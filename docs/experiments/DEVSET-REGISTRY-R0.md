@@ -1,36 +1,52 @@
-# DEVSET-REGISTRY-R0 — Development Set 注册表
+# DEVSET-REGISTRY-R0/R1 — Development Set 注册表
 
-- 状态:**PLANNED**(期望值未回填)
-- 来源:baseline [§12](../baselines/FCF-PC-BASELINE-R0-20260915.md) 枚举的 Development / Regression Set
-- 纪律:本表只登记 §12 列名的案例,**不新增语义、不编造期望 Response**。期望值一律从中鱼库(Notion)/推导表(飞书)回填,逐条标注来源页面/工作表;两来源冲突时按 AGENTS.md 使用边界处理——先报告冲突请求确认,不自行覆盖。
-- classification 列在 run 时按 [EXP-PROTOCOL-FCF-PC-R0](EXP-PROTOCOL-FCF-PC-R0.md) §5 判定树填写,当前一律 TBD。
+- 状态:**BACKFILLED(R1,2026-09-16)**——已在 `programaticHitFish` `feature/pc-cue-validation-r1-clean` 执行为真实 Development Regression;fixture 见该仓 `pc_validation/fixtures/devset_r1_backfilled.json`
+- 来源:baseline [R0 §12](../baselines/FCF-PC-BASELINE-R0-20260915.md) 枚举 + Design Owner 2026-09-16 裁决(新增 Walleye)+ 回填材料:
+  - Presentation Adapter Development Set Manifest v1(frozen 2026-08-25,Notion `3c7a4137d23681b7adc7cafa9f444b6b`)
+  - Response Language Contract Delta R0 §14 Expression Pressure Test(2026-09-05,Notion `3d0a4137d2368168b678ccfafc85583c`)
+- 纪律:本表不发明语义;来源未定值标 `UNKNOWN_FROM_SOURCE`;无任何 ResponseBand 数字;DEV regression 证明事实需求/可表达性/所需 delta/ownership 结果,不证明 HIGH=多少。
+- 据本表任何 case 修改 baseline 时,该 case 永久保持 Development 身份(R0 §10)。
 
-## Presentation 案例(§12 枚举)
+## Presentation 案例
 
-| case_id | Presentation(§12 原文) | item / rig / technique | species × mode | 期望(来源) | classification | 备注 |
-|---|---|---|---|---|---|---|
-| DEV-001 | Spinnerbait steady | 待回填 | 待回填 | 待回填(中鱼库/推导表) | TBD | — |
-| DEV-002 | Spinnerbait jerk-pause | 待回填 | 待回填 | 待回填(中鱼库/推导表) | TBD | — |
-| DEV-003 | Bread / prepared-food passive | 待回填 | 待回填 | 待回填(中鱼库/推导表) | TBD | — |
-| DEV-004 | Shrimp-like bottom hop | 待回填 | 待回填 | 待回填(中鱼库/推导表) | TBD | — |
-| DEV-005 | Spoon steady | 待回填 | 待回填 | 待回填(中鱼库/推导表) | TBD | — |
-| DEV-006 | Spoon oscillating | 待回填 | 待回填 | 待回填(中鱼库/推导表) | TBD | 与 DEV-005 的区分依赖 cue.displacement 度量语义——A2 裁决:PROVISIONAL,未定义前不得据此判 COVERED |
-| DEV-007 | Fly dead drift | 待回填 | 待回填 | 待回填(中鱼库/推导表) | TBD | 参考系选择敏感(自审 P1-2):水局部 vs 地面 |
-| DEV-008 | Fly twitch | 待回填 | 待回填 | 待回填(中鱼库/推导表) | TBD | — |
-| DEV-009 | Topwater popper pop-pause | 待回填 | 待回填 | 待回填(中鱼库/推导表) | TBD | 观察者相对 cue 敏感(自审 P1-1) |
-| DEV-010 | Soft worm bottom drag | 待回填 | 待回填 | 待回填(中鱼库/推导表) | TBD | — |
-
-## Strategy Story 案例(§12:「已参与 FCF Strategy Story 设计的 Bass / Trout / Carp 等具体故事」)
-
-| case_id | Story class | 具体故事身份 | 期望(来源) | classification | 备注 |
+| case_id | Presentation | classification | requested_deltas | ownership | 备注 |
 |---|---|---|---|---|---|
-| DEV-S1 | Bass FCF strategy story | 待从中鱼库回填(不得由 Coding Agent 自行发明) | 待回填 | TBD | — |
-| DEV-S2 | Trout FCF strategy story | 待从中鱼库回填 | 待回填 | TBD | — |
-| DEV-S3 | Carp FCF strategy story | 待从中鱼库回填 | 待回填 | TBD | — |
-| DEV-S4 | 其他已参与旧设计的 story(如有) | 待 Owner 补充认定 | 待回填 | TBD | §12 用「等」字,边界由 Owner 认定 |
+| DEV-001 | Spinnerbait steady | COVERED | — | NO_DOCUMENTED_CONFLICT | optical motion + flash + mechanical;frame metadata 照 A2 |
+| DEV-002 | Spinnerbait jerk-pause | COVERED | — | NO_DOCUMENTED_CONFLICT | 14.1 判定:speed_change + pause_duration + ALL 足够 |
+| DEV-003 | Bread / prepared-food passive | ANNOTATION_ONLY | chemical_signature values;PREPARED_FOOD member | NO_DOCUMENTED_CONFLICT | CHEMICAL_INTENSITY_GAP_WATCH;species UNKNOWN_FROM_SOURCE |
+| DEV-004 | Shrimp-like bottom hop | COVERED | — | NO_DOCUMENTED_CONFLICT | relation.bottom;不新增 bottom_disturbance |
+| DEV-005 | Spoon steady | COVERED | — | NO_DOCUMENTED_CONFLICT | Optical family 复用 |
+| DEV-006 | Spoon oscillating | **UNRESOLVED** | displacement summary semantics 裁定 | NO_DOCUMENTED_CONFLICT | direction_change band 是否足够判别 = UNKNOWN_FROM_SOURCE |
+| DEV-007 | Fly dead drift | COVERED | — | NO_DOCUMENTED_CONFLICT | LOCAL_WATER 为 fixture 级声明(A2 不选 universal frame) |
+| DEV-008 | Fly twitch | COVERED | — | NO_DOCUMENTED_CONFLICT | 同 representation 换 kinematics,复用 item-side 语义 |
+| DEV-009 | Topwater popper pop-pause | COVERED | — | NO_DOCUMENTED_CONFLICT | relation.surface;不升级 surface_pop;sound_pattern 未用 |
+| DEV-010 | Soft worm bottom drag | **UNRESOLVED** | displacement 语义;scrape setter 评估 | NO_DOCUMENTED_CONFLICT | Manifest 原文即标注 unresolved |
+
+## Strategy Story 案例(回填后重构编号;旧表 S1–S4 作废)
+
+| case_id | Story | classification | requested_deltas | ownership | 备注 |
+|---|---|---|---|---|---|
+| DEV-S1 | Bass jerk-pause(14.1) | COVERED | — | NO_DOCUMENTED_CONFLICT | Profile=Species×Mode;affinity 值 UNKNOWN_FROM_SOURCE |
+| DEV-S2 | Bass Spawn Guard(14.1) | COVERED | — | NO_DOCUMENTED_CONFLICT | relation.nest;NestThreat 非 mandatory 层 |
+| DEV-S3 | Trout Match Hatch(14.1) | ANNOTATION_ONLY | prey_stage values | NO_DOCUMENTED_CONFLICT | field-to-field compare 已在语言契约 |
+| DEV-S4 | Walleye low-light / hydro-acoustic(14.1;Owner 2026-09-16 加入) | COVERED | — | **LINT_WATCH** | light 与 Exposure/LocalOpportunity 潜在双计(14.1 记录为 lint 事项) |
+| DEV-S5 | Scent feeder(R0 §12 Carp story;物种归属 UNKNOWN_FROM_SOURCE) | ANNOTATION_ONLY | chemical_signature values | NO_DOCUMENTED_CONFLICT | CHEMICAL_INTENSITY_GAP_WATCH;浓度 primitive 保持 candidate |
+
+## 分布与特别报告(2026-09-16 run)
+
+```text
+COVERED 10 / ANNOTATION_ONLY 3 / UNRESOLVED 2
+打穿 R1:DEV-006、DEV-010(均阻塞于 displacement PROVISIONAL)
+未使用 basis 字段:cue.sound_pattern
+chemical intensity 缺口:DEV-003、DEV-S5
+ownership lint watch:DEV-S4
+Fish×Descriptor resurfacing:DEV fixtures 无 Response rules,不可测(如实标注)
+```
+
+完整机器可读结果:`programaticHitFish` `pc_validation/reports/pc_validation_report.json`(development_regression 段)。
 
 ## 回填记录
 
 | 日期 | 回填人 | 覆盖 case | 来源标注 | 冲突处理 |
 |---|---|---|---|---|
-| — | — | — | — | — |
+| 2026-09-16 | Coding Agent | DEV-001..010, S1..S5 | Manifest v1 + Pressure Test 14.1 + R0 §12 + Owner 裁决 | 无来源冲突;未定值均标 UNKNOWN_FROM_SOURCE |
