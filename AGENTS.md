@@ -15,8 +15,8 @@
    - 用途：查看、讨论和维护现有参数、公式、推导关系与例子。读取前确认工作表、版本和公式语义。
 
 3. **本地冻结与实验记录(本仓 `docs/`)**
-   - `docs/baselines/`:baseline 冻结候选存档(当前:`FCF-PC-BASELINE-R0-20260915`,未晋升,附自审报告 `docs/reviews/`)。
-   - `docs/experiments/`:验证实验协议、Development Set 注册表、blind holdout 交接契约与 run 记录;harness 执行代码在 `fishingGameTuningShowcase` 仓(中鱼 Reference Harness)。
+   - `docs/baselines/`:baseline 冻结候选存档(`FCF-PC-BASELINE-R0-20260915` 原样存档 + `FCF-PC-BASELINE-R1-ADDENDUM-2026-09-16` Design Owner 裁决增补;均未晋升,自审报告在 `docs/reviews/`)。
+   - `docs/experiments/`:验证实验协议、Development Set 注册表、blind holdout 交接契约与 run 记录;harness 执行代码在 `futouyiba/programaticHitFish` 仓(本地 `SharedProjects/programaticHitFish`)。
 
 ## 使用边界
 

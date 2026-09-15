@@ -1,9 +1,9 @@
 # EXP-PROTOCOL-FCF-PC-R0 — Authorability / Vocabulary Generalization 实验协议
 
-- 状态:**PROPOSAL**
-- 执行对象:[FCF-PC-BASELINE-R0-20260915](../baselines/FCF-PC-BASELINE-R0-20260915.md)(冻结候选,未晋升)
+- 状态:**ACTIVE(PROPOSAL 部分更新至 R1)**
+- 执行对象:[FCF-PC-BASELINE-R0-20260915](../baselines/FCF-PC-BASELINE-R0-20260915.md) + [FCF-PC-BASELINE-R1-ADDENDUM-2026-09-16](../baselines/FCF-PC-BASELINE-R1-ADDENDUM-2026-09-16.md)(Design Owner 已裁决 A1–A4 / B1–B2)
 - 配套自审:[FCF-PC-BASELINE-R0-SELFREVIEW-2026-09-15](../reviews/FCF-PC-BASELINE-R0-SELFREVIEW-2026-09-15.md)
-- 标注 **[PROPOSAL-R0]** 的条目是对 baseline 未定义处的填补(对应自审 P1-4 / P2-6 / P2-8 / P3-13),经 Owner 批准后作为 run 规则;**不修改冻结文本**。其余条目为冻结文本的执行化重述。
+- 标注 **[PROPOSAL-R0]** 的条目中,对应 A/B 裁决的部分已按 R1 Addendum 更新并标注 **[R1-ADJUDICATED]**;其余仍未得到 Design Owner 裁决的 proposal 保持 proposal 状态,不自行 promotion。
 
 ## 1. 实验主张(引自 §1)
 
@@ -23,8 +23,8 @@ Kill signals(§9):new Item count ↑ ≈ semantic token count 线性 ↑;或一�
 ## 3. 资产位置
 
 - 本仓 `docs/experiments/`:协议、注册表、交接契约、run 记录。
-- Harness 实现:`fishingGameTuningShowcase`(中鱼 Reference Harness;stacked 分支 + verify.sh CI 惯例)。本仓不放执行代码。
-- 语义对照与期望值来源:中鱼库(Notion `中鱼升级`)、推导表(飞书)。
+- Harness 实现:`futouyiba/programaticHitFish`(本地 `/Volumes/Mac DS - Data/SharedProjects/programaticHitFish`;**2026-09-16 Design Owner 裁决修正**——原协议误写 `fishingGameTuningShowcase`)。在既有 authoring compiler / deterministic pre-generation harness / fixture-test infra 上增加 Presentation/Cue Contract Validation Lane,不平行建立第二套 execution framework。
+- 语义对照与期望值来源:中鱼库(Notion `中鱼升级`)、推导表(飞书);Notion「Simplified V0 Working Main」与「Response Language Contract Delta R0」为 Engagement Mode / ResponseBand / SET-CAP 语义出处。
 
 ## 4. Run 生命周期
 
@@ -45,28 +45,45 @@ Kill signals(§9):new Item count ↑ ≈ semantic token count 线性 ↑;或一�
 6. **独立抽查**:Reviewer 复核分类,抽样量 ≥20% 且 ≥10 个 case(取大)**[PROPOSAL-R0]**。
 7. **Run 报告**:§11 全量指标 + 分组 + kill-signal 布尔判定及证据。
 
-## 5. 分类判定树 **[PROPOSAL-R0]**(补自审 P1-4)
+## 5. 分类判定程序 **[R1-ADJUDICATED]**(Design Owner 裁决,见 R1 Addendum §A4;替代本节原 [PROPOSAL-R0] 判定树)
 
-主标签 = 沿「表达成本阶梯」自上而下第一个走不通的台阶之后的第一个「需要项」:
+每个 Case 必须有:
 
-1. 冻结 primitives + field-to-field 比较 + ALL/ANY/NOT 可表达 → `COVERED`
-2. 仅需新增 sparse annotation(不改词汇)→ `ANNOTATION_ONLY`
-3. 仅需由已有 primitives 确定性派生新 descriptor → `DERIVED_DESCRIPTOR_ONLY`
-4. 仅需新增通用 Response 规则(跨 item 复用、不新增词汇)→ `NEW_GENERIC_RULE_REQUIRED`
-5. 需新 relation → `NEW_RELATION_REQUIRED`
-6. 需新 primitive → `NEW_PRIMITIVE_REQUIRED`
-7. 仅 item-specific 例外可表达 → `ITEM_SPECIFIC_EXCEPTION`
+```text
+primary_classification: exactly one
+requested_deltas: zero or more
+flags: zero or more
+```
 
-正交 flag(不占主标签,可与任意主标签并记):
+Primary 判定程序(顺序固定):
 
-- `UNRESOLVED`:合法表达必须经过 §13/§4 显式 open 机制(如 multi-target aggregation、SET/CAP 终局)→ 该 case **不实现**,记录 semantic delta request。
-- `CAUSE_OWNERSHIP_CONFLICT`:输入集同时含 derived cue 与其 provenance 成因 primitive,且无 `CAUSE_JUSTIFIED` 声明。
+```text
+CAUSE_OWNERSHIP_CONFLICT
+→ 若当前表达首先违反 owner / double-count
 
-边界规则:
+UNRESOLVED
+→ 若必须先做尚未冻结的 semantic decision
 
-- 「确定性派生」= 派生式中无 species/mode 项、无自由参数,给定相同输入唯一输出。
-- 单主标签 + 任意多 flag;每条分类记录所走到的台阶与证据(用到的字段、规则草稿)。
-- 分类由 Coding Agent 初判,Reviewer 按步骤 6 抽查;分歧 case 在 run 报告中双记并标注,以 Reviewer 结论为准归档。
+否则寻找「使 Case 可合法表达的最小充分改动」：
+COVERED
+ANNOTATION_ONLY
+DERIVED_DESCRIPTOR_ONLY
+NEW_GENERIC_RULE_REQUIRED
+NEW_PRIMITIVE_REQUIRED
+NEW_RELATION_REQUIRED
+ITEM_SPECIFIC_EXCEPTION
+```
+
+若 Case 同时需要多种 Delta:primary = 最先不可缺少的最小充分 semantic change;其它需求进入 `requested_deltas[]`;aggregate metrics 分别计数,不丢失多 Delta 信息。
+
+`DERIVED_DESCRIPTOR_ONLY` 的「确定性派生」要求(A4 原文):只读取当前已 admitted fish-independent facts,并且相同输入必须唯一地产生相同 descriptor;不得读取 Species / Mode / response / hidden SKU identity。
+
+补充执行规则:
+
+- 「最小充分改动」的搜索顺序即 A4 列出的七档;UNRESOLVED 命中 §13/§4 显式 open 机制(如 multi-target aggregation、SET/CAP 终局)时,该 case 不实现绕过方案,记录 semantic delta request。
+- `cue.displacement` 依赖(A2):fixture 无明确 semantic definition 时,不得据此判 `COVERED`,应标 `UNRESOLVED` 或避开该字段。
+- 每条分类记录判定路径与证据(用到的字段、规则草稿)。
+- 分类由 Coding Agent 初判,Reviewer 抽查(抽样量 ≥20% 且 ≥10 个,取大——**此项仍为 [PROPOSAL-R0]**,裁决未覆盖);分歧 case 双记并标注,以 Reviewer 结论归档。
 
 ## 6. 度量规范 **[PROPOSAL-R0]**(补自审 P2-6)
 
@@ -81,7 +98,7 @@ Kill signals(§9):new Item count ↑ ≈ semantic token count 线性 ↑;或一�
 | Δ unresolved / Δ conflict | 新增 flag case 数 |
 | descriptor token count | 当前生效 `presentation.*` / `cue.*` token 总数,批准与 candidate 分列 |
 | single-use descriptor count | 仅被 1 个 item 的任何事实引用的 descriptor 数 |
-| Fish × Descriptor direct-touch | Response 规则中同时绑定具体 Species(或 Species×Mode,依 P1-3 澄清结果)与具体 descriptor 的规则数 |
+| Fish × Descriptor direct-touch | Response 规则中同时绑定具体 Species 与具体 descriptor 的规则数(依 A3:Static Affinity 无 Mode 轴;Mode 绑定按 ResponseProfile 维度单独统计) |
 | per-descriptor Species/Mode fan-out | 每 descriptor 被引用的 Species(×Mode)数分布 |
 | generic rule fan-out | 每条通用规则实际覆盖的 item×presentation 数分布 |
 | descriptor→target 非恒等映射率(WATCH-15) | Target Interpretation 输出与输入 descriptor 一一对应的假设占比;持续≈100% 则两层 vocabulary 有一层冗余 |

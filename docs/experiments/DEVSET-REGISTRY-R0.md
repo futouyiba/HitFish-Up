@@ -14,7 +14,7 @@
 | DEV-003 | Bread / prepared-food passive | 待回填 | 待回填 | 待回填(中鱼库/推导表) | TBD | — |
 | DEV-004 | Shrimp-like bottom hop | 待回填 | 待回填 | 待回填(中鱼库/推导表) | TBD | — |
 | DEV-005 | Spoon steady | 待回填 | 待回填 | 待回填(中鱼库/推导表) | TBD | — |
-| DEV-006 | Spoon oscillating | 待回填 | 待回填 | 待回填(中鱼库/推导表) | TBD | 与 DEV-005 的区分依赖 cue.displacement 度量定义(自审 P1-2) |
+| DEV-006 | Spoon oscillating | 待回填 | 待回填 | 待回填(中鱼库/推导表) | TBD | 与 DEV-005 的区分依赖 cue.displacement 度量语义——A2 裁决:PROVISIONAL,未定义前不得据此判 COVERED |
 | DEV-007 | Fly dead drift | 待回填 | 待回填 | 待回填(中鱼库/推导表) | TBD | 参考系选择敏感(自审 P1-2):水局部 vs 地面 |
 | DEV-008 | Fly twitch | 待回填 | 待回填 | 待回填(中鱼库/推导表) | TBD | — |
 | DEV-009 | Topwater popper pop-pause | 待回填 | 待回填 | 待回填(中鱼库/推导表) | TBD | 观察者相对 cue 敏感(自审 P1-1) |
