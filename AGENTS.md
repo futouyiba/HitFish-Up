@@ -14,12 +14,17 @@
    - 链接：<https://pisn3u3ony2.feishu.cn/sheets/I1sdspfpJhWP8JtKrAPcY5Y3nmb?from=from_copylink>
    - 用途：查看、讨论和维护现有参数、公式、推导关系与例子。读取前确认工作表、版本和公式语义。
 
+3. **本地冻结与实验记录(本仓 `docs/`)**
+   - `docs/baselines/`:baseline 冻结候选存档(当前:`FCF-PC-BASELINE-R0-20260915`,未晋升,附自审报告 `docs/reviews/`)。
+   - `docs/experiments/`:验证实验协议、Development Set 注册表、blind holdout 交接契约与 run 记录;harness 执行代码在 `fishingGameTuningShowcase` 仓(中鱼 Reference Harness)。
+
 ## 使用边界
 
 - 中鱼库负责设计意图、概念定义、决策记录与讨论上下文；推导表负责可检查、可迭代的推导和参数实例。两者出现冲突时，先报告冲突并请求确认，不自行覆盖任一来源。
 - agent 可在当前任务范围内直接编辑推导表，例如填写参数、补充公式、修正推导或新增局部案例；编辑后应回读并报告影响的工作表/区域。删除数据、覆盖大量既有内容、调整跨表结构或改变核心公式语义前，才需要用户明确确认。
 - 中鱼库的创建、改写或发布仍需先说明目标、影响范围和回读验证方式，并获得用户明确确认。
 - 任何实现、数据契约或正式结论应标注其依据是 Notion、飞书表还是本地代码；尚未在来源中确认的内容应标为假设。
+- 本仓 `docs/baselines/` 的冻结文本不得因单个失败案例被就地修改；修订走新 freeze ID（如 R1），被用于修订的案例按冻结纪律归入 Development Set。Blind holdout 案例身份由独立 Reviewer / Sample Agent 选择（见 `docs/experiments/HOLDOUT-HANDOFF-R0.md`），Coding Agent 不得自行挑选或探知。
 
 ## 独立审核
 
