@@ -1,0 +1,168 @@
+{
+  "status": "PROBE_ONLY_NOT_FORMAL_0_3_4_CONFIG",
+  "n_species": 267,
+  "sources": {
+    "feishu_selected_fields": "SOURCE-LINKED, 267 rows",
+    "notion_reference": "SOURCE snapshot 2026-09-08, 267 rows"
+  },
+  "effect_signature": {
+    "temperature_points": 81,
+    "structure_dimensions": 22,
+    "time_dimensions": 8,
+    "feeding_layer_dimensions": 3
+  },
+  "missing_fields": {
+    "temperature": 0,
+    "structure": 0,
+    "time": 0,
+    "feeding_layer": 0
+  },
+  "distance_definition": "mean absolute difference per signature dimension; joint is equal-weight mean of four component distances",
+  "component_cluster_counts_0_15": {
+    "temperature": 14,
+    "structure": 21,
+    "time": 4,
+    "feeding_layer": 4,
+    "joint": 31
+  },
+  "component_outlier_ratio_0_15": {
+    "temperature": 0.0,
+    "structure": 0.0,
+    "time": 0.0,
+    "feeding_layer": 0.0
+  },
+  "cluster_within_mean_distance_0_15": {
+    "temperature": 0.05586811368487672,
+    "structure": 0.036374623841427874,
+    "time": 0.0,
+    "feeding_layer": 0.028929441425387805
+  },
+  "compression_curve": [
+    {
+      "allowed_error": 0.05,
+      "archetypes": 136,
+      "coverage": 0.6741573033707865,
+      "exact_radius_coverage": 1.0,
+      "median_override_ratio": 0.0,
+      "p90_override_ratio": 0.04055896297466225,
+      "fields_reused_per_species": 2.940956674850721,
+      "fields_modified_per_species": 1.059043325149279
+    },
+    {
+      "allowed_error": 0.1,
+      "archetypes": 60,
+      "coverage": 0.9063670411985019,
+      "exact_radius_coverage": 1.0,
+      "median_override_ratio": 0.05234220511998288,
+      "p90_override_ratio": 0.09090909090909091,
+      "fields_reused_per_species": 2.1533242649495636,
+      "fields_modified_per_species": 1.8466757350504364
+    },
+    {
+      "allowed_error": 0.15,
+      "archetypes": 22,
+      "coverage": 0.9887640449438202,
+      "exact_radius_coverage": 1.0,
+      "median_override_ratio": 0.08445723968599786,
+      "p90_override_ratio": 0.1340799147942005,
+      "fields_reused_per_species": 1.8516495511890485,
+      "fields_modified_per_species": 2.1483504488109517
+    },
+    {
+      "allowed_error": 0.2,
+      "archetypes": 9,
+      "coverage": 0.9962546816479401,
+      "exact_radius_coverage": 1.0,
+      "median_override_ratio": 0.12833687373307912,
+      "p90_override_ratio": 0.17956127411682968,
+      "fields_reused_per_species": 1.573456843272387,
+      "fields_modified_per_species": 2.426543156727613
+    },
+    {
+      "allowed_error": 0.25,
+      "archetypes": 5,
+      "coverage": 0.9962546816479401,
+      "exact_radius_coverage": 1.0,
+      "median_override_ratio": 0.1460396661199874,
+      "p90_override_ratio": 0.20294233881473464,
+      "fields_reused_per_species": 1.6771794206268715,
+      "fields_modified_per_species": 2.3228205793731282
+    },
+    {
+      "allowed_error": 0.3,
+      "archetypes": 3,
+      "coverage": 1.0,
+      "exact_radius_coverage": 1.0,
+      "median_override_ratio": 0.17573723970859387,
+      "p90_override_ratio": 0.2302986685520168,
+      "fields_reused_per_species": 1.7054330999134473,
+      "fields_modified_per_species": 2.2945669000865525
+    }
+  ],
+  "cross_component_consistency": [
+    {
+      "a": "temperature",
+      "b": "structure",
+      "ARI": 0.0731320895927006,
+      "NMI": 0.268574625740963
+    },
+    {
+      "a": "temperature",
+      "b": "time",
+      "ARI": 0.05509218785838455,
+      "NMI": 0.13861783333559705
+    },
+    {
+      "a": "temperature",
+      "b": "feeding_layer",
+      "ARI": -0.007194308759101885,
+      "NMI": 0.050426880542854734
+    },
+    {
+      "a": "structure",
+      "b": "time",
+      "ARI": 0.14957902052046212,
+      "NMI": 0.3105614051672211
+    },
+    {
+      "a": "structure",
+      "b": "feeding_layer",
+      "ARI": 0.017477408110133128,
+      "NMI": 0.1507019103740026
+    },
+    {
+      "a": "time",
+      "b": "feeding_layer",
+      "ARI": 0.00822178172696228,
+      "NMI": 0.043280491685491904
+    }
+  ],
+  "outlier_species": [
+    {
+      "species": "丁鱥",
+      "distance": 0.14921436588103254
+    },
+    {
+      "species": "鞍带石斑鱼",
+      "distance": 0.14881085992197102
+    },
+    {
+      "species": "蓝笛鲷",
+      "distance": 0.14797868107329912
+    },
+    {
+      "species": "美洲锐唇鲷",
+      "distance": 0.14783921181056597
+    },
+    {
+      "species": "金鲫",
+      "distance": 0.14762534643487024
+    }
+  ],
+  "caveats": [
+    "Structure signature is FG推荐结构体 presence, not formal 25-Type affinity profile.",
+    "Time signature uses old 8 period source values; 0.3.4 requires 5 periods and forbids automatic migration.",
+    "Temperature comfort band is derived from favourite point; falloff_shape and temp_threshold unavailable.",
+    "No ResolvedBakeSubjectConfig / Engagement Mode / FishQuality production snapshot was available."
+  ]
+}
