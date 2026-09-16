@@ -1,6 +1,6 @@
 # DEVSET-REGISTRY — Development Set 注册表(R0/R1/R2/R3 + Round 1)
 
-- 状态:**EXECUTED UNDER R3 CANDIDATE(2026-09-16)**——Design Owner Development Review(D1–D6)后,在 `programaticHitFish` `feature/pc-cue-validation-r2-clean` 以 R2 契约执行;fixture 见该仓 `pc_validation/fixtures/devset_r2_backfilled.json`;R1 回填版本保留为 provenance
+- 状态:**EXECUTED UNDER FROZEN R3(2026-09-16;FCF-PC-BASELINE-R3-20260916,WORKING VALIDATION BASELINE / NOT PROMOTED)**——Design Owner Development Review(D1–D6)后,在 `programaticHitFish` `feature/pc-cue-validation-r2-clean` 以 R2 契约执行;fixture 见该仓 `pc_validation/fixtures/devset_r2_backfilled.json`;R1 回填版本保留为 provenance
 - 来源:baseline [R0 §12](../baselines/FCF-PC-BASELINE-R0-20260915.md) 枚举 + Design Owner 2026-09-16 裁决(新增 Walleye)+ 回填材料:
   - Presentation Adapter Development Set Manifest v1(frozen 2026-08-25,Notion `3c7a4137d23681b7adc7cafa9f444b6b`)
   - Response Language Contract Delta R0 §14 Expression Pressure Test(2026-09-05,Notion `3d0a4137d2368168b678ccfafc85583c`)
@@ -52,7 +52,7 @@ R3 重分类(仅限授权 delta):
 Development 总集 33 = 原有 15 + Round 1 18
 COVERED 29 / ANNOTATION_ONLY 3 / NEW_PRIMITIVE_REQUIRED 1(H17)/ UNRESOLVED 0
 DEV-010 KNOWN_DEV_GAP 经 Delta 1 关闭(RESOLVED_BY_R3_DELTA_1;永久 Development 身份保留)
-H10 首次行使 cue.sound_pattern(D6 UNEXERCISED 解除;combined dev set unused basis = 空)
+H10 行使 cue.sound_pattern → `EXERCISED_BY_DEVELOPMENT_CASE`(非 NECESSITY_VALIDATED;combined unused basis = 空)
 chemical 缺口维持:DEV-003、DEV-S5(D4)
 ownership lint watch 维持:DEV-S4(D5)
 open counterfactual:CF-MULTI-1(OPEN_PENDING_EVIDENCE)——single vs multi-source 等聚合对照,
@@ -60,10 +60,12 @@ open counterfactual:CF-MULTI-1(OPEN_PENDING_EVIDENCE)——single vs multi-sourc
 ```
 
 ```text
-ROUND1 = HISTORICAL BLIND EVIDENCE
-R3     = DEVELOPMENT CANDIDATE(NOT YET FROZEN / NOT_PROMOTED)
-ROUND2 = NOT YET STARTED
+ROUND1 = HISTORICAL BLIND EVIDENCE(closed)
+R3     = WORKING VALIDATION BASELINE(FROZEN / NOT PROMOTED;sha256 f68bac2b…)
+ROUND2 = NOT_YET_AUTHORIZED
 ```
+
+冻结版 R3 = candidate 经 REVISE_NARROWLY_BEFORE_FREEZE(A–F)收缩;稳定位置:origin 分支 `feature/pc-cue-validation-r3-candidate` @ `8221cf6`(`docs/pc_validation/FCF-PC-BASELINE-R3-20260916.md`)+ 本仓 `docs/baselines/` canonical。
 
 完整机器可读结果:`programaticHitFish` `pc_validation/reports/pc_validation_report.json`(development_regression + open_counterfactuals 段)。
 
