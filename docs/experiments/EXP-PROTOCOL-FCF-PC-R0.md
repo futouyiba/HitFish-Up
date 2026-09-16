@@ -1,7 +1,7 @@
 # EXP-PROTOCOL-FCF-PC-R0 — Authorability / Vocabulary Generalization 实验协议
 
 - 状态:**ACTIVE(PROPOSAL 部分更新至 R1)**
-- 执行对象:[FCF-PC-BASELINE-R0-20260915](../baselines/FCF-PC-BASELINE-R0-20260915.md) + [FCF-PC-BASELINE-R1-ADDENDUM-2026-09-16](../baselines/FCF-PC-BASELINE-R1-ADDENDUM-2026-09-16.md)(Design Owner 已裁决 A1–A4 / B1–B2)
+- 执行对象:契约链 R0 → [R1 Addendum](../baselines/FCF-PC-BASELINE-R1-ADDENDUM-2026-09-16.md)(A1–A4/B1–B2)→ [R2](../baselines/FCF-PC-BASELINE-R2-20260916.md)(D1–D6,冻结)→ [R3 Candidate](../baselines/FCF-PC-BASELINE-R3-CANDIDATE-2026-09-16.md)(窄 Delta 1–3,NOT YET FROZEN);Round 1 盲测证据见 [归档报告](../holdout/FCF-PC-R2_BLIND_HOLDOUT_R1_20260916.md)
 - 配套自审:[FCF-PC-BASELINE-R0-SELFREVIEW-2026-09-15](../reviews/FCF-PC-BASELINE-R0-SELFREVIEW-2026-09-15.md)
 - 标注 **[PROPOSAL-R0]** 的条目中,对应 A/B 裁决的部分已按 R1 Addendum 更新并标注 **[R1-ADJUDICATED]**;其余仍未得到 Design Owner 裁决的 proposal 保持 proposal 状态,不自行 promotion。
 
