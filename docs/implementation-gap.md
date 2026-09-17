@@ -39,12 +39,16 @@ reference implementation, and written back to the two authority pages
 | GAP-003 | An explicit `"aggregationRole": null` is an **explicit IGNORED**. Only a wholly absent binding row is a resolve error. | Satisfies both Current clauses at once: the Bass fixture's `null` reads as IGNORED, and 开发需求 §4.5's "missing ≠ ignored" still governs absent rows. |
 | GAP-004 | `gatePolicy` **never shipped**, so there is no legacy payload and no read-through channel. Any occurrence of the key is an error (Bass slice §8 V6, read literally). Docs that still describe it as current are to be made consistent with the spec. | Owner 2026-09-18: it is a new feature with no historical/stock data, so there is nothing to migrate. A role edit (e.g. CORE → SECONDARY) is ordinary authoring — bake always uses the *current* role; no migration logic is involved. |
 
-**Written back 2026-09-18** to the two authority pages — Schema & Validator
+**Written back 2026-09-18** to four authority pages — Schema & Validator
 (`3dca4137d23681e28c5bc2f29c63dc16`: new §1.1 key table + rewritten §3.8 Trace block +
-ruling note) and Bake Authoring / 条件开关 Working
-(`3dca4137d236816ab0add70228a80d51`: §6.2 / §6.3 profile keys → snake_case + ruling
-note). Both were read back in full and verified. Two items remain outside that scope: the
-Main Control ruling trace, and 开发需求 §4.1's `time_period_coefficient` example string.
+ruling note), Bake Authoring / 条件开关 Working
+(`3dca4137d236816ab0add70228a80d51`: §6.2 / §6.3 profile keys → snake_case, ruling note,
+page renamed off the deleted GatePolicy wording), Main Control
+(`3dda4137d2368109aa54ec4f7acbab26`: new §33 ruling section + read-pointer update), and
+开发需求 (`3dda4137d23681c68ec3fb1944573af4`: §4.1 example block aligned to §4.0). All were
+fresh-read, written as narrow deltas with distinct anchors, and read back in full. The
+only remaining item is implementation-side: land these plus §26.4 deltas 1–9 on the W6
+branch.
 
 **Consequences for the reference implementation:** `role_of()` rejects any
 `gatePolicy` key outright (the inert-value read-through path was removed);
@@ -52,11 +56,10 @@ the Trace no longer emits the three dead keys; `spatial_distribution_weight`
 follows §26.4 delta 6. Test count went 38 → 39 (the old "OFF + NONE normalises"
 test was replaced by "any gatePolicy is rejected", plus a dead-key-absence test).
 
-**Residual (not covered by these rulings, needs one more edit):** 开发需求 §4.1's
-inline example writes `time_period_coefficient[DAWN]` while §4.0's own table
-writes `time_period_activity_coefficient[DAWN]`. Under the GAP-001 ruling the
-§4.0 spelling wins, so §4.1's example string should be corrected — that is a
-**third page** and was outside the two-page write scope of this session.
+**Residual sweep (resolved 2026-09-18):** 开发需求 §4.1's inline example block wrote
+`feeding_surface_affinity` and `time_period_coefficient` while §4.0's own table writes
+`foraging_surface_affinity` and `time_period_activity_coefficient`. Under the GAP-001
+ruling the §4.0 spelling wins; both strings in §4.1 were corrected in the same sweep.
 
 ---
 

@@ -276,29 +276,22 @@ two edited Notion pages. Recorded project decisions belong in Main Control
 
 ## 7. Write-back status
 
-**Done 2026-09-18** — the two authorised authority pages were edited and each read
-back in full:
+**All done 2026-09-18.** Four authority pages were edited; each was fresh-read first
+(all had a `last_edited_time` of 2026-09-17, ≈24h stale, so no concurrent writer was
+active), written with narrow `update_content` deltas using distinct anchors, then read
+back whole-page.
 
 | Page | Edit | Verified |
 | --- | --- | --- |
 | Schema & Validator (`3dca4137d23681e28c5bc2f29c63dc16`) | new §1.1 canonical `resolvedComponentProfiles` key table; §3.8 `BakeEvaluationTrace` rewritten to the post-2026-09-17 key set; 2026-09-17 field-name note replaced by the 2026-09-18 ruling + negative-knowledge warning | headings §1–§11 intact, new §1.1 present, no `****` corruption |
-| Bake Authoring / 条件开关 Working (`3dca4137d236816ab0add70228a80d51`) | §6.2 Feeding Layer keys and §6.3 Structure key → snake_case, plus a one-line ruling note | §6.1–§6.4 and the historical tail intact |
+| Bake Authoring / 条件开关 Working (`3dca4137d236816ab0add70228a80d51`) | §6.2 Feeding Layer keys and §6.3 Structure key → snake_case, plus a one-line ruling note; **page renamed** to `…｜AggregationRole 三态 · 门控随 CORE 自动存在` | §6.1–§6.4 and the historical tail intact; content unaffected by the rename |
+| Main Control (`3dda4137d2368109aa54ec4f7acbab26`) | new **§33** ruling section (four adjudications + §33.2 the three-page sweep + §33.3 implementation-side TODO); read-pointer callout updated from "§26 为准" to "§26 起…Fixed Bake 契约窄修见 §33" | §33 / §33.1 / §33.3 all present, `****` count 0, tail intact |
+| 开发需求 (`3dda4137d23681c68ec3fb1944573af4`) | §4.1 inline example block aligned to §4.0: `feeding_surface_affinity` → `foraging_surface_affinity`, `time_period_coefficient` → `time_period_activity_coefficient`; one-line ruling note added | §4.1 block and the note both present, page otherwise unchanged |
 
-Both pages had a `last_edited_time` of 2026-09-17 (≈24h stale) before the edit, so no
-concurrent writer was active. Writes were narrow `update_content` deltas with distinct
-anchors, then read back whole-page.
+The 条件开关 rename keeps the page ID (`3dca4137d236816ab0add70228a80d51`), so every
+`<mention-page>` / `<page url>` reference by ID still resolves; only the URL slug changed.
 
-**Still outstanding (both outside the authorised two-page scope):**
-
-1. **Ruling trace.** Recorded project decisions belong in Main Control
-   (`3dda4137d2368109aa54ec4f7acbab26`, §26-style section). The four adjudications
-   currently live in this repository plus the two edited pages, but not in the branch's
-   ruling log. Append one narrow section.
-2. **One residual string.** 开发需求 §4.1's inline example writes
-   `time_period_coefficient[DAWN]` while §4.0's own table writes
-   `time_period_activity_coefficient[DAWN]`. Under the GAP-001 ruling the §4.0 spelling
-   wins, so that example should be corrected.
-
-**Also noticed but not touched:** the 条件开关 page's *title* still reads
-`…｜AggregationRole constrains GatePolicy`, which references the deleted field. Renaming a
-page changes its link/URL, so it was left alone — worth a separate decision.
+**Remaining, and it is implementation-side only:** apply these four adjudications
+together with the §26.4 deltas 1–9 to the W6 branch (`programaticHitFish`). The code has
+not been migrated, so it still disagrees with this reference until that lands. That is
+tracked in Main Control §33.3.
