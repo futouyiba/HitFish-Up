@@ -24,16 +24,9 @@
   },
   "nodes": [
     {
-      "id": "SYS",
-      "label": "中鱼机制总图",
-      "caption": "FCF Canonical System Map · 七大层",
-      "parent": null,
-      "lane": "main"
-    },
-    {
       "id": "R1",
       "label": "数据",
-      "parent": "SYS",
+      "parent": null,
       "lane": "main",
       "band": 300
     },
@@ -96,7 +89,7 @@
     {
       "id": "R2",
       "label": "烘焙",
-      "parent": "SYS",
+      "parent": null,
       "lane": "main",
       "band": 340,
       "collapsible": true
@@ -197,7 +190,7 @@
     {
       "id": "R3",
       "label": "玩家策略",
-      "parent": "SYS",
+      "parent": null,
       "lane": "main",
       "band": 210,
       "collapsible": true
@@ -206,7 +199,7 @@
       "id": "DEF",
       "label": "派生环境场",
       "caption": "行2 与 行4 之间的交接数据",
-      "parent": "SYS",
+      "parent": null,
       "lane": "r3def",
       "kind": "cube"
     },
@@ -245,7 +238,7 @@
     {
       "id": "R4",
       "label": "响应",
-      "parent": "SYS",
+      "parent": null,
       "lane": "main",
       "band": 210,
       "collapsible": true
@@ -285,7 +278,7 @@
     {
       "id": "R5",
       "label": "圆桌抽鱼",
-      "parent": "SYS",
+      "parent": null,
       "lane": "main",
       "band": 220,
       "collapsible": true
@@ -333,7 +326,7 @@
     {
       "id": "R6",
       "label": "抽鱼和生成",
-      "parent": "SYS",
+      "parent": null,
       "lane": "main",
       "band": 150,
       "collapsible": true
@@ -357,7 +350,7 @@
     {
       "id": "R7",
       "label": "范围外",
-      "parent": "SYS",
+      "parent": null,
       "lane": "main",
       "band": 130
     },
@@ -397,7 +390,7 @@
     {
       "id": "R2.C1.K",
       "label": "核心因子计算",
-      "caption": "各组各自算法 → 亲和系数",
+      "caption": "核心因子各自算法 → 亲和系数",
       "parent": "R2.C1",
       "lane": "r2c1K",
       "kind": "core"
@@ -413,7 +406,7 @@
     {
       "id": "R2.C1.X",
       "label": "忽略因子",
-      "caption": "",
+      "caption": "不参与计算",
       "parent": "R2.C1",
       "lane": "r2c1X",
       "kind": "skip"

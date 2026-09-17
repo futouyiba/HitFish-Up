@@ -262,7 +262,7 @@ def main():
         if baseline_path.exists():
             base = json.loads(baseline_path.read_text(encoding="utf-8"))
             cur = fingerprint(graph)
-            for key in ("root", "rows", "blocks", "shapes", "labels", "edges"):
+            for key in ("roots", "rows", "blocks", "shapes", "labels", "edges"):
                 if key in base and base[key] != cur[key]:
                     failures.append(
                         "SKELETON DRIFT in %r — 骨架冻结在 v1，只允许加内容/细化格式；"
@@ -362,9 +362,10 @@ def main():
         sys.exit(1)
     print("VALIDATION: PASS")
     print("  stable IDs:            %d (unique, syntax-safe)" % stable_count)
-    root_ids = {n["id"] for n in nodes if n.get("parent") is None}
-    drawn_structural = [n for n in nodes if n.get("parent") and n["parent"] not in root_ids]
-    print("  edges:                 %d semantic + %d structural (root->row edges not drawn), endpoints ok"
+    # 构建器现在给每个"有 parent"的节点都画一条结构边（SYS 删掉之后，原来那条
+    # "父是根就不画" 的规则会把行→方块也一起吞掉）。这里跟着改，别再报一个错的数。
+    drawn_structural = [n for n in nodes if n.get("parent")]
+    print("  edges:                 %d semantic + %d structural, endpoints ok"
           % (len(graph["edges"]), len(drawn_structural)))
     print("  views:                 %s (default %s)"
           % (", ".join(view_ids), views["defaultView"]))
