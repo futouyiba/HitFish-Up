@@ -1,28 +1,41 @@
 {
-  "format": 1,
-  "description": "View dimension of the FCF Canonical System Map: 'how far is the hierarchy currently expanded'. Views are presentation presets rendered as native draw.io custom-action buttons. scopeLens: 'clear' = restore neutral colors, a scope id = apply that lens, 'keep' = do not touch colors. expansion: 'collapse'/'expand' name collapsible nodes; presets use idempotent hide/show sets (never toggle) so they never fight manual expand/collapse state.",
+  "format": 2,
+  "description": "View dimension = 'how far is the hierarchy currently expanded' plus an optional scope lens. The authority states that its §2 diagrams are five observation faces (语义边界 / 生产执行 / 模块 Contract / Authoring→Runtime / Bass 实例) of ONE system — that idea is what this dimension exists to carry. scopeLens: 'clear' = restore neutral colors, a scope id = apply that lens, 'keep' = do not touch colors. expansion: 'collapse'/'expand' name collapsible nodes; presets use idempotent hide/show sets (never toggle) so they never fight manual expand/collapse state.",
   "defaultView": "overall",
   "views": [
     {
       "id": "overall",
       "label": "Overall",
       "scopeLens": "clear",
-      "expansion": {"collapse": ["SPATIAL", "CONDITION"]},
-      "comment": "Canonical reset: main chain only, neutral colors."
+      "expansion": {
+        "collapse": ["IO", "WAIST", "WHO", "WHO.SPATIAL", "WHO.INTERACTION", "RESOLVE"]
+      },
+      "comment": "规范复位：只留主干，中性配色。"
     },
     {
-      "id": "0340",
-      "label": "0.3.4.0",
-      "scopeLens": "0.3.4.0",
+      "id": "0340b",
+      "label": "0.3.4.0-B",
+      "scopeLens": "0.3.4.0-B",
       "expansion": null,
-      "comment": "Applies the 0.3.4.0 scope lens only; never touches expansion state (orthogonality requirement)."
+      "comment": "只上 scope 配色，绝不触碰展开状态（正交性要求）。"
     },
     {
-      "id": "spatial-detail",
-      "label": "Spatial Bake Detail",
+      "id": "who-detail",
+      "label": "WHO Detail",
       "scopeLens": "keep",
-      "expansion": {"expand": ["SPATIAL"]},
-      "comment": "Expands the Spatial Opportunity subtree only; never touches the scope lens, so it composes with the 0.3.4.0 coloring."
+      "expansion": {
+        "expand": ["WHO", "WHO.SPATIAL", "WHO.INTERACTION"]
+      },
+      "comment": "只展开 WHO 两个域，绝不触碰 scope 配色，故可与 0.3.4.0-B 配色自由叠加。"
+    },
+    {
+      "id": "resolve-detail",
+      "label": "RESOLVE Detail",
+      "scopeLens": "keep",
+      "expansion": {
+        "expand": ["RESOLVE"]
+      },
+      "comment": "只展开 RESOLVE 域。"
     }
   ]
 }

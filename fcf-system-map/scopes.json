@@ -1,56 +1,90 @@
 {
-  "format": 1,
-  "description": "Scope dimension of the FCF Canonical System Map. Scope answers: 'does version X own this node?' — it is orthogonal to Hierarchy (progressive disclosure) and View (current granularity). A lens scope drives a coloring pass on the SAME single cell per node (no duplicated instances, no scope x view layer multiplication).",
+  "format": 2,
+  "description": "Scope dimension = the compression ladder. 中鱼升级 is the substrate (OVERALL, no clipping); each lower design level is a projection with strictly smaller scope. Scope is orthogonal to Hierarchy (progressive disclosure) and View (current granularity), and is applied as a native style pass on the SAME single cell per node — no duplicated instances.",
   "classes": {
-    "ACTIVE": "implemented / modified by the version",
-    "BOUNDARY": "consumed or produced across the version boundary; internals not owned",
-    "OUT": "exists in the overall system; not handled by the version — grayed but never hidden"
+    "ACTIVE": "该版本真正实现 / 修改",
+    "BOUNDARY": "该版本依赖、消费或输出到这里，但不负责其内部实现",
+    "OUT": "总体系统存在，但该版本不处理 — 置灰，不隐藏"
   },
+  "containerRule": "Presentation convention (ours, not an authority claim): a container node (SYS / IO / WAIST / WHO / WHO.SPATIAL / WHO.INTERACTION / RESOLVE) takes ACTIVE if any descendant is ACTIVE, else BOUNDARY if any descendant is BOUNDARY, else OUT. Applied below and listed explicitly so readers can audit it.",
   "scopes": [
     {
       "id": "OVERALL",
-      "label": "OVERALL",
+      "label": "OVERALL｜中鱼升级",
       "lens": false,
-      "comment": "No scope clipping or coloring; the whole system in neutral colors."
+      "class": "SUBSTRATE",
+      "comment": "第一性主干，不做范围裁剪、不置灰。所有下级版本都是它的投影。"
     },
     {
-      "id": "0.3.4.0",
-      "label": "0.3.4.0",
+      "id": "0.3.4.0-B",
+      "label": "0.3.4.0-B｜当前版本投影",
       "lens": true,
-      "basis": "Per Production Pilot v0.1 directive: SPATIAL subtree ACTIVE; upstream nodes consumed by Bake are BOUNDARY (minimum necessary boundary only); the rest OUT. BOUNDARY membership rule: 'upstream, consumed by the current Bake, internals not owned by this task'.",
+      "class": "PROJECTION",
+      "basis": "中鱼0.3.4.0-B｜开发需求 R0 · 固定模板分层烘焙 · Authoring & Resolve Contract R0 (2026-09-17 读)",
+      "basisNote": "本版只闭合『属性编辑器 → Fixed Template 条件开关 / Resolve → Bake』；无 Response / Routing / Quality Selection / 动态 Fish Condition。B 的 per-CORE-condition GatePolicy 与第一性主干里的 Structural Gate 是不同对象，故 SP.GATE 记为 OUT。B 的 Time Period 直接进 Opportunity Fit，在第一性主干上落在哪一槽位尚未由权威闭合，见 SEMANTIC_OPEN。",
       "assignment": {
         "ACTIVE": [
-          "SPATIAL",
-          "SPATIAL.SUBJECT",
-          "SPATIAL.SNAPSHOT",
-          "SPATIAL.BASE",
-          "SPATIAL.TEMPLATE",
-          "SPATIAL.GATE",
-          "SPATIAL.FACTOR",
-          "SPATIAL.CORE_LOSS",
-          "SPATIAL.SECONDARY_LOSS",
-          "SPATIAL.AGGREGATE",
-          "SPATIAL.ENV_COEFF",
-          "SPATIAL.INTENSITY",
-          "SPATIAL.DEBUG"
+          "SYS",
+          "WHO",
+          "WHO.SPATIAL",
+          "SP.HABITAT",
+          "SP.VIABILITY",
+          "SP.AMBIENT"
         ],
         "BOUNDARY": [
-          "SYS.CONTEXT",
-          "OPPORTUNITY.BASE",
-          "CANDIDATE.RESOLVED"
+          "IO",
+          "IO.WORLD",
+          "IO.FISH",
+          "WHO.OPPORTUNITY"
         ],
         "OUT": [
-          "MODE.ROUTING",
-          "CONDITION",
-          "CONDITION.ACTIVITY",
-          "CONDITION.FUNCTIONAL_CAPACITY",
-          "CONDITION.FEEDING_READINESS",
-          "PRESENTATION.EXPOSURE",
-          "RESPONSE",
-          "SELECTION",
-          "MATERIALIZATION"
+          "WAIST",
+          "W.READINESS",
+          "W.FUNCTIONAL",
+          "W.PRESENTATION",
+          "IO.PLAYER",
+          "IO.RESOURCE",
+          "SP.GATE",
+          "SP.LOCAL",
+          "WHO.INTERACTION",
+          "IN.PERCEPTION",
+          "IN.INTERPRET",
+          "IN.FEEDING",
+          "IN.DEFENSE",
+          "IN.AGGREGATE",
+          "JOIN",
+          "RESOLVE",
+          "RS.POLICY",
+          "RS.TRUEROLL",
+          "RS.FALLBACK",
+          "RS.INSTANCE",
+          "COMMIT"
         ]
       }
+    },
+    {
+      "id": "0.3.4",
+      "label": "0.3.4｜更小范围（投影 3）",
+      "lens": false,
+      "class": "PROJECTION",
+      "status": "DECLARED-UNASSIGNED",
+      "comment": "已在阶梯中声明，但 per-node scope 归属未登记 — 见 SEMANTIC_OPEN-006。0.3.4 主规格页 21.3 万字符，本轮只精读了 §2 综述与 §4 机制，不足以做逐节点归类而不编造。"
+    },
+    {
+      "id": "SIMPLIFIED-V0",
+      "label": "Simplified V0｜压缩 2",
+      "lens": false,
+      "class": "PROJECTION",
+      "status": "DECLARED-UNASSIGNED",
+      "comment": "同上 — 见 SEMANTIC_OPEN-006。"
+    },
+    {
+      "id": "FCF-V1",
+      "label": "FCF v1｜压缩 1",
+      "lens": false,
+      "class": "PROJECTION",
+      "status": "DECLARED-UNASSIGNED",
+      "comment": "按 Design Owner 指示本轮未读。留空位 — 见 SEMANTIC_OPEN-006。"
     }
   ]
 }
