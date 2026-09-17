@@ -25,6 +25,24 @@ python3 fcf-system-map/tools/preview.py        # 默认 8799，可 --port
 
 ---
 
+## 内容语义的权威在 Notion
+
+**版面在这里迭代，含义在 Notion 固化。** 每个节点「要表达的意思」以
+**《FCF 总图｜内容语义清单 R0｜Canonical Map Content Ledger》**为准
+（挂 `Fish-Centric Conditional Funnel｜Design Branch Index` 下，
+page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
+
+分工：
+
+| | 归谁 |
+|---|---|
+| **含义** —— 每一层/每一块表达什么、流与边界、命名约定、待定项 | **Notion 清单**（权威） |
+| **版面** —— 行带高度、横向展开 vs 纵向堆叠、是否接容器动态布局 | **本 repo**（自由迭代） |
+
+两者冲突时：**改本 repo 去对齐 Notion**，不要反过来悄悄改含义。
+
+---
+
 ## 0. 本图的三个硬约束
 
 **① 骨架冻结在最初对齐草图 v1。** 总拓扑（行结构 / 每行并列方块 / 方块间连接 / 形状语义 / 行与方块的名字）来自 `align/align-topology-v1.drawio`，**已冻结**。后续只允许两类改动：
