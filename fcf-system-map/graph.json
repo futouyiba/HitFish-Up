@@ -101,17 +101,7 @@
       "parent": "SYS",
       "lane": "main",
       "band": 340,
-      "collapsible": true,
-      "slot": "R2"
-    },
-    {
-      "id": "R2.COVER",
-      "label": "二、烘焙",
-      "caption": "展开后见五条计算通道（通道 1 更宽，内含细展开）",
-      "parent": "R2",
-      "lane": "r2cover",
-      "kind": "cover",
-      "slot": "R2"
+      "collapsible": true
     },
     {
       "id": "BAKE",
@@ -184,17 +174,7 @@
       "parent": "SYS",
       "lane": "main",
       "band": 210,
-      "collapsible": true,
-      "slot": "R3"
-    },
-    {
-      "id": "R3.COVER",
-      "label": "三、玩家策略与操作数据",
-      "caption": "",
-      "parent": "R3",
-      "lane": "r3cover",
-      "kind": "cover",
-      "slot": "R3"
+      "collapsible": true
     },
     {
       "id": "DEF",
@@ -243,17 +223,7 @@
       "parent": "SYS",
       "lane": "main",
       "band": 210,
-      "collapsible": true,
-      "slot": "R4"
-    },
-    {
-      "id": "R4.COVER",
-      "label": "四、响应",
-      "caption": "",
-      "parent": "R4",
-      "lane": "r4cover",
-      "kind": "cover",
-      "slot": "R4"
+      "collapsible": true
     },
     {
       "id": "RESPONSE",
@@ -294,17 +264,7 @@
       "parent": "SYS",
       "lane": "main",
       "band": 220,
-      "collapsible": true,
-      "slot": "R5"
-    },
-    {
-      "id": "R5.COVER",
-      "label": "五、圆桌抽鱼",
-      "caption": "",
-      "parent": "R5",
-      "lane": "r5cover",
-      "kind": "cover",
-      "slot": "R5"
+      "collapsible": true
     },
     {
       "id": "TABLE",
@@ -353,17 +313,7 @@
       "parent": "SYS",
       "lane": "main",
       "band": 150,
-      "collapsible": true,
-      "slot": "R6"
-    },
-    {
-      "id": "R6.COVER",
-      "label": "六、抽鱼和生成",
-      "caption": "",
-      "parent": "R6",
-      "lane": "r6cover",
-      "kind": "cover",
-      "slot": "R6"
+      "collapsible": true
     },
     {
       "id": "DRAW",
@@ -635,12 +585,6 @@
       "type": "DATA_FLOW"
     },
     {
-      "from": "R2.COVER",
-      "to": "BAKE",
-      "type": "DATA_FLOW",
-      "label": "展开"
-    },
-    {
       "from": "BAKE",
       "to": "R2.C1",
       "type": "DATA_FLOW",
@@ -681,12 +625,6 @@
       "label": "不通过"
     },
     {
-      "from": "R3.COVER",
-      "to": "PLAYER",
-      "type": "DATA_FLOW",
-      "label": "展开"
-    },
-    {
       "from": "PLAYER",
       "to": "CUE",
       "type": "DATA_FLOW"
@@ -704,12 +642,6 @@
       "label": "Cue 吸引元素"
     },
     {
-      "from": "R4.COVER",
-      "to": "RESPONSE",
-      "type": "DATA_FLOW",
-      "label": "展开"
-    },
-    {
       "from": "R2.C1",
       "to": "R5",
       "type": "DATA_FLOW",
@@ -722,22 +654,10 @@
       "label": "适配系数"
     },
     {
-      "from": "R5.COVER",
-      "to": "TABLE",
-      "type": "DATA_FLOW",
-      "label": "展开"
-    },
-    {
       "from": "R5",
       "to": "DRAW",
       "type": "DATA_FLOW",
       "label": "权重池 + NONE"
-    },
-    {
-      "from": "R6.COVER",
-      "to": "DRAW",
-      "type": "DATA_FLOW",
-      "label": "展开"
     },
     {
       "from": "DRAW",
