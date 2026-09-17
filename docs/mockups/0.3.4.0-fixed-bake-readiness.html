@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>0.3.4.0 Fixed Bake｜可执行参考 × 实现就绪度验证｜速览</title>
+<style>
+/* ---------- palette: 沿用同仓 0.3.4.0-B-quickstart.html 的已验证配色 ----------
+   categorical light #2a78d6/#eb6834/#1baf7a · dark #3987e5/#d95926/#199e70
+   已跑 dataviz validate_palette.js：浅/深两模式全部 PASS
+   （浅色下绿 #1baf7a 对比度 2.74 < 3:1 → 该色一律与可见文字标签同现，满足 relief 要求） */
+:root, .viz-root {
+  color-scheme: light;
+  --surface-1:#fcfcfb; --plane:#f9f9f7;
+  --text-primary:#0b0b0b; --text-secondary:#52514e; --muted:#898781;
+  --grid:#e1e0d9; --axis:#c3c2b7; --border:rgba(11,11,11,0.10);
+  --series-1:#2a78d6; --series-2:#eb6834; --series-3:#1baf7a;
+  --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
+  --good-ink:#006300;
+  --tier-1:#184f95; --tier-2:#2a78d6; --tier-3:#6da7ec; --tier-4:#86b6ef;
+  --wash:rgba(42,120,214,0.08);
+  --hatch:#a9a7a0;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) .viz-root, :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --surface-1:#1a1a19; --plane:#0d0d0d;
+    --text-primary:#ffffff; --text-secondary:#c3c2b7; --muted:#898781;
+    --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,0.10);
+    --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70;
+    --good-ink:#0ca30c;
+    --tier-1:#184f95; --tier-2:#2a78d6; --tier-3:#6da7ec; --tier-4:#b7d3f6;
+    --wash:rgba(57,135,229,0.14);
+    --hatch:#5c5b55;
+  }
+}
+:root[data-theme="dark"] .viz-root, :root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface-1:#1a1a19; --plane:#0d0d0d;
+  --text-primary:#ffffff; --text-secondary:#c3c2b7; --muted:#898781;
+  --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,0.10);
+  --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70;
+  --good-ink:#0ca30c;
+  --tier-1:#184f95; --tier-2:#2a78d6; --tier-3:#6da7ec; --tier-4:#b7d3f6;
+  --wash:rgba(57,135,229,0.14);
+  --hatch:#383835;
+}
+
+* { box-sizing:border-box; }
+html,body { margin:0; padding:0; }
+body {
+  background:var(--plane); color:var(--text-primary);
+  font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:15px; line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+.wrap { max-width:960px; margin:0 auto; padding:28px 22px 64px; }
+.card {
+  background:var(--surface-1); border:1px solid var(--border);
+  border-radius:12px; padding:20px 22px; margin:0 0 18px;
+}
+h1 { font-size:27px; line-height:1.3; margin:0 0 8px; letter-spacing:-0.01em; }
+h2 { font-size:19px; margin:0 0 4px; letter-spacing:-0.01em; }
+h3 { font-size:15px; margin:18px 0 6px; }
+p  { margin:8px 0; color:var(--text-secondary); }
+strong { color:var(--text-primary); }
+.lede { font-size:16px; color:var(--text-secondary); }
+.muted { color:var(--muted); font-size:13px; }
+code, .mono { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:13px; }
+code { background:var(--wash); padding:1px 5px; border-radius:4px; color:var(--text-primary); }
+a { color:var(--series-1); text-decoration:none; border-bottom:1px solid transparent; }
+a:hover { border-bottom-color:currentColor; }
+.badge {
+  display:inline-block; font-size:12px; padding:2px 9px; border-radius:999px;
+  border:1px solid var(--border); color:var(--text-secondary); background:var(--wash);
+}
+.head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.toggle {
+  border:1px solid var(--border); background:var(--surface-1); color:var(--text-secondary);
+  border-radius:8px; padding:6px 11px; font-size:13px; cursor:pointer; font-family:inherit;
+}
+.toggle:hover { color:var(--text-primary); }
+.eyebrow { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:0 0 6px; }
+
+/* ---------- hero ---------- */
+.hero { display:grid; grid-template-columns:auto 1fr; gap:22px; align-items:center; }
+@media (max-width:620px){ .hero { grid-template-columns:1fr; } }
+.bignum { font-size:56px; line-height:1; font-weight:650; letter-spacing:-0.03em; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+.bignum small { display:block; font-size:12.5px; font-weight:500; letter-spacing:0; color:var(--muted); margin-top:8px; }
+.tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; }
+.tile { border:1px solid var(--border); border-radius:10px; padding:12px 14px; background:var(--surface-1); }
+.tile .v { font-size:22px; font-weight:600; font-variant-numeric:tabular-nums; letter-spacing:-0.01em; }
+.tile .l { font-size:12.5px; color:var(--muted); margin-top:2px; }
+
+/* ---------- flow ---------- */
+.flow { display:flex; flex-wrap:wrap; gap:8px; align-items:stretch; margin:10px 0 4px; }
+.step {
+  flex:1 1 150px; min-width:140px; border:1px solid var(--border); border-radius:10px;
+  padding:10px 12px; background:var(--surface-1);
+}
+.step .n { font-size:11px; color:var(--muted); font-variant-numeric:tabular-nums; }
+.step .t { font-size:13.5px; color:var(--text-primary); margin-top:2px; }
+.step .d { font-size:12px; color:var(--muted); margin-top:3px; line-height:1.5; }
+.step.hot { border-color:var(--critical); }
+.step.hot .n { color:var(--critical); }
+.formula {
+  background:var(--wash); border:1px solid var(--border); border-radius:10px;
+  padding:12px 14px; margin:12px 0 0; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:12.5px; line-height:1.9; color:var(--text-primary); overflow-x:auto; white-space:pre;
+}
+
+/* ---------- grids / minis ---------- */
+.grid3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(232px,1fr)); gap:12px; margin-top:10px; }
+.grid2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; margin-top:10px; }
+.mini { border:1px solid var(--border); border-radius:10px; padding:13px 15px; background:var(--surface-1); }
+.mini h4 { margin:0 0 6px; font-size:14.5px; }
+.mini p { margin:5px 0; font-size:13px; }
+.state { border-left:3px solid var(--axis); }
+.state.ok  { border-left-color:var(--good); }
+.state.warn{ border-left-color:var(--warning); }
+.state.bad { border-left-color:var(--critical); }
+.state .lbl { font-size:13.5px; color:var(--text-primary); }
+.state .out { font-family:ui-monospace,Menlo,monospace; font-size:13px; color:var(--text-primary); margin-top:4px; }
+
+/* ---------- chips ---------- */
+.chips { display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; }
+.chip { font-size:12.5px; padding:4px 10px; border-radius:999px; border:1px solid var(--border); color:var(--text-secondary); background:var(--surface-1); }
+.chip.no { color:var(--muted); text-decoration:line-through; text-decoration-color:var(--muted); }
+.chip.cur { border-color:var(--series-1); color:var(--text-primary); }
+
+/* ---------- tables ---------- */
+table { border-collapse:collapse; width:100%; margin-top:12px; font-size:13px; }
+th,td { text-align:left; padding:7px 9px; border-bottom:1px solid var(--grid); vertical-align:top; }
+th { color:var(--muted); font-weight:500; font-size:12px; }
+td.num, th.num { text-align:right; font-family:ui-monospace,Menlo,monospace; font-variant-numeric:tabular-nums; }
+del { color:var(--muted); text-decoration-thickness:1.5px; }
+ul.tight { margin:8px 0 0; padding-left:20px; }
+ul.tight li { margin:5px 0; font-size:13.5px; color:var(--text-secondary); }
+
+/* ---------- severity rows ---------- */
+.sev { display:grid; grid-template-columns:126px 1fr; gap:12px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--grid); }
+.sev:last-child { border-bottom:0; }
+.sev .rid { font-family:ui-monospace,Menlo,monospace; font-size:12.5px; color:var(--text-primary); }
+.sev .tagl { display:inline-block; margin-top:4px; font-size:11px; padding:1px 7px; border-radius:999px; border:1px solid var(--border); color:var(--text-secondary); }
+.sev .body { font-size:13.5px; color:var(--text-secondary); }
+.sev .body b { color:var(--text-primary); font-weight:600; }
+.mark { font-weight:600; }
+.mark.crit { color:var(--critical); }
+.mark.warnc { color:var(--warning); }
+.mark.mut  { color:var(--muted); }
+
+/* ---------- charts ---------- */
+.chart { position:relative; margin-top:12px; }
+.chart svg { display:block; width:100%; height:auto; overflow:visible; }
+.axis-lbl { font-size:11px; fill:var(--muted); font-family:system-ui,sans-serif; font-variant-numeric:tabular-nums; }
+.annot { font-size:11.5px; fill:var(--text-secondary); font-family:system-ui,sans-serif; }
+.annot.b { font-weight:600; fill:var(--text-primary); }
+.crosshair { stroke:var(--axis); stroke-width:1; opacity:0; }
+.tipbox {
+  position:absolute; pointer-events:none; opacity:0; transition:opacity .08s;
+  background:var(--surface-1); border:1px solid var(--border); border-radius:8px;
+  padding:7px 10px; font-size:12.5px; color:var(--text-primary);
+  box-shadow:0 4px 14px rgba(0,0,0,.14); white-space:nowrap; z-index:3;
+  font-variant-numeric:tabular-nums;
+}
+.tipbox.on { opacity:1; }
+.axisline { stroke:var(--axis); stroke-width:1.5; stroke-dasharray:5 4; }
+.legendline { display:flex; gap:16px; flex-wrap:wrap; font-size:12.5px; color:var(--text-secondary); margin-top:8px; }
+.legendline i { display:inline-block; width:14px; height:3px; border-radius:2px; vertical-align:middle; margin-right:6px; }
+.legendline .sq { width:12px; height:12px; border-radius:3px; }
+
+/* ---------- stacked severity bar ---------- */
+.stack { position:relative; height:34px; display:flex; gap:2px; border-radius:8px; overflow:visible; margin-top:10px; }
+.seg { position:relative; height:100%; }
+.seg:first-child { border-radius:8px 0 0 8px; }
+.seg:last-child { border-radius:0 8px 8px 0; }
+.seg.s-crit { background:var(--critical); }
+.seg.s-warn { background:var(--warning); }
+.seg.s-mut  { background:var(--axis); }
+.seg .stipl {
+  position:absolute; left:50%; bottom:calc(100% + 8px); transform:translateX(-50%);
+  background:var(--surface-1); border:1px solid var(--border); border-radius:8px;
+  padding:6px 10px; font-size:12px; white-space:nowrap; opacity:0; transition:opacity .08s;
+  box-shadow:0 4px 14px rgba(0,0,0,.14); z-index:3; color:var(--text-primary); font-variant-numeric:tabular-nums;
+}
+.seg:hover .stipl { opacity:1; }
+.seg .sin { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:12.5px; font-weight:600; font-variant-numeric:tabular-nums; }
+.seg.s-mut .sin { color:var(--text-primary); }
+
+/* ---------- bars ---------- */
+.bars { display:grid; grid-template-columns:150px 1fr 92px; gap:10px 12px; align-items:center; margin-top:16px; }
+.bars .bl { font-size:13px; color:var(--text-primary); text-align:right; }
+.bars .bt { font-family:ui-monospace,Menlo,monospace; font-size:13px; color:var(--text-secondary); text-align:right; font-variant-numeric:tabular-nums; }
+.bar { position:relative; border-radius:0 4px 4px 0; height:20px; }
+.bar:hover { outline:2px solid var(--surface-1); }
+.bar .btip {
+  position:absolute; left:calc(100% + 8px); top:50%; transform:translateY(-50%);
+  background:var(--surface-1); border:1px solid var(--border); border-radius:8px;
+  padding:5px 9px; font-size:12px; white-space:nowrap; opacity:0; transition:opacity .08s;
+  box-shadow:0 4px 14px rgba(0,0,0,.14); z-index:3; color:var(--text-primary);
+}
+.bar:hover .btip { opacity:1; }
+.bars .note { grid-column:2 / 4; font-size:12px; color:var(--muted); margin-top:-2px; }
+
+.foot { font-size:12.5px; color:var(--muted); }
+.foot a { color:var(--series-1); }
+@media (forced-colors: active) {
+  .bar, .tier .bar, .seg { forced-color-adjust:none; background:Highlight; }
+  .card, .mini, .step, .tile { border:1px solid CanvasText; }
+}
+</style>
+</head>
+<body>
+<div class="viz-root">
+<div class="wrap">
+
+  <!-- ============ 0. 头 + 一句话结论 ============ -->
+  <div class="card">
+    <div class="head">
+      <div>
+        <p class="eyebrow">0.3.4.0 Fixed Bake｜速览</p>
+        <h1>可执行参考 × 实现就绪度验证</h1>
+        <p class="lede">不是重新设计 FCF，也不是"随便写个能跑的 Demo"。<strong>用一次真实的纵向实现</strong>去验证：0.3.4.0 Fixed Bake 的规格是否已经足够让工程师<strong>不猜地写出唯一行为</strong>。</p>
+      </div>
+      <div style="text-align:right">
+        <span class="badge">REFERENCE / VALIDATION · NOT PROMOTED</span><br>
+        <button class="toggle" id="themeBtn" type="button" style="margin-top:8px">切换深浅色</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="eyebrow">一句话结论</p>
+    <div class="hero">
+      <div class="bignum">≈90%<small>主链可唯一实现</small></div>
+      <div>
+        <p style="margin-top:0"><strong>数值与行为这部分，已经能"不猜就写出来"。</strong>聚合、门控、失败分支、保底、基数相乘、水温曲线、四个求值器——全部唯一可解，验收 golden 精确复现。</p>
+        <p>剩下的缺口<strong>不是算法，是命名</strong>：能让两套实现互相交换数据的"序列化契约"，还有 2 处没定。外加 2 处需要 Design Owner 拍板的读数。</p>
+      </div>
+    </div>
+    <div class="tiles" style="margin-top:18px">
+      <div class="tile"><div class="v">38 / 38</div><div class="l">测试通过（0 失败 0 跳过）</div></div>
+      <div class="tile"><div class="v">8 / 8</div><div class="l">Bass golden 精确复现</div></div>
+      <div class="tile"><div class="v">12</div><div class="l">Gap（其中 2 阻塞）</div></div>
+      <div class="tile"><div class="v">0</div><div class="l">架构级阻塞</div></div>
+    </div>
+  </div>
+
+  <!-- ============ 1. 交付了什么 ============ -->
+  <div class="card">
+    <p class="eyebrow">第一步</p>
+    <h2>这轮实际交付了什么</h2>
+    <p>在 <strong>HitFish-Up 的独立 worktree</strong> 里，把主链做成了可执行参考——刻意<strong>不碰实现仓</strong> <code>programaticHitFish</code>（那里有其它在途会话，两边同时改会撞车）。</p>
+    <div class="flow">
+      <div class="step"><div class="n">01</div><div class="t">可执行参考</div><div class="d">主链一整条，pure Python，无依赖</div></div>
+      <div class="step"><div class="n">02</div><div class="t">Golden fixture</div><div class="d">Bass Q3 + 3 条变异用例</div></div>
+      <div class="step"><div class="n">03</div><div class="t">语义 + 性质测试</div><div class="d">38 条，逐条写清依据哪条权威</div></div>
+      <div class="step"><div class="n">04</div><div class="t">Gap Log</div><div class="d">12 个真实工程问题</div></div>
+      <div class="step"><div class="n">05</div><div class="t">Readiness 报告</div><div class="d">主链逐区域判定</div></div>
+    </div>
+    <p class="muted" style="margin-top:10px">产出是 <strong>REFERENCE / VALIDATION</strong>，明示<strong>不是</strong>最终生产实现。提交 <code>8d13aff</code>：未 merge、未晋升、Notion 权威一字未改。</p>
+  </div>
+
+  <!-- ============ 2. 权威漂移 ============ -->
+  <div class="card">
+    <p class="eyebrow">开工第一件事</p>
+    <h2>任务里给的"当前入口"，其实已经全是历史页</h2>
+    <p>任务让我从三个页面 rebase 权威。实际去读，这三页<strong>现在都带着 <code>Historical｜</code> 前缀</strong>——内容早被挪到隔壁的 <code>0.3.4.0-B</code> 族去了。按任务给的链接走下去，会读到一整套<strong>已废口径</strong>。</p>
+
+    <h3>任务标注的入口 → 实际状态</h3>
+    <div class="grid2">
+      <div class="mini state bad">
+        <div class="lbl">✕ 已作废（别再用）</div>
+        <ul class="tight" style="margin-top:6px">
+          <li><code>0.3.4.0 Fixed Bake 当前入口</code><br><span class="muted">现名 <strong>Historical｜0.3.4.0 Fixed Template Transition</strong></span></li>
+          <li><code>0.3.4.0 固定模板烘焙开发需求</code><br><span class="muted">现名 Historical｜…开发需求 R0</span></li>
+          <li><code>参数组件计算机制 R1｜Fixed Template</code><br><span class="muted">同样挂 Historical 前缀</span></li>
+        </ul>
+      </div>
+      <div class="mini state ok">
+        <div class="lbl">✓ 真正在用的 Current（0.3.4.0-B 族）</div>
+        <ul class="tight" style="margin-top:6px">
+          <li><strong>开发需求</strong> —— Role/Gate 语义 + 聚合公式 canonical</li>
+          <li>Authoring &amp; Resolve Contract</li>
+          <li>Bake Authoring Schema &amp; Validator</li>
+          <li>Bake Runtime Algorithm（只有开头那段是 current）</li>
+          <li>Bass NORMAL Vertical Slice（P0 golden）</li>
+          <li>Main Control Checkpoint（§26 起才是现行口径）</li>
+        </ul>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:12px">这条本身就是本轮最有价值的产出之一：<strong>"页面标题看起来像当前权威" 和 "它真的是当前权威" 是两回事。</strong>已记进项目记忆，避免下次再走一遍。</p>
+  </div>
+
+  <!-- ============ 3. 被废止的旧模型 ============ -->
+  <div class="card">
+    <p class="eyebrow">口径对齐</p>
+    <h2>任务描述里的 5 处前提，现行契约已经不要了</h2>
+    <p>这些我没有"照做"，也没有"顺手修"，而是<strong>按现行契约实现</strong>，并各自记进 Gap Log 或 Readiness 的"已废止前提"表。</p>
+    <table>
+      <thead><tr><th style="width:38%">任务里的前提</th><th>现行契约（2026-09-17 裁决后）</th></tr></thead>
+      <tbody>
+        <tr><td><del>条件三态 = CORE / SECONDARY / <b>OFF</b></del></td><td><code>AggregationRole = CORE | SECONDARY | IGNORED</code>（旧 OFF/EXCLUDED 仅作迁移别名读入）</td></tr>
+        <tr><td><del><b>GatePolicy</b> 字段（HARD_EXCLUDE / TRACE_RESIDUAL / LOW_RESIDUAL）</del></td><td><strong>没有这个字段。</strong>配成 CORE 就自动拥有门控，判据写死</td></tr>
+        <tr><td><del>门控 <b>Failure Cap</b>：<code>min(Raw, min(失败 cap))</code></del></td><td>改成<strong>失败分支</strong>：背景鱼 → <code>envCoeffMin</code>，非背景鱼 → <code>0</code>；聚合公式根本不计算</td></tr>
+        <tr><td><del><code>SpatialOpportunityIntensity</code></del></td><td><code>SpatialDistributionWeight</code>（局部重命名被撤销，回到全局统一术语）</td></tr>
+        <tr><td><del>次要损失 <code>1/6 × Σ −ln(fit)</code> + 封顶 <code>0.2554</code></del></td><td><code>SecondaryFactor = 1 − (1 − Π)/4</code>，值域 [0.75, 1.0]——"最多扣 25%"是<strong>结构性质</strong>，不再需要封顶常量</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============ 4. 主链怎么跑 ============ -->
+  <div class="card">
+    <p class="eyebrow">被验证的对象</p>
+    <h2>主链：八步，顺序不可改，作者只配开关</h2>
+    <div class="flow">
+      <div class="step"><div class="n">01</div><div class="t">读角色</div><div class="d">四个槽位各读 AggregationRole</div></div>
+      <div class="step hot"><div class="n">02</div><div class="t">门控</div><div class="d">CORE 自动带门控，判据固定</div></div>
+      <div class="step"><div class="n">03</div><div class="t">求适配值</div><div class="d">查表 / 曲线 → 0~1 的 fit</div></div>
+      <div class="step"><div class="n">04</div><div class="t">Core 乘积</div><div class="d">各 CORE 的 fit 相乘</div></div>
+      <div class="step"><div class="n">05</div><div class="t">Secondary 折减</div><div class="d">差额缩到 1/4，最多扣 25%</div></div>
+      <div class="step"><div class="n">06</div><div class="t">RawEnvCoeff</div><div class="d">Core × SecondaryFactor</div></div>
+      <div class="step hot"><div class="n">07</div><div class="t">失败分支 / 保底</div><div class="d">失败走两条路；通过才吃保底</div></div>
+      <div class="step"><div class="n">08</div><div class="t">乘 Base</div><div class="d">基础机会强度只乘一次</div></div>
+    </div>
+    <div class="formula">CoreProduct      = Π_CORE fit                      # 核心相乘（无序）
+SecondaryProduct = Π_SECONDARY fit                 # 次要原始乘积
+SecondaryFactor  = 1 − (1 − SecondaryProduct) / 4  # 差额缩到四分之一 → 恒在 [0.75, 1]
+RawEnvCoeff      = CoreProduct × SecondaryFactor
+
+若任一 CORE 门控失败 → 不走上面：背景鱼 FinalEnvCoeff = envCoeffMin；非背景鱼 = 0
+否则                  → 背景鱼 max(RawEnvCoeff, envCoeffMin)；非背景鱼 RawEnvCoeff
+
+SpatialDistributionWeight = BaseOpportunityIntensity × FinalEnvCoeff   # Base 只乘一次</div>
+    <p class="muted" style="margin-top:10px">这八步里，<strong>只有第 2 步和第 7 步在概念上容易搞错</strong>——上一版文档把它们写成了"门控封顶"，现行是"门控换路"。下一页专门讲这个差别。</p>
+  </div>
+
+  <!-- ============ 5. 门控的坑 ============ -->
+  <div class="card">
+    <p class="eyebrow">最容易搞错的一处</p>
+    <h2>门控失败 ≠ fit 归零，也 ≠ 封顶</h2>
+    <p>旧模型说：门控失败就先算 <code>RawEnvCoeff</code>，再 <code>min(Raw, cap)</code> 压一下。现行契约说：<strong>失败就换路，聚合公式根本不执行</strong>。两者在"fit 恰好为 0"时结果相同，但在<strong>fit 很小却非 0</strong> 时不一样。</p>
+
+    <div class="grid2">
+      <div class="mini state bad">
+        <div class="lbl"><span class="mark crit">✕</span> 旧模型（已废）：封顶</div>
+        <div class="out">Final = min(RawEnvCoeff, cap)</div>
+        <p class="muted">语义是"最多给到 cap"。Gate 永远只能压低，不能抬高。</p>
+      </div>
+      <div class="mini state ok">
+        <div class="lbl"><span class="mark" style="color:var(--good-ink)">✓</span> 现行：换路（分支）</div>
+        <div class="out">背景鱼 → envCoeffMin；非背景鱼 → 0</div>
+        <p class="muted">语义是"这条路不存在"。对背景鱼而言，它仍然被保底到下限——这是设计意图，不是副作用。</p>
+      </div>
+    </div>
+
+    <h3>水温门控：失败区比"超出可接受区间"更宽</h3>
+    <p>以 Bass Q3 为例：可接受 <code>[2, 35]</code>、偏好 <code>[24, 29]</code>、LINEAR、<code>temp_threshold = 0.05</code>。判据是 <strong>fit 低于 0.05</strong>，不是"fit 等于 0"——所以在 <code>[2, 3.1)</code> 这段爬坡区里，鱼已经"不在这里"了。<strong>3℃ 失败、4℃ 通过，只差 1 度。</strong></p>
+
+    <div class="chart" id="gateChart">
+      <svg viewBox="0 0 720 286" role="img" aria-label="水温适配值曲线局部放大：0 到 12 度。2 度以下适配值为 0，2 到 3.1 度之间适配值低于 0.05 阈值，同属门控失败区">
+        <defs>
+          <pattern id="hatch2" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0" x2="0" y2="7" stroke="var(--hatch)" stroke-width="1.4"></line>
+          </pattern>
+        </defs>
+        <!-- 门控失败区（纹理，不只靠颜色） -->
+        <rect x="56" y="24" width="163.8" height="212" fill="url(#hatch2)"></rect>
+        <!-- 网格 -->
+        <g stroke="var(--grid)" stroke-width="1">
+          <line x1="56" y1="24"  x2="690" y2="24"></line>
+          <line x1="56" y1="77"  x2="690" y2="77"></line>
+          <line x1="56" y1="130" x2="690" y2="130"></line>
+          <line x1="56" y1="183" x2="690" y2="183"></line>
+          <line x1="56" y1="236" x2="690" y2="236"></line>
+        </g>
+        <!-- 阈值线 -->
+        <line class="axisline" x1="56" y1="225.4" x2="690" y2="225.4"></line>
+        <text class="annot" x="62" y="221">temp_threshold = 0.05</text>
+        <!-- 曲线 -->
+        <polyline fill="none" stroke="var(--series-1)" stroke-width="2" stroke-linejoin="round"
+          points="56,236 161.7,236 690,139.6"></polyline>
+        <!-- 2 度起点 -->
+        <circle cx="161.7" cy="236" r="3.5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"></circle>
+        <text class="annot b" x="167" y="252">2℃ 起爬坡</text>
+        <!-- 3 度 vs 4 度 -->
+        <circle cx="214.5" cy="226.4" r="4.5" fill="var(--critical)" stroke="var(--surface-1)" stroke-width="2"></circle>
+        <text class="annot b" x="196" y="272" text-anchor="middle" style="fill:var(--critical)">3℃ 失败</text>
+        <circle cx="267.3" cy="216.7" r="4.5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2"></circle>
+        <text class="annot b" x="300" y="272" text-anchor="middle">4℃ 通过</text>
+        <line x1="214.5" y1="226.4" x2="214.5" y2="268" stroke="var(--critical)" stroke-width="1" stroke-dasharray="3 3"></line>
+        <line x1="267.3" y1="216.7" x2="267.3" y2="268" stroke="var(--axis)" stroke-width="1" stroke-dasharray="3 3"></line>
+        <!-- 门控失败区标签 -->
+        <text class="annot" x="110" y="268" text-anchor="middle">门控失败区（fit &lt; 0.05）</text>
+        <!-- y 轴 -->
+        <text class="axis-lbl" x="48" y="240" text-anchor="end">0</text>
+        <text class="axis-lbl" x="48" y="190" text-anchor="end">0.20</text>
+        <text class="axis-lbl" x="48" y="134" text-anchor="end">0.40</text>
+        <text class="axis-lbl" x="48" y="81"  text-anchor="end">0.60</text>
+        <text class="axis-lbl" x="48" y="28"  text-anchor="end">1.00</text>
+        <!-- x 轴 -->
+        <g class="axis-lbl" text-anchor="middle">
+          <text x="56"  y="286">0</text>
+          <text x="161.7" y="286">2</text>
+          <text x="267.3" y="286">4</text>
+          <text x="373" y="286">6</text>
+          <text x="478.7" y="286">8</text>
+          <text x="584.3" y="286">10</text>
+          <text x="690" y="286">12</text>
+        </g>
+        <line class="crosshair" id="gcross" x1="0" y1="24" x2="0" y2="236"></line>
+        <circle id="gdot" r="4.5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2" opacity="0"></circle>
+      </svg>
+      <div class="tipbox" id="gateTip"></div>
+    </div>
+    <div class="legendline">
+      <span><i style="background:var(--series-1)"></i>温度适配值 TemperatureFit</span>
+      <span><i style="background:transparent;border-top:2px dashed var(--axis);height:0"></i>门控阈值线</span>
+      <span><i class="sq" style="background:var(--hatch)"></i>斜纹区 = 门控失败</span>
+    </div>
+    <p class="muted" style="margin-top:12px">这条路径我在参考实现里用<strong>反事实测试</strong>钉住了：把 <code>temp_threshold</code> 调到 0 让门控永不触发，同一组 fit 下的结果<strong>只会更高或相等</strong>——所以"门控只会压低、不会抬高"这个不变量在现行契约下仍然成立（保底鱼那条路由 floor 兜住了）。</p>
+  </div>
+
+  <!-- ============ 6. 验证结果 ============ -->
+  <div class="card">
+    <p class="eyebrow">验证</p>
+    <h2>Bass Q3：验收基准精确复现</h2>
+    <p>同一套鱼配置，只换条件组。三条都远高于阈值、不触发门控；剩下两条专打边界。</p>
+    <div class="chart">
+      <div class="bars" role="img" aria-label="五条用例的空间分布权重：CG-01 = 1.0000，CG-02 = 0.3191，CG-03 = 0.1125，门控失败 = 0，保底 = 0.10">
+        <div class="bl">CG-01 草边 · 中层 · 26℃</div>
+        <div><div class="bar" style="background:var(--series-1);width:100%"><span class="btip">1.00 × 1.00 × 1.00 → 1.0000</span></div></div>
+        <div class="bt">1.0000</div>
+
+        <div class="bl">CG-02 落差 · 底层 · 15℃</div>
+        <div><div class="bar" style="background:var(--series-1);width:31.9%"><span class="btip">核心 0.5909 × 0.60 = 0.3545；次要 0.90 → 0.3191</span></div></div>
+        <div class="bt">0.3191</div>
+
+        <div class="bl">CG-03 开阔 · 表层 · 32℃</div>
+        <div><div class="bar" style="background:var(--series-1);width:11.3%"><span class="btip">核心 0.50 × 0.25 = 0.1250；次要 0.90 → 0.1125</span></div></div>
+        <div class="bt">0.1125</div>
+
+        <div class="bl">门控失败（非背景鱼）</div>
+        <div><div class="bar" style="background:var(--critical);width:0.8%"><span class="btip">36℃ 超出可接受上限 → 换路 → 0</span></div></div>
+        <div class="bt">0</div>
+
+        <div class="bl">保底（背景鱼）</div>
+        <div><div class="bar" style="background:var(--series-2);width:10%"><span class="btip">5℃ 且门控全通过 → max(0.0307, 0.10) = 0.10</span></div></div>
+        <div class="bt">0.1000</div>
+
+        <div class="note">柱长 = SpatialDistributionWeight（本例 Base = 1.0，所以等于环境系数）。灰底注：上面三条只差环境，没有额外魔法。</div>
+      </div>
+    </div>
+    <table>
+      <thead><tr><th>用例</th><th class="num">温度 fit</th><th class="num">结构 fit</th><th class="num">水层 fit</th><th class="num">Core 乘积</th><th class="num">环境系数</th></tr></thead>
+      <tbody>
+        <tr><td>CG-01</td><td class="num">1.0000</td><td class="num">1.00</td><td class="num">1.00</td><td class="num">1.0000</td><td class="num">1.0000</td></tr>
+        <tr><td>CG-02</td><td class="num">0.5909</td><td class="num">0.60</td><td class="num">0.60</td><td class="num">0.3545</td><td class="num">0.3191</td></tr>
+        <tr><td>CG-03</td><td class="num">0.5000</td><td class="num">0.25</td><td class="num">0.60</td><td class="num">0.1250</td><td class="num">0.1125</td></tr>
+        <tr><td>门控失败</td><td class="num">0.0000</td><td class="num">0.25</td><td class="num">0.60</td><td class="num">— 不计算</td><td class="num">0 / 0.10</td></tr>
+      </tbody>
+    </table>
+    <p class="muted" style="margin-top:8px">这些数字<strong>不是"测试跑出来的"就算数</strong>：我用一支<strong>不 import 参考实现</strong>的独立脚本，照着契约页的公式重算了一遍，逐位一致——防止实现和 fixture 共用同一个误解。</p>
+  </div>
+
+  <!-- ============ 7. Gap ============ -->
+  <div class="card">
+    <p class="eyebrow">真正的产出</p>
+    <h2>12 个 Gap：哪些真阻塞，哪些只是需要拍板</h2>
+    <p>这轮的价值不在"写了多少代码"，而在于把"好像还有很多东西没说清楚"收敛成<strong>少量、具体、可裁决</strong>的工程问题。</p>
+
+    <div class="stack" role="img" aria-label="12 个 Gap 按严重度：阻塞 2 个，待 Owner 裁决 2 个，非阻塞 8 个">
+      <div class="seg s-crit" style="flex:2"><span class="sin">2</span><span class="stipl"><b>阻塞互通</b><br>GAP-001 · GAP-002</span></div>
+      <div class="seg s-warn" style="flex:2"><span class="sin">2</span><span class="stipl"><b>待 Owner 裁决</b><br>GAP-003 · GAP-004</span></div>
+      <div class="seg s-mut"  style="flex:8"><span class="sin">8</span><span class="stipl"><b>非阻塞</b><br>GAP-005 … GAP-012</span></div>
+    </div>
+    <div class="legendline">
+      <span><i class="sq" style="background:var(--critical)"></i>阻塞——必须裁决才能开工</span>
+      <span><i class="sq" style="background:var(--warning)"></i>待裁决——两种读法都合理</span>
+      <span><i class="sq" style="background:var(--axis)"></i>非阻塞——不影响合法配置</span>
+    </div>
+
+    <h3>两个阻塞项：都是命名，不是算法</h3>
+    <div class="sev">
+      <div><div class="rid">GAP-001</div><div class="tagl">阻塞</div></div>
+      <div class="body">
+        <b>组件习性表的字段名没有统一。</b>水温那 6 个参数是 canonical 的、两页一致；但结构 / 水层 / 时段各页写法不同——同一件事，一页写 <code>structure_affinity</code>，另一页写 <code>structureAffinity</code>；时段系数甚至有三个写法。
+        <br><b>为什么阻塞：</b>数值语义完全一样，所以怎么选都算得对——但这是<em>序列化</em>契约。两套实现用不同 key，就<b>无法交换 payload、无法共用心跳 fixture</b>，谁也不算"那个契约"。
+      </div>
+    </div>
+    <div class="sev">
+      <div><div class="rid">GAP-002</div><div class="tagl">阻塞（仅 Trace）</div></div>
+      <div class="body">
+        <b>Trace 的字段表被"批注"过，但从没重写。</b>Schema 页 §3.8 定义了 <code>BakeEvaluationTrace</code>，可是它自己加了一行注记说输出键名是历史遗留、封顶字段已被换路取代——正文却还是旧模型。
+        <br><b>为什么阻塞：</b>最终数值不受影响（换哪个名字数值都一样），但写 Trace 消费方的人<b>没法对着 schema 匹配 key</b>。
+      </div>
+    </div>
+
+    <h3>两个待拍板项</h3>
+    <div class="sev">
+      <div><div class="rid">GAP-003</div><div class="tagl">待裁决</div></div>
+      <div class="body">
+        <b><code>"aggregationRole": null</code> 算"显式忽略"还是"该配没配"？</b>Bass 切片页把它写作 <code>null = IGNORED</code>；但开发需求另一处明确说"忽略是作者显式决定，缺配置仍是错误"。两种读法各有 Current 页支撑，我不替 Design Owner 选。
+      </div>
+    </div>
+    <div class="sev">
+      <div><div class="rid">GAP-004</div><div class="tagl">待裁决</div></div>
+      <div class="body">
+        <b>序列里出现旧的 <code>gatePolicy</code> 字段：直接报错，还是悄悄读进去？</b>同一个族的两个 Current 页互相矛盾——Schema 说"NONE/缺失可以归一为忽略"，Bass 切片的断言说"出现该字段就报错"。
+      </div>
+    </div>
+
+    <h3>其余 8 个（不影响任何合法配置）</h3>
+    <table>
+      <thead><tr><th style="width:96px">ID</th><th style="width:26%">区域</th><th>问题一句话</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">GAP-005</td><td>数值域</td><td>手填值超出 <code>[0,1]</code> 时运行时怎么办——夹紧 / 报错 / 原样透传？只有一条<b>明确标为"非现行"</b>的实现史里提过。</td></tr>
+        <tr><td class="mono">GAP-006</td><td>条件组</td><td>觅食水层列表<b>为空</b>时 <code>max()</code> 没有值；这种条件组合法不合法没写。</td></tr>
+        <tr><td class="mono">GAP-007</td><td>Core 聚合</td><td>一条鱼<b>一个 CORE 都不配</b>时，Core 乘积是不是空积 = 1？现行页从未说。</td></tr>
+        <tr><td class="mono">GAP-008</td><td>水温求值</td><td><code>accept_min == fav_min</code>（零宽过渡段）在硬约束下<b>合法</b>，但会让公式除零——含义没写（值可推导，合法性没定）。</td></tr>
+        <tr><td class="mono">GAP-009</td><td>Trace</td><td>换路时 Trace 要不要报 per-factor fit 和 <code>rawEnvCoeff</code>——文本只说"不计算公式"。</td></tr>
+        <tr><td class="mono">GAP-010</td><td>校验分层</td><td>为什么 SECONDARY 的水温档也<b>必须</b>带 <code>temp_threshold</code>——它永远用不到。</td></tr>
+        <tr><td class="mono">GAP-011</td><td>命名</td><td><code>ConditionGroup</code> 还是 <code>ConditionGroupSnapshot</code>。</td></tr>
+        <tr><td class="mono">GAP-012</td><td>边界值</td><td><code>temp_threshold = 0</code> 合法，于是门控永不触发、fit 0 也通过，对数损失变成 <code>−inf</code>。</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============ 8. 代码里的隐式决定 ============ -->
+  <div class="card">
+    <p class="eyebrow">自我审查</p>
+    <h2>写完之后反查：代码里有没有"文档没说我就自己定了"的地方</h2>
+    <p>有 8 处。没有一处是偷偷做的——每处都写进了 Gap Log；这里列出最要紧的三条。</p>
+    <div class="grid3">
+      <div class="mini state warn">
+        <h4><span class="mark warnc">▲</span> 故意不夹紧</h4>
+        <p>超出 <code>[0,1]</code> 的手填值<strong>原样透传</strong>，会让环境系数冲过 1.0。</p>
+        <p class="muted">这是<strong>刻意不做决定</strong>：一夹紧，GAP-005 就被藏起来了。</p>
+      </div>
+      <div class="mini state warn">
+        <h4><span class="mark warnc">▲</span> 换路时聚合字段置空</h4>
+        <p>门控失败时 Trace 报 <code>null</code> 的乘积字段，但仍报各条件的 fit（判门控本来就得先算出来）。</p>
+        <p class="muted">文本只写了"不计算公式"，没写 Trace 报什么。</p>
+      </div>
+      <div class="mini state warn">
+        <h4><span class="mark warnc">▲</span> null 当忽略、缺行当错</h4>
+        <p><code>null</code> → IGNORED；<strong>整行缺失</strong> → 报错。</p>
+        <p class="muted">这是在两条互相矛盾的权威之间取的折中读法（GAP-003）。</p>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:12px">另外 5 处：<code>appliedFit == rawFit</code>（现行无 0.05 夹紧）、已废的 Trace 键保留为 <code>null</code>、CORE fit 为 0 时 <code>coreLoss</code> 置 <code>null</code> 以免 <code>−inf</code>、空积 = 1、旧的 <code>gatePolicy</code> 惰性值读透而其他值报错。</p>
+  </div>
+
+  <!-- ============ 9. 下一步 ============ -->
+  <div class="card">
+    <p class="eyebrow">下一步</p>
+    <h2>只差一页文档</h2>
+    <p>两个阻塞项都是<strong>同一页上的两处编辑</strong>：给 Schema &amp; Validator 补一张<strong>规范化的 resolved payload 字段名表</strong>（GAP-001），再把它的 §3.8 Trace 区块按 2026-09-17 之后的键集重写一遍（GAP-002）。做完这两件，两个阻塞 Gap 就变成确定契约。其余都可以等。</p>
+
+    <h3>一个不能忘的前提</h3>
+    <div class="mini state bad" style="margin-top:8px">
+      <div class="lbl"><span class="mark crit">!</span> 生产仓还没迁移</div>
+      <p>实现仓 <code>programaticHitFish</code>（W6 head <code>0d94319</code>，B 模块 62 条测试全绿）仍然跑着 <strong>2026-09-17 之前</strong>的语义——还在用已删的 <code>gatePolicy</code>、旧的 <code>1/6</code> 次要损失与 <code>0.2554</code> 封顶、旧输出名、<code>0.30</code> 的较差档锚点。这份参考实现的是<strong>裁决之后</strong>的契约；在 §26.4 的 9 条 delta 落地之前，两边必然对不上。</p>
+    </div>
+  </div>
+
+  <!-- ============ footer ============ -->
+  <div class="card">
+    <p class="eyebrow">以契约页为准</p>
+    <p class="foot">
+      本页是<strong>速览</strong>，与契约页或仓库文档冲突时以它们为准。<br>
+      本地产出（<code>HitFish-Up</code> @ <code>8d13aff</code>，未 merge 未晋升）：
+      <code>reference/0340-fixed-bake/</code> ·
+      <a href="../../docs/implementation-gap.md">implementation-gap.md</a> ·
+      <a href="../../docs/implementation-readiness.md">implementation-readiness.md</a><br>
+      权威（Notion，2026-09-18 读取）：<a href="https://app.notion.com/p/3dda4137d23681c68ec3fb1944573af4">开发需求</a> ·
+      <a href="https://app.notion.com/p/3dda4137d23681e28c5bc2f29c63dc16">Schema &amp; Validator</a> ·
+      <a href="https://app.notion.com/p/3dca4137d236815c88a0e56e15ceaf85">Runtime Algorithm</a> ·
+      <a href="https://app.notion.com/p/3dda4137d236818c9b61e6bc7fc348a7">Bass 垂直切片</a> ·
+      <a href="https://app.notion.com/p/3dda4137d2368109aa54ec4f7acbab26">Main Control Checkpoint</a> ·
+      <a href="https://app.notion.com/p/3dda4137d236812e89b5cf846c528b6c">族根</a><br>
+      文档状态：REFERENCE / VALIDATION · NOT PROMOTED。
+    </p>
+  </div>
+
+</div>
+</div>
+
+<script>
+(function () {
+  // ---- theme toggle ----
+  var root = document.documentElement, btn = document.getElementById('themeBtn');
+  function currentDark() {
+    var t = root.getAttribute('data-theme');
+    if (t === 'dark') return true;
+    if (t === 'light') return false;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  btn.addEventListener('click', function () {
+    root.setAttribute('data-theme', currentDark() ? 'light' : 'dark');
+  });
+
+  // ---- 水温曲线局部放大：Bass Q3，x 轴 0..12℃ ----
+  var ACC_MIN = 2, PREF_MIN = 24, THRESHOLD = 0.05, SPAN = PREF_MIN - ACC_MIN;
+  var X0 = 56, X1 = 690, T0 = 0, T1 = 12, Y0 = 236, Y1 = 24;
+  function fit(t) { return t < ACC_MIN ? 0 : Math.min(1, (t - ACC_MIN) / SPAN); }
+  function px(t) { return X0 + (t - T0) / (T1 - T0) * (X1 - X0); }
+  function py(f) { return Y0 - f * (Y0 - Y1); }
+
+  var svg = document.querySelector('#gateChart svg');
+  var cross = document.getElementById('gcross'), dot = document.getElementById('gdot');
+  var tip = document.getElementById('gateTip'), host = document.getElementById('gateChart');
+
+  function move(ev) {
+    var r = svg.getBoundingClientRect();
+    var clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
+    var xUser = (clientX - r.left) / r.width * 720;
+    var t = (xUser - X0) / (X1 - X0) * (T1 - T0) + T0;
+    t = Math.max(T0, Math.min(T1, t));
+    var f = fit(t), gated = f < THRESHOLD;
+    cross.setAttribute('x1', px(t)); cross.setAttribute('x2', px(t));
+    cross.style.opacity = 1;
+    dot.setAttribute('cx', px(t)); dot.setAttribute('cy', py(f));
+    dot.setAttribute('fill', gated ? 'var(--critical)' : 'var(--series-1)');
+    dot.style.opacity = 1;
+    tip.innerHTML = '水温 ' + t.toFixed(1) + ' ℃<br>fit ' + f.toFixed(3) +
+      '<br><span style="color:var(' + (gated ? '--critical' : '--good-ink') + ')">' +
+      (gated ? '✕ 门控失败 → 换路' : '✓ 门控通过') + '</span>';
+    tip.classList.add('on');
+    var left = (px(t) / 720) * host.clientWidth + 12;
+    var top  = (py(f) / 286) * (host.clientWidth * 286 / 720) - 18;
+    if (left > host.clientWidth - 150) left = left - 168;
+    tip.style.left = Math.max(0, left) + 'px';
+    tip.style.top = Math.max(0, top) + 'px';
+  }
+  function leave() {
+    cross.style.opacity = 0; dot.style.opacity = 0; tip.classList.remove('on');
+  }
+  svg.addEventListener('mousemove', move);
+  svg.addEventListener('mouseleave', leave);
+  svg.addEventListener('touchmove', function (e) { move(e); e.preventDefault(); }, { passive: false });
+  svg.addEventListener('touchend', leave);
+})();
+</script>
+</body>
+</html>
