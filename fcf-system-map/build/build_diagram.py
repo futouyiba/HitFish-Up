@@ -54,39 +54,37 @@ NODE_W, NODE_H, STAGE_W = 260, 66, 220
 # 7-row 整体框架 layout: `main` stacks the root + seven row labels; each row
 # lane lays its blocks out horizontally (dx) on that row's own y.
 LANES = {
-    "main": {"x": 70, "w": 300, "anchor": None, "y0": 150, "dy": 0, "bandGap": 26,
-              "tagH": 28},
-    # 行 1（常显，无封面）
-    "r1a":     {"x": 110, "w": 260, "anchor": "R1", "y0": 78,  "dy": 70, "cap": 3},
-    "r1b":     {"x": 560, "w": 470, "anchor": "R1", "y0": 64,  "dy": 46, "h": 42, "cap": 4},
-    # 行 2
-    "r2cover": {"x": 100, "w": 300, "anchor": "R2", "y0": 34,  "dx": 0, "h": 150},
-    "r2io":    {"x": 430, "w": 220, "anchor": "R2", "y0": 44, "dy": 72, "cap": 2},
-    "r2ch":    {"x": 680, "w": 150, "anchor": "R2", "y0": 38,  "dy": 50, "h": 44, "cap": 5},
-    "r2core":  {"x": 840, "w": 104, "anchor": "R2", "y0": 38,  "dy": 50, "h": 44, "cap": 5},
-    "r2sec":   {"x": 952, "w": 104, "anchor": "R2", "y0": 38,  "dy": 50, "h": 44, "cap": 5},
-    "r2skip":  {"x": 1064, "w": 92, "anchor": "R2", "y0": 38,  "dy": 50, "h": 44, "cap": 5},
-    "r2l2":    {"x": 1190, "w": 250, "anchor": "R2", "y0": 40, "dy": 58, "h": 52, "cap": 4},
-    "r2gate":  {"x": 1470, "w": 110, "anchor": "R2", "y0": 98, "dx": 0, "h": 52},
-    "r2out":   {"x": 1610, "w": 220, "anchor": "R2", "y0": 80, "dy": 58, "h": 52, "cap": 2},
-    "r2val":   {"x": 1870, "w": 150, "anchor": "R2", "y0": 108, "dx": 0, "h": 42},
-    # 行 3 / 4 / 5 / 6 / 7
-    "r3cover": {"x": 100, "w": 300, "anchor": "R3", "y0": 34,  "dx": 0, "h": 120},
-    "r3l0":    {"x": 100, "w": 270, "anchor": "R3", "y0": 34,  "dy": 78, "cap": 2},
-    "r3l1":    {"x": 420, "w": 430, "anchor": "R3", "y0": 34,  "dy": 72, "cap": 2},
-    "r4cover": {"x": 100, "w": 300, "anchor": "R4", "y0": 34,  "dx": 0, "h": 120},
-    "r4l0":    {"x": 100, "w": 300, "anchor": "R4", "y0": 34,  "dx": 0, "h": 60},
-    "r4l1":    {"x": 440, "w": 480, "anchor": "R4", "y0": 34,  "dy": 68, "cap": 3},
-    "r5cover": {"x": 100, "w": 300, "anchor": "R5", "y0": 34,  "dx": 0, "h": 120},
-    "r5bar":   {"x": 100, "w": 1300, "anchor": "R5", "y0": 34, "dx": 0, "h": 42},
-    "r5t":     {"x": 120, "w": 310, "anchor": "R5", "y0": 92, "dx": 330, "cap": 4},
-    "r6cover": {"x": 100, "w": 300, "anchor": "R6", "y0": 34,  "dx": 0, "h": 100},
-    "r6l0":    {"x": 100, "w": 300, "anchor": "R6", "y0": 34,  "dx": 0, "h": 60},
-    "r6l1":    {"x": 440, "w": 620, "anchor": "R6", "y0": 34,  "dx": 0, "h": 50},
-    "r7l0":    {"x": 100, "w": 300, "anchor": "R7", "y0": 34,  "dx": 0, "h": 60},
-    "r7l1":    {"x": 440, "w": 400, "anchor": "R7", "y0": 34,  "dx": 0, "h": 50},
+    "main": {"x": 40, "w": 280, "anchor": None, "y0": 150, "dy": 0, "bandGap": 26, "tagH": 30},
+    "r1a":     {"x": 400,  "w": 270, "anchor": "R1", "y0": 72, "dy": 70, "cap": 3},
+    "r1b":     {"x": 700,  "w": 470, "anchor": "R1", "y0": 58, "dy": 46, "h": 42, "cap": 4},
+    "r2cover": {"x": 40,   "w": 280, "anchor": "R2", "y0": 0,  "dx": 0, "h": 480},
+    "r2io":    {"x": 400,  "w": 210, "anchor": "R2", "y0": 60, "dx": 0, "h": 64},
+    "r2chG":   {"x": 660,  "w": 220, "anchor": "R2", "y0": 56, "dx": 232, "h": 224, "cap": 5},
+    "r2chK":   {"follow": "r2chG", "x0": 8,  "y0": 44,  "w": 204, "h": 40},
+    "r2chS":   {"follow": "r2chG", "x0": 8,  "y0": 88,  "w": 204, "h": 40},
+    "r2chX":   {"follow": "r2chG", "x0": 8,  "y0": 132, "w": 204, "h": 40},
+    "r2chV":   {"follow": "r2chG", "x0": 8,  "y0": 176, "w": 204, "h": 40},
+    "r2l2":    {"x": 660,  "w": 250, "anchor": "R2", "y0": 310, "dy": 56, "h": 50, "cap": 4},
+    "r2gate":  {"x": 950,  "w": 110, "anchor": "R2", "y0": 368, "dx": 0, "h": 50},
+    "r2out":   {"x": 1090, "w": 220, "anchor": "R2", "y0": 348, "dy": 56, "h": 50, "cap": 2},
+    "r2val":   {"x": 1350, "w": 150, "anchor": "R2", "y0": 376, "dx": 0, "h": 42},
+    "r3cover": {"x": 40,   "w": 280, "anchor": "R3", "y0": 0, "dx": 0, "h": 190},
+    "r3def":   {"x": 400,  "w": 260, "anchor": "R3", "y0": 44, "dx": 0, "h": 92},
+    "r3l0":    {"x": 740,  "w": 270, "anchor": "R3", "y0": 40, "dy": 78, "cap": 2},
+    "r3l1":    {"x": 1060, "w": 430, "anchor": "R3", "y0": 40, "dy": 72, "cap": 2},
+    "r4cover": {"x": 40,   "w": 280, "anchor": "R4", "y0": 0, "dx": 0, "h": 180},
+    "r4l0":    {"x": 400,  "w": 300, "anchor": "R4", "y0": 40, "dx": 0, "h": 60},
+    "r4l1":    {"x": 740,  "w": 480, "anchor": "R4", "y0": 40, "dy": 68, "cap": 3},
+    "r5cover": {"x": 40,   "w": 280, "anchor": "R5", "y0": 0, "dx": 0, "h": 180},
+    "r5bar":   {"x": 400,  "w": 1120, "anchor": "R5", "y0": 40, "dx": 0, "h": 42},
+    "r5t":     {"x": 420,  "w": 270, "anchor": "R5", "y0": 96, "dx": 286, "cap": 4},
+    "r6cover": {"x": 40,   "w": 280, "anchor": "R6", "y0": 0, "dx": 0, "h": 140},
+    "r6l0":    {"x": 400,  "w": 300, "anchor": "R6", "y0": 40, "dx": 0, "h": 60},
+    "r6l1":    {"x": 740,  "w": 620, "anchor": "R6", "y0": 40, "dx": 0, "h": 50},
+    "r7l0":    {"x": 400,  "w": 300, "anchor": "R7", "y0": 40, "dx": 0, "h": 60},
+    "r7l1":    {"x": 740,  "w": 400, "anchor": "R7", "y0": 40, "dx": 0, "h": 50},
 }
-PAGE_W, PAGE_H = 2120, 2020
+PAGE_W, PAGE_H = 1820, 2400
 
 GRAY_FILL, GRAY_STROKE, GRAY_FONT = "#f5f5f5", "#a6a6a6", "#8f8f8f"
 
@@ -106,6 +104,8 @@ KIND_STYLE = {
     "skip":    ("rounded=1;dashed=1;", "#f5f5f5", "#aaaaaa"),
     "gate":    ("rhombus;whiteSpace=wrap;html=1;", "#f8cecc", "#b85450"),
     "outside": ("rounded=1;dashed=1;", "#f5f5f5", "#a6a6a6"),
+    "group":   ("rounded=1;dashed=1;strokeWidth=1;", "#fcfcfc", "#bbbbbb"),
+    "gtitle":  ("rounded=0;", "#eeeeee", "#999999"),
 }
 ROW_STYLE = ("rounded=1;strokeWidth=2;", "#ffffff", "#4477aa")   # 行标题
 DEFAULT_KIND = "process"
@@ -140,8 +140,13 @@ def style_of(kind):
 
 def node_style(kind):
     base, fill, stroke = style_of(kind)
+    extra = ""
+    if kind == "group":
+        extra = "verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;fontSize=11;fontColor=#888888;"
+    elif kind == "gtitle":
+        extra = "fontSize=11;fontColor=#555555;fontStyle=1;"
     return (base + "whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;"
-            "fillColor=%s;strokeColor=%s;" % (fill, stroke))
+            "fillColor=%s;strokeColor=%s;%s" % (fill, stroke, extra))
 
 
 def action_link(payload):
@@ -163,7 +168,7 @@ def load_sources(root):
 def layout(nodes, edges):
     ids = [n["id"] for n in nodes]
     by_id = {n["id"]: n for n in nodes}
-    pos, lane_cursor, row_bands = {}, {}, {}
+    pos, lane_cursor, row_bands, lane_positions = {}, {}, {}, {}
     # main lane first (row nodes live there), then row lanes in definition order
     for lane in ["main"] + [l for l in LANES if l != "main"]:
         spec = LANES[lane]
@@ -179,6 +184,17 @@ def layout(nodes, edges):
                 cursor_y += n.get("band", 160) + spec.get("bandGap", 26)
                 pos[n["id"]] = (spec["x"], y, spec["w"], spec.get("tagH", 28))
                 row_bands[n["id"]] = (y, n.get("band", 160))
+                i += 1
+                continue
+            if "follow" in spec:
+                src = spec["follow"]
+                if src not in lane_positions or i >= len(lane_positions[src]):
+                    sys.exit("error: lane %s follows %s but has no slot %d"
+                             % (lane, src, i))
+                bx, by = lane_positions[src][i]
+                x, y = bx + spec.get("x0", 0), by + spec.get("y0", 0)
+                pos[n["id"]] = (x, y, spec["w"], spec.get("h", NODE_H))
+                lane_positions.setdefault(lane, []).append((x, y))
                 i += 1
                 continue
             if "dx" in spec:
@@ -199,6 +215,7 @@ def layout(nodes, edges):
                 x = spec["x"]
                 y = pos[spec["anchor"]][1] + spec["y0"] + i * spec["dy"]
             pos[n["id"]] = (x, y, spec["w"], spec.get("h", NODE_H))
+            lane_positions.setdefault(lane, []).append((x, y))
             i += 1
         cap = spec.get("cap")
         if cap is not None and i > cap:

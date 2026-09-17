@@ -35,7 +35,7 @@
       "caption": "不可折叠的 section：数据的三个重要来源常显",
       "parent": "SYS",
       "lane": "main",
-      "band": 304
+      "band": 300
     },
     {
       "id": "D.CONTEXT",
@@ -96,19 +96,21 @@
     {
       "id": "R2",
       "label": "二、烘焙",
-      "caption": "输入 = 第一行数据；输出 = 派生环境场",
+      "caption": "折叠态：这一块会变大占满整条行带",
       "parent": "SYS",
       "lane": "main",
-      "band": 334,
-      "collapsible": true
+      "band": 540,
+      "collapsible": true,
+      "slot": "R2"
     },
     {
       "id": "R2.COVER",
       "label": "二、烘焙",
-      "caption": "折叠态 · 展开后见五条计算通道",
+      "caption": "展开后见五条计算通道",
       "parent": "R2",
       "lane": "r2cover",
-      "kind": "cover"
+      "kind": "cover",
+      "slot": "R2"
     },
     {
       "id": "BAKE",
@@ -117,174 +119,6 @@
       "parent": "R2",
       "lane": "r2io",
       "kind": "process"
-    },
-    {
-      "id": "DEF",
-      "label": "派生环境场",
-      "caption": "输出 · 行 2 与行 4 之间的交接数据",
-      "parent": "R2",
-      "lane": "r2io",
-      "kind": "cube"
-    },
-    {
-      "id": "R2.C1",
-      "label": "1 空间分布权重",
-      "caption": "环境侧",
-      "parent": "R2",
-      "lane": "r2ch",
-      "kind": "process"
-    },
-    {
-      "id": "R2.C2",
-      "label": "2 活性 Activity",
-      "caption": "鱼侧",
-      "parent": "R2",
-      "lane": "r2ch",
-      "kind": "process"
-    },
-    {
-      "id": "R2.C3",
-      "label": "3 进食动机",
-      "caption": "鱼侧",
-      "parent": "R2",
-      "lane": "r2ch",
-      "kind": "process"
-    },
-    {
-      "id": "R2.C4",
-      "label": "4 警戒度",
-      "caption": "鱼侧 · 后续版本",
-      "parent": "R2",
-      "lane": "r2ch",
-      "kind": "process"
-    },
-    {
-      "id": "R2.C5",
-      "label": "5 动态进食偏好",
-      "caption": "鱼侧",
-      "parent": "R2",
-      "lane": "r2ch",
-      "kind": "process"
-    },
-    {
-      "id": "R2.C1.K",
-      "label": "核心因子计算",
-      "caption": "",
-      "parent": "R2",
-      "lane": "r2core",
-      "kind": "core"
-    },
-    {
-      "id": "R2.C2.K",
-      "label": "核心因子计算",
-      "caption": "",
-      "parent": "R2",
-      "lane": "r2core",
-      "kind": "core"
-    },
-    {
-      "id": "R2.C3.K",
-      "label": "核心因子计算",
-      "caption": "",
-      "parent": "R2",
-      "lane": "r2core",
-      "kind": "core"
-    },
-    {
-      "id": "R2.C4.K",
-      "label": "核心因子计算",
-      "caption": "",
-      "parent": "R2",
-      "lane": "r2core",
-      "kind": "core"
-    },
-    {
-      "id": "R2.C5.K",
-      "label": "核心因子计算",
-      "caption": "",
-      "parent": "R2",
-      "lane": "r2core",
-      "kind": "core"
-    },
-    {
-      "id": "R2.C1.S",
-      "label": "次要因子计算",
-      "caption": "",
-      "parent": "R2",
-      "lane": "r2sec",
-      "kind": "sec"
-    },
-    {
-      "id": "R2.C2.S",
-      "label": "次要因子计算",
-      "caption": "",
-      "parent": "R2",
-      "lane": "r2sec",
-      "kind": "sec"
-    },
-    {
-      "id": "R2.C3.S",
-      "label": "次要因子计算",
-      "caption": "",
-      "parent": "R2",
-      "lane": "r2sec",
-      "kind": "sec"
-    },
-    {
-      "id": "R2.C4.S",
-      "label": "次要因子计算",
-      "caption": "",
-      "parent": "R2",
-      "lane": "r2sec",
-      "kind": "sec"
-    },
-    {
-      "id": "R2.C5.S",
-      "label": "次要因子计算",
-      "caption": "",
-      "parent": "R2",
-      "lane": "r2sec",
-      "kind": "sec"
-    },
-    {
-      "id": "R2.C1.X",
-      "label": "排除忽略",
-      "caption": "",
-      "parent": "R2",
-      "lane": "r2skip",
-      "kind": "skip"
-    },
-    {
-      "id": "R2.C2.X",
-      "label": "排除忽略",
-      "caption": "",
-      "parent": "R2",
-      "lane": "r2skip",
-      "kind": "skip"
-    },
-    {
-      "id": "R2.C3.X",
-      "label": "排除忽略",
-      "caption": "",
-      "parent": "R2",
-      "lane": "r2skip",
-      "kind": "skip"
-    },
-    {
-      "id": "R2.C4.X",
-      "label": "排除忽略",
-      "caption": "",
-      "parent": "R2",
-      "lane": "r2skip",
-      "kind": "skip"
-    },
-    {
-      "id": "R2.C5.X",
-      "label": "排除忽略",
-      "caption": "",
-      "parent": "R2",
-      "lane": "r2skip",
-      "kind": "skip"
     },
     {
       "id": "R2.F.HAB",
@@ -312,7 +146,7 @@
     },
     {
       "id": "R2.F.SKIP",
-      "label": "不计算（例：六角形）",
+      "label": "不计算（六角形）",
       "caption": "",
       "parent": "R2",
       "lane": "r2l2",
@@ -344,7 +178,7 @@
     },
     {
       "id": "R2.VAL",
-      "label": "该通道的值",
+      "label": "通道 1 的值",
       "caption": "",
       "parent": "R2",
       "lane": "r2val",
@@ -353,20 +187,29 @@
     {
       "id": "R3",
       "label": "三、玩家策略与操作数据",
-      "caption": "钓具 / 钓组 · 姿态",
+      "caption": "整体向右错开",
       "parent": "SYS",
       "lane": "main",
-      "band": 234,
-      "collapsible": true
+      "band": 210,
+      "collapsible": true,
+      "slot": "R3"
     },
     {
       "id": "R3.COVER",
       "label": "三、玩家策略与操作数据",
-      "caption": "折叠态",
+      "caption": "",
       "parent": "R3",
       "lane": "r3cover",
       "kind": "cover",
       "slot": "R3"
+    },
+    {
+      "id": "DEF",
+      "label": "派生环境场",
+      "caption": "行2 与 行4 之间的交接数据 · 落在行3 的正左（行3 整体偏右）",
+      "parent": "SYS",
+      "lane": "r3def",
+      "kind": "cube"
     },
     {
       "id": "PLAYER",
@@ -374,8 +217,7 @@
       "caption": "钓具 / 钓组 · 姿态",
       "parent": "R3",
       "lane": "r3l0",
-      "kind": "data",
-      "slot": "R3"
+      "kind": "data"
     },
     {
       "id": "CUE",
@@ -383,8 +225,7 @@
       "caption": "",
       "parent": "R3",
       "lane": "r3l0",
-      "kind": "data",
-      "slot": "R3"
+      "kind": "data"
     },
     {
       "id": "R3.A",
@@ -408,13 +249,14 @@
       "caption": "适配系数",
       "parent": "SYS",
       "lane": "main",
-      "band": 274,
-      "collapsible": true
+      "band": 210,
+      "collapsible": true,
+      "slot": "R4"
     },
     {
       "id": "R4.COVER",
       "label": "四、响应",
-      "caption": "折叠态",
+      "caption": "",
       "parent": "R4",
       "lane": "r4cover",
       "kind": "cover",
@@ -426,8 +268,7 @@
       "caption": "两路输入：派生环境场 + Cue 吸引元素",
       "parent": "R4",
       "lane": "r4l0",
-      "kind": "process",
-      "slot": "R4"
+      "kind": "process"
     },
     {
       "id": "R4.A",
@@ -459,13 +300,14 @@
       "caption": "",
       "parent": "SYS",
       "lane": "main",
-      "band": 269,
-      "collapsible": true
+      "band": 220,
+      "collapsible": true,
+      "slot": "R5"
     },
     {
       "id": "R5.COVER",
       "label": "五、圆桌抽鱼",
-      "caption": "折叠态",
+      "caption": "",
       "parent": "R5",
       "lane": "r5cover",
       "kind": "cover",
@@ -477,8 +319,7 @@
       "caption": "",
       "parent": "R5",
       "lane": "r5bar",
-      "kind": "process",
-      "slot": "R5"
+      "kind": "process"
     },
     {
       "id": "T1",
@@ -486,8 +327,7 @@
       "caption": "中鱼习性模式带来的品质份额调整",
       "parent": "R5",
       "lane": "r5t",
-      "kind": "process",
-      "slot": "R5"
+      "kind": "process"
     },
     {
       "id": "T2",
@@ -495,8 +335,7 @@
       "caption": "权重池：空间分布权重 × 适配系数 → 权重行 + NONE",
       "parent": "R5",
       "lane": "r5t",
-      "kind": "process",
-      "slot": "R5"
+      "kind": "process"
     },
     {
       "id": "T3",
@@ -504,8 +343,7 @@
       "caption": "尾部保护 · 独立控制层",
       "parent": "R5",
       "lane": "r5t",
-      "kind": "process",
-      "slot": "R5"
+      "kind": "process"
     },
     {
       "id": "T4",
@@ -513,8 +351,7 @@
       "caption": "按玩家标签 × 鱼标签强制干预中鱼体验（规则未细化）",
       "parent": "R5",
       "lane": "r5t",
-      "kind": "process",
-      "slot": "R5"
+      "kind": "process"
     },
     {
       "id": "R6",
@@ -522,13 +359,14 @@
       "caption": "五的短延伸",
       "parent": "SYS",
       "lane": "main",
-      "band": 204,
-      "collapsible": true
+      "band": 150,
+      "collapsible": true,
+      "slot": "R6"
     },
     {
       "id": "R6.COVER",
       "label": "六、抽鱼和生成",
-      "caption": "折叠态",
+      "caption": "",
       "parent": "R6",
       "lane": "r6cover",
       "kind": "cover",
@@ -540,8 +378,7 @@
       "caption": "抽出鱼种 · 品质 · 大小 · 重量",
       "parent": "R6",
       "lane": "r6l0",
-      "kind": "process",
-      "slot": "R6"
+      "kind": "process"
     },
     {
       "id": "R6.L",
@@ -557,7 +394,7 @@
       "caption": "超出中鱼范畴 · 不折叠",
       "parent": "SYS",
       "lane": "main",
-      "band": 164
+      "band": 130
     },
     {
       "id": "FISHAI",
@@ -574,6 +411,206 @@
       "parent": "R7",
       "lane": "r7l1",
       "kind": "outside"
+    },
+    {
+      "id": "R2.C1",
+      "label": "1 空间分布权重",
+      "caption": "环境侧",
+      "parent": "R2",
+      "lane": "r2chG",
+      "kind": "group"
+    },
+    {
+      "id": "R2.C1.K",
+      "label": "核心因子计算",
+      "caption": "",
+      "parent": "R2.C1",
+      "lane": "r2chK",
+      "kind": "core"
+    },
+    {
+      "id": "R2.C1.S",
+      "label": "次要因子计算",
+      "caption": "",
+      "parent": "R2.C1",
+      "lane": "r2chS",
+      "kind": "sec"
+    },
+    {
+      "id": "R2.C1.X",
+      "label": "排除忽略",
+      "caption": "",
+      "parent": "R2.C1",
+      "lane": "r2chX",
+      "kind": "skip"
+    },
+    {
+      "id": "R2.C1.V",
+      "label": "该通道的值",
+      "caption": "",
+      "parent": "R2.C1",
+      "lane": "r2chV",
+      "kind": "data"
+    },
+    {
+      "id": "R2.C2",
+      "label": "2 活性 Activity",
+      "caption": "鱼侧",
+      "parent": "R2",
+      "lane": "r2chG",
+      "kind": "group"
+    },
+    {
+      "id": "R2.C2.K",
+      "label": "核心因子计算",
+      "caption": "",
+      "parent": "R2.C2",
+      "lane": "r2chK",
+      "kind": "core"
+    },
+    {
+      "id": "R2.C2.S",
+      "label": "次要因子计算",
+      "caption": "",
+      "parent": "R2.C2",
+      "lane": "r2chS",
+      "kind": "sec"
+    },
+    {
+      "id": "R2.C2.X",
+      "label": "排除忽略",
+      "caption": "",
+      "parent": "R2.C2",
+      "lane": "r2chX",
+      "kind": "skip"
+    },
+    {
+      "id": "R2.C2.V",
+      "label": "该通道的值",
+      "caption": "",
+      "parent": "R2.C2",
+      "lane": "r2chV",
+      "kind": "data"
+    },
+    {
+      "id": "R2.C3",
+      "label": "3 进食动机",
+      "caption": "鱼侧",
+      "parent": "R2",
+      "lane": "r2chG",
+      "kind": "group"
+    },
+    {
+      "id": "R2.C3.K",
+      "label": "核心因子计算",
+      "caption": "",
+      "parent": "R2.C3",
+      "lane": "r2chK",
+      "kind": "core"
+    },
+    {
+      "id": "R2.C3.S",
+      "label": "次要因子计算",
+      "caption": "",
+      "parent": "R2.C3",
+      "lane": "r2chS",
+      "kind": "sec"
+    },
+    {
+      "id": "R2.C3.X",
+      "label": "排除忽略",
+      "caption": "",
+      "parent": "R2.C3",
+      "lane": "r2chX",
+      "kind": "skip"
+    },
+    {
+      "id": "R2.C3.V",
+      "label": "该通道的值",
+      "caption": "",
+      "parent": "R2.C3",
+      "lane": "r2chV",
+      "kind": "data"
+    },
+    {
+      "id": "R2.C4",
+      "label": "4 警戒度",
+      "caption": "鱼侧 · 后续版本",
+      "parent": "R2",
+      "lane": "r2chG",
+      "kind": "group"
+    },
+    {
+      "id": "R2.C4.K",
+      "label": "核心因子计算",
+      "caption": "",
+      "parent": "R2.C4",
+      "lane": "r2chK",
+      "kind": "core"
+    },
+    {
+      "id": "R2.C4.S",
+      "label": "次要因子计算",
+      "caption": "",
+      "parent": "R2.C4",
+      "lane": "r2chS",
+      "kind": "sec"
+    },
+    {
+      "id": "R2.C4.X",
+      "label": "排除忽略",
+      "caption": "",
+      "parent": "R2.C4",
+      "lane": "r2chX",
+      "kind": "skip"
+    },
+    {
+      "id": "R2.C4.V",
+      "label": "该通道的值",
+      "caption": "",
+      "parent": "R2.C4",
+      "lane": "r2chV",
+      "kind": "data"
+    },
+    {
+      "id": "R2.C5",
+      "label": "5 动态进食偏好",
+      "caption": "鱼侧",
+      "parent": "R2",
+      "lane": "r2chG",
+      "kind": "group"
+    },
+    {
+      "id": "R2.C5.K",
+      "label": "核心因子计算",
+      "caption": "",
+      "parent": "R2.C5",
+      "lane": "r2chK",
+      "kind": "core"
+    },
+    {
+      "id": "R2.C5.S",
+      "label": "次要因子计算",
+      "caption": "",
+      "parent": "R2.C5",
+      "lane": "r2chS",
+      "kind": "sec"
+    },
+    {
+      "id": "R2.C5.X",
+      "label": "排除忽略",
+      "caption": "",
+      "parent": "R2.C5",
+      "lane": "r2chX",
+      "kind": "skip"
+    },
+    {
+      "id": "R2.C5.V",
+      "label": "该通道的值",
+      "caption": "",
+      "parent": "R2.C5",
+      "lane": "r2chV",
+      "kind": "data"
     }
   ],
   "edges": [
@@ -612,14 +649,15 @@
     },
     {
       "from": "BAKE",
-      "to": "DEF",
-      "type": "DATA_FLOW"
+      "to": "R2.C1",
+      "type": "DATA_FLOW",
+      "label": "分通道：五条通道各自算自己的值"
     },
     {
       "from": "BAKE",
-      "to": "R2.C1",
+      "to": "DEF",
       "type": "DATA_FLOW",
-      "label": "分通道"
+      "label": "输出"
     },
     {
       "from": "DEF",
@@ -660,15 +698,15 @@
       "type": "DATA_FLOW"
     },
     {
-      "from": "PLAYER",
-      "to": "CUE",
-      "type": "DATA_FLOW"
-    },
-    {
       "from": "R3.COVER",
       "to": "PLAYER",
       "type": "DATA_FLOW",
       "label": "展开"
+    },
+    {
+      "from": "PLAYER",
+      "to": "CUE",
+      "type": "DATA_FLOW"
     },
     {
       "from": "DEF",
