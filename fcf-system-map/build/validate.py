@@ -31,9 +31,9 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 BUILDER = HERE / "build_diagram.py"
 
-RESERVED_PREFIXES = ("E:", "EX:", "BTN:", "CTRL:", "LEG:", "Layer:", "C:")
-# "C:" = 版面容器（layout.json 的包纳树）；它们不是语义节点，所以重命名
-# 检查豁免它们，也无法从 graph.json 派生 label。
+RESERVED_PREFIXES = ("E:", "EX:", "BTN:", "CTRL:", "LEG:", "Layer:", "C:", "I:")
+# "C:" = 版面容器、"I:" = 矢量图标（都在 layout.json 里声明）；它们不是语义节点，
+# 所以重命名检查豁免它们，也无法从 graph.json 派生 label。
 ID_RE = re.compile(r"^[A-Z][A-Z0-9_]*(\.[A-Z0-9_]+)*$")
 EDGE_TYPES = {"DATA_FLOW", "CONTROL_OR_SELECTION", "REFERENCE_OR_CONFIG",
               "RETENTION", "ANCHOR"}

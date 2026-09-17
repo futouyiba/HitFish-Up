@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mxfile host="fcf-system-map" agent="build_diagram.py" version="26.0.0" type="device">
   <diagram id="fcf-canonical-system-map" name="FCF System Map">
-    <mxGraphModel dx="1422" dy="796" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1460" pageHeight="2522" math="0" shadow="0">
+    <mxGraphModel dx="1422" dy="796" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1460" pageHeight="2828" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -24,33 +24,27 @@
           </mxCell>
         </UserObject>
         <mxCell id="LEG:DATA" value="数据 / 配置" style="shape=parallelogram;perimeter=parallelogramPerimeter;size=18;whiteSpace=wrap;html=1;fontSize=11;fontColor=#333333;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="Layer:Controls">
-            <mxGeometry x="340" y="2394" width="250" height="34" as="geometry" />
+            <mxGeometry x="340" y="2700" width="250" height="34" as="geometry" />
         </mxCell>
         <mxCell id="LEG:CUBE" value="派生数据（环境场）" style="shape=cube;size=20;whiteSpace=wrap;html=1;fontSize=11;fontColor=#333333;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="Layer:Controls">
-            <mxGeometry x="600" y="2394" width="250" height="34" as="geometry" />
+            <mxGeometry x="600" y="2700" width="250" height="34" as="geometry" />
         </mxCell>
         <mxCell id="LEG:PROC" value="过程 / 模块" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fontColor=#333333;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="Layer:Controls">
-            <mxGeometry x="860" y="2394" width="250" height="34" as="geometry" />
+            <mxGeometry x="860" y="2700" width="250" height="34" as="geometry" />
         </mxCell>
         <mxCell id="LEG:OUT2" value="范围外" style="rounded=1;dashed=1;whiteSpace=wrap;html=1;fontSize=11;fontColor=#333333;fillColor=#f5f5f5;strokeColor=#a6a6a6;" vertex="1" parent="Layer:Controls">
-            <mxGeometry x="1120" y="2394" width="250" height="34" as="geometry" />
+            <mxGeometry x="1120" y="2700" width="250" height="34" as="geometry" />
         </mxCell>
         <mxCell id="LEG:EDGES" value="——▶  数据 / 权重流向　　– –▶  选择 · 控制　　┄┄  层属查询（非因果主张）" style="text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#666666;" vertex="1" parent="Layer:Controls">
-            <mxGeometry x="350" y="2442" width="900" height="30" as="geometry" />
+            <mxGeometry x="350" y="2748" width="900" height="30" as="geometry" />
         </mxCell>
         <mxCell id="C:ROOT" value="" style="rounded=0;html=1;fillColor=none;strokeColor=none;strokeWidth=1;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontalStack=0;stackSpacing=12;stackBorder=10;" vertex="1" parent="Layer:Main">
-            <mxGeometry x="40" y="150" width="1300" height="2152" as="geometry" />
-        </mxCell>
-        <mxCell id="C:W:SYS" value="" style="rounded=0;html=1;fillColor=none;strokeColor=none;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=0;" vertex="1" parent="C:ROOT">
-            <mxGeometry x="10" y="10" width="1280" height="66" as="geometry" />
-        </mxCell>
-        <mxCell id="SYS" value="中鱼机制总图&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;FCF Canonical System Map · 七大层&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="C:W:SYS">
-            <mxGeometry x="0" y="0" width="260" height="66" as="geometry" />
+            <mxGeometry x="40" y="150" width="1300" height="2458" as="geometry" />
         </mxCell>
         <mxCell id="C:R1" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#9fb4c7;strokeWidth=1;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontalStack=0;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:ROOT">
-            <mxGeometry x="10" y="88" width="1280" height="212" as="geometry" />
+            <mxGeometry x="10" y="10" width="1280" height="212" as="geometry" />
         </mxCell>
-        <mxCell id="R1" value="一、数据&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;不可折叠的 section：数据的三个重要来源常显&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#2b4a63;fillColor=#f6f9fc;strokeColor=#a8bccd;strokeWidth=2;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;" vertex="1" parent="C:R1">
+        <mxCell id="R1" value="数据" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#2b4a63;fillColor=#f6f9fc;strokeColor=#a8bccd;strokeWidth=2;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;" vertex="1" parent="C:R1">
             <mxGeometry x="10" y="10" width="1260" height="24" as="geometry" />
         </mxCell>
         <mxCell id="C:R1/TOP" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#b9c9d8;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:R1">
@@ -77,13 +71,13 @@
         <mxCell id="R1.L.STOCK" value="投放与机会强度&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;基础机会强度 · 背景鱼开关 · 下限&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fff7e6;strokeColor=#d79b00;" vertex="1" parent="C:R1/DET">
             <mxGeometry x="636" y="10" width="301" height="56" as="geometry" />
         </mxCell>
-        <mxCell id="R1.L.NATURE" value="鱼的习性配置的构成&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;四张习性表 + 条件角色绑定&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fff7e6;strokeColor=#d79b00;" vertex="1" parent="C:R1/DET">
+        <mxCell id="R1.L.NATURE" value="习性配置的构成&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;四张习性表 + 条件角色绑定&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fff7e6;strokeColor=#d79b00;" vertex="1" parent="C:R1/DET">
             <mxGeometry x="949" y="10" width="301" height="56" as="geometry" />
         </mxCell>
         <mxCell id="C:R2" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#9fb4c7;strokeWidth=1;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontalStack=0;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:ROOT">
-            <mxGeometry x="10" y="312" width="1280" height="914" as="geometry" />
+            <mxGeometry x="10" y="234" width="1280" height="1298" as="geometry" />
         </mxCell>
-        <UserObject label="⇕ 二、烘焙&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;折叠后只留标题条 · 展开见五条计算通道&lt;/font&gt;" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;C:C1&quot;,&quot;C:R2/FC&quot;,&quot;C:W:BAKE&quot;,&quot;E:BAKE-&gt;DEF&quot;,&quot;E:BAKE-&gt;R2.C1&quot;,&quot;E:D.CONTEXT-&gt;BAKE&quot;,&quot;E:D.HABIT-&gt;BAKE&quot;,&quot;E:D.STOCK-&gt;BAKE&quot;,&quot;E:DEF-&gt;R2.F.HAB&quot;,&quot;E:R2.C1-&gt;R5&quot;,&quot;E:R2.F.CORE-&gt;R2.GATE&quot;,&quot;E:R2.F.HAB-&gt;R2.GATE&quot;,&quot;E:R2.GATE-&gt;R2.FAIL&quot;,&quot;E:R2.GATE-&gt;R2.PASS&quot;,&quot;EX:R2-&gt;BAKE&quot;,&quot;EX:R2-&gt;R2.C1&quot;,&quot;EX:R2-&gt;R2.FC&quot;,&quot;EX:R2.C1-&gt;R2.C1.A1&quot;,&quot;EX:R2.C1-&gt;R2.C1.A2&quot;,&quot;EX:R2.C1-&gt;R2.C1.A3&quot;,&quot;EX:R2.C1-&gt;R2.C1.GFAIL&quot;,&quot;EX:R2.C1-&gt;R2.C1.K&quot;,&quot;EX:R2.C1-&gt;R2.C1.S&quot;,&quot;EX:R2.C1-&gt;R2.C1.V&quot;,&quot;EX:R2.C1-&gt;R2.C1.X&quot;,&quot;EX:R2.C1-&gt;R2.F.CORE&quot;,&quot;EX:R2.C1-&gt;R2.F.HAB&quot;,&quot;EX:R2.C1-&gt;R2.F.SEC&quot;,&quot;EX:R2.C1-&gt;R2.F.SKIP&quot;,&quot;EX:R2.C1-&gt;R2.FAIL&quot;,&quot;EX:R2.C1-&gt;R2.GATE&quot;,&quot;EX:R2.C1-&gt;R2.PASS&quot;,&quot;EX:R2.C2-&gt;R2.C2.K&quot;,&quot;EX:R2.C2-&gt;R2.C2.S&quot;,&quot;EX:R2.C2-&gt;R2.C2.V&quot;,&quot;EX:R2.C2-&gt;R2.C2.X&quot;,&quot;EX:R2.C3-&gt;R2.C3.K&quot;,&quot;EX:R2.C3-&gt;R2.C3.S&quot;,&quot;EX:R2.C3-&gt;R2.C3.V&quot;,&quot;EX:R2.C3-&gt;R2.C3.X&quot;,&quot;EX:R2.C4-&gt;R2.C4.K&quot;,&quot;EX:R2.C4-&gt;R2.C4.S&quot;,&quot;EX:R2.C4-&gt;R2.C4.V&quot;,&quot;EX:R2.C4-&gt;R2.C4.X&quot;,&quot;EX:R2.C5-&gt;R2.C5.K&quot;,&quot;EX:R2.C5-&gt;R2.C5.S&quot;,&quot;EX:R2.C5-&gt;R2.C5.V&quot;,&quot;EX:R2.C5-&gt;R2.C5.X&quot;,&quot;EX:R2.FC-&gt;R2.C2&quot;,&quot;EX:R2.FC-&gt;R2.C3&quot;,&quot;EX:R2.FC-&gt;R2.C4&quot;,&quot;EX:R2.FC-&gt;R2.C5&quot;],&quot;transient&quot;:false}}]}" id="R2">
+        <UserObject label="⇕ 烘焙" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;C:C1&quot;,&quot;C:R2/FC&quot;,&quot;C:W:BAKE&quot;,&quot;E:BAKE-&gt;DEF&quot;,&quot;E:BAKE-&gt;R2.C1&quot;,&quot;E:D.CONTEXT-&gt;BAKE&quot;,&quot;E:D.HABIT-&gt;BAKE&quot;,&quot;E:D.STOCK-&gt;BAKE&quot;,&quot;E:DEF-&gt;R2.F.HAB&quot;,&quot;E:R2.C1-&gt;R5&quot;,&quot;E:R2.F.CORE-&gt;R2.GATE&quot;,&quot;E:R2.F.HAB-&gt;R2.GATE&quot;,&quot;E:R2.GATE-&gt;R2.FAIL&quot;,&quot;E:R2.GATE-&gt;R2.PASS&quot;,&quot;EX:R2-&gt;BAKE&quot;,&quot;EX:R2-&gt;R2.C1&quot;,&quot;EX:R2-&gt;R2.FC&quot;,&quot;EX:R2.C1-&gt;R2.C1.A1&quot;,&quot;EX:R2.C1-&gt;R2.C1.A2&quot;,&quot;EX:R2.C1-&gt;R2.C1.A3&quot;,&quot;EX:R2.C1-&gt;R2.C1.GFAIL&quot;,&quot;EX:R2.C1-&gt;R2.C1.K&quot;,&quot;EX:R2.C1-&gt;R2.C1.S&quot;,&quot;EX:R2.C1-&gt;R2.C1.V&quot;,&quot;EX:R2.C1-&gt;R2.C1.X&quot;,&quot;EX:R2.C1-&gt;R2.F.CORE&quot;,&quot;EX:R2.C1-&gt;R2.F.HAB&quot;,&quot;EX:R2.C1-&gt;R2.F.SEC&quot;,&quot;EX:R2.C1-&gt;R2.F.SKIP&quot;,&quot;EX:R2.C1-&gt;R2.FAIL&quot;,&quot;EX:R2.C1-&gt;R2.GATE&quot;,&quot;EX:R2.C1-&gt;R2.PASS&quot;,&quot;EX:R2.C2-&gt;R2.C2.K&quot;,&quot;EX:R2.C2-&gt;R2.C2.S&quot;,&quot;EX:R2.C2-&gt;R2.C2.V&quot;,&quot;EX:R2.C2-&gt;R2.C2.X&quot;,&quot;EX:R2.C3-&gt;R2.C3.K&quot;,&quot;EX:R2.C3-&gt;R2.C3.S&quot;,&quot;EX:R2.C3-&gt;R2.C3.V&quot;,&quot;EX:R2.C3-&gt;R2.C3.X&quot;,&quot;EX:R2.C4-&gt;R2.C4.K&quot;,&quot;EX:R2.C4-&gt;R2.C4.S&quot;,&quot;EX:R2.C4-&gt;R2.C4.V&quot;,&quot;EX:R2.C4-&gt;R2.C4.X&quot;,&quot;EX:R2.C5-&gt;R2.C5.K&quot;,&quot;EX:R2.C5-&gt;R2.C5.S&quot;,&quot;EX:R2.C5-&gt;R2.C5.V&quot;,&quot;EX:R2.C5-&gt;R2.C5.X&quot;,&quot;EX:R2.FC-&gt;R2.C2&quot;,&quot;EX:R2.FC-&gt;R2.C3&quot;,&quot;EX:R2.FC-&gt;R2.C4&quot;,&quot;EX:R2.FC-&gt;R2.C5&quot;],&quot;transient&quot;:false}}]}" id="R2">
           <mxCell style="rounded=0;whiteSpace=wrap;html=1;fontColor=#2b4a63;fillColor=#f6f9fc;strokeColor=#a8bccd;strokeWidth=2;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;" vertex="1" parent="C:R2">
             <mxGeometry x="10" y="10" width="1260" height="24" as="geometry" />
           </mxCell>
@@ -95,28 +89,73 @@
             <mxGeometry x="0" y="0" width="590" height="48" as="geometry" />
         </mxCell>
         <mxCell id="C:C1" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#b9c9d8;strokeWidth=1;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontalStack=0;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:R2">
-            <mxGeometry x="10" y="106" width="1260" height="406" as="geometry" />
+            <mxGeometry x="10" y="106" width="1260" height="790" as="geometry" />
         </mxCell>
-        <mxCell id="R2.C1" value="1 空间分布权重&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;环境侧&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#2b4a63;fillColor=#f6f9fc;strokeColor=#a8bccd;strokeWidth=2;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;" vertex="1" parent="C:C1">
+        <mxCell id="R2.C1" value="空间分布权重&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;环境侧&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#2b4a63;fillColor=#f6f9fc;strokeColor=#a8bccd;strokeWidth=2;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;" vertex="1" parent="C:C1">
             <mxGeometry x="10" y="10" width="1240" height="24" as="geometry" />
         </mxCell>
-        <mxCell id="C:C1/L2" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#d0dbe5;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:C1">
-            <mxGeometry x="10" y="46" width="1240" height="68" as="geometry" />
+        <mxCell id="C:C1/FACTORS" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#d0dbe5;strokeWidth=1;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontalStack=0;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:C1">
+            <mxGeometry x="10" y="46" width="1240" height="452" as="geometry" />
         </mxCell>
-        <mxCell id="R2.F.HAB" value="鱼的栖息地动态偏好&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;与其它因子一起参与计算&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="C:C1/L2">
-            <mxGeometry x="10" y="10" width="296" height="48" as="geometry" />
+        <mxCell id="C:C1/F1" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#dde5ec;strokeWidth=1;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontalStack=0;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:C1/FACTORS">
+            <mxGeometry x="10" y="10" width="1220" height="116" as="geometry" />
         </mxCell>
-        <mxCell id="R2.F.CORE" value="核心因子（例：方块 · 三角）&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;按中鱼习性模式配置&lt;/font&gt;" style="rounded=1;strokeWidth=2;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#d5e8d4;strokeColor=#2d6a4f;" vertex="1" parent="C:C1/L2">
-            <mxGeometry x="318" y="10" width="296" height="48" as="geometry" />
+        <mxCell id="C:W:R2.F.CORE" value="" style="rounded=0;html=1;fillColor=none;strokeColor=none;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=0;" vertex="1" parent="C:C1/F1">
+            <mxGeometry x="10" y="10" width="1200" height="34" as="geometry" />
         </mxCell>
-        <mxCell id="R2.F.SEC" value="次要因子（例：六边形 · 圆）" style="rounded=1;dashed=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="C:C1/L2">
-            <mxGeometry x="626" y="10" width="296" height="48" as="geometry" />
+        <mxCell id="R2.F.CORE" value="核心因子" style="rounded=1;strokeWidth=2;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#d5e8d4;strokeColor=#2d6a4f;" vertex="1" parent="C:W:R2.F.CORE">
+            <mxGeometry x="0" y="0" width="190" height="34" as="geometry" />
         </mxCell>
-        <mxCell id="R2.F.SKIP" value="不计算（六角形）" style="rounded=1;dashed=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#f5f5f5;strokeColor=#aaaaaa;" vertex="1" parent="C:C1/L2">
-            <mxGeometry x="934" y="10" width="296" height="48" as="geometry" />
+        <mxCell id="C:C1/F1/I" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#dde5ec;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:C1/F1">
+            <mxGeometry x="10" y="56" width="1200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="I:C:C1/F1/I/0" value="" style="rectangle;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="C:C1/F1/I">
+            <mxGeometry x="10" y="10" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="I:C:C1/F1/I/1" value="" style="triangle;direction=north;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="C:C1/F1/I">
+            <mxGeometry x="52" y="10" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="C:C1/F2" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#dde5ec;strokeWidth=1;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontalStack=0;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:C1/FACTORS">
+            <mxGeometry x="10" y="138" width="1220" height="116" as="geometry" />
+        </mxCell>
+        <mxCell id="C:W:R2.F.SEC" value="" style="rounded=0;html=1;fillColor=none;strokeColor=none;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=0;" vertex="1" parent="C:C1/F2">
+            <mxGeometry x="10" y="10" width="1200" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="R2.F.SEC" value="次要因子" style="rounded=1;dashed=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="C:W:R2.F.SEC">
+            <mxGeometry x="0" y="0" width="190" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="C:C1/F2/I" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#dde5ec;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:C1/F2">
+            <mxGeometry x="10" y="56" width="1200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="I:C:C1/F2/I/0" value="" style="hexagon;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="C:C1/F2/I">
+            <mxGeometry x="10" y="10" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="I:C:C1/F2/I/1" value="" style="ellipse;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="C:C1/F2/I">
+            <mxGeometry x="52" y="10" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="C:C1/F3" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#dde5ec;strokeWidth=1;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontalStack=0;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:C1/FACTORS">
+            <mxGeometry x="10" y="266" width="1220" height="116" as="geometry" />
+        </mxCell>
+        <mxCell id="C:W:R2.F.SKIP" value="" style="rounded=0;html=1;fillColor=none;strokeColor=none;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=0;" vertex="1" parent="C:C1/F3">
+            <mxGeometry x="10" y="10" width="1200" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="R2.F.SKIP" value="忽略因子" style="rounded=1;dashed=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#f5f5f5;strokeColor=#aaaaaa;" vertex="1" parent="C:W:R2.F.SKIP">
+            <mxGeometry x="0" y="0" width="190" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="C:C1/F3/I" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#dde5ec;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:C1/F3">
+            <mxGeometry x="10" y="56" width="1200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="I:C:C1/F3/I/0" value="" style="hexagon;dashed=1;fillColor=#f5f5f5;strokeColor=#aaaaaa;" vertex="1" parent="C:C1/F3/I">
+            <mxGeometry x="10" y="10" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="C:W:R2.F.HAB" value="" style="rounded=0;html=1;fillColor=none;strokeColor=none;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=0;" vertex="1" parent="C:C1/FACTORS">
+            <mxGeometry x="10" y="394" width="1220" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="R2.F.HAB" value="鱼的栖息地动态偏好&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;与其它因子一起参与计算&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="C:W:R2.F.HAB">
+            <mxGeometry x="0" y="0" width="260" height="48" as="geometry" />
         </mxCell>
         <mxCell id="C:C1/CORE" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#d0dbe5;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:C1">
-            <mxGeometry x="10" y="126" width="1240" height="68" as="geometry" />
+            <mxGeometry x="10" y="510" width="1240" height="68" as="geometry" />
         </mxCell>
         <mxCell id="R2.GATE" value="门控&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;核心条件门控；各影响因素 / 习性组各有自己的门控&lt;/font&gt;" style="rhombus;whiteSpace=wrap;html=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="C:C1/CORE">
             <mxGeometry x="10" y="10" width="296" height="48" as="geometry" />
@@ -131,7 +170,7 @@
             <mxGeometry x="934" y="10" width="296" height="48" as="geometry" />
         </mxCell>
         <mxCell id="C:C1/CALC" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#d0dbe5;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:C1">
-            <mxGeometry x="10" y="206" width="1240" height="54" as="geometry" />
+            <mxGeometry x="10" y="590" width="1240" height="54" as="geometry" />
         </mxCell>
         <mxCell id="R2.C1.K" value="核心因子计算&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;各组各自算法 → 亲和系数&lt;/font&gt;" style="rounded=1;strokeWidth=2;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#d5e8d4;strokeColor=#2d6a4f;" vertex="1" parent="C:C1/CALC">
             <mxGeometry x="10" y="10" width="398" height="34" as="geometry" />
@@ -139,11 +178,11 @@
         <mxCell id="R2.C1.S" value="次要因子计算&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;综合习性配置 + 条件组 → 亲和系数&lt;/font&gt;" style="rounded=1;dashed=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="C:C1/CALC">
             <mxGeometry x="420" y="10" width="398" height="34" as="geometry" />
         </mxCell>
-        <mxCell id="R2.C1.X" value="排除忽略" style="rounded=1;dashed=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#f5f5f5;strokeColor=#aaaaaa;" vertex="1" parent="C:C1/CALC">
+        <mxCell id="R2.C1.X" value="忽略因子" style="rounded=1;dashed=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#f5f5f5;strokeColor=#aaaaaa;" vertex="1" parent="C:C1/CALC">
             <mxGeometry x="830" y="10" width="398" height="34" as="geometry" />
         </mxCell>
         <mxCell id="C:C1/AGG" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#d0dbe5;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:C1">
-            <mxGeometry x="10" y="272" width="1240" height="68" as="geometry" />
+            <mxGeometry x="10" y="656" width="1240" height="68" as="geometry" />
         </mxCell>
         <mxCell id="R2.C1.A1" value="系数聚合&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;各条件算出的亲和系数汇总&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="C:C1/AGG">
             <mxGeometry x="10" y="10" width="398" height="48" as="geometry" />
@@ -155,13 +194,13 @@
             <mxGeometry x="830" y="10" width="398" height="48" as="geometry" />
         </mxCell>
         <mxCell id="C:W:R2.C1.V" value="" style="rounded=0;html=1;fillColor=none;strokeColor=none;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=0;" vertex="1" parent="C:C1">
-            <mxGeometry x="10" y="352" width="1240" height="44" as="geometry" />
+            <mxGeometry x="10" y="736" width="1240" height="44" as="geometry" />
         </mxCell>
         <mxCell id="R2.C1.V" value="该通道的值&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;返回给烘焙求解器&lt;/font&gt;" style="shape=parallelogram;perimeter=parallelogramPerimeter;size=18;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="C:W:R2.C1.V">
             <mxGeometry x="0" y="0" width="620" height="44" as="geometry" />
         </mxCell>
         <mxCell id="C:R2/FC" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#b9c9d8;strokeWidth=1;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontalStack=0;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:R2">
-            <mxGeometry x="10" y="524" width="1260" height="380" as="geometry" />
+            <mxGeometry x="10" y="908" width="1260" height="380" as="geometry" />
         </mxCell>
         <UserObject label="⇕ 鱼侧动态参数&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;通道 2–5&lt;/font&gt;" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;C:R2/FC/BOT&quot;,&quot;C:R2/FC/TOP&quot;,&quot;EX:R2.C2-&gt;R2.C2.K&quot;,&quot;EX:R2.C2-&gt;R2.C2.S&quot;,&quot;EX:R2.C2-&gt;R2.C2.V&quot;,&quot;EX:R2.C2-&gt;R2.C2.X&quot;,&quot;EX:R2.C3-&gt;R2.C3.K&quot;,&quot;EX:R2.C3-&gt;R2.C3.S&quot;,&quot;EX:R2.C3-&gt;R2.C3.V&quot;,&quot;EX:R2.C3-&gt;R2.C3.X&quot;,&quot;EX:R2.C4-&gt;R2.C4.K&quot;,&quot;EX:R2.C4-&gt;R2.C4.S&quot;,&quot;EX:R2.C4-&gt;R2.C4.V&quot;,&quot;EX:R2.C4-&gt;R2.C4.X&quot;,&quot;EX:R2.C5-&gt;R2.C5.K&quot;,&quot;EX:R2.C5-&gt;R2.C5.S&quot;,&quot;EX:R2.C5-&gt;R2.C5.V&quot;,&quot;EX:R2.C5-&gt;R2.C5.X&quot;,&quot;EX:R2.FC-&gt;R2.C2&quot;,&quot;EX:R2.FC-&gt;R2.C3&quot;,&quot;EX:R2.FC-&gt;R2.C4&quot;,&quot;EX:R2.FC-&gt;R2.C5&quot;],&quot;transient&quot;:false}}]}" id="R2.FC">
           <mxCell style="rounded=0;whiteSpace=wrap;html=1;fontColor=#2b4a63;fillColor=#f6f9fc;strokeColor=#a8bccd;strokeWidth=2;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;" vertex="1" parent="C:R2/FC">
@@ -177,7 +216,7 @@
         <mxCell id="C:W:R2.C2" value="" style="rounded=0;html=1;fillColor=none;strokeColor=none;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=0;" vertex="1" parent="C:C2">
             <mxGeometry x="10" y="10" width="584" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="R2.C2" value="2 活性 Activity&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;鱼侧&lt;/font&gt;" style="rounded=1;dashed=1;strokeWidth=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fcfcfc;strokeColor=#bbbbbb;align=center;verticalAlign=middle;fontSize=12;fontColor=#555555;" vertex="1" parent="C:W:R2.C2">
+        <mxCell id="R2.C2" value="活性&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;鱼侧&lt;/font&gt;" style="rounded=1;dashed=1;strokeWidth=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fcfcfc;strokeColor=#bbbbbb;align=center;verticalAlign=middle;fontSize=12;fontColor=#555555;" vertex="1" parent="C:W:R2.C2">
             <mxGeometry x="0" y="0" width="300" height="40" as="geometry" />
         </mxCell>
         <mxCell id="C:C2/KV" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#dde5ec;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:C2">
@@ -201,7 +240,7 @@
         <mxCell id="C:W:R2.C3" value="" style="rounded=0;html=1;fillColor=none;strokeColor=none;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=0;" vertex="1" parent="C:C3">
             <mxGeometry x="10" y="10" width="584" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="R2.C3" value="3 进食动机&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;鱼侧&lt;/font&gt;" style="rounded=1;dashed=1;strokeWidth=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fcfcfc;strokeColor=#bbbbbb;align=center;verticalAlign=middle;fontSize=12;fontColor=#555555;" vertex="1" parent="C:W:R2.C3">
+        <mxCell id="R2.C3" value="进食动机&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;鱼侧&lt;/font&gt;" style="rounded=1;dashed=1;strokeWidth=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fcfcfc;strokeColor=#bbbbbb;align=center;verticalAlign=middle;fontSize=12;fontColor=#555555;" vertex="1" parent="C:W:R2.C3">
             <mxGeometry x="0" y="0" width="300" height="40" as="geometry" />
         </mxCell>
         <mxCell id="C:C3/KV" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#dde5ec;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:C3">
@@ -228,7 +267,7 @@
         <mxCell id="C:W:R2.C4" value="" style="rounded=0;html=1;fillColor=none;strokeColor=none;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=0;" vertex="1" parent="C:C4">
             <mxGeometry x="10" y="10" width="584" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="R2.C4" value="4 警戒度&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;鱼侧 · 后续版本&lt;/font&gt;" style="rounded=1;dashed=1;strokeWidth=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fcfcfc;strokeColor=#bbbbbb;align=center;verticalAlign=middle;fontSize=12;fontColor=#555555;" vertex="1" parent="C:W:R2.C4">
+        <mxCell id="R2.C4" value="警戒度&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;鱼侧 · 后续版本&lt;/font&gt;" style="rounded=1;dashed=1;strokeWidth=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fcfcfc;strokeColor=#bbbbbb;align=center;verticalAlign=middle;fontSize=12;fontColor=#555555;" vertex="1" parent="C:W:R2.C4">
             <mxGeometry x="0" y="0" width="300" height="40" as="geometry" />
         </mxCell>
         <mxCell id="C:C4/KV" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#dde5ec;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:C4">
@@ -252,7 +291,7 @@
         <mxCell id="C:W:R2.C5" value="" style="rounded=0;html=1;fillColor=none;strokeColor=none;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=0;" vertex="1" parent="C:C5">
             <mxGeometry x="10" y="10" width="584" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="R2.C5" value="5 动态进食偏好&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;鱼侧&lt;/font&gt;" style="rounded=1;dashed=1;strokeWidth=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fcfcfc;strokeColor=#bbbbbb;align=center;verticalAlign=middle;fontSize=12;fontColor=#555555;" vertex="1" parent="C:W:R2.C5">
+        <mxCell id="R2.C5" value="动态进食偏好&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;鱼侧&lt;/font&gt;" style="rounded=1;dashed=1;strokeWidth=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fcfcfc;strokeColor=#bbbbbb;align=center;verticalAlign=middle;fontSize=12;fontColor=#555555;" vertex="1" parent="C:W:R2.C5">
             <mxGeometry x="0" y="0" width="300" height="40" as="geometry" />
         </mxCell>
         <mxCell id="C:C5/KV" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#dde5ec;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:C5">
@@ -271,9 +310,9 @@
             <mxGeometry x="442" y="10" width="132" height="44" as="geometry" />
         </mxCell>
         <mxCell id="C:R3" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#9fb4c7;strokeWidth=1;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontalStack=0;stackSpacing=12;stackBorder=10;marginLeft=300;" vertex="1" parent="C:ROOT">
-            <mxGeometry x="10" y="1238" width="1280" height="192" as="geometry" />
+            <mxGeometry x="10" y="1544" width="1280" height="192" as="geometry" />
         </mxCell>
-        <UserObject label="⇕ 三、玩家策略与操作数据&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;整体向右错开，左侧让给派生环境场&lt;/font&gt;" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;C:R3/L0&quot;,&quot;C:R3/L1&quot;,&quot;DEF&quot;,&quot;E:BAKE-&gt;DEF&quot;,&quot;E:CUE-&gt;RESPONSE&quot;,&quot;E:DEF-&gt;R2.F.HAB&quot;,&quot;E:DEF-&gt;RESPONSE&quot;,&quot;E:PLAYER-&gt;CUE&quot;,&quot;EX:R3-&gt;CUE&quot;,&quot;EX:R3-&gt;PLAYER&quot;,&quot;EX:R3-&gt;R3.A&quot;,&quot;EX:R3-&gt;R3.B&quot;],&quot;transient&quot;:false}}]}" id="R3">
+        <UserObject label="⇕ 玩家策略" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;C:R3/L0&quot;,&quot;C:R3/L1&quot;,&quot;DEF&quot;,&quot;E:BAKE-&gt;DEF&quot;,&quot;E:CUE-&gt;RESPONSE&quot;,&quot;E:DEF-&gt;R2.F.HAB&quot;,&quot;E:DEF-&gt;RESPONSE&quot;,&quot;E:PLAYER-&gt;CUE&quot;,&quot;EX:R3-&gt;CUE&quot;,&quot;EX:R3-&gt;PLAYER&quot;,&quot;EX:R3-&gt;R3.A&quot;,&quot;EX:R3-&gt;R3.B&quot;],&quot;transient&quot;:false}}]}" id="R3">
           <mxCell style="rounded=0;whiteSpace=wrap;html=1;fontColor=#2b4a63;fillColor=#f6f9fc;strokeColor=#a8bccd;strokeWidth=2;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;" vertex="1" parent="C:R3">
             <mxGeometry x="310" y="10" width="960" height="24" as="geometry" />
           </mxCell>
@@ -300,9 +339,9 @@
             <mxGeometry x="12" y="40" width="260" height="92" as="geometry" />
         </mxCell>
         <mxCell id="C:R4" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#9fb4c7;strokeWidth=1;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontalStack=0;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:ROOT">
-            <mxGeometry x="10" y="1442" width="1280" height="176" as="geometry" />
+            <mxGeometry x="10" y="1748" width="1280" height="176" as="geometry" />
         </mxCell>
-        <UserObject label="⇕ 四、响应&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;适配系数&lt;/font&gt;" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;C:R4/L1&quot;,&quot;C:W:RESPONSE&quot;,&quot;E:CUE-&gt;RESPONSE&quot;,&quot;E:DEF-&gt;RESPONSE&quot;,&quot;E:RESPONSE-&gt;R5&quot;,&quot;EX:R4-&gt;R4.A&quot;,&quot;EX:R4-&gt;R4.B&quot;,&quot;EX:R4-&gt;R4.C&quot;,&quot;EX:R4-&gt;RESPONSE&quot;],&quot;transient&quot;:false}}]}" id="R4">
+        <UserObject label="⇕ 响应" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;C:R4/L1&quot;,&quot;C:W:RESPONSE&quot;,&quot;E:CUE-&gt;RESPONSE&quot;,&quot;E:DEF-&gt;RESPONSE&quot;,&quot;E:RESPONSE-&gt;R5&quot;,&quot;EX:R4-&gt;R4.A&quot;,&quot;EX:R4-&gt;R4.B&quot;,&quot;EX:R4-&gt;R4.C&quot;,&quot;EX:R4-&gt;RESPONSE&quot;],&quot;transient&quot;:false}}]}" id="R4">
           <mxCell style="rounded=0;whiteSpace=wrap;html=1;fontColor=#2b4a63;fillColor=#f6f9fc;strokeColor=#a8bccd;strokeWidth=2;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;" vertex="1" parent="C:R4">
             <mxGeometry x="10" y="10" width="1260" height="24" as="geometry" />
           </mxCell>
@@ -326,9 +365,9 @@
             <mxGeometry x="844" y="10" width="405" height="40" as="geometry" />
         </mxCell>
         <mxCell id="C:R5" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#9fb4c7;strokeWidth=1;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontalStack=0;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:ROOT">
-            <mxGeometry x="10" y="1630" width="1280" height="184" as="geometry" />
+            <mxGeometry x="10" y="1936" width="1280" height="184" as="geometry" />
         </mxCell>
-        <UserObject label="⇕ 五、圆桌抽鱼" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;C:R5/L1&quot;,&quot;EX:R5-&gt;T1&quot;,&quot;EX:R5-&gt;T2&quot;,&quot;EX:R5-&gt;T3&quot;,&quot;EX:R5-&gt;T4&quot;,&quot;EX:R5-&gt;TABLE&quot;,&quot;TABLE&quot;],&quot;transient&quot;:false}}]}" id="R5">
+        <UserObject label="⇕ 圆桌抽鱼" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;C:R5/L1&quot;,&quot;EX:R5-&gt;T1&quot;,&quot;EX:R5-&gt;T2&quot;,&quot;EX:R5-&gt;T3&quot;,&quot;EX:R5-&gt;T4&quot;,&quot;EX:R5-&gt;TABLE&quot;,&quot;TABLE&quot;],&quot;transient&quot;:false}}]}" id="R5">
           <mxCell style="rounded=0;whiteSpace=wrap;html=1;fontColor=#2b4a63;fillColor=#f6f9fc;strokeColor=#a8bccd;strokeWidth=2;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;" vertex="1" parent="C:R5">
             <mxGeometry x="10" y="10" width="1260" height="24" as="geometry" />
           </mxCell>
@@ -352,9 +391,9 @@
             <mxGeometry x="949" y="10" width="301" height="48" as="geometry" />
         </mxCell>
         <mxCell id="C:R6" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#9fb4c7;strokeWidth=1;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontalStack=0;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:ROOT">
-            <mxGeometry x="10" y="1826" width="1280" height="156" as="geometry" />
+            <mxGeometry x="10" y="2132" width="1280" height="156" as="geometry" />
         </mxCell>
-        <UserObject label="⇕ 六、抽鱼和生成&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;五的短延伸&lt;/font&gt;" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;C:W:DRAW&quot;,&quot;C:W:R6.L&quot;,&quot;E:DRAW-&gt;FISHAI&quot;,&quot;E:R5-&gt;DRAW&quot;,&quot;EX:R6-&gt;DRAW&quot;,&quot;EX:R6-&gt;R6.L&quot;],&quot;transient&quot;:false}}]}" id="R6">
+        <UserObject label="⇕ 抽鱼和生成" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;C:W:DRAW&quot;,&quot;C:W:R6.L&quot;,&quot;E:DRAW-&gt;FISHAI&quot;,&quot;E:R5-&gt;DRAW&quot;,&quot;EX:R6-&gt;DRAW&quot;,&quot;EX:R6-&gt;R6.L&quot;],&quot;transient&quot;:false}}]}" id="R6">
           <mxCell style="rounded=0;whiteSpace=wrap;html=1;fontColor=#2b4a63;fillColor=#f6f9fc;strokeColor=#a8bccd;strokeWidth=2;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;" vertex="1" parent="C:R6">
             <mxGeometry x="10" y="10" width="1260" height="24" as="geometry" />
           </mxCell>
@@ -372,9 +411,9 @@
             <mxGeometry x="0" y="0" width="590" height="40" as="geometry" />
         </mxCell>
         <mxCell id="C:R7" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#9fb4c7;strokeWidth=1;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontalStack=0;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:ROOT">
-            <mxGeometry x="10" y="1994" width="1280" height="148" as="geometry" />
+            <mxGeometry x="10" y="2300" width="1280" height="148" as="geometry" />
         </mxCell>
-        <mxCell id="R7" value="七、范围外&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;超出中鱼范畴 · 不折叠&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#2b4a63;fillColor=#f6f9fc;strokeColor=#a8bccd;strokeWidth=2;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;" vertex="1" parent="C:R7">
+        <mxCell id="R7" value="范围外" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#2b4a63;fillColor=#f6f9fc;strokeColor=#a8bccd;strokeWidth=2;align=center;verticalAlign=middle;fontSize=12;fontStyle=1;" vertex="1" parent="C:R7">
             <mxGeometry x="10" y="10" width="1260" height="24" as="geometry" />
         </mxCell>
         <mxCell id="C:W:FISHAI" value="" style="rounded=0;html=1;fillColor=none;strokeColor=none;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=0;" vertex="1" parent="C:R7">
