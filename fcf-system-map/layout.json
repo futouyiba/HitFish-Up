@@ -144,26 +144,10 @@
           "role": "title"
         },
         {
-          "ref": "C:C1/F1"
-        },
-        {
-          "ref": "C:C1/F2"
-        },
-        {
-          "ref": "C:C1/F3"
-        },
-        {
-          "node": "R2.F.HAB"
-        },
-        {
-          "ref": "C:C1/AFF"
+          "ref": "C:C1/GRID"
         },
         {
           "ref": "C:C1/AGG"
-        },
-        {
-          "node": "R2.C1.V",
-          "w": 620
         }
       ]
     },
@@ -482,8 +466,7 @@
       "even": true
     },
     "C:C1/AGG": {
-      "axis": "h",
-      "even": true,
+      "axis": "v",
       "children": [
         {
           "node": "R2.C1.A1"
@@ -493,6 +476,9 @@
         },
         {
           "node": "R2.C1.A3"
+        },
+        {
+          "node": "R2.C1.V"
         }
       ]
     },
@@ -513,79 +499,33 @@
         }
       ]
     },
-    "C:C1/F1": {
+    "C:C1/GRID": {
+      "axis": "h",
+      "even": true,
+      "children": [
+        {
+          "ref": "C:C1/C1"
+        },
+        {
+          "ref": "C:C1/C2"
+        },
+        {
+          "ref": "C:C1/C3"
+        }
+      ]
+    },
+    "C:C1/C1": {
       "axis": "v",
       "children": [
         {
           "node": "R2.F.CORE"
         },
         {
-          "ref": "C:C1/F1/I"
+          "ref": "C:C1/C1/I"
         },
         {
-          "ref": "C:C1/F1/GATE"
-        }
-      ]
-    },
-    "C:C1/F1/I": {
-      "axis": "h",
-      "even": true,
-      "children": [
-        {
-          "icon": "square"
+          "node": "R2.F.HAB"
         },
-        {
-          "icon": "triangle"
-        }
-      ]
-    },
-    "C:C1/F2": {
-      "axis": "v",
-      "children": [
-        {
-          "node": "R2.F.SEC"
-        },
-        {
-          "ref": "C:C1/F2/I"
-        }
-      ]
-    },
-    "C:C1/F2/I": {
-      "axis": "h",
-      "even": true,
-      "children": [
-        {
-          "icon": "hexagon"
-        },
-        {
-          "icon": "circle"
-        }
-      ]
-    },
-    "C:C1/F3": {
-      "axis": "v",
-      "children": [
-        {
-          "node": "R2.F.SKIP"
-        },
-        {
-          "ref": "C:C1/F3/I"
-        }
-      ]
-    },
-    "C:C1/F3/I": {
-      "axis": "h",
-      "even": true,
-      "children": [
-        {
-          "icon": "hexagon-off"
-        }
-      ]
-    },
-    "C:C1/F1/GATE": {
-      "axis": "h",
-      "even": true,
-      "children": [
         {
           "node": "R2.GATE"
         },
@@ -597,21 +537,70 @@
         },
         {
           "node": "R2.C1.GFAIL"
+        },
+        {
+          "node": "R2.C1.K"
         }
       ]
     },
-    "C:C1/AFF": {
+    "C:C1/C1/I": {
       "axis": "h",
       "even": true,
       "children": [
         {
-          "node": "R2.C1.K"
+          "icon": "square"
+        },
+        {
+          "icon": "triangle"
+        }
+      ]
+    },
+    "C:C1/C2": {
+      "axis": "v",
+      "children": [
+        {
+          "node": "R2.F.SEC"
+        },
+        {
+          "ref": "C:C1/C2/I"
         },
         {
           "node": "R2.C1.S"
+        }
+      ]
+    },
+    "C:C1/C2/I": {
+      "axis": "h",
+      "even": true,
+      "children": [
+        {
+          "icon": "hexagon"
+        },
+        {
+          "icon": "circle"
+        }
+      ]
+    },
+    "C:C1/C3": {
+      "axis": "v",
+      "children": [
+        {
+          "node": "R2.F.SKIP"
+        },
+        {
+          "ref": "C:C1/C3/I"
         },
         {
           "node": "R2.C1.X"
+        }
+      ]
+    },
+    "C:C1/C3/I": {
+      "axis": "h",
+      "even": true,
+      "children": [
+        {
+          "icon": "hexagon-off"
         }
       ]
     }
