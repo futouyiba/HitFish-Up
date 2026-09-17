@@ -109,9 +109,9 @@ page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
 
 **压缩阶梯**：`中鱼升级（本体）→ FCF v1 → Simplified V0 → 0.3.4 → 0.3.4.0-B（当前版本投影）`。每一层是范围更小的投影，不是不同系统。
 
-**0.3.4.0-B** 是唯一登记完毕的 lens：**16 ACTIVE / 8 BOUNDARY / 42 OUT**。
+**0.3.4.0-B** 是唯一登记完毕的 lens：**15 ACTIVE / 8 BOUNDARY / 44 OUT**。
 
-- ACTIVE：SYS / 行2 / 烘焙 / 派生环境场 / **通道 1 及其全部分解**（核心·次要·排除·该通道的值 / 栖息地动态偏好 / 门控 / 通过·不通过）
+- ACTIVE：SYS / 行2 / 烘焙 / **通道 1 及其全部分解**（核心·次要·排除·该通道的值 / 栖息地动态偏好 / 门控 / 通过·不通过）
 - BOUNDARY：行1 及其三块与 L1 细节（B 消费的输入）
 - OUT：通道 2–5（活性·进食动机·警戒度·动态进食偏好，全在 B 的「不交付」清单里）、行3–7 全域
 
@@ -139,7 +139,7 @@ page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
 stable IDs:            66 (unique, syntax-safe)
 edges:                 24 semantic + 62 structural (root->row edges not drawn)
 views:                 overall, 0340b (default overall)
-scope lens:            0.3.4.0-B — 16 ACTIVE / 8 BOUNDARY / 42 OUT, all nodes classified once
+scope lens:            0.3.4.0-B — 15 ACTIVE / 8 BOUNDARY / 44 OUT, all nodes classified once
 ladder declared, unassigned: 0.3.4, SIMPLIFIED-V0, FCF-V1
 contracts:             10 entries (refs valid)
 determinism:           consecutive builds byte-identical; committed artifact fresh
