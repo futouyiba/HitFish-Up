@@ -45,6 +45,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -68,6 +69,8 @@ KIND_STYLE = {
     "sec":     ("rounded=1;dashed=1;", "#fff2cc", "#d6b656"),
     "skip":    ("rounded=1;dashed=1;", "#f5f5f5", "#aaaaaa"),
     "gate":    ("rhombus;whiteSpace=wrap;html=1;", "#f8cecc", "#b85450"),
+    "end":     ("rounded=1;arcSize=50;strokeWidth=2;", "#dae8fc", "#6c8ebf"),
+    "factor":  ("rounded=0;", "#dae8fc", "#6c8ebf"),
     "outside": ("rounded=1;dashed=1;", "#f5f5f5", "#a6a6a6"),
     "group":   ("rounded=1;dashed=1;strokeWidth=1;", "#fcfcfc", "#bbbbbb"),
     "gtitle":  ("rounded=0;", "#eeeeee", "#999999"),
@@ -92,7 +95,6 @@ CONTAINER_STROKE_DEEP = "#dde5ec"
 TITLE_FILL, TITLE_STROKE, TITLE_FONT = "#f6f9fc", "#a8bccd", "#2b4a63"
 TITLE_EXTRA = ("align=center;verticalAlign=middle;fontSize=12;fontStyle=1;")
 
-ANCHOR_STYLE = "endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#b3b3b3;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;"
 EDGE_BASE = (
     "edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=1.5;"
 )
@@ -106,6 +108,9 @@ EDGE_TYPES = {
 
 DIRS = {
     "N": (0.5, 0), "S": (0.5, 1), "E": (1, 0.5), "W": (0, 0.5),
+    # 四个角也给出来：多路汇进同一个框时（如两个因子汇进门控、两路汇进聚合），
+    # 各自钉在框的一个角上，线才不会叠在最后一段上。
+    "NW": (0, 0), "NE": (1, 0), "SW": (0, 1), "SE": (1, 1),
 }
 
 LENS_EDGE_GRAY = "#a6a6a6"
@@ -173,11 +178,14 @@ ICON_PREFIX = "I:"
 LEAF_W = {
     "data": 260, "l1": 250, "process": 260, "cube": 260, "outside": 260,
     "group": 300, "core": 190, "sec": 190, "skip": 190, "gate": 130,
+    "end": 300, "factor": 40,
 }
 DEFAULT_LEAF_W = 240
 ROOT_X, ROOT_Y = 40, 150
 # 控件区硬编码坐标占用的最小页宽（图例 y=底部那排，最右一格到 x=1370）。
 CONTROLS_MIN_W = 1410
+# 绕行边的"先纵向挪出横带"留白（像素）。
+ROUTE_GUTTER = 20
 
 
 def load_layout(root):
@@ -193,19 +201,27 @@ def resolve_layout(lay, nodes):
     def build(spec, cid, parent, axis):
         kids = []
         for ch in spec.get("children", []):
-            if "icon" in ch:
-                if ch["icon"] not in ICON_SHAPES:
-                    sys.exit("error: layout.json 用了未知图标 %r" % ch["icon"])
-                icon = {"kind": "leaf", "id": ICON_PREFIX + cid + "/" + str(len(kids)),
-                        "spec": ch, "parent": cid, "icon": ch["icon"]}
-                kids.append(icon)
-            elif "node" in ch:
+            # `"node"` 先判：`{"node": "R2.C1.F1", "icon": "square"}` 是「把某个
+            # **语义节点**画成图形」，而 `{"icon": "square"}` 是纯装饰图形。
+            if "node" in ch:
                 if ch["node"] not in by_id:
                     sys.exit("error: layout.json 引用了 graph.json 里没有的节点 %r"
                              % ch["node"])
                 leaf = {"kind": "leaf", "id": ch["node"], "spec": ch,
                         "parent": cid}
+                if ch.get("icon"):
+                    # 形状即因子：cell id 仍是节点 id，所以边照样能接上去，
+                    # 只是不写字。
+                    if ch["icon"] not in ICON_SHAPES:
+                        sys.exit("error: layout.json 用了未知图标 %r" % ch["icon"])
+                    leaf["icon"] = ch["icon"]
                 kids.append(leaf)
+            elif "icon" in ch:
+                if ch["icon"] not in ICON_SHAPES:
+                    sys.exit("error: layout.json 用了未知图标 %r" % ch["icon"])
+                icon = {"kind": "leaf", "id": ICON_PREFIX + cid + "/" + str(len(kids)),
+                        "spec": ch, "parent": cid, "icon": ch["icon"]}
+                kids.append(icon)
             elif "ref" in ch:
                 if ch["ref"] not in containers:
                     sys.exit("error: layout.json 引用了未定义的容器 %r" % ch["ref"])
@@ -260,7 +276,10 @@ def resolve_layout(lay, nodes):
     seen = {}
 
     def count(n):
-        if n["kind"] == "leaf" and not n.get("icon"):
+        # 每个叶子都登记一次 —— 包括画成矢量图形的**语义节点**（它们也是叶子，
+        # 只是不写字）。纯装饰图标（`I:` 前缀）登记进来无害：`miss` 只查 graph
+        # 里的节点 id，`dup` 也只会被真正出现两次的 id 触发。
+        if n["kind"] == "leaf":
             seen[n["id"]] = seen.get(n["id"], 0) + 1
         for c in n.get("children", []):
             count(c)
@@ -395,6 +414,30 @@ def measure(node, forced_w, ctx):
     hid = [c for c in kids if not ctx["visible"](c)]
     ind = node["indent"]
     if node["axis"] == "h":
+        # 贴边壳（wrap() 造的那层，border=0、无边框）：只有一个子块。壳的宽度由父容器
+        # 给（引擎也会把它撑满，实测 `C:W:R2.C1.A1` 被撑到 1220），子块按自身宽度放在
+        # 壳里 —— 声明 `center` 就居中，否则靠左。壳的 stackBorder 必须写成同一个偏移，
+        # 否则引擎会把子块放到 x=0，发出来的坐标就不再是首轮不动点。
+        if node.get("bare") and len(vis) <= 1:
+            c = vis[0] if vis else None
+            pad = 0
+            if c is None:
+                node["_w"] = forced_w or 0
+                node["_h"] = 0
+            else:
+                measure(c, None, ctx)
+                inner_w = (forced_w or c["_w"]) - 2 * b - ind
+                if c["spec"].get("center"):
+                    pad = max(0, (inner_w - c["_w"]) // 2)
+                c["_x"], c["_y"] = ind + b + pad, b
+                node["_w"] = forced_w if forced_w else (2 * b + ind + pad + c["_w"])
+                node["_h"] = c["_h"] + 2 * b
+                c["_h"] = node["_h"] - 2 * b
+            node["_pad"] = pad
+            for c in hid:
+                measure(c, None, ctx)
+                c["_x"], c["_y"] = ind + b, b
+            return
         # `even`：把可用内宽**均分**给可见子块，让每行的块左右两边对齐成一个格子阵。
         # 硬编码块宽在内容一变就得重算，而且行与行的块宽不齐看着就乱。
         # 算出来的宽度只作为 forced_w 往下传，**不改写 spec** —— 改写会让几何依赖
@@ -407,9 +450,16 @@ def measure(node, forced_w, ctx):
         # 见探针 P3），所以叶子的发射高度必须写成容器内高，否则首次点击会跳。
         off = ind + b
         for c in vis:
-            measure(c, each, ctx)
-            c["_x"], c["_y"] = off, b
-            off += c["_w"] + sp
+            # 声明了 `w` 的子块自己定宽（`even` 只决定它占哪个格子）。
+            measure(c, None if c["spec"].get("w") else each, ctx)
+            # `even` 均分的是**格子**；块比格子窄时在格内居中 —— 图标尤其需要，
+            # 否则一排形状会全挤在各自格子的左边。
+            slot = each if each else c["_w"]
+            pad = 0
+            if each and (c.get("icon") or c["spec"].get("center")):
+                pad = max(0, (slot - c["_w"]) // 2)
+            c["_x"], c["_y"] = off + pad, b
+            off += slot + sp
         # 水平容器的宽度**只有一个来源**：父容器的 fill。它自己如果也去 resizeParent，
         # 两边会互相覆盖，哪次布局跑赢就取哪个值 —— 那样发出来的坐标就不是不动点了
         # （独立复核实测过：行一的行内横带在 824 与 1336 之间来回跳）。所以水平容器
@@ -431,13 +481,19 @@ def measure(node, forced_w, ctx):
         inner = node["_w"] - 2 * b - ind
         y = b
         for c in vis:
-            # 垂直容器把所有子块宽度撑满 —— 叶子、子容器、贴边壳一律如此。
-            measure(c, inner, ctx)
-            c["_x"], c["_y"] = ind + b, y
+            # 子块默认被撑满（forced_w = inner）；声明 `w` 或 `center` 的子块自己定宽
+            # ——「汇聚漏斗」（AGG）就靠这个：否则一个 260 宽的菱形放进 1240 宽的
+            # 列里只能左对齐，看着像掉到边上去了。
+            own = c["spec"].get("w") or c["spec"].get("center")
+            measure(c, None if own else inner, ctx)
+            c["_x"] = (ind + b + max(0, (inner - c["_w"]) // 2)
+                       if c["spec"].get("center") else ind + b)
+            c["_y"] = y
             y += c["_h"] + sp
         node["_h"] = ((y - sp) + b) if vis else (2 * b)
         for c in hid:
-            measure(c, inner, ctx)
+            own = c["spec"].get("w") or c["spec"].get("center")
+            measure(c, None if own else inner, ctx)
             c["_x"], c["_y"] = ind + b, b
     # 侧钉（movable=0）：不进栈、不计入父高，坐标由声明给定。
     for c in node.get("children", []):
@@ -463,21 +519,20 @@ def layout(lay, graph, views):
             walk(c, depth + 1)
     walk(root)
 
-    # 结构边：仍是「父节点 → 子节点」的语义层级（与版面树无关），保持原样
-    nodes = graph["nodes"]
-    structural = []
-    for n in nodes:
-        # 只跳过"没有父"的节点。原来还跳过"父是根"的那些，用来不画 SYS→行；
-        # 现在 SYS 已删、七行本身成了顶层，那条规则会把行→方块也一起吞掉。
-        p = n.get("parent")
-        if p is None:
-            continue
-        structural.append({"from": p, "to": n["id"],
-                           "id": "EX:%s->%s" % (p, n["id"])})
+    # 结构边（行 → 该行顶层块）：**不再画**。
+    # 容器嵌套已经把"谁包着谁"画出来了，再叠一层线反而是本图最主要的"挡内容"来源：
+    # 实测 27 条结构边里，行一/行五/行六/行七 那几条中心连中心，正好横穿各自行内的
+    # 方块（如 行六→鱼侧透传 穿过 抽鱼和生成）。Design Owner 2026-09-17 反馈
+    # "好多箭头上上下下，把内容都挡住了" —— 删掉这一层是最大的一笔。
     semantic = []
     for e in graph["edges"]:
         semantic.append({"from": e["from"], "to": e["to"], "type": e["type"],
                          "exit": e.get("exit"), "entry": e.get("entry"),
+                         "exitDx": e.get("exitDx"), "exitDy": e.get("exitDy"),
+                         "entryDx": e.get("entryDx"), "entryDy": e.get("entryDy"),
+                         "points": e.get("points"),
+                         "route": e.get("route"), "lane": e.get("lane"),
+                         "via": e.get("via"),
                          "id": "E:%s->%s" % (e["from"], e["to"])})
 
     by_cid = {}
@@ -488,6 +543,86 @@ def layout(lay, graph, views):
             index(c)
     index(root)
 
+    # 边的默认出入口：按源/目标的相对位置给一组（下→上 / 右→左 …）。
+    # 不设默认的话线是**中心连中心** —— 一条斜线从源方块拉到目标方块，中途压过
+    # 挡在中间的所有方块（实测 `BAKE→DEF` 一条就穿过十几个）。钉住出入口之后，
+    # 线从边上出去、从边上进来，只在方块的间隙里走。
+    # graph.json 里显式写了 exit/entry 的边不被覆盖。
+    def _abs(n):
+        x = y = 0
+        cur = n
+        while cur is not None:
+            x += cur["_x"]
+            y += cur["_y"]
+            cur = by_cid.get(cur["parent"]) if cur["parent"] else None
+        return x, y
+
+    for e in semantic:
+        s, t = by_cid.get(e["from"]), by_cid.get(e["to"])
+        if s is None or t is None:
+            continue
+        sx, sy = _abs(s)
+        tx, ty = _abs(t)
+        tcx, tcy = tx + t["_w"] / 2, ty + t["_h"] / 2
+
+        # 「绕行」：跨行的长边不走中间（中间横着好几行），改为沿页面左右空白走廊绕。
+        # 走廊 x 由页面几何算出来、不写死 —— 版面改了它跟着改。
+        # 为什么非要途经点：**平行四边形（kind=data）会忽略 exitX/exitY**（实测：
+        # 圆角矩形、立方体都认，"从左边出去"对行一的三个数据块完全不生效），
+        # 那条线于是从方块正中往下扎，横穿行一的细节带。见 memory 的布局硬规则。
+        if e.get("route") in ("left", "right"):
+            lane = e.get("lane") or 0
+            mx = (8 + lane * 9 if e["route"] == "left"
+                  else ROOT_X + root["_w"] + 12 + lane * 9)
+            mid_y = round(ty + t["_h"] / 2)
+            if e.get("via") == "S":
+                # 先纵向挪出自己那一条横带再横穿：同行邻居会挡住直着过去的路
+                # （行一的「投放与机会强度」要往右走，正撞上右边的「习性配置的构成」）。
+                y = round(sy + s["_h"] + ROUTE_GUTTER)
+                e["points"] = [[round(sx + s["_w"] / 2), y], [mx, y], [mx, mid_y]]
+            else:
+                e["points"] = [[mx, round(sy + s["_h"] / 2)], [mx, mid_y]]
+            e["exit"] = e["entry"] = None
+            continue
+
+        def _frac(v, lo, span):
+            # 目标中线**落在源的那条边上**才把出点挪过去；落在边外就保持中分。
+            # （否则"从左边出去"会被算成 y=1.0，变成从**下边**出去 —— 实测过：
+            #   行一→烘焙 的三条边因此横穿行一的细节带。）
+            if not span:
+                return None
+            f = (v - lo) / span
+            return round(f, 4) if 0.0 <= f <= 1.0 else None
+
+        # 没写方向的边：按相对位置定方向（下→上 / 右→左 …）。
+        if not (e["exit"] or e["entry"]):
+            dx = tcx - (sx + s["_w"] / 2)
+            dy = tcy - (sy + s["_h"] / 2)
+            if abs(dy) >= abs(dx):
+                e["exit"], e["entry"] = ("S", "N") if dy > 0 else ("N", "S")
+            else:
+                e["exit"], e["entry"] = ("E", "W") if dx > 0 else ("W", "E")
+
+        # 出点对准目标中线 —— 于是"下→上"是一条**竖直直线**，不会先斜着走一段
+        # 再拐（那一段上的方块会被整片压掉）。四角（NW/NE/…）是显式钉点，不参与。
+        ex = e["exit"]
+        if len(ex) == 1:
+            if ex in ("N", "S"):
+                f = _frac(tcx, sx, s["_w"])
+                e["exitX"] = f if f is not None else 0.5
+                e["exitY"] = 0.0 if ex == "N" else 1.0
+            else:
+                f = _frac(tcy, sy, s["_h"])
+                e["exitX"] = 0.0 if ex == "W" else 1.0
+                e["exitY"] = f if f is not None else 0.5
+        # 入口用 draw.io 的默认：那条边的中点。四角同理。
+        en = e["entry"]
+        if len(en) == 1:
+            if en in ("N", "S"):
+                e["entryX"], e["entryY"] = 0.5, (0.0 if en == "N" else 1.0)
+            else:
+                e["entryX"], e["entryY"] = (0.0 if en == "W" else 1.0), 0.5
+
     titles = {n["id"] for n in by_cid.values()
               if n["kind"] == "leaf" and n["spec"].get("role") == "title"}
     # 控件区（标题 / 提示 / 视图按钮 / 图例）是硬编码坐标，图例最右到 x=1370。
@@ -496,7 +631,7 @@ def layout(lay, graph, views):
     page_h = int(ROOT_Y + root["_h"] + 220)
     return {"root": root, "by_cid": by_cid, "order": order,
             "parent_of": parent_of, "ctx": ctx, "titles": titles,
-            "page_w": page_w, "page_h": page_h}, structural, semantic
+            "page_w": page_w, "page_h": page_h}, semantic
 
 
 def subtree_cell_ids(node):
@@ -525,15 +660,15 @@ def subtree_node_ids(node):
     return out
 
 
-def edges_touching(ids, structural, semantic):
+def edges_touching(ids, semantic):
     out = []
-    for e in semantic + structural:
+    for e in semantic:
         if e["from"] in ids or e["to"] in ids:
             out.append(e["id"])
     return sorted(out)
 
 
-def container_toggles(plan, structural, semantic):
+def container_toggles(plan, semantic):
     """每个可折叠容器要 toggle 的 cell 列表，键 = 它的**标题节点 id**
     （与 views.json 的 expansion 对齐）。
 
@@ -556,8 +691,7 @@ def container_toggles(plan, structural, semantic):
             if c is title or not when_of(c):
                 continue
             cells.append(c["id"])
-            cells.extend(edges_touching(subtree_node_ids(c),
-                                        structural, semantic))
+            cells.extend(edges_touching(subtree_node_ids(c), semantic))
         if cells:
             toggles[title["id"]] = sorted(set(cells))
     return toggles
@@ -570,7 +704,7 @@ def class_of(node_id, assignment):
     return None
 
 
-def lens_actions(scope, nodes, kinds, structural, semantic, mode, titles=()):
+def lens_actions(scope, nodes, kinds, semantic, mode, titles=()):
     """Style + opacity actions for a scope lens.
 
     mode='apply' -> colour the three classes AND dim out-of-scope cells
@@ -597,7 +731,7 @@ def lens_actions(scope, nodes, kinds, structural, semantic, mode, titles=()):
 
     by_class = {c: sorted(assignment.get(c, [])) for c in ("ACTIVE", "BOUNDARY", "OUT")}
     all_nodes = [n["id"] for n in nodes]
-    all_edges = [e["id"] for e in semantic] + [e["id"] for e in structural]
+    all_edges = [e["id"] for e in semantic]
 
     gray_edges, dash_edges = [], []
     for e in semantic:
@@ -656,17 +790,17 @@ def lens_actions(scope, nodes, kinds, structural, semantic, mode, titles=()):
 
 # ---------------------------------------------------------------- easing ----
 
-def view_button_payload(view, scope_by_id, nodes, kinds, semantic, structural,
+def view_button_payload(view, scope_by_id, nodes, kinds, semantic,
                         toggles, titles=()):
     acts = []
     lens_id = view.get("scopeLens", "keep")
     if lens_id == "clear":
         for s in scope_by_id.values():
             if s.get("lens"):
-                acts.extend(lens_actions(s, nodes, kinds, structural, semantic,
+                acts.extend(lens_actions(s, nodes, kinds, semantic,
                                          "clear", titles))
     elif lens_id not in (None, "keep"):
-        acts.extend(lens_actions(scope_by_id[lens_id], nodes, kinds, structural,
+        acts.extend(lens_actions(scope_by_id[lens_id], nodes, kinds,
                                  semantic, "apply", titles))
     exp = view.get("expansion") or {}
     for key in ("collapse", "expand"):
@@ -697,22 +831,34 @@ def vertex(cid, value, style, x, y, w, h, layer, link=None, visible=True):
             % (xesc(cid), xesc(value), xesc(style), xesc(layer), vis, geo))
 
 
-def edge(eid, estyle, layer, src, tgt, visible=True, value=""):
+def edge(eid, estyle, layer, src, tgt, visible=True, value="", points=None):
     vis = "" if visible else ' visible="0"'
+    if points:
+        # 显式途经点（绝对页面坐标）。**这是最后的逃生口**：这个 viewer build
+        # 完全忽略 exitX/exitY（实测：改 exitX、换 edgeStyle 都不动），所以
+        # "这条线要绕左边空白走"只能靠点把它钉住。
+        body = ('            <mxGeometry relative="1" as="geometry">\n'
+                '              <Array as="points">\n'
+                + "".join('                <mxPoint x="%d" y="%d" />\n' % (int(px), int(py))
+                          for px, py in points)
+                + '              </Array>\n'
+                  '            </mxGeometry>\n')
+    else:
+        body = '            <mxGeometry relative="1" as="geometry" />\n'
     return ('        <mxCell id="%s" value="%s" style="%s" edge="1" parent="%s" source="%s" target="%s"%s>\n'
-            '            <mxGeometry relative="1" as="geometry" />\n'
+            '%s'
             '        </mxCell>\n'
-            % (xesc(eid), xesc(value), xesc(estyle), xesc(layer), xesc(src), xesc(tgt), vis))
+            % (xesc(eid), xesc(value), xesc(estyle), xesc(layer), xesc(src), xesc(tgt), vis, body))
 
 
 def text_cell(cid, value, style, x, y, w, h):
     return vertex(cid, value, style, x, y, w, h, "Layer:Controls")
 
 
-def emit(graph, scopes, views, plan, structural, semantic, default_view):
+def emit(graph, scopes, views, plan, semantic, default_view):
     kinds = {n["id"]: n.get("kind", DEFAULT_KIND) for n in graph["nodes"]}
     gby = {n["id"]: n for n in graph["nodes"]}
-    toggles = container_toggles(plan, structural, semantic)
+    toggles = container_toggles(plan, semantic)
     ctx = plan["ctx"]
     PAGE_W, PAGE_H = plan["page_w"], plan["page_h"]
     out = []
@@ -743,7 +889,7 @@ def emit(graph, scopes, views, plan, structural, semantic, default_view):
 
     for i, v in enumerate(views["views"]):
         payload = view_button_payload(v, {s["id"]: s for s in scopes["scopes"]},
-                                      graph["nodes"], kinds, semantic, structural,
+                                      graph["nodes"], kinds, semantic,
                                       toggles, plan["titles"])
         is_default = v["id"] == default_view
         x, y, w, h = 80 + i * 190, 54, 175, 34
@@ -782,7 +928,7 @@ def emit(graph, scopes, views, plan, structural, semantic, default_view):
         for c in node.get("children", []):
             if not ctx["visible"](c):
                 hidden_nodes |= subtree_cell_ids(c)
-    hidden_edges = set(edges_touching(hidden_nodes, structural, semantic))
+    hidden_edges = set(edges_touching(hidden_nodes, semantic))
 
     for cid in plan["order"]:
         n = plan["by_cid"][cid]
@@ -799,7 +945,7 @@ def emit(graph, scopes, views, plan, structural, semantic, default_view):
                      "horizontalStack=%d;stackSpacing=%d;stackBorder=%d;%s"
                      % (stroke, 0 if n["axis"] == "h" else 1,
                         1 if n["axis"] == "h" else 0,
-                        ctx["spacing"], border_of(n, ctx), indent))
+                        ctx["spacing"], n.get("_pad", border_of(n, ctx)), indent))
             a(vertex(cid, "", style, x, y, w, h, parent,
                      visible=cid not in hidden_nodes))
             continue
@@ -828,10 +974,7 @@ def emit(graph, scopes, views, plan, structural, semantic, default_view):
         a(vertex(n["id"], value, style, x, y, w, h, parent, link=link,
                  visible=n["id"] not in hidden_nodes))
 
-    # ---- edges: structural (faint) then semantic (typed) -----------------
-    for e in structural:
-        a(edge(e["id"], ANCHOR_STYLE, "Layer:Main", e["from"], e["to"],
-               visible=e["id"] not in hidden_edges))
+    # ---- edges: 只有语义边（层级关系由容器嵌套表达，不另画线） -----------
     for e in semantic:
         kind = kinds.get(e["from"], DEFAULT_KIND)
         _, fill, stroke = style_of(kind)
@@ -841,16 +984,19 @@ def emit(graph, scopes, views, plan, structural, semantic, default_view):
                  "endArrow=%s;strokeColor=%s;" % (t["arrow"], stroke))
         if e.get("label"):
             style += "fontSize=10;fontColor=%s;" % stroke
-        for key, val in (("exit", e.get("exit")), ("entry", e.get("entry"))):
-            if val:
+        for key in ("exit", "entry"):
+            val = e.get(key)
+            fx, fy = e.get(key + "X"), e.get(key + "Y")
+            if fx is None and fy is None:
+                if not val:
+                    continue
                 fx, fy = DIRS[val]
-                style += "%sX=%s;%sY=%s;%sDx=0;%sDy=0;" % (
-                    "exit" if key == "exit" else "entry", fx,
-                    "exit" if key == "exit" else "entry", fy,
-                    "exit" if key == "exit" else "entry",
-                    "exit" if key == "exit" else "entry")
+            style += "%sX=%s;%sY=%s;%sDx=%s;%sDy=%s;" % (
+                key, fx, key, fy, key, e.get(key + "Dx", 0) or 0,
+                key, e.get(key + "Dy", 0) or 0)
         a(edge(e["id"], style, "Layer:Main", e["from"], e["to"],
-               visible=e["id"] not in hidden_edges, value=e.get("label", "")))
+               visible=e["id"] not in hidden_edges, value=e.get("label", ""),
+               points=e.get("points")))
 
     a('      </root>\n')
     a('    </mxGraphModel>\n')
@@ -865,8 +1011,8 @@ def build(root):
     src = load_sources(root)
     graph, scopes, views = src["graph"], src["scopes"], src["views"]
 
-    plan, structural, semantic = layout(load_layout(root), graph, views)
-    xml = emit(graph, scopes, views, plan, structural, semantic,
+    plan, semantic = layout(load_layout(root), graph, views)
+    xml = emit(graph, scopes, views, plan, semantic,
                views["defaultView"])
     out_path = root / "generated" / "fcf-system-map.drawio"
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -874,11 +1020,10 @@ def build(root):
         f.write(xml)
     digest = hashlib.sha256(xml.encode("utf-8")).hexdigest()
     n_cont = sum(1 for n in plan["by_cid"].values() if n["kind"] == "container")
-    n_cells = len(graph["nodes"]) + n_cont + len(structural) + len(semantic)
-    print("wrote %s: %d nodes + %d containers, %d structural + %d semantic edges, "
+    n_cells = len(graph["nodes"]) + n_cont + len(semantic)
+    print("wrote %s: %d nodes + %d containers, %d semantic edges, "
           "%d cells total, sha256=%s" % (out_path, len(graph["nodes"]), n_cont,
-                                         len(structural), len(semantic), n_cells,
-                                         digest[:16]))
+                                         len(semantic), n_cells, digest[:16]))
     return out_path
 
 
@@ -893,8 +1038,8 @@ def main():
     if args.out:
         src = load_sources(root)
         graph, scopes, views = src["graph"], src["scopes"], src["views"]
-        plan, structural, semantic = layout(load_layout(root), graph, views)
-        xml = emit(graph, scopes, views, plan, structural, semantic,
+        plan, semantic = layout(load_layout(root), graph, views)
+        xml = emit(graph, scopes, views, plan, semantic,
                    views["defaultView"])
         with open(args.out, "w", encoding="utf-8", newline="\n") as f:
             f.write(xml)
