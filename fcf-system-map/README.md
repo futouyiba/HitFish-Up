@@ -62,15 +62,19 @@ page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
 
 | 行 | 内容 | 可折叠 |
 |---|---|---|
-| 一、数据 | 环境上下文 · 钓场投鱼配置 · 鱼的习性配置 | ✓ |
+| 一、数据 | 环境上下文 · 钓场投鱼配置 · 鱼的习性配置 | ✗ 常显 section |
 | 二、烘焙 | 烘焙 → 派生环境场 → 空间分布权重 + 鱼侧动态参数 | ✓ |
-| 三、玩家策略与操作数据 | 钓具 / 钓组 · 姿态 → 呈现刺激（左右偏右） | ✓ |
+| 三、玩家策略与操作数据 | 钓具 / 钓组 · 姿态 → 呈现刺激（整体向右错开） | ✓ |
 | 四、响应 | 响应模块（适配系数） | ✓ |
 | 五、圆桌抽鱼 | 品质抽取调整 · 圆桌权重表构建 · 硬保底 · 动态权重调整 | ✓ |
 | 六、抽鱼和生成 | 鱼种 · 品质 · 大小 · 重量 ｜ 鱼侧动态参数透传 | ✓ |
 | 七、范围外 | 运行 Fish AI（刺鱼 / 博鱼） | ✗ 不折叠 |
 
-折叠时**行内全部方块与所连箭头一起隐藏**；行标题即折叠手柄。
+**折叠 = 只留标题条。** 七大层各是一个真容器（`childLayout=stackLayout`），
+标题条是常驻可见的第一个子块；收起该层时它下面的层**自动上移**，展开时下移。
+层内再展开同样会让位 —— 因为重排沿「垂直容器的连续链」传播（见 §7）。
+行三整体右缩 `marginLeft`，把左边 gutter 让给「派生环境场」，后者用 `movable=0`
+钉在 gutter 里：不进栈、不计入行高，但随行三一起移动、随行三一起收起。
 
 ## 2. 术语与流向的两条修正（2026-09-17 Design Owner）
 
@@ -94,7 +98,8 @@ page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
 
 | 文件 | 职责 |
 |---|---|
-| `graph.json` | 71 个节点（stable ID + **中文 label** + 英文 caption + 行归属 + lane + `kind` 形状 + `band` 行带高）+ 24 条语义边（只标"流过去的是什么"） |
+| `graph.json` | 66 个节点（stable ID + **中文 label** + 英文 caption + 行归属 + lane + `kind` 形状）+ 19 条语义边（只标"流过去的是什么"） |
+| `layout.json` | **版面**：容器包纳树（`C:` 前缀的容器 + `graph.json` 节点作叶子；轴线 / 间距 / 缩进 / 侧钉 / 折叠态） |
 | `scopes.json` | Scope = 压缩阶梯 + 透明度；`OVERALL`（不裁剪）+ `0.3.4.0-B`（lens，逐节点归类） |
 | `views.json` | View = 展开粒度 + 可选 lens |
 | `contracts.json` | 薄关联层：`semanticId → authorityRef / status / note` |
@@ -104,9 +109,9 @@ page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
 
 **压缩阶梯**：`中鱼升级（本体）→ FCF v1 → Simplified V0 → 0.3.4 → 0.3.4.0-B（当前版本投影）`。每一层是范围更小的投影，不是不同系统。
 
-**0.3.4.0-B** 是唯一登记完毕的 lens：**17 ACTIVE / 8 BOUNDARY / 46 OUT**。
+**0.3.4.0-B** 是唯一登记完毕的 lens：**16 ACTIVE / 8 BOUNDARY / 42 OUT**。
 
-- ACTIVE：SYS / 行2 / 封面 / 烘焙 / 派生环境场 / **通道 1 及其全部分解**（核心·次要·排除·该通道的值 / 栖息地动态偏好 / 门控 / 通过·不通过）
+- ACTIVE：SYS / 行2 / 烘焙 / 派生环境场 / **通道 1 及其全部分解**（核心·次要·排除·该通道的值 / 栖息地动态偏好 / 门控 / 通过·不通过）
 - BOUNDARY：行1 及其三块与 L1 细节（B 消费的输入）
 - OUT：通道 2–5（活性·进食动机·警戒度·动态进食偏好，全在 B 的「不交付」清单里）、行3–7 全域
 
@@ -131,10 +136,10 @@ page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
 ## 6. Validation
 
 ```
-stable IDs:            71 (unique, syntax-safe)
+stable IDs:            66 (unique, syntax-safe)
 edges:                 24 semantic + 62 structural (root->row edges not drawn)
 views:                 overall, 0340b (default overall)
-scope lens:            0.3.4.0-B — 17 ACTIVE / 8 BOUNDARY / 46 OUT, all nodes classified once
+scope lens:            0.3.4.0-B — 16 ACTIVE / 8 BOUNDARY / 42 OUT, all nodes classified once
 ladder declared, unassigned: 0.3.4, SIMPLIFIED-V0, FCF-V1
 contracts:             10 entries (refs valid)
 determinism:           consecutive builds byte-identical; committed artifact fresh
@@ -143,7 +148,7 @@ rename stability:      cell ID set and geometry invariant under label rename
 
 外加三项护栏，均已负向测试：**中文标签检查**（每个 label 必须含 CJK）、**顶点重叠检查**（任何两个方块碰撞即 FAIL）、**骨架漂移检查**（与 `skeleton.baseline.json` 比对，骨架一变即 FAIL）。
 
-官方 pinned viewer 运行时：七大层渲染、默认视图全展开、行折叠（连同所连箭头）、lens 着色 + 透明度（实测 ACTIVE `1.0` / BOUNDARY `0.70` / OUT `0.28`，全部仍 rendered）、零人工修补 —— 全部 PASS。
+官方 pinned viewer 运行时：七大层渲染、默认视图全展开、**折叠任一层时下方各层精确上移、展开时精确复原**（实测 40 轮零漂移；折叠后该层高度恰为 `标题 34 + 2×border 10 = 54`）、lens 着色 + 透明度（实测 ACTIVE `1.0` / BOUNDARY `0.70` / OUT `0.28`，全部仍 rendered）、零人工修补 —— 全部 PASS。
 
 > harness：预览沙箱读不了 `/Volumes` 卷，测试时镜像到 `/tmp` 再起服务；普通环境 `python3 ../spike/verify/serve.py` 后打开 `http://127.0.0.1:8799/fcf-system-map/build/viewer-harness.html`。
 
