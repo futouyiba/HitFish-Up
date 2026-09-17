@@ -50,7 +50,7 @@
         <mxCell id="C:R1" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#9fb4c7;strokeWidth=1;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontalStack=0;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:ROOT">
             <mxGeometry x="10" y="88" width="1280" height="222" as="geometry" />
         </mxCell>
-        <mxCell id="R1" value="一、数据&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;不可折叠的 section：数据的三个重要来源常显&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#1f3a52;fillColor=#f2f6fa;strokeColor=#7d9bb8;strokeWidth=2;align=left;spacingLeft=12;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="C:R1">
+        <mxCell id="R1" value="一、数据&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;不可折叠的 section：数据的三个重要来源常显&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#1f3a52;fillColor=#f2f6fa;strokeColor=#7d9bb8;strokeWidth=2;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="C:R1">
             <mxGeometry x="10" y="10" width="1260" height="34" as="geometry" />
         </mxCell>
         <mxCell id="C:R1/TOP" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#b9c9d8;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:R1">
@@ -84,7 +84,7 @@
             <mxGeometry x="10" y="322" width="1280" height="846" as="geometry" />
         </mxCell>
         <UserObject label="⇕ 二、烘焙&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;折叠后只留标题条 · 展开见五条计算通道&lt;/font&gt;" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;C:C1&quot;,&quot;C:R2/FC&quot;,&quot;C:W:BAKE&quot;,&quot;E:BAKE-&gt;DEF&quot;,&quot;E:BAKE-&gt;R2.C1&quot;,&quot;E:D.CONTEXT-&gt;BAKE&quot;,&quot;E:D.HABIT-&gt;BAKE&quot;,&quot;E:D.STOCK-&gt;BAKE&quot;,&quot;E:DEF-&gt;R2.F.HAB&quot;,&quot;E:R2.C1-&gt;R5&quot;,&quot;E:R2.F.CORE-&gt;R2.GATE&quot;,&quot;E:R2.F.HAB-&gt;R2.GATE&quot;,&quot;E:R2.GATE-&gt;R2.FAIL&quot;,&quot;E:R2.GATE-&gt;R2.PASS&quot;,&quot;EX:R2-&gt;BAKE&quot;,&quot;EX:R2-&gt;R2.C1&quot;,&quot;EX:R2-&gt;R2.FC&quot;,&quot;EX:R2.C1-&gt;R2.C1.K&quot;,&quot;EX:R2.C1-&gt;R2.C1.S&quot;,&quot;EX:R2.C1-&gt;R2.C1.V&quot;,&quot;EX:R2.C1-&gt;R2.C1.X&quot;,&quot;EX:R2.C1-&gt;R2.F.CORE&quot;,&quot;EX:R2.C1-&gt;R2.F.HAB&quot;,&quot;EX:R2.C1-&gt;R2.F.SEC&quot;,&quot;EX:R2.C1-&gt;R2.F.SKIP&quot;,&quot;EX:R2.C1-&gt;R2.FAIL&quot;,&quot;EX:R2.C1-&gt;R2.GATE&quot;,&quot;EX:R2.C1-&gt;R2.PASS&quot;,&quot;EX:R2.C2-&gt;R2.C2.K&quot;,&quot;EX:R2.C2-&gt;R2.C2.S&quot;,&quot;EX:R2.C2-&gt;R2.C2.V&quot;,&quot;EX:R2.C2-&gt;R2.C2.X&quot;,&quot;EX:R2.C3-&gt;R2.C3.K&quot;,&quot;EX:R2.C3-&gt;R2.C3.S&quot;,&quot;EX:R2.C3-&gt;R2.C3.V&quot;,&quot;EX:R2.C3-&gt;R2.C3.X&quot;,&quot;EX:R2.C4-&gt;R2.C4.K&quot;,&quot;EX:R2.C4-&gt;R2.C4.S&quot;,&quot;EX:R2.C4-&gt;R2.C4.V&quot;,&quot;EX:R2.C4-&gt;R2.C4.X&quot;,&quot;EX:R2.C5-&gt;R2.C5.K&quot;,&quot;EX:R2.C5-&gt;R2.C5.S&quot;,&quot;EX:R2.C5-&gt;R2.C5.V&quot;,&quot;EX:R2.C5-&gt;R2.C5.X&quot;,&quot;EX:R2.FC-&gt;R2.C2&quot;,&quot;EX:R2.FC-&gt;R2.C3&quot;,&quot;EX:R2.FC-&gt;R2.C4&quot;,&quot;EX:R2.FC-&gt;R2.C5&quot;],&quot;transient&quot;:false}}]}" id="R2">
-          <mxCell style="rounded=0;whiteSpace=wrap;html=1;fontColor=#1f3a52;fillColor=#f2f6fa;strokeColor=#7d9bb8;strokeWidth=2;align=left;spacingLeft=12;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="C:R2">
+          <mxCell style="rounded=0;whiteSpace=wrap;html=1;fontColor=#1f3a52;fillColor=#f2f6fa;strokeColor=#7d9bb8;strokeWidth=2;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="C:R2">
             <mxGeometry x="10" y="10" width="1260" height="34" as="geometry" />
           </mxCell>
         </UserObject>
@@ -97,7 +97,7 @@
         <mxCell id="C:C1" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#b9c9d8;strokeWidth=1;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontalStack=0;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:R2">
             <mxGeometry x="10" y="116" width="1260" height="318" as="geometry" />
         </mxCell>
-        <mxCell id="R2.C1" value="1 空间分布权重&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;环境侧&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#1f3a52;fillColor=#f2f6fa;strokeColor=#7d9bb8;strokeWidth=2;align=left;spacingLeft=12;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="C:C1">
+        <mxCell id="R2.C1" value="1 空间分布权重&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;环境侧&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#1f3a52;fillColor=#f2f6fa;strokeColor=#7d9bb8;strokeWidth=2;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="C:C1">
             <mxGeometry x="10" y="10" width="1240" height="34" as="geometry" />
         </mxCell>
         <mxCell id="C:C1/COLS" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#d0dbe5;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:C1">
@@ -146,7 +146,7 @@
             <mxGeometry x="10" y="446" width="1260" height="390" as="geometry" />
         </mxCell>
         <UserObject label="⇕ 鱼侧动态参数&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;通道 2–5&lt;/font&gt;" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;C:R2/FC/BOT&quot;,&quot;C:R2/FC/TOP&quot;,&quot;EX:R2.C2-&gt;R2.C2.K&quot;,&quot;EX:R2.C2-&gt;R2.C2.S&quot;,&quot;EX:R2.C2-&gt;R2.C2.V&quot;,&quot;EX:R2.C2-&gt;R2.C2.X&quot;,&quot;EX:R2.C3-&gt;R2.C3.K&quot;,&quot;EX:R2.C3-&gt;R2.C3.S&quot;,&quot;EX:R2.C3-&gt;R2.C3.V&quot;,&quot;EX:R2.C3-&gt;R2.C3.X&quot;,&quot;EX:R2.C4-&gt;R2.C4.K&quot;,&quot;EX:R2.C4-&gt;R2.C4.S&quot;,&quot;EX:R2.C4-&gt;R2.C4.V&quot;,&quot;EX:R2.C4-&gt;R2.C4.X&quot;,&quot;EX:R2.C5-&gt;R2.C5.K&quot;,&quot;EX:R2.C5-&gt;R2.C5.S&quot;,&quot;EX:R2.C5-&gt;R2.C5.V&quot;,&quot;EX:R2.C5-&gt;R2.C5.X&quot;,&quot;EX:R2.FC-&gt;R2.C2&quot;,&quot;EX:R2.FC-&gt;R2.C3&quot;,&quot;EX:R2.FC-&gt;R2.C4&quot;,&quot;EX:R2.FC-&gt;R2.C5&quot;],&quot;transient&quot;:false}}]}" id="R2.FC">
-          <mxCell style="rounded=0;whiteSpace=wrap;html=1;fontColor=#1f3a52;fillColor=#f2f6fa;strokeColor=#7d9bb8;strokeWidth=2;align=left;spacingLeft=12;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="C:R2/FC">
+          <mxCell style="rounded=0;whiteSpace=wrap;html=1;fontColor=#1f3a52;fillColor=#f2f6fa;strokeColor=#7d9bb8;strokeWidth=2;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="C:R2/FC">
             <mxGeometry x="10" y="10" width="1240" height="34" as="geometry" />
           </mxCell>
         </UserObject>
@@ -159,7 +159,7 @@
         <mxCell id="C:W:R2.C2" value="" style="rounded=0;html=1;fillColor=none;strokeColor=none;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=0;" vertex="1" parent="C:C2">
             <mxGeometry x="10" y="10" width="584" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="R2.C2" value="2 活性 Activity&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;鱼侧&lt;/font&gt;" style="rounded=1;dashed=1;strokeWidth=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fcfcfc;strokeColor=#bbbbbb;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;fontSize=11;fontColor=#888888;" vertex="1" parent="C:W:R2.C2">
+        <mxCell id="R2.C2" value="2 活性 Activity&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;鱼侧&lt;/font&gt;" style="rounded=1;dashed=1;strokeWidth=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fcfcfc;strokeColor=#bbbbbb;align=center;verticalAlign=middle;fontSize=12;fontColor=#555555;" vertex="1" parent="C:W:R2.C2">
             <mxGeometry x="0" y="0" width="300" height="40" as="geometry" />
         </mxCell>
         <mxCell id="C:C2/KV" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#dde5ec;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:C2">
@@ -183,7 +183,7 @@
         <mxCell id="C:W:R2.C3" value="" style="rounded=0;html=1;fillColor=none;strokeColor=none;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=0;" vertex="1" parent="C:C3">
             <mxGeometry x="10" y="10" width="584" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="R2.C3" value="3 进食动机&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;鱼侧&lt;/font&gt;" style="rounded=1;dashed=1;strokeWidth=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fcfcfc;strokeColor=#bbbbbb;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;fontSize=11;fontColor=#888888;" vertex="1" parent="C:W:R2.C3">
+        <mxCell id="R2.C3" value="3 进食动机&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;鱼侧&lt;/font&gt;" style="rounded=1;dashed=1;strokeWidth=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fcfcfc;strokeColor=#bbbbbb;align=center;verticalAlign=middle;fontSize=12;fontColor=#555555;" vertex="1" parent="C:W:R2.C3">
             <mxGeometry x="0" y="0" width="300" height="40" as="geometry" />
         </mxCell>
         <mxCell id="C:C3/KV" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#dde5ec;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:C3">
@@ -210,7 +210,7 @@
         <mxCell id="C:W:R2.C4" value="" style="rounded=0;html=1;fillColor=none;strokeColor=none;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=0;" vertex="1" parent="C:C4">
             <mxGeometry x="10" y="10" width="584" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="R2.C4" value="4 警戒度&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;鱼侧 · 后续版本&lt;/font&gt;" style="rounded=1;dashed=1;strokeWidth=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fcfcfc;strokeColor=#bbbbbb;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;fontSize=11;fontColor=#888888;" vertex="1" parent="C:W:R2.C4">
+        <mxCell id="R2.C4" value="4 警戒度&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;鱼侧 · 后续版本&lt;/font&gt;" style="rounded=1;dashed=1;strokeWidth=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fcfcfc;strokeColor=#bbbbbb;align=center;verticalAlign=middle;fontSize=12;fontColor=#555555;" vertex="1" parent="C:W:R2.C4">
             <mxGeometry x="0" y="0" width="300" height="40" as="geometry" />
         </mxCell>
         <mxCell id="C:C4/KV" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#dde5ec;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:C4">
@@ -234,7 +234,7 @@
         <mxCell id="C:W:R2.C5" value="" style="rounded=0;html=1;fillColor=none;strokeColor=none;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=0;" vertex="1" parent="C:C5">
             <mxGeometry x="10" y="10" width="584" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="R2.C5" value="5 动态进食偏好&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;鱼侧&lt;/font&gt;" style="rounded=1;dashed=1;strokeWidth=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fcfcfc;strokeColor=#bbbbbb;verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;fontSize=11;fontColor=#888888;" vertex="1" parent="C:W:R2.C5">
+        <mxCell id="R2.C5" value="5 动态进食偏好&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;鱼侧&lt;/font&gt;" style="rounded=1;dashed=1;strokeWidth=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fcfcfc;strokeColor=#bbbbbb;align=center;verticalAlign=middle;fontSize=12;fontColor=#555555;" vertex="1" parent="C:W:R2.C5">
             <mxGeometry x="0" y="0" width="300" height="40" as="geometry" />
         </mxCell>
         <mxCell id="C:C5/KV" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#dde5ec;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:C5">
@@ -256,7 +256,7 @@
             <mxGeometry x="10" y="1180" width="1280" height="202" as="geometry" />
         </mxCell>
         <UserObject label="⇕ 三、玩家策略与操作数据&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;整体向右错开，左侧让给派生环境场&lt;/font&gt;" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;C:R3/L0&quot;,&quot;C:R3/L1&quot;,&quot;DEF&quot;,&quot;E:BAKE-&gt;DEF&quot;,&quot;E:CUE-&gt;RESPONSE&quot;,&quot;E:DEF-&gt;R2.F.HAB&quot;,&quot;E:DEF-&gt;RESPONSE&quot;,&quot;E:PLAYER-&gt;CUE&quot;,&quot;EX:R3-&gt;CUE&quot;,&quot;EX:R3-&gt;PLAYER&quot;,&quot;EX:R3-&gt;R3.A&quot;,&quot;EX:R3-&gt;R3.B&quot;],&quot;transient&quot;:false}}]}" id="R3">
-          <mxCell style="rounded=0;whiteSpace=wrap;html=1;fontColor=#1f3a52;fillColor=#f2f6fa;strokeColor=#7d9bb8;strokeWidth=2;align=left;spacingLeft=12;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="C:R3">
+          <mxCell style="rounded=0;whiteSpace=wrap;html=1;fontColor=#1f3a52;fillColor=#f2f6fa;strokeColor=#7d9bb8;strokeWidth=2;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="C:R3">
             <mxGeometry x="310" y="10" width="960" height="34" as="geometry" />
           </mxCell>
         </UserObject>
@@ -285,7 +285,7 @@
             <mxGeometry x="10" y="1394" width="1280" height="186" as="geometry" />
         </mxCell>
         <UserObject label="⇕ 四、响应&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;适配系数&lt;/font&gt;" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;C:R4/L1&quot;,&quot;C:W:RESPONSE&quot;,&quot;E:CUE-&gt;RESPONSE&quot;,&quot;E:DEF-&gt;RESPONSE&quot;,&quot;E:RESPONSE-&gt;R5&quot;,&quot;EX:R4-&gt;R4.A&quot;,&quot;EX:R4-&gt;R4.B&quot;,&quot;EX:R4-&gt;R4.C&quot;,&quot;EX:R4-&gt;RESPONSE&quot;],&quot;transient&quot;:false}}]}" id="R4">
-          <mxCell style="rounded=0;whiteSpace=wrap;html=1;fontColor=#1f3a52;fillColor=#f2f6fa;strokeColor=#7d9bb8;strokeWidth=2;align=left;spacingLeft=12;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="C:R4">
+          <mxCell style="rounded=0;whiteSpace=wrap;html=1;fontColor=#1f3a52;fillColor=#f2f6fa;strokeColor=#7d9bb8;strokeWidth=2;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="C:R4">
             <mxGeometry x="10" y="10" width="1260" height="34" as="geometry" />
           </mxCell>
         </UserObject>
@@ -311,7 +311,7 @@
             <mxGeometry x="10" y="1592" width="1280" height="194" as="geometry" />
         </mxCell>
         <UserObject label="⇕ 五、圆桌抽鱼" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;C:R5/L1&quot;,&quot;EX:R5-&gt;T1&quot;,&quot;EX:R5-&gt;T2&quot;,&quot;EX:R5-&gt;T3&quot;,&quot;EX:R5-&gt;T4&quot;,&quot;EX:R5-&gt;TABLE&quot;,&quot;TABLE&quot;],&quot;transient&quot;:false}}]}" id="R5">
-          <mxCell style="rounded=0;whiteSpace=wrap;html=1;fontColor=#1f3a52;fillColor=#f2f6fa;strokeColor=#7d9bb8;strokeWidth=2;align=left;spacingLeft=12;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="C:R5">
+          <mxCell style="rounded=0;whiteSpace=wrap;html=1;fontColor=#1f3a52;fillColor=#f2f6fa;strokeColor=#7d9bb8;strokeWidth=2;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="C:R5">
             <mxGeometry x="10" y="10" width="1260" height="34" as="geometry" />
           </mxCell>
         </UserObject>
@@ -337,7 +337,7 @@
             <mxGeometry x="10" y="1798" width="1280" height="166" as="geometry" />
         </mxCell>
         <UserObject label="⇕ 六、抽鱼和生成&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;五的短延伸&lt;/font&gt;" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;C:W:DRAW&quot;,&quot;C:W:R6.L&quot;,&quot;E:DRAW-&gt;FISHAI&quot;,&quot;E:R5-&gt;DRAW&quot;,&quot;EX:R6-&gt;DRAW&quot;,&quot;EX:R6-&gt;R6.L&quot;],&quot;transient&quot;:false}}]}" id="R6">
-          <mxCell style="rounded=0;whiteSpace=wrap;html=1;fontColor=#1f3a52;fillColor=#f2f6fa;strokeColor=#7d9bb8;strokeWidth=2;align=left;spacingLeft=12;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="C:R6">
+          <mxCell style="rounded=0;whiteSpace=wrap;html=1;fontColor=#1f3a52;fillColor=#f2f6fa;strokeColor=#7d9bb8;strokeWidth=2;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="C:R6">
             <mxGeometry x="10" y="10" width="1260" height="34" as="geometry" />
           </mxCell>
         </UserObject>
@@ -356,7 +356,7 @@
         <mxCell id="C:R7" value="" style="rounded=0;html=1;fillColor=none;strokeColor=#9fb4c7;strokeWidth=1;childLayout=stackLayout;resizeParent=1;resizeParentMax=0;horizontalStack=0;stackSpacing=12;stackBorder=10;" vertex="1" parent="C:ROOT">
             <mxGeometry x="10" y="1976" width="1280" height="158" as="geometry" />
         </mxCell>
-        <mxCell id="R7" value="七、范围外&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;超出中鱼范畴 · 不折叠&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#1f3a52;fillColor=#f2f6fa;strokeColor=#7d9bb8;strokeWidth=2;align=left;spacingLeft=12;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="C:R7">
+        <mxCell id="R7" value="七、范围外&lt;br&gt;&lt;font style='font-size:10px;color:#444444'&gt;超出中鱼范畴 · 不折叠&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontColor=#1f3a52;fillColor=#f2f6fa;strokeColor=#7d9bb8;strokeWidth=2;align=center;verticalAlign=middle;fontSize=13;fontStyle=1;" vertex="1" parent="C:R7">
             <mxGeometry x="10" y="10" width="1260" height="34" as="geometry" />
         </mxCell>
         <mxCell id="C:W:FISHAI" value="" style="rounded=0;html=1;fillColor=none;strokeColor=none;strokeWidth=1;childLayout=stackLayout;resizeParent=0;resizeParentMax=0;horizontalStack=1;stackSpacing=12;stackBorder=0;" vertex="1" parent="C:R7">

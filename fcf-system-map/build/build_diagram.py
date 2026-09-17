@@ -90,8 +90,7 @@ CONTAINER_STROKE_BY_DEPTH = (
 CONTAINER_STROKE_DEEP = "#dde5ec"
 # 标题条（行标题 / 分组标题）：左对齐加粗，压低体量，便于一眼看出这是可点的把手。
 TITLE_FILL, TITLE_STROKE, TITLE_FONT = "#f2f6fa", "#7d9bb8", "#1f3a52"
-TITLE_EXTRA = ("align=left;spacingLeft=12;verticalAlign=middle;fontSize=13;"
-               "fontStyle=1;")
+TITLE_EXTRA = ("align=center;verticalAlign=middle;fontSize=13;fontStyle=1;")
 
 ANCHOR_STYLE = "endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#b3b3b3;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;"
 EDGE_BASE = (
@@ -129,7 +128,7 @@ def node_style(kind, role=None):
     base, fill, stroke = style_of(kind)
     extra = ""
     if kind == "group":
-        extra = "verticalAlign=top;align=left;spacingLeft=8;spacingTop=4;fontSize=11;fontColor=#888888;"
+        extra = "align=center;verticalAlign=middle;fontSize=12;fontColor=#555555;"
     elif kind == "gtitle":
         extra = "fontSize=11;fontColor=#555555;fontStyle=1;"
     return (base + "whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;"
