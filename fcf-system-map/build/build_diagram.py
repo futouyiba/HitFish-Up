@@ -155,6 +155,8 @@ LEAF_W = {
 }
 DEFAULT_LEAF_W = 240
 ROOT_X, ROOT_Y = 40, 150
+# 控件区硬编码坐标占用的最小页宽（图例 y=底部那排，最右一格到 x=1370）。
+CONTROLS_MIN_W = 1410
 
 
 def load_layout(root):
@@ -231,10 +233,16 @@ def layout_ctx(lay, graph, views, root):
         return None
 
     def visible(child):
-        when = child["spec"].get("when")
-        if when is None:
-            return True
-        return when == state_of(child["parent"])
+        """一个子块只有在**自己与全部祖先**的折叠态都匹配时才可见。
+        只查自己那一层是不够的：被收起的容器里的子孙虽然没写 `when`，
+        也一起不可见，否则它们会按展开态坐标发出去。"""
+        node = child
+        while node is not None:
+            when = node["spec"].get("when")
+            if when is not None and when != state_of(node["parent"]):
+                return False
+            node = by_cid.get(node["parent"]) if node["parent"] else None
+        return True
 
     return {
         "border": lay["border"], "spacing": lay["spacing"],
@@ -361,11 +369,26 @@ def layout(lay, graph, views):
 
     titles = {n["id"] for n in by_cid.values()
               if n["kind"] == "leaf" and n["spec"].get("role") == "title"}
-    page_w = int(ROOT_X + root["_w"] + 120)
+    # 控件区（标题 / 提示 / 视图按钮 / 图例）是硬编码坐标，图例最右到 x=1370。
+    # 版面收起时根容器会变窄，页宽不能跟着一路缩到装不下控件。
+    page_w = max(int(ROOT_X + root["_w"] + 120), CONTROLS_MIN_W)
     page_h = int(ROOT_Y + root["_h"] + 220)
     return {"root": root, "by_cid": by_cid, "order": order,
             "parent_of": parent_of, "ctx": ctx, "titles": titles,
             "page_w": page_w, "page_h": page_h}, structural, semantic
+
+
+def subtree_cell_ids(node):
+    """版面树里某个节点下面的全部 cell id：graph.json 节点 **和** 容器 id。
+    隐藏一个子树时要按这个集合标记 —— 只标节点的话，容器本身仍会发成可见。"""
+    out = set()
+
+    def walk(n):
+        out.add(n["id"])
+        for c in n.get("children", []):
+            walk(c)
+    walk(node)
+    return out
 
 
 def subtree_node_ids(node):
@@ -640,7 +663,7 @@ def emit(graph, scopes, views, plan, structural, semantic, default_view):
     for node in plan["by_cid"].values():
         for c in node.get("children", []):
             if not ctx["visible"](c):
-                hidden_nodes |= subtree_node_ids(c)
+                hidden_nodes |= subtree_cell_ids(c)
     hidden_edges = set(edges_touching(hidden_nodes, structural, semantic))
 
     for cid in plan["order"]:
@@ -654,7 +677,8 @@ def emit(graph, scopes, views, plan, structural, semantic, default_view):
                      "horizontalStack=%d;stackSpacing=%d;stackBorder=%d;%s"
                      % (CONTAINER_STROKE, 1 if n["axis"] == "h" else 0,
                         ctx["spacing"], ctx["border"], indent))
-            a(vertex(cid, "", style, x, y, w, h, parent))
+            a(vertex(cid, "", style, x, y, w, h, parent,
+                     visible=cid not in hidden_nodes))
             continue
         gn = gby[n["id"]]
         kind = gn.get("kind", DEFAULT_KIND)
