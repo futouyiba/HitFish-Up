@@ -613,20 +613,20 @@
     },
     {
       "from": "D.CONTEXT",
-      "to": "BAKE",
+      "to": "R2",
       "type": "DATA_FLOW",
       "route": "left"
     },
     {
       "from": "D.STOCK",
-      "to": "BAKE",
+      "to": "R2",
       "type": "DATA_FLOW",
       "route": "right",
       "via": "S"
     },
     {
       "from": "D.HABIT",
-      "to": "BAKE",
+      "to": "R2",
       "type": "DATA_FLOW",
       "route": "right",
       "lane": 1
@@ -638,12 +638,12 @@
       "label": "分通道：五条通道各自算自己的值"
     },
     {
-      "from": "BAKE",
-      "to": "DEF",
+      "from": "R2",
+      "to": "R3",
       "type": "DATA_FLOW",
       "label": "输出",
       "route": "left",
-      "lane": 1
+      "lane": 3
     },
     {
       "from": "DEF",
@@ -658,20 +658,15 @@
       "type": "DATA_FLOW"
     },
     {
-      "from": "DEF",
-      "to": "RESPONSE",
+      "from": "R3",
+      "to": "R4",
       "type": "DATA_FLOW",
-      "label": "环境侧产物（空间分布权重 + 鱼侧动态参数）"
+      "label": "派生环境场 + Cue 吸引元素",
+      "route": "right",
+      "lane": 1
     },
     {
-      "from": "CUE",
-      "to": "RESPONSE",
-      "type": "DATA_FLOW",
-      "label": "Cue 吸引元素",
-      "route": "right"
-    },
-    {
-      "from": "R2.C1",
+      "from": "R2",
       "to": "R5",
       "type": "DATA_FLOW",
       "label": "空间分布权重",
@@ -679,7 +674,7 @@
       "lane": 2
     },
     {
-      "from": "RESPONSE",
+      "from": "R4",
       "to": "R5",
       "type": "DATA_FLOW",
       "label": "适配系数",
@@ -688,14 +683,14 @@
     },
     {
       "from": "R5",
-      "to": "DRAW",
+      "to": "R6",
       "type": "DATA_FLOW",
       "label": "权重池 + NONE",
       "route": "left"
     },
     {
-      "from": "DRAW",
-      "to": "FISHAI",
+      "from": "R6",
+      "to": "R7",
       "type": "CONTROL_OR_SELECTION",
       "label": "鱼种 / 品质 / 大小 / 重量",
       "route": "right"

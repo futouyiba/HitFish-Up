@@ -25,6 +25,9 @@ from roundtrip import diff_files, pages_of, parse_style  # noqa: E402
 
 SRC = HERE.parent / "generated" / "fcf-system-map.drawio"
 fails = []
+# 测试里"按特征挑出来"的那两条边，id 在 mutate() 里填，main() 里断言。
+DRAG_ID = [None]
+NOISE_ID = [None]
 
 
 def check(cond, msg):
@@ -84,21 +87,35 @@ def mutate(src: Path, dst: Path) -> None:
         ng.set(k, v)
     ng.set("as", "geometry")
 
-    for mx in model.iter("mxCell"):          # 拖一条边（改已有 Array）
-        if mx.get("id") == "E:BAKE->DEF":
-            arr = mx.find("mxGeometry").find("Array")
-            for el, (x, y) in zip(arr.findall("mxPoint"), ((30, 700), (30, 1500))):
-                el.set("x", str(x))
-                el.set("y", str(y))
+    edges = [mx for mx in model.iter("mxCell")
+             if mx.get("edge") == "1" and mx.get("id")]
+    # 不写死边 id —— 边会随设计改名，测试不该跟着碎。按特征挑：
+    #   * 有途经点的边（走廊绕行的那几条）→ 用来测"拖动线段"
+    #   * 没有途经点的简单边          → 用来测"只重排 style 键序不该被报"
+    withpts = [e for e in edges
+               if e.find("mxGeometry") is not None
+               and e.find("mxGeometry").find("Array") is not None
+               and e.find("mxGeometry").find("Array").findall("mxPoint")]
+    simple = [e for e in edges if e not in withpts]
+    check(withpts and simple, "找不到足够的边来做拖动/噪声测试")
+    if not (withpts and simple):
+        return
+    drag = withpts[0].find("mxGeometry").find("Array")
+    for el, (x, y) in zip(drag.findall("mxPoint"), ((30, 700), (30, 1500))):
+        el.set("x", str(x))
+        el.set("y", str(y))
+    noise_edge = simple[0]
 
     mx, _ = cell("R2.C1.F1")                 # 改样式 + 键序重排
     sm = parse_style(mx.get("style"))
     sm["fillColor"] = "#ff0000"
     mx.set("style", ";".join("%s=%s" % (k, v) for k, v in reversed(list(sm.items()))) + ";")
 
-    x, _ = cell("E:D.STOCK->BAKE")           # 噪声 2：只重排键序，不该被报
+    x = noise_edge                           # 噪声 2：只重排键序，不该被报
     sm = parse_style(x.get("style"))
     x.set("style", ";".join("%s=%s" % (k, v) for k, v in reversed(list(sm.items()))) + ";")
+    NOISE_ID[0] = x.get("id")
+    DRAG_ID[0] = withpts[0].get("id")
 
     ET.indent(tree, space="  ")
     tree.write(str(dst), encoding="utf-8", xml_declaration=True)
@@ -123,7 +140,7 @@ def main():
             ("R2.C1.V", "relabeled"),
             ("R2.C1.F5", "removed"),
             ("k7QmZ3vRt9", "added"),
-            ("E:BAKE->DEF", "rerouted"),
+            (DRAG_ID[0], "rerouted"),
             ("R2.C1.F1", "restyled"),
         }
         for pair in sorted(expect - got):
@@ -133,8 +150,9 @@ def main():
         check(("(model)", "page") not in got, "模型级差异被混进了 cell 差异")
 
         # 噪声必须一字不报
-        check(not any(c["id"] == "E:D.STOCK->BAKE" for c in r["changes"]),
-              "误报：只重排 style 键序被当成了改动（draw.io 保存必然这样做）")
+        check(not any(c["id"] == NOISE_ID[0] for c in r["changes"]),
+              "误报：只重排 style 键序被当成了改动（%s；draw.io 保存必然这样做）"
+              % NOISE_ID[0])
         check(not any(c["kind"] == "visibility" for c in r["changes"]),
               "误报：出现无中生有的 visibility 变化")
 

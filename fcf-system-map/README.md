@@ -152,7 +152,7 @@ page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
 
 | 文件 | 职责 |
 |---|---|
-| `graph.json` | 73 个节点（stable ID + **中文 label** + 英文 caption + 行归属 + lane + `kind` 形状）+ 32 条语义边（只标"流过去的是什么"） |
+| `graph.json` | 73 个节点（stable ID + **中文 label** + 英文 caption + 行归属 + lane + `kind` 形状）+ 31 条语义边（只标"流过去的是什么"；跨模块的边锚在**模块标题**上，见 LAYOUT.md §6.4） |
 | `layout.json` | **版面**：容器包纳树（`C:` 前缀的容器 + `graph.json` 节点作叶子；轴线 / 间距 / 缩进 / 侧钉 / 折叠态） |
 | `scopes.json` | Scope = 压缩阶梯 + 透明度；`OVERALL`（不裁剪）+ `0.3.4.0-B`（lens，逐节点归类） |
 | `views.json` | View = 展开粒度 + 可选 lens |
@@ -195,7 +195,7 @@ page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
 
 ```
 stable IDs:            73 (unique, syntax-safe)
-edges:                 32 semantic (层级关系由容器嵌套表达，不再另画结构线)
+edges:                 31 semantic (层级关系由容器嵌套表达，不再另画结构线)
 views:                 overall, 0340b (default overall)
 scope lens:            0.3.4.0-B — 21 ACTIVE / 8 BOUNDARY / 44 OUT, all nodes classified once
 ladder declared, unassigned: 0.3.4, SIMPLIFIED-V0, FCF-V1
