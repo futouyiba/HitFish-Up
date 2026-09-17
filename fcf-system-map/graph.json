@@ -364,6 +364,15 @@
       "kind": "group"
     },
     {
+      "id": "R2.FC",
+      "label": "鱼侧动态参数",
+      "parent": "R2",
+      "lane": "r2chG",
+      "kind": "group",
+      "collapsible": true,
+      "caption": "Fish Condition · 通道 2–5 · 随条件组变化"
+    },
+    {
       "id": "R2.C1.K",
       "label": "核心因子计算",
       "caption": "",
@@ -399,7 +408,7 @@
       "id": "R2.C2",
       "label": "2 活性 Activity",
       "caption": "鱼侧",
-      "parent": "R2",
+      "parent": "R2.FC",
       "lane": "r2chG",
       "kind": "group"
     },
@@ -439,7 +448,7 @@
       "id": "R2.C3",
       "label": "3 进食动机",
       "caption": "鱼侧",
-      "parent": "R2",
+      "parent": "R2.FC",
       "lane": "r2chG",
       "kind": "group"
     },
@@ -479,7 +488,7 @@
       "id": "R2.C4",
       "label": "4 警戒度",
       "caption": "鱼侧 · 后续版本",
-      "parent": "R2",
+      "parent": "R2.FC",
       "lane": "r2chG",
       "kind": "group"
     },
@@ -519,7 +528,7 @@
       "id": "R2.C5",
       "label": "5 动态进食偏好",
       "caption": "鱼侧",
-      "parent": "R2",
+      "parent": "R2.FC",
       "lane": "r2chG",
       "kind": "group"
     },

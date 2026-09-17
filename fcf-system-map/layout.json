@@ -124,7 +124,7 @@
           "when": "expanded"
         },
         {
-          "ref": "C:R2/CH2",
+          "ref": "C:R2/FC",
           "when": "expanded"
         }
       ]
@@ -429,6 +429,19 @@
         },
         {
           "ref": "C:C5"
+        }
+      ]
+    },
+    "C:R2/FC": {
+      "axis": "v",
+      "children": [
+        {
+          "node": "R2.FC",
+          "role": "title"
+        },
+        {
+          "ref": "C:R2/CH2",
+          "when": "expanded"
         }
       ]
     }
