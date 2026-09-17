@@ -18,7 +18,7 @@
   "format": 1,
   "border": 10,
   "spacing": 12,
-  "titleH": 34,
+  "titleH": 24,
   "leafH": {
     "data": 44,
     "l1": 40,
@@ -148,36 +148,26 @@
           "role": "title"
         },
         {
-          "ref": "C:C1/COLS"
-        },
-        {
           "ref": "C:C1/L2"
         },
         {
-          "ref": "C:C1/FLOW"
+          "ref": "C:C1/CORE"
+        },
+        {
+          "ref": "C:C1/CALC"
+        },
+        {
+          "ref": "C:C1/AGG"
+        },
+        {
+          "node": "R2.C1.V",
+          "w": 620
         }
       ]
     },
-    "C:C1/COLS": {
-      "axis": "h",
-      "children": [
-        {
-          "node": "R2.C1.K"
-        },
-        {
-          "node": "R2.C1.S"
-        },
-        {
-          "node": "R2.C1.X"
-        },
-        {
-          "node": "R2.C1.V"
-        }
-      ],
-      "even": true
-    },
     "C:C1/L2": {
       "axis": "h",
+      "even": true,
       "children": [
         {
           "node": "R2.F.HAB"
@@ -191,8 +181,7 @@
         {
           "node": "R2.F.SKIP"
         }
-      ],
-      "even": true
+      ]
     },
     "C:C2": {
       "axis": "v",
@@ -412,24 +401,6 @@
         }
       ]
     },
-    "C:C1/FLOW": {
-      "axis": "h",
-      "children": [
-        {
-          "node": "R2.GATE",
-          "h": 76
-        },
-        {
-          "node": "R2.PASS",
-          "h": 56
-        },
-        {
-          "node": "R2.FAIL",
-          "h": 56
-        }
-      ],
-      "even": true
-    },
     "C:R2/FC/TOP": {
       "axis": "h",
       "children": [
@@ -525,6 +496,54 @@
         }
       ],
       "even": true
+    },
+    "C:C1/CORE": {
+      "axis": "h",
+      "even": true,
+      "children": [
+        {
+          "node": "R2.GATE"
+        },
+        {
+          "node": "R2.PASS"
+        },
+        {
+          "node": "R2.FAIL"
+        },
+        {
+          "node": "R2.C1.GFAIL"
+        }
+      ]
+    },
+    "C:C1/CALC": {
+      "axis": "h",
+      "even": true,
+      "children": [
+        {
+          "node": "R2.C1.K"
+        },
+        {
+          "node": "R2.C1.S"
+        },
+        {
+          "node": "R2.C1.X"
+        }
+      ]
+    },
+    "C:C1/AGG": {
+      "axis": "h",
+      "even": true,
+      "children": [
+        {
+          "node": "R2.C1.A1"
+        },
+        {
+          "node": "R2.C1.A2"
+        },
+        {
+          "node": "R2.C1.A3"
+        }
+      ]
     }
   }
 }
