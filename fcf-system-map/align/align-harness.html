@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FCF 总图拓扑对齐 v0 — alignment sketch</title>
+<style>
+  body { font-family: -apple-system, "PingFang SC", sans-serif; margin: 16px; color: #222; }
+  #dg { width: 100%; height: 860px; border: 1px solid #ccc; border-radius: 6px; }
+  .note { color: #666; font-size: 12px; margin: 8px 0 12px; max-width: 980px; }
+  pre { background: #f6f6f6; padding: 8px; border-radius: 4px; font-size: 12px; }
+</style>
+</head>
+<body>
+<h3>FCF 总图 · 大块拓扑对齐草图 v0</h3>
+<p class="note">对齐用草图(throwaway,非 canonical):只对齐模块行/块/箭头的<b>形状</b>,内容后补。
+确认后才会把结构落入 <code>fcf-system-map/graph.json</code> 并重画正式图。</p>
+<div id="dg" class="mxgraph"></div>
+<pre id="log">loading…</pre>
+<script src="../../spike/verify/vendor/viewer-static.min.js"></script>
+<script>
+(async function () {
+  var log = function (m) { document.getElementById('log').textContent = m; };
+  try {
+    var xml = await (await fetch('align-topology-v1.drawio')).text();
+    var el = document.getElementById('dg');
+    el.setAttribute('data-mxgraph', JSON.stringify({
+      xml: xml, toolbar: 'zoom', border: 10, 'auto-fit': true, resize: true, 'max-width': '100%'
+    }));
+    GraphViewer.createViewerForElement(el, function (v) {
+      window.__fcf = { viewer: v, graph: v.graph };
+      log('sketch loaded');
+    });
+  } catch (e) { log('ERROR: ' + (e && e.message ? e.message : e)); }
+})();
+</script>
+</body>
+</html>
