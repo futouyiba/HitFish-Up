@@ -105,7 +105,6 @@
     {
       "id": "R2.F.HAB",
       "label": "鱼的栖息地动态偏好",
-      "caption": "与其它因子一起参与计算",
       "parent": "R2.C1",
       "lane": "r2L2a",
       "kind": "process"
@@ -116,6 +115,49 @@
       "parent": "R2.C1",
       "lane": "r2L2b",
       "kind": "core"
+    },
+    {
+      "id": "R2.C1.F1",
+      "label": "核心因子（方块）",
+      "parent": "R2.C1",
+      "lane": "r2c1F",
+      "kind": "factor"
+    },
+    {
+      "id": "R2.C1.F2",
+      "label": "核心因子（三角）",
+      "parent": "R2.C1",
+      "lane": "r2c1F",
+      "kind": "factor"
+    },
+    {
+      "id": "R2.C1.F3",
+      "label": "次要因子（六边形）",
+      "parent": "R2.C1",
+      "lane": "r2c1F",
+      "kind": "factor"
+    },
+    {
+      "id": "R2.C1.F4",
+      "label": "次要因子（圆）",
+      "parent": "R2.C1",
+      "lane": "r2c1F",
+      "kind": "factor"
+    },
+    {
+      "id": "R2.C1.F5",
+      "label": "忽略因子（六角形）",
+      "parent": "R2.C1",
+      "lane": "r2c1F",
+      "kind": "factor"
+    },
+    {
+      "id": "R2.C1.BG",
+      "label": "是否背景鱼",
+      "caption": "背景鱼判断；不是背景鱼就跳过系数下限",
+      "parent": "R2.C1",
+      "lane": "r2c1G",
+      "kind": "gate"
     },
     {
       "id": "R2.F.SEC",
@@ -134,26 +176,10 @@
     {
       "id": "R2.GATE",
       "label": "门控",
-      "caption": "核心条件门控；各影响因素 / 习性组各有自己的门控",
+      "caption": "各影响因素 / 习性组各有自己的门控",
       "parent": "R2.C1",
       "lane": "r2L2d",
       "kind": "gate"
-    },
-    {
-      "id": "R2.PASS",
-      "label": "满足 → 核心路径结算",
-      "caption": "通过 → 核心条件结果",
-      "parent": "R2.C1",
-      "lane": "r2L2e",
-      "kind": "process"
-    },
-    {
-      "id": "R2.FAIL",
-      "label": "不满足 → 失败路径 / 背景鱼下限",
-      "caption": "不通过 → 条件判断失败 → 背景鱼下限",
-      "parent": "R2.C1",
-      "lane": "r2L2f",
-      "kind": "process"
     },
     {
       "id": "R2.C1.GFAIL",
@@ -177,7 +203,7 @@
       "parent": "R2.C1",
       "lane": "r2c1G",
       "kind": "process",
-      "caption": "仅背景鱼：先判是否背景鱼，低于 threshold 就抬到 threshold"
+      "caption": "应用 threshold：低于则抬到 threshold"
     },
     {
       "id": "R2.C1.A3",
@@ -390,7 +416,7 @@
     {
       "id": "R2.C1.K",
       "label": "核心因子计算",
-      "caption": "通过门控的一路，各自算法 → 亲和系数",
+      "caption": "通过门控的一路 → 亲和系数",
       "parent": "R2.C1",
       "lane": "r2c1K",
       "kind": "core"
@@ -406,10 +432,10 @@
     {
       "id": "R2.C1.V",
       "label": "该通道的值",
-      "caption": "返回给烘焙求解器",
+      "caption": "交回烘焙求解器",
       "parent": "R2.C1",
       "lane": "r2c1V",
-      "kind": "data"
+      "kind": "end"
     },
     {
       "id": "R2.C2",
@@ -588,17 +614,22 @@
     {
       "from": "D.CONTEXT",
       "to": "BAKE",
-      "type": "DATA_FLOW"
+      "type": "DATA_FLOW",
+      "route": "left"
     },
     {
       "from": "D.STOCK",
       "to": "BAKE",
-      "type": "DATA_FLOW"
+      "type": "DATA_FLOW",
+      "route": "right",
+      "via": "S"
     },
     {
       "from": "D.HABIT",
       "to": "BAKE",
-      "type": "DATA_FLOW"
+      "type": "DATA_FLOW",
+      "route": "right",
+      "lane": 1
     },
     {
       "from": "BAKE",
@@ -610,35 +641,16 @@
       "from": "BAKE",
       "to": "DEF",
       "type": "DATA_FLOW",
-      "label": "输出"
+      "label": "输出",
+      "route": "left",
+      "lane": 1
     },
     {
       "from": "DEF",
       "to": "R2.F.HAB",
       "type": "DATA_FLOW",
-      "label": "展开通道 1"
-    },
-    {
-      "from": "R2.F.CORE",
-      "to": "R2.GATE",
-      "type": "DATA_FLOW"
-    },
-    {
-      "from": "R2.F.HAB",
-      "to": "R2.GATE",
-      "type": "DATA_FLOW"
-    },
-    {
-      "from": "R2.GATE",
-      "to": "R2.PASS",
-      "type": "CONTROL_OR_SELECTION",
-      "label": "通过"
-    },
-    {
-      "from": "R2.GATE",
-      "to": "R2.FAIL",
-      "type": "CONTROL_OR_SELECTION",
-      "label": "不通过"
+      "label": "展开通道 1",
+      "route": "left"
     },
     {
       "from": "PLAYER",
@@ -655,46 +667,162 @@
       "from": "CUE",
       "to": "RESPONSE",
       "type": "DATA_FLOW",
-      "label": "Cue 吸引元素"
+      "label": "Cue 吸引元素",
+      "route": "right"
     },
     {
       "from": "R2.C1",
       "to": "R5",
       "type": "DATA_FLOW",
-      "label": "空间分布权重"
+      "label": "空间分布权重",
+      "route": "left",
+      "lane": 2
     },
     {
       "from": "RESPONSE",
       "to": "R5",
       "type": "DATA_FLOW",
-      "label": "适配系数"
+      "label": "适配系数",
+      "route": "left",
+      "lane": 1
     },
     {
       "from": "R5",
       "to": "DRAW",
       "type": "DATA_FLOW",
-      "label": "权重池 + NONE"
+      "label": "权重池 + NONE",
+      "route": "left"
     },
     {
       "from": "DRAW",
       "to": "FISHAI",
       "type": "CONTROL_OR_SELECTION",
-      "label": "鱼种 / 品质 / 大小 / 重量"
+      "label": "鱼种 / 品质 / 大小 / 重量",
+      "route": "right"
     },
     {
       "from": "R2.C1.K",
       "to": "R2.C1.A1",
-      "type": "DATA_FLOW"
+      "type": "DATA_FLOW",
+      "exit": "S",
+      "entry": "NW"
     },
     {
       "from": "R2.C1.S",
       "to": "R2.C1.A1",
-      "type": "DATA_FLOW"
+      "type": "DATA_FLOW",
+      "exit": "S",
+      "entry": "NE"
     },
     {
       "from": "R2.C1.GFAIL",
       "to": "R2.C1.A2",
-      "type": "DATA_FLOW"
+      "type": "DATA_FLOW",
+      "exit": "SE",
+      "entry": "E",
+      "exitDx": 560
+    },
+    {
+      "from": "R2.F.HAB",
+      "to": "R2.C1.F1",
+      "type": "DATA_FLOW",
+      "exit": "S",
+      "entry": "N"
+    },
+    {
+      "from": "R2.F.HAB",
+      "to": "R2.C1.F2",
+      "type": "DATA_FLOW",
+      "exit": "S",
+      "entry": "N"
+    },
+    {
+      "from": "R2.F.HAB",
+      "to": "R2.C1.F3",
+      "type": "DATA_FLOW",
+      "exit": "S",
+      "entry": "N"
+    },
+    {
+      "from": "R2.F.HAB",
+      "to": "R2.C1.F4",
+      "type": "DATA_FLOW",
+      "exit": "S",
+      "entry": "N"
+    },
+    {
+      "from": "R2.C1.F1",
+      "to": "R2.GATE",
+      "type": "DATA_FLOW",
+      "exit": "S",
+      "entry": "NW"
+    },
+    {
+      "from": "R2.C1.F2",
+      "to": "R2.GATE",
+      "type": "DATA_FLOW",
+      "exit": "S",
+      "entry": "NE"
+    },
+    {
+      "from": "R2.C1.F3",
+      "to": "R2.C1.S",
+      "type": "DATA_FLOW",
+      "exit": "S",
+      "entry": "NW"
+    },
+    {
+      "from": "R2.C1.F4",
+      "to": "R2.C1.S",
+      "type": "DATA_FLOW",
+      "exit": "S",
+      "entry": "NE"
+    },
+    {
+      "from": "R2.GATE",
+      "to": "R2.C1.K",
+      "type": "CONTROL_OR_SELECTION",
+      "label": "通过",
+      "exit": "S",
+      "entry": "N"
+    },
+    {
+      "from": "R2.GATE",
+      "to": "R2.C1.GFAIL",
+      "type": "CONTROL_OR_SELECTION",
+      "label": "不通过",
+      "exit": "SW",
+      "entry": "N"
+    },
+    {
+      "from": "R2.C1.A1",
+      "to": "R2.C1.BG",
+      "type": "DATA_FLOW",
+      "exit": "S",
+      "entry": "N"
+    },
+    {
+      "from": "R2.C1.BG",
+      "to": "R2.C1.A2",
+      "type": "CONTROL_OR_SELECTION",
+      "label": "是：背景鱼",
+      "exit": "E",
+      "entry": "W"
+    },
+    {
+      "from": "R2.C1.BG",
+      "to": "R2.C1.A3",
+      "type": "CONTROL_OR_SELECTION",
+      "label": "否：跳过下限",
+      "exit": "S",
+      "entry": "NW"
+    },
+    {
+      "from": "R2.C1.A2",
+      "to": "R2.C1.A3",
+      "type": "DATA_FLOW",
+      "exit": "S",
+      "entry": "NE"
     }
   ]
 }

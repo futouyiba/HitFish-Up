@@ -2,10 +2,11 @@
 
 `generated/fcf-system-map.drawio` 是**构建产物**——永远不要手工编辑。改 source JSON 后重新生成。
 
-**版面是怎么定的、为什么这么定，见 [LAYOUT.md](LAYOUT.md)。** 那里记着两条实测出来的
-硬规则（水平容器是"高度汇"、宽度只能有一个来源）、折叠语义、以及"横向=类别并列 /
-竖向=执行顺序"这条语汇。内容语义不在本页也不在 LAYOUT.md，在 Notion 的
-《FCF R0 Canonical Map Content Ledger》。
+**版面是怎么定的、为什么这么定，见 [LAYOUT.md](LAYOUT.md)。** 那里记着实测出来的
+引擎行为（水平容器是"高度汇"、宽度只能有一个来源且只撑**直接**子块）、折叠语义、
+"横向=类别并列 / 竖向=执行顺序"这条语汇、以及**边的走位规则**（层级关系不画线；
+出入口约束对平行四边形无效，跨行长边走左右空白走廊）。内容语义不在本页也不在
+LAYOUT.md，在 Notion 的《FCF R0 Canonical Map Content Ledger》。
 
 ```bash
 python3 build/build_diagram.py     # 5 个 source JSON -> generated/fcf-system-map.drawio
@@ -103,7 +104,7 @@ page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
 
 | 文件 | 职责 |
 |---|---|
-| `graph.json` | 69 个节点（stable ID + **中文 label** + 英文 caption + 行归属 + lane + `kind` 形状）+ 22 条语义边（只标"流过去的是什么"） |
+| `graph.json` | 73 个节点（stable ID + **中文 label** + 英文 caption + 行归属 + lane + `kind` 形状）+ 32 条语义边（只标"流过去的是什么"） |
 | `layout.json` | **版面**：容器包纳树（`C:` 前缀的容器 + `graph.json` 节点作叶子；轴线 / 间距 / 缩进 / 侧钉 / 折叠态） |
 | `scopes.json` | Scope = 压缩阶梯 + 透明度；`OVERALL`（不裁剪）+ `0.3.4.0-B`（lens，逐节点归类） |
 | `views.json` | View = 展开粒度 + 可选 lens |
@@ -114,10 +115,10 @@ page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
 
 **压缩阶梯**：`中鱼升级（本体）→ FCF v1 → Simplified V0 → 0.3.4 → 0.3.4.0-B（当前版本投影）`。每一层是范围更小的投影，不是不同系统。
 
-**0.3.4.0-B** 是唯一登记完毕的 lens：**17 ACTIVE / 8 BOUNDARY / 44 OUT**。
+**0.3.4.0-B** 是唯一登记完毕的 lens：**21 ACTIVE / 8 BOUNDARY / 44 OUT**。
 
-- ACTIVE：行2 / 烘焙 / **通道 1 及其全部分解**（核心·次要·忽略三种因子 / 栖息地动态偏好 /
-  门控与通过·不通过 / 该通道的值，以及聚合之后的系数下限与权重聚合）
+- ACTIVE：行2 / 烘焙 / **通道 1 及其全部分解**（三种因子各自的形状 / 栖息地动态偏好 /
+  门控与条件判断失败 / 汇聚漏斗：系数聚合 · 是否背景鱼 · 系数下限 · 权重聚合 · 通道返回值）
 - BOUNDARY：行1 及其三块与 L1 细节（B 消费的输入）
 - OUT：通道 2–5（活性·进食动机·警戒度·动态进食偏好，全在 B 的「不交付」清单里）、行3–7 全域
 
@@ -145,10 +146,10 @@ page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
 ## 6. Validation
 
 ```
-stable IDs:            69 (unique, syntax-safe)
-edges:                 22 semantic + 61 structural (root->row edges not drawn)
+stable IDs:            73 (unique, syntax-safe)
+edges:                 32 semantic (层级关系由容器嵌套表达，不再另画结构线)
 views:                 overall, 0340b (default overall)
-scope lens:            0.3.4.0-B — 17 ACTIVE / 8 BOUNDARY / 44 OUT, all nodes classified once
+scope lens:            0.3.4.0-B — 21 ACTIVE / 8 BOUNDARY / 44 OUT, all nodes classified once
 ladder declared, unassigned: 0.3.4, SIMPLIFIED-V0, FCF-V1
 contracts:             9 entries (refs valid)
 determinism:           consecutive builds byte-identical; committed artifact fresh
@@ -157,7 +158,7 @@ rename stability:      cell ID set and geometry invariant under label rename
 
 外加三项护栏，均已负向测试：**中文标签检查**（每个 label 必须含 CJK）、**顶点重叠检查**（任何两个方块碰撞即 FAIL）、**骨架漂移检查**（与 `skeleton.baseline.json` 比对，骨架一变即 FAIL）。
 
-官方 pinned viewer 运行时：七大层渲染、默认视图全展开、**折叠任一层时下方各层精确上移、展开时精确复原**（实测 40 轮零漂移；折叠后该层高度恰为 `标题 34 + 2×border 10 = 54`）、lens 着色 + 透明度（实测 ACTIVE `1.0` / BOUNDARY `0.70` / OUT `0.28`，全部仍 rendered）、零人工修补 —— 全部 PASS。
+官方 pinned viewer 运行时：七大层渲染、默认视图全展开、**折叠任一层时下方各层精确上移、展开时精确复原**（实测零漂移；折叠后该层高度恰为 `标题 24 + 2×border 10 = 44`，下方各行位移量恰好等于该差值）、lens 着色 + 透明度（实测 ACTIVE `1.0` / BOUNDARY `0.70` / OUT `0.28`，全部仍 rendered）、**零边穿方块**（逐段 polyline 与全部渲染方块求交，实测 0 处）、零人工修补 —— 全部 PASS。
 
 > harness：预览沙箱读不了 `/Volumes` 卷，测试时镜像到 `/tmp` 再起服务；普通环境 `python3 ../spike/verify/serve.py` 后打开 `http://127.0.0.1:8799/fcf-system-map/build/viewer-harness.html`。
 
