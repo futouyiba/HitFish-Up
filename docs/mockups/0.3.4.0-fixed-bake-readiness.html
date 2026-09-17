@@ -175,6 +175,7 @@ ul.tight li { margin:5px 0; font-size:13.5px; color:var(--text-secondary); }
 .seg:last-child { border-radius:0 8px 8px 0; }
 .seg.s-crit { background:var(--critical); }
 .seg.s-warn { background:var(--warning); }
+.seg.s-good { background:var(--good); }
 .seg.s-mut  { background:var(--axis); }
 .seg .stipl {
   position:absolute; left:50%; bottom:calc(100% + 8px); transform:translateX(-50%);
@@ -184,6 +185,7 @@ ul.tight li { margin:5px 0; font-size:13.5px; color:var(--text-secondary); }
 }
 .seg:hover .stipl { opacity:1; }
 .seg .sin { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:12.5px; font-weight:600; font-variant-numeric:tabular-nums; }
+.seg.s-good .sin { color:#0b0b0b; }
 .seg.s-mut .sin { color:var(--text-primary); }
 
 /* ---------- bars ---------- */
@@ -231,17 +233,17 @@ ul.tight li { margin:5px 0; font-size:13.5px; color:var(--text-secondary); }
   <div class="card">
     <p class="eyebrow">一句话结论</p>
     <div class="hero">
-      <div class="bignum">≈90%<small>主链可唯一实现</small></div>
+      <div class="bignum">0<small>剩余阻塞项（4 条已裁决）</small></div>
       <div>
         <p style="margin-top:0"><strong>数值与行为这部分，已经能"不猜就写出来"。</strong>聚合、门控、失败分支、保底、基数相乘、水温曲线、四个求值器——全部唯一可解，验收 golden 精确复现。</p>
-        <p>剩下的缺口<strong>不是算法，是命名</strong>：能让两套实现互相交换数据的"序列化契约"，还有 2 处没定。外加 2 处需要 Design Owner 拍板的读数。</p>
+        <p>挡路的 4 条（2 条命名阻塞 + 2 条待拍板）已于 <strong>2026-09-18 全部裁决并落盘</strong>。剩下的 8 条都是非阻塞边界，不影响任何合法配置。</p>
       </div>
     </div>
     <div class="tiles" style="margin-top:18px">
-      <div class="tile"><div class="v">38 / 38</div><div class="l">测试通过（0 失败 0 跳过）</div></div>
+      <div class="tile"><div class="v">39 / 39</div><div class="l">测试通过（0 失败 0 跳过）</div></div>
       <div class="tile"><div class="v">8 / 8</div><div class="l">Bass golden 精确复现</div></div>
-      <div class="tile"><div class="v">12</div><div class="l">Gap（其中 2 阻塞）</div></div>
-      <div class="tile"><div class="v">0</div><div class="l">架构级阻塞</div></div>
+      <div class="tile"><div class="v">4</div><div class="l">已裁决 Gap（原阻塞/待拍板）</div></div>
+      <div class="tile"><div class="v">8</div><div class="l">剩余 Gap（全部非阻塞）</div></div>
     </div>
   </div>
 
@@ -465,51 +467,45 @@ SpatialDistributionWeight = BaseOpportunityIntensity × FinalEnvCoeff   # Base �
   <!-- ============ 7. Gap ============ -->
   <div class="card">
     <p class="eyebrow">真正的产出</p>
-    <h2>12 个 Gap：哪些真阻塞，哪些只是需要拍板</h2>
-    <p>这轮的价值不在"写了多少代码"，而在于把"好像还有很多东西没说清楚"收敛成<strong>少量、具体、可裁决</strong>的工程问题。</p>
+    <h2>12 个 Gap：4 条已裁决，8 条非阻塞</h2>
+    <p>这轮的价值不在"写了多少代码"，而在于把"好像还有很多东西没说清楚"收敛成<strong>少量、具体、可裁决</strong>的工程问题——然后在 2026-09-18 把其中 4 条一次裁掉。</p>
 
-    <div class="stack" role="img" aria-label="12 个 Gap 按严重度：阻塞 2 个，待 Owner 裁决 2 个，非阻塞 8 个">
-      <div class="seg s-crit" style="flex:2"><span class="sin">2</span><span class="stipl"><b>阻塞互通</b><br>GAP-001 · GAP-002</span></div>
-      <div class="seg s-warn" style="flex:2"><span class="sin">2</span><span class="stipl"><b>待 Owner 裁决</b><br>GAP-003 · GAP-004</span></div>
-      <div class="seg s-mut"  style="flex:8"><span class="sin">8</span><span class="stipl"><b>非阻塞</b><br>GAP-005 … GAP-012</span></div>
+    <div class="stack" role="img" aria-label="12 个 Gap 按状态：4 个已裁决，8 个非阻塞">
+      <div class="seg s-good" style="flex:4"><span class="sin">4 已裁决</span><span class="stipl"><b>已裁决 2026-09-18</b><br>GAP-001 · GAP-002 · GAP-003 · GAP-004</span></div>
+      <div class="seg s-mut"  style="flex:8"><span class="sin">8 非阻塞</span><span class="stipl"><b>非阻塞</b><br>GAP-005 … GAP-012</span></div>
     </div>
     <div class="legendline">
-      <span><i class="sq" style="background:var(--critical)"></i>阻塞——必须裁决才能开工</span>
-      <span><i class="sq" style="background:var(--warning)"></i>待裁决——两种读法都合理</span>
-      <span><i class="sq" style="background:var(--axis)"></i>非阻塞——不影响合法配置</span>
+      <span><i class="sq" style="background:var(--good)"></i>已裁决——契约已按裁决落盘</span>
+      <span><i class="sq" style="background:var(--axis)"></i>非阻塞——不影响任何合法配置</span>
     </div>
 
-    <h3>两个阻塞项：都是命名，不是算法</h3>
+    <h3>4 条已裁决：裁决内容与理由</h3>
     <div class="sev">
-      <div><div class="rid">GAP-001</div><div class="tagl">阻塞</div></div>
+      <div><div class="rid">GAP-001</div><div class="tagl">已裁决</div></div>
       <div class="body">
-        <b>组件习性表的字段名没有统一。</b>水温那 6 个参数是 canonical 的、两页一致；但结构 / 水层 / 时段各页写法不同——同一件事，一页写 <code>structure_affinity</code>，另一页写 <code>structureAffinity</code>；时段系数甚至有三个写法。
-        <br><b>为什么阻塞：</b>数值语义完全一样，所以怎么选都算得对——但这是<em>序列化</em>契约。两套实现用不同 key，就<b>无法交换 payload、无法共用心跳 fixture</b>，谁也不算"那个契约"。
+        <b>四个组件的习性表字段名统一走 snake_case。</b>它不是"两页写得不一致、随便挑一个"——delta 7 早已把<b>温度</b>那 6 个参数在解析后 payload 里钉成 snake_case，所以另外三个组件跟同一层走：<code>structure_affinity</code>、<code>foraging_surface_affinity</code> / <code>_middle_</code> / <code>_bottom_</code>、<code>time_period_activity_coefficient</code>。条件开关页的 camelCase 是过时写法。
       </div>
     </div>
     <div class="sev">
-      <div><div class="rid">GAP-002</div><div class="tagl">阻塞（仅 Trace）</div></div>
+      <div><div class="rid">GAP-002</div><div class="tagl">已裁决</div></div>
       <div class="body">
-        <b>Trace 的字段表被"批注"过，但从没重写。</b>Schema 页 §3.8 定义了 <code>BakeEvaluationTrace</code>，可是它自己加了一行注记说输出键名是历史遗留、封顶字段已被换路取代——正文却还是旧模型。
-        <br><b>为什么阻塞：</b>最终数值不受影响（换哪个名字数值都一样），但写 Trace 消费方的人<b>没法对着 schema 匹配 key</b>。
-      </div>
-    </div>
-
-    <h3>两个待拍板项</h3>
-    <div class="sev">
-      <div><div class="rid">GAP-003</div><div class="tagl">待裁决</div></div>
-      <div class="body">
-        <b><code>"aggregationRole": null</code> 算"显式忽略"还是"该配没配"？</b>Bass 切片页把它写作 <code>null = IGNORED</code>；但开发需求另一处明确说"忽略是作者显式决定，缺配置仍是错误"。两种读法各有 Current 页支撑，我不替 Design Owner 选。
+        <b>三个死键直接删掉，不保留为 null；并新增 <code>gateFailureBranch</code>。</b>判据：没有存量数据、没有已实现的消费方、<b>删了不丢信息</b>（这些键的内容已由 <code>secondaryProduct</code> / <code>secondaryFactor</code> / <code>gateFailureBranch</code> 完整表达）。留着的代价是自相矛盾——一张以「可解释性」为唯一职责的字段表里躺着已废概念的字段。同时留一条 negative knowledge 注记，写明是哪次裁决删的、不要再加回来。
       </div>
     </div>
     <div class="sev">
-      <div><div class="rid">GAP-004</div><div class="tagl">待裁决</div></div>
+      <div><div class="rid">GAP-003</div><div class="tagl">已裁决</div></div>
       <div class="body">
-        <b>序列里出现旧的 <code>gatePolicy</code> 字段：直接报错，还是悄悄读进去？</b>同一个族的两个 Current 页互相矛盾——Schema 说"NONE/缺失可以归一为忽略"，Bass 切片的断言说"出现该字段就报错"。
+        <b>显式 <code>"aggregationRole": null</code> = 显式忽略。</b>只有<b>整条 binding 行缺失</b>才算「应配而缺」报错。这一条同时满足了两处现行权威的说法：Bass fixture 的 <code>null</code> 读成 IGNORED，而「缺配置 ≠ 忽略」仍然管着"整行缺失"。
+      </div>
+    </div>
+    <div class="sev">
+      <div><div class="rid">GAP-004</div><div class="tagl">已裁决</div></div>
+      <div class="body">
+        <b><code>gatePolicy</code> 从未上线，所以不存在迁移通道——出现即报错。</b>我原先把它写成"两条权威互相矛盾"，重新细读后更正：Schema §5.1 管的是<b>迁移读取通道</b>，Bass 切片 V6 管的是<b>校验通道</b>。但既然没有存量数据，迁移通道根本没有对象，只剩"字段不存在"这一条。另外：把某条鱼的水温从 CORE 改成 SECONDARY 是<b>普通编辑</b>，烘焙永远按<b>当前</b>角色算，不需要任何迁移逻辑。
       </div>
     </div>
 
-    <h3>其余 8 个（不影响任何合法配置）</h3>
+    <h3>其余 8 条（不影响任何合法配置）</h3>
     <table>
       <thead><tr><th style="width:96px">ID</th><th style="width:26%">区域</th><th>问题一句话</th></tr></thead>
       <tbody>
@@ -529,7 +525,7 @@ SpatialDistributionWeight = BaseOpportunityIntensity × FinalEnvCoeff   # Base �
   <div class="card">
     <p class="eyebrow">自我审查</p>
     <h2>写完之后反查：代码里有没有"文档没说我就自己定了"的地方</h2>
-    <p>有 8 处。没有一处是偷偷做的——每处都写进了 Gap Log；这里列出最要紧的三条。</p>
+    <p>有 8 处。其中 <strong>3 处已由 2026-09-18 的裁决变成正式契约</strong>（不再算"隐式"）；剩 5 处仍未决。<strong>没有一处是偷偷做的</strong>——每处都写进了 Gap Log；这里列出最要紧的三条。</p>
     <div class="grid3">
       <div class="mini state warn">
         <h4><span class="mark warnc">▲</span> 故意不夹紧</h4>
@@ -541,20 +537,36 @@ SpatialDistributionWeight = BaseOpportunityIntensity × FinalEnvCoeff   # Base �
         <p>门控失败时 Trace 报 <code>null</code> 的乘积字段，但仍报各条件的 fit（判门控本来就得先算出来）。</p>
         <p class="muted">文本只写了"不计算公式"，没写 Trace 报什么。</p>
       </div>
-      <div class="mini state warn">
-        <h4><span class="mark warnc">▲</span> null 当忽略、缺行当错</h4>
+      <div class="mini state ok">
+        <h4><span class="mark" style="color:var(--good-ink)">✓</span> null 当忽略、缺行当错</h4>
         <p><code>null</code> → IGNORED；<strong>整行缺失</strong> → 报错。</p>
-        <p class="muted">这是在两条互相矛盾的权威之间取的折中读法（GAP-003）。</p>
+        <p class="muted"><strong>已裁决</strong>（GAP-003）：这是两条现行权威折中后的正式读法，不再是隐式决定。</p>
       </div>
     </div>
-    <p class="muted" style="margin-top:12px">另外 5 处：<code>appliedFit == rawFit</code>（现行无 0.05 夹紧）、已废的 Trace 键保留为 <code>null</code>、CORE fit 为 0 时 <code>coreLoss</code> 置 <code>null</code> 以免 <code>−inf</code>、空积 = 1、旧的 <code>gatePolicy</code> 惰性值读透而其他值报错。</p>
+    <p class="muted" style="margin-top:12px">另外 5 处仍未决：<code>appliedFit == rawFit</code>（现行无 0.05 夹紧，属陈述而非决定）、CORE fit 为 0 时 <code>coreLoss</code> 置 <code>null</code> 以免 <code>−inf</code>、空积 = 1、换路时聚合字段置空、故意不夹紧。已由裁决转正的另两处：死键<strong>已删</strong>（不再保留 null）、<code>gatePolicy</code> <strong>一律报错</strong>（不再有惰性读透）。</p>
   </div>
 
   <!-- ============ 9. 下一步 ============ -->
   <div class="card">
     <p class="eyebrow">下一步</p>
-    <h2>只差一页文档</h2>
-    <p>两个阻塞项都是<strong>同一页上的两处编辑</strong>：给 Schema &amp; Validator 补一张<strong>规范化的 resolved payload 字段名表</strong>（GAP-001），再把它的 §3.8 Trace 区块按 2026-09-17 之后的键集重写一遍（GAP-002）。做完这两件，两个阻塞 Gap 就变成确定契约。其余都可以等。</p>
+    <h2>已做的 / 还差的两件小事</h2>
+    <div class="grid2">
+      <div class="mini state ok">
+        <div class="lbl"><span class="mark" style="color:var(--good-ink)">✓</span> 已做（2026-09-18）</div>
+        <ul class="tight" style="margin-top:6px">
+          <li>4 条裁决落进参考实现（测试 38 → <strong>39 全绿</strong>）</li>
+          <li>Gap Log 标为 RESOLVED 并写明裁决理由</li>
+          <li>文档写回 Notion <strong>两页</strong>：Schema &amp; Validator（key 表 + §3.8 Trace）、条件开关 Working（字段名对齐），逐条回读核对</li>
+        </ul>
+      </div>
+      <div class="mini state warn">
+        <div class="lbl"><span class="mark warnc">▲</span> 还差</div>
+        <ul class="tight" style="margin-top:6px">
+          <li><strong>裁决留痕</strong>：按本分支惯例，裁决应在 Main Control 记一条窄节。那属于第 <strong>3</strong> 页，超出本会话授权的两页范围，故仍待办。</li>
+          <li><strong>一处残留</strong>：开发需求 §4.1 的内联例子写 <code>time_period_coefficient</code>，而 §4.0 自己的表写 <code>time_period_activity_coefficient</code>。按 GAP-001 裁决以后者为准，改这一处即可——同样属于第三页。</li>
+        </ul>
+      </div>
+    </div>
 
     <h3>一个不能忘的前提</h3>
     <div class="mini state bad" style="margin-top:8px">

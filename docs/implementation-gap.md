@@ -6,14 +6,15 @@ implementation are listed; phrasing improvements are not.
 
 Authority read 2026-09-18 (Notion). Page IDs are given so each claim is checkable.
 
-**Summary: 2 blocking, 2 design-choice, 4 spec-gap (non-blocking), 4 non-blocking ambiguity.**
+**Status: GAP-001 … GAP-004 were adjudicated on 2026-09-18 — all four are RESOLVED.**
+Eight non-blocking items remain (GAP-005 … GAP-012).
 
 | ID | Area | Status | Blocking |
 | --- | --- | --- | --- |
-| GAP-001 | Atomic factor evaluation (input shape) | SPEC_GAP | **YES** |
-| GAP-002 | Debug Trace | SPEC_GAP | **YES** (trace conformance only) |
-| GAP-003 | ConditionRole / input validation | DESIGN_CHOICE_REQUIRED | NO (blocks a unique reading) |
-| GAP-004 | Legacy migration / invalid config | DESIGN_CHOICE_REQUIRED | NO |
+| GAP-001 | Atomic factor evaluation (input shape) | **RESOLVED** — canonicalised to the 开发需求 snake_case set | was YES |
+| GAP-002 | Debug Trace | **RESOLVED** — dead keys deleted, `gateFailureBranch` added | was YES |
+| GAP-003 | ConditionRole / input validation | **RESOLVED** — explicit `null` = IGNORED | was DESIGN_CHOICE |
+| GAP-004 | Legacy migration / invalid config | **RESOLVED** — GatePolicy never shipped; any occurrence is an error | was DESIGN_CHOICE |
 | GAP-005 | Atomic factor evaluation (numeric domain) | SPEC_GAP | Partial |
 | GAP-006 | ConditionGroupSnapshot | SPEC_GAP | NO |
 | GAP-007 | Core aggregation | SPEC_GAP | NO |
@@ -25,10 +26,37 @@ Authority read 2026-09-18 (Notion). Page IDs are given so each claim is checkabl
 
 ---
 
+## Rulings applied 2026-09-18
+
+Decided by the Design Owner in the readiness-validation session; applied to the
+reference implementation, and written back to the two authority pages
+(Schema & Validator; Bake Authoring / 条件开关 Working).
+
+| ID | Ruling | Rationale |
+| --- | --- | --- |
+| GAP-001 | The four component profiles use the **开发需求 §4.0 / §4.3 snake_case key names** in the resolved payload (`structure_affinity`, `foraging_surface_affinity` / `_middle_` / `_bottom_`, `time_period_activity_coefficient`). The camelCase spellings on the 条件开关 page are stale. | Not a free choice: §26.4 delta 7 already pinned the Temperature profile to that spelling in the resolved payload, so the other three follow the same layer. 条件开关's §6.2/§6.3 are annotation-method text and were written before that pin. |
+| GAP-002 | **Delete** `gateFailureCap` / `secondaryLossRaw` / `secondaryLossApplied` from the Trace; add `gateFailureBranch {applied, branch, failedConditions}`; rename `factorResults[].importance` → `aggregationRole`. Leave a negative-knowledge note saying they were removed and must not be re-added. | No legacy data (new requirement), no implemented consumer (production not migrated, Bake Preview not built), and no information loss — the dead keys' content is fully expressed by `secondaryProduct` / `secondaryFactor` / `gateFailureBranch`. A schema whose only job is explainability must not advertise concepts that no longer exist. |
+| GAP-003 | An explicit `"aggregationRole": null` is an **explicit IGNORED**. Only a wholly absent binding row is a resolve error. | Satisfies both Current clauses at once: the Bass fixture's `null` reads as IGNORED, and 开发需求 §4.5's "missing ≠ ignored" still governs absent rows. |
+| GAP-004 | `gatePolicy` **never shipped**, so there is no legacy payload and no read-through channel. Any occurrence of the key is an error (Bass slice §8 V6, read literally). Docs that still describe it as current are to be made consistent with the spec. | Owner 2026-09-18: it is a new feature with no historical/stock data, so there is nothing to migrate. A role edit (e.g. CORE → SECONDARY) is ordinary authoring — bake always uses the *current* role; no migration logic is involved. |
+
+**Consequences for the reference implementation:** `role_of()` rejects any
+`gatePolicy` key outright (the inert-value read-through path was removed);
+the Trace no longer emits the three dead keys; `spatial_distribution_weight`
+follows §26.4 delta 6. Test count went 38 → 39 (the old "OFF + NONE normalises"
+test was replaced by "any gatePolicy is rejected", plus a dead-key-absence test).
+
+**Residual (not covered by these rulings, needs one more edit):** 开发需求 §4.1's
+inline example writes `time_period_coefficient[DAWN]` while §4.0's own table
+writes `time_period_activity_coefficient[DAWN]`. Under the GAP-001 ruling the
+§4.0 spelling wins, so §4.1's example string should be corrected — that is a
+**third page** and was outside the two-page write scope of this session.
+
+---
+
 ## GAP-001
 
 **Area:** Atomic factor evaluation — resolved component profile payload key names
-**Status:** SPEC_GAP
+**Status:** RESOLVED 2026-09-18 (see Rulings above)
 
 **Authority:**
 - 中鱼0.3.4.0-B｜开发需求 §4.0 / §4.1–§4.4 (`3dda4137d23681c68ec3fb1944573af4`) uses
@@ -70,7 +98,7 @@ not a recommendation.
 ## GAP-002
 
 **Area:** Debug Trace
-**Status:** SPEC_GAP
+**Status:** RESOLVED 2026-09-18 (see Rulings above)
 
 **Authority:** 0.3.4.0-B｜Bake Authoring Schema & Validator Contract §3.8
 (`3dca4137d23681e28c5bc2f29c63dc16`) defines `BakeEvaluationTrace`. Its own
@@ -110,7 +138,7 @@ candidate yields the same weight).
 ## GAP-003
 
 **Area:** ConditionRole resolution / input validation
-**Status:** DESIGN_CHOICE_REQUIRED
+**Status:** RESOLVED 2026-09-18 — explicit `null` = IGNORED (see Rulings above)
 
 **Authority:** 0.3.4.0-B｜Bass NORMAL Fixed Template Vertical Slice §5
 (`3dda4137d236818c9b61e6bc7fc348a7`) serializes
@@ -143,7 +171,7 @@ payload.
 ## GAP-004
 
 **Area:** Legacy migration / invalid config handling
-**Status:** DESIGN_CHOICE_REQUIRED
+**Status:** RESOLVED 2026-09-18 — GatePolicy never shipped; any occurrence is an error (see Rulings above)
 
 **Authority conflict — two Current clauses disagree:**
 - Schema & Validator §5.1: `legacy OFF（GatePolicy NONE / absent）→ IGNORED（自动不消费）`.

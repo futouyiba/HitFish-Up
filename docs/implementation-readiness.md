@@ -3,11 +3,13 @@
 Result of one real vertical implementation (`reference/0340-fixed-bake/`) against the
 Current 0.3.4.0-B contract. **REFERENCE / VALIDATION — not promoted.**
 
-**Answer in one line:** the main chain is **~90% uniquely implementable**; the numbers,
-the gates, the aggregation and the floor are unambiguous and reproduce the P0 goldens
-exactly. What still blocks a *formal* engineer is **not algorithm** — it is **two schema
-questions**: the resolved profile payload key names (GAP-001) and the Trace key names
-(GAP-002). Two further readings require an owner adjudication (GAP-003, GAP-004).
+**Answer in one line:** the main chain is **uniquely implementable**; the numbers, the
+gates, the aggregation and the floor are unambiguous and reproduce the P0 goldens
+exactly. What was blocking a *formal* engineer was **not algorithm** but **two schema
+questions** — resolved profile payload key names (GAP-001) and the Trace key set
+(GAP-002) — plus two readings needing an owner line (GAP-003, GAP-004). **All four were
+adjudicated on 2026-09-18 and are now closed** (see `implementation-gap.md` → *Rulings
+applied*). Eight non-blocking edge items remain.
 
 ---
 
@@ -95,14 +97,22 @@ local mirror of the Fixed Bake contract exists, so Notion was the sole authority
 - **Missing vs ignored** — a missing binding row / missing active profile is an error; an
   ignored condition is legal and silent.
 
+### RESOLVED 2026-09-18
+
+- **GAP-001** — resolved: the four component profiles use the 开发需求 §4.0 / §4.3
+  snake_case key names in the resolved payload (delta 7 already pinned Temperature to
+  that spelling; the 条件开关 page's camelCase is stale).
+- **GAP-002** — resolved: `gateFailureCap` / `secondaryLossRaw` / `secondaryLossApplied`
+  are **deleted** (not kept as null) and `gateFailureBranch {applied, branch,
+  failedConditions}` is added; `importance` → `aggregationRole`. No legacy data, no
+  implemented consumer, no information loss.
+- **GAP-003** — resolved: an explicit `"aggregationRole": null` is an explicit IGNORED;
+  only a wholly absent binding row is a resolve error.
+- **GAP-004** — resolved: `gatePolicy` never shipped, so there is no legacy payload and
+  no read-through channel; any occurrence is an error.
+
 ### SPEC_GAP
 
-- **GAP-001** — component profile payload key names are not canonicalised
-  (Structure / Feeding Layer / Time Period each have 2–3 spellings across Current pages).
-  **Blocking.**
-- **GAP-002** — the Trace schema was annotated but never rewritten after the 2026-09-17
-  deltas; output key, failure-branch representation and dead keys are undefined.
-  **Blocking for trace conformance, not for the number.**
 - **GAP-005** — runtime handling of an out-of-`[0,1]` authored fit is defined nowhere
   (only in an explicitly non-Current implementation history). Partially blocking.
 - **GAP-006** — empty `feedingEcologyLayers[]`: `max()` over an empty set is undefined.
@@ -110,13 +120,6 @@ local mirror of the Fixed Bake contract exists, so Notion was the sole authority
 - **GAP-008** — degenerate temperature bands (`accept_min == fav_min`) are legal by the
   stated constraint but their meaning is unstated (the value is derivable; the legality is
   not).
-
-### DESIGN_CHOICE_REQUIRED
-
-- **GAP-003** — does an explicit `"aggregationRole": null` mean IGNORED (Bass fixture
-  reading) or "configured but missing" = error (`Missing ≠ Ignore`)?
-- **GAP-004** — a serialized legacy `gatePolicy` key: hard error (Bass slice V6) or
-  read-through when inert (Schema §5.1)? Two Current clauses disagree.
 
 ### NON_BLOCKING_AMBIGUITY
 
@@ -159,8 +162,8 @@ run at all, the chosen reading is labelled in code and in §4 of `implementation
 
 ```text
 runner      python3 -m pytest test_fixed_bake.py   and   python3 -m unittest test_fixed_bake
-total       38
-passed      38
+total       39
+passed      39
 failed      0
 skipped     0
 ```
@@ -170,11 +173,13 @@ skipped     0
   `0.10`), background floor `0.0306818182 → 0.10`, and two Base-scaling cases. The goldens
   were reproduced a second time by an independent script that applies the §3.4 / §4.3
   formulas without importing the reference.
-- **Semantic cases (19)** — the task's Case 1–15 re-expressed against the Current contract
+- **Semantic cases (20)** — the task's Case 1–15 re-expressed against the Current contract
   (Case 7 "residual gate" is now "a near-zero nonzero coefficient is not a gate failure";
   Case 9 "multiple failed gates" collapses to one branch because there is no cap to
-  combine).
-- **Migration / legacy (3)**, **validation (7)**, **property invariants (8)**.
+  combine), plus a dead-key-absence case added by the GAP-002 ruling.
+- **Migration / legacy (3)**, **validation (7)**, **property invariants (8)**. The
+  migration class was rewritten by the GAP-004 ruling: "any `gatePolicy` occurrence is
+  rejected" replaced the old "inert value read through / non-inert rejected" pair.
 - **Property tests** run seeded loops of 100–300 iterations over randomised condition
   groups: determinism, `EnvCoeff` bounds, background floor lower bound, monotonicity under
   a worsening CORE fit (including across the gate threshold), extra-SECONDARY-factor
@@ -204,26 +209,33 @@ skipped     0
 Cases where the reference has to behave in a way no Current page states — all disclosed,
 none silently absorbed. Full detail in `implementation-gap.md`.
 
-1. **Gate failure → `None` aggregate.** On the failure branch the Trace reports `null` for
+**Now backed by a ruling** (so no longer hidden — the contract says what to do):
+
+1. **Superseded trace keys.** Now deleted outright rather than kept as `null`, with a
+   negative-knowledge note. (GAP-002 ✅)
+2. **`null` role → IGNORED, absent row → error.** Now the ruled contract. (GAP-003 ✅)
+3. **Any `gatePolicy` key is rejected.** The earlier inert-value read-through path was
+   removed once it was established the field never shipped. (GAP-004 ✅)
+
+**Still open — deliberately un-decided:**
+
+4. **Gate failure → `None` aggregate.** On the failure branch the Trace reports `null` for
    `coreProduct` / `secondaryProduct` / `secondaryFactor` / `rawEnvCoeff` while still
    reporting per-condition fits (which had to be computed to evaluate the gate). The text
    only says the formula "is not computed". (GAP-009)
-2. **No runtime clamp, no runtime range check.** An out-of-`[0,1]` authored value passes
+5. **No runtime clamp, no runtime range check.** An out-of-`[0,1]` authored value passes
    through unchanged and can push `FinalEnvCoeff` above `1`. Deliberate: taking no decision
-   keeps GAP-005 visible rather than hidden behind a clamp. (GAP-005)
-3. **`appliedFit == rawFit`.** The trace keeps both keys for shape fidelity with Schema
-   §3.8, but the Current contract applies no `≥ 0.05` clamp, so they are always equal.
-4. **Superseded trace keys retained as `null`.** `secondaryLossRaw`, `secondaryLossApplied`
-   and the cap concept are dead under the new aggregation; the keys are kept as `null`
-   purely so the Trace shape still matches the published schema. (GAP-002)
-5. **`coreLoss = None` when any CORE fit is 0** — avoids emitting `-inf`. Only reachable
+   keeps GAP-005 visible rather than hidden behind a clamp.
+6. **`coreLoss = None` when any CORE fit is 0** — avoids emitting `-inf`. Only reachable
    when `temp_threshold = 0`. (GAP-012)
-6. **Empty product = 1.** Used twice: empty SECONDARY (explicitly authorised) and empty
+7. **Empty product = 1.** Used twice: empty SECONDARY (explicitly authorised) and empty
    CORE (not authorised anywhere). (GAP-007)
-7. **`null` role → IGNORED, absent row → error.** A split reading of the two authorities
-   that speak to this. (GAP-003)
-8. **Legacy `gatePolicy` with an inert value is read through, other values rejected.** Picks
-   one side of two disagreeing Current clauses. (GAP-004)
+
+**Not a decision at all:**
+
+8. **`appliedFit == rawFit`.** The trace keeps both keys for shape fidelity, but the
+   Current contract applies no `≥ 0.05` clamp, so they are always equal. This is a
+   statement about the contract, not a choice.
 
 ## 6. Production readiness assessment
 
@@ -233,15 +245,14 @@ multiplication, temperature curve and all four evaluators are specified tightly 
 implement with no guessing, and the P0 goldens reproduce exactly. An engineer can build a
 numerically correct Fixed Bake evaluator today from 开发需求 §3.3/§3.4/§4.3/§7 alone.
 
-**What contracts are still missing?** Precisely two, plus two readings:
+**What contracts are still missing?** As of the 2026-09-18 rulings: **none that block.**
+The four items that previously did are now closed —
 
-1. the **resolved profile payload key names** for Structure / Feeding Layer / Time Period
-   (GAP-001) — this is a *serialization* contract, and without it two correct
-   implementations still cannot interoperate;
-2. the **Trace key names** after the 2026-09-17 deltas (GAP-002) — the schema page was
-   annotated, not rewritten;
-3. an owner line on **`null` vs missing** (GAP-003);
-4. an owner line on **legacy `gatePolicy`** handling (GAP-004).
+1. ~~resolved profile payload key names~~ (GAP-001 ✅ canonicalised to the 开发需求
+   snake_case set);
+2. ~~Trace key set~~ (GAP-002 ✅ dead keys deleted, `gateFailureBranch` added);
+3. ~~`null` vs missing~~ (GAP-003 ✅ explicit `null` = IGNORED);
+4. ~~legacy `gatePolicy`~~ (GAP-004 ✅ never shipped ⇒ any occurrence is an error).
 
 Nothing in the remaining list (GAP-005 … GAP-012) blocks a legal configuration.
 
@@ -249,7 +260,7 @@ Nothing in the remaining list (GAP-005 … GAP-012) blocks a legal configuration
 Bake DSL, an expression language, authorable ordering, early return, a Factor Tree, a
 third role tier, or a per-mode program. The `CORE | SECONDARY | IGNORED` plus
 automatic-gate model was sufficient for every case exercised, including all the boundary
-cases the task nominated. The gaps are naming and edge-case ownership, not shape.
+cases the task nominated. The gaps were naming and edge-case ownership, never shape.
 
 **Caveat that must not be lost:** the *production* line (`programaticHitFish`, W6 head
 `0d94319`, 62 B-module tests green / 231 total) still carries the **pre-2026-09-17**
@@ -258,10 +269,21 @@ field, the removed `1/6` secondary loss with its `0.25541281188299536` cap, the 
 name, and the `0.30` ACCEPTABLE anchor. That code has **not** been migrated. This reference
 implements the post-delta contract; the two will disagree until the migration lands.
 
+**One caveat on the rulings themselves:** they currently live in this repository plus the
+two edited Notion pages. Recorded project decisions belong in Main Control
+(§26-style ruling section) — that page was outside this session's two-page write scope, so
+**the ruling trace is still outstanding.**
+
 ## 7. Next minimal action
 
-**One page, one table:** add a canonical *resolved payload key-name table* to
-Schema & Validator §1/§3 (Structure, Feeding Layer, Time Period profile keys — GAP-001) and
-rewrite its §3.8 `BakeEvaluationTrace` block to the post-2026-09-17 key set (GAP-002). Both
-are documentation-only edits on one existing page, and together they convert the two
-blocking gaps into fixed contracts. Everything else in this report can wait.
+**Record the ruling.** Append one narrow section to
+`Checkpoint｜0.3.4.0-B Main Agent Control` capturing the 2026-09-18 adjudications
+(GAP-001 … GAP-004) plus the residual fixed below, so the decisions are traceable in the
+place this branch keeps its rulings. Then the Fixed Bake contract is closed for
+implementation.
+
+**Residual fixed in the same pass:** 开发需求 §4.1's inline example writes
+`time_period_coefficient[DAWN]` while §4.0's own table writes
+`time_period_activity_coefficient[DAWN]`. Under the GAP-001 ruling the §4.0 spelling wins,
+so that one example string should be corrected — a third page, likewise outside this
+session's write scope.
