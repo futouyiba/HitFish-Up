@@ -28,7 +28,20 @@ SUPERSEDED premises — deliberately NOT implemented (see docs/implementation-ga
   * `SecondaryLoss = min((1/6)*Σ -ln(fit), 0.5*-ln(0.60))`
       -> `SecondaryFactor = 1 - (1 - SecondaryProduct)/4` (range [0.75, 1.0]).
   * output name `SpatialOpportunityIntensity`
-      -> `SpatialDistributionWeight` (= BaseOpportunityIntensity x FinalEnvCoeff).
+      -> `SpatialDistributionWeight` (contract) / `spatial_distribution_weight`
+      (code key, Main Control §26.4 delta 6).
+
+RULINGS APPLIED 2026-09-18 (see docs/implementation-gap.md):
+  * GAP-001 the four component profiles use the 开发需求 §4.0 / §4.3 snake_case
+    key names in the resolved payload -- delta 7 already pinned Temperature to
+    that spelling, so the other three follow it.
+  * GAP-002 the superseded Trace keys `gateFailureCap` / `secondaryLossRaw` /
+    `secondaryLossApplied` are DELETED rather than kept as null; the failure
+    branch is expressed by `gateFailureBranch`.
+  * GAP-003 an explicit `"aggregationRole": null` is an explicit IGNORED; only a
+    wholly absent binding row is a resolve error.
+  * GAP-004 `gatePolicy` never shipped, so there is no legacy payload and no
+    read-through channel: any occurrence is an error.
 """
 
 from __future__ import annotations
@@ -49,9 +62,6 @@ IGNORED = "IGNORED"
 
 #: legacy tokens accepted on read only; never written (Main Control §26.4 #8)
 _MIGRATION_IGNORED_ALIASES = frozenset({"OFF", "EXCLUDED"})
-
-#: a serialized gatePolicy key is legacy; only "absent" or explicit NONE is inert
-_INERT_GATE_POLICY = (None, "NONE")
 
 #: the four fixed P0 condition slots, in canonical (system) order. Order is a
 #: presentation/iteration order only -- aggregation is commutative (see §3.4).
@@ -142,19 +152,19 @@ def role_of(key: str, row: Mapping[str, Any]) -> str:
     """Resolve AggregationRole for one binding row.
 
     Missing-vs-ignored: an *explicit* `null` or an explicit token resolves to
-    IGNORED (Bass Vertical Slice §5 renders `"aggregationRole": null` = IGNORED).
-    A *missing* binding row is a resolve error, not an ignore -- 开发需求 §4.5
-    guardrail 2: "忽略 = 作者显式决定 ... 后者仍是错误".
-    See GAP-003: authority is split on whether `null` alone is explicit enough.
+    IGNORED; a *missing* binding row is a resolve error (开发需求 §4.5 guardrail 2).
+    Ruling 2026-09-18 (GAP-003): explicit `null` counts as an explicit ignore.
 
-    A legacy `gatePolicy` key is handled per GAP-004 (two Current clauses disagree):
-    an inert value is read through, any other is rejected.
+    `gatePolicy` DOES NOT EXIST in the Current contract, and it never shipped --
+    so there is no legacy payload to migrate and no read-through channel to
+    provide (ruling 2026-09-18, GAP-004). Any occurrence is an error, which is
+    Bass Vertical Slice §8 V6 read literally.
     """
-    if "gatePolicy" in row and row["gatePolicy"] not in _INERT_GATE_POLICY:
+    if "gatePolicy" in row:
         raise BakeConfigError(
-            "%s: legacy gatePolicy=%r present. The Current contract has no GatePolicy "
-            "field (gate is automatic for CORE); lift the intent explicitly to CORE or "
-            "SECONDARY -- silent coercion is forbidden." % (key, row["gatePolicy"]))
+            "%s: `gatePolicy` is not part of the Current contract. The field never "
+            "shipped, so there is no legacy payload to migrate; gate is automatic for "
+            "CORE and its criteria are fixed. Remove the field." % (key,))
     token = row.get("aggregationRole")
     if token is None or token == IGNORED or token in _MIGRATION_IGNORED_ALIASES:
         return IGNORED
@@ -376,15 +386,23 @@ def evaluate(subject: Mapping[str, Any], seed: Mapping[str, Any],
         "secondaryProduct": secondary_product,
         "secondaryFactor": secondary_factor,
         "coreLoss": core_loss,
-        # superseded keys, retained only so the Trace shape matches Schema §3.8;
-        # always None under the post-2026-09-17 aggregation (see GAP-001)
-        "secondaryLossRaw": None,
-        "secondaryLossApplied": None,
+        # NOTE (ruling 2026-09-18, GAP-002): the superseded keys that Schema §3.8
+        # still lists -- gateFailureCap, secondaryLossRaw, secondaryLossApplied --
+        # are DELETED, not retained as null. They described the failure-cap and
+        # 1/6-loss models, neither of which exists any more; this schema's only job
+        # is explainability, so dead keys in it are actively misleading. The
+        # information they carried is fully expressed by secondaryProduct /
+        # secondaryFactor / gateFailureBranch above.
         "rawEnvCoeff": raw_env_coeff,
         "gateFailureBranch": branch,
         "backgroundFloorApplied": background_floor_applied,
         "finalEnvCoeff": final_env_coeff,
-        "spatialDistributionWeight": seed["baseOpportunityIntensity"] * final_env_coeff,
+        # Main Control §26.4 delta 6 fixes the *code* key as snake_case
+        # `spatial_distribution_weight` (a rename of the existing
+        # `spatial_opportunity_intensity` field). The *contract* name stays
+        # `SpatialDistributionWeight`. See GAP-002 for the neighbouring keys,
+        # which the delta does not cover.
+        "spatial_distribution_weight": seed["baseOpportunityIntensity"] * final_env_coeff,
     }
 
 

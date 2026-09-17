@@ -89,7 +89,7 @@ class TestFixtureGoldens(unittest.TestCase):
                 else:
                     self.assertAlmostEqual(raw, expect["rawEnvCoeff"], places=12)
                 self.assertAlmostEqual(trace["finalEnvCoeff"], expect["finalEnvCoeff"], places=12)
-                self.assertAlmostEqual(trace["spatialDistributionWeight"], expect["weight"], places=12)
+                self.assertAlmostEqual(trace["spatial_distribution_weight"], expect["weight"], places=12)
                 failed = bool([g for g in trace["gateResults"] if g["passed"] is False])
                 self.assertEqual(failed, expect["gateFailed"])
 
@@ -224,15 +224,15 @@ class TestSemanticCases(unittest.TestCase):
         one = fb.evaluate(subject, build_seed(base=1.0), cg(structure="DROPOFF", temperature=(15, 15)))
         four = fb.evaluate(subject, build_seed(base=4.0), cg(structure="DROPOFF", temperature=(15, 15)))
         self.assertAlmostEqual(one["finalEnvCoeff"], four["finalEnvCoeff"], places=15)
-        self.assertAlmostEqual(four["spatialDistributionWeight"],
-                               4.0 * one["spatialDistributionWeight"], places=12)
+        self.assertAlmostEqual(four["spatial_distribution_weight"],
+                               4.0 * one["spatial_distribution_weight"], places=12)
 
     def test_case12b_zero_base_never_creates_weight(self):
         trace = fb.evaluate(build_subject(BASS_CORE_ROLES),
                             build_seed(base=0.0, background=True, env_coeff_min=0.1),
                             cg(structure="OPEN", temperature=(5, 5), layers=("SURFACE",)))
         self.assertEqual(trace["finalEnvCoeff"], 0.1)
-        self.assertEqual(trace["spatialDistributionWeight"], 0.0)
+        self.assertEqual(trace["spatial_distribution_weight"], 0.0)
 
     def test_case13_out_of_range_authored_fit(self):
         """GAP-005 characterisation: authority does not define runtime handling of an
@@ -275,7 +275,7 @@ class TestSemanticCases(unittest.TestCase):
         for key in ("subjectIdentity", "baseOpportunityIntensity", "conditionGroup",
                     "gateResults", "factorResults", "coreProduct", "secondaryProduct",
                     "secondaryFactor", "rawEnvCoeff", "gateFailureBranch",
-                    "backgroundFloorApplied", "finalEnvCoeff", "spatialDistributionWeight"):
+                    "backgroundFloorApplied", "finalEnvCoeff", "spatial_distribution_weight"):
             self.assertIn(key, trace)
         by_key = {f["conditionKey"]: f for f in trace["factorResults"]}
         self.assertAlmostEqual(by_key["TEMPERATURE"]["rawFit"], 13 / 22, places=12)
@@ -284,11 +284,30 @@ class TestSemanticCases(unittest.TestCase):
         self.assertAlmostEqual(trace["secondaryFactor"], 0.90, places=12)
         self.assertAlmostEqual(trace["finalEnvCoeff"], 0.3190909090909091, places=12)
 
+    def test_case15b_superseded_trace_keys_are_deleted_not_nulled(self):
+        """Ruling 2026-09-18 (GAP-002): dead keys are removed, not carried as null.
+
+        Their information is expressed by secondaryProduct / secondaryFactor /
+        gateFailureBranch; a schema whose only job is explainability must not
+        advertise concepts that no longer exist.
+        """
+        trace = fb.evaluate(build_subject(BASS_CORE_ROLES), build_seed(),
+                            cg(structure="DROPOFF", temperature=(15, 15), layers=("BOTTOM",)))
+        for dead in ("secondaryLossRaw", "secondaryLossApplied",
+                     "gateFailureCap", "spatialOpportunityIntensity"):
+            self.assertNotIn(dead, trace)
+        self.assertEqual(trace["secondaryProduct"], 0.60)
+        self.assertEqual(trace["secondaryFactor"], 0.90)
+
 
 class TestMigrationAndLegacy(unittest.TestCase):
-    """W5 migration rules: legacy tokens are read, never silently coerced."""
+    """W5 migration: legacy role tokens are read; `gatePolicy` is gone entirely.
 
-    def test_legacy_off_without_gate_is_ignored(self):
+    Ruling 2026-09-18 (GAP-004): GatePolicy never shipped, so there is no legacy
+    payload to migrate and no read-through channel. Any occurrence is an error.
+    """
+
+    def test_legacy_off_role_is_read_as_ignored(self):
         subject = build_subject(BASS_CORE_ROLES)
         for row in subject["resolvedSpatialOpportunityBindings"]:
             if row["conditionKey"] == "TIME_PERIOD":
@@ -296,23 +315,20 @@ class TestMigrationAndLegacy(unittest.TestCase):
         trace = fb.evaluate(subject, build_seed(), cg())
         self.assertNotIn("TIME_PERIOD", [f["conditionKey"] for f in trace["factorResults"]])
 
-    def test_legacy_off_with_gate_policy_is_rejected_not_coerced(self):
-        """Schema §5.1: OFF + non-NONE GatePolicy requires an explicit content decision."""
-        subject = build_subject(BASS_CORE_ROLES)
-        for row in subject["resolvedSpatialOpportunityBindings"]:
-            if row["conditionKey"] == "TIME_PERIOD":
-                row["aggregationRole"] = "OFF"
-                row["gatePolicy"] = "TRACE_RESIDUAL"
-        with self.assertRaises(fb.BakeConfigError):
-            fb.evaluate(subject, build_seed(), cg())
+    def test_any_gate_policy_field_is_rejected(self):
+        """Including the inert value: the field does not exist, so it is never legal."""
+        for value in ("TRACE_RESIDUAL", "HARD_EXCLUDE", "LOW_RESIDUAL", "NONE", None):
+            with self.subTest(gatePolicy=value):
+                subject = build_subject(BASS_CORE_ROLES)
+                for row in subject["resolvedSpatialOpportunityBindings"]:
+                    if row["conditionKey"] == "TIME_PERIOD":
+                        row["aggregationRole"] = "OFF"
+                        row["gatePolicy"] = value
+                with self.assertRaises(fb.BakeConfigError):
+                    fb.evaluate(subject, build_seed(), cg())
 
-    def test_legacy_off_with_none_gate_policy_normalises_to_ignored(self):
-        subject = build_subject(BASS_CORE_ROLES)
-        for row in subject["resolvedSpatialOpportunityBindings"]:
-            if row["conditionKey"] == "TIME_PERIOD":
-                row["aggregationRole"] = "OFF"
-                row["gatePolicy"] = "NONE"
-        trace = fb.evaluate(subject, build_seed(), cg())
+    def test_absent_gate_policy_key_is_fine(self):
+        trace = fb.evaluate(build_subject(BASS_CORE_ROLES), build_seed(), cg())
         self.assertAlmostEqual(trace["finalEnvCoeff"], 1.0, places=12)
 
 
