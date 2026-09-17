@@ -32,8 +32,7 @@
     },
     {
       "id": "R1",
-      "label": "一、数据",
-      "caption": "不可折叠的 section：数据的三个重要来源常显",
+      "label": "数据",
       "parent": "SYS",
       "lane": "main",
       "band": 300
@@ -88,7 +87,7 @@
     },
     {
       "id": "R1.L.NATURE",
-      "label": "鱼的习性配置的构成",
+      "label": "习性配置的构成",
       "caption": "四张习性表 + 条件角色绑定",
       "parent": "R1",
       "lane": "r1b",
@@ -96,8 +95,7 @@
     },
     {
       "id": "R2",
-      "label": "二、烘焙",
-      "caption": "折叠后只留标题条 · 展开见五条计算通道",
+      "label": "烘焙",
       "parent": "SYS",
       "lane": "main",
       "band": 340,
@@ -121,24 +119,21 @@
     },
     {
       "id": "R2.F.CORE",
-      "label": "核心因子（例：方块 · 三角）",
-      "caption": "按中鱼习性模式配置",
+      "label": "核心因子",
       "parent": "R2.C1",
       "lane": "r2L2b",
       "kind": "core"
     },
     {
       "id": "R2.F.SEC",
-      "label": "次要因子（例：六边形 · 圆）",
-      "caption": "",
+      "label": "次要因子",
       "parent": "R2.C1",
       "lane": "r2L2c",
       "kind": "sec"
     },
     {
       "id": "R2.F.SKIP",
-      "label": "不计算（六角形）",
-      "caption": "",
+      "label": "忽略因子",
       "parent": "R2.C1",
       "lane": "r2L2c2",
       "kind": "skip"
@@ -201,8 +196,7 @@
     },
     {
       "id": "R3",
-      "label": "三、玩家策略与操作数据",
-      "caption": "整体向右错开，左侧让给派生环境场",
+      "label": "玩家策略",
       "parent": "SYS",
       "lane": "main",
       "band": 210,
@@ -250,8 +244,7 @@
     },
     {
       "id": "R4",
-      "label": "四、响应",
-      "caption": "适配系数",
+      "label": "响应",
       "parent": "SYS",
       "lane": "main",
       "band": 210,
@@ -291,8 +284,7 @@
     },
     {
       "id": "R5",
-      "label": "五、圆桌抽鱼",
-      "caption": "",
+      "label": "圆桌抽鱼",
       "parent": "SYS",
       "lane": "main",
       "band": 220,
@@ -340,8 +332,7 @@
     },
     {
       "id": "R6",
-      "label": "六、抽鱼和生成",
-      "caption": "五的短延伸",
+      "label": "抽鱼和生成",
       "parent": "SYS",
       "lane": "main",
       "band": 150,
@@ -365,8 +356,7 @@
     },
     {
       "id": "R7",
-      "label": "七、范围外",
-      "caption": "超出中鱼范畴 · 不折叠",
+      "label": "范围外",
       "parent": "SYS",
       "lane": "main",
       "band": 130
@@ -389,7 +379,7 @@
     },
     {
       "id": "R2.C1",
-      "label": "1 空间分布权重",
+      "label": "空间分布权重",
       "caption": "环境侧",
       "parent": "R2",
       "lane": "r2c1G",
@@ -422,7 +412,7 @@
     },
     {
       "id": "R2.C1.X",
-      "label": "排除忽略",
+      "label": "忽略因子",
       "caption": "",
       "parent": "R2.C1",
       "lane": "r2c1X",
@@ -438,7 +428,7 @@
     },
     {
       "id": "R2.C2",
-      "label": "2 活性 Activity",
+      "label": "活性",
       "caption": "鱼侧",
       "parent": "R2.FC",
       "lane": "r2chG",
@@ -478,7 +468,7 @@
     },
     {
       "id": "R2.C3",
-      "label": "3 进食动机",
+      "label": "进食动机",
       "caption": "鱼侧",
       "parent": "R2.FC",
       "lane": "r2chG",
@@ -518,7 +508,7 @@
     },
     {
       "id": "R2.C4",
-      "label": "4 警戒度",
+      "label": "警戒度",
       "caption": "鱼侧 · 后续版本",
       "parent": "R2.FC",
       "lane": "r2chG",
@@ -558,7 +548,7 @@
     },
     {
       "id": "R2.C5",
-      "label": "5 动态进食偏好",
+      "label": "动态进食偏好",
       "caption": "鱼侧",
       "parent": "R2.FC",
       "lane": "r2chG",

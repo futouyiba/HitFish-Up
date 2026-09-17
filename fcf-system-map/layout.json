@@ -36,7 +36,7 @@
     "children": [
       {
         "node": "SYS",
-        "h": 66
+        "skip": true
       },
       {
         "ref": "C:R1"
@@ -148,7 +148,7 @@
           "role": "title"
         },
         {
-          "ref": "C:C1/L2"
+          "ref": "C:C1/FACTORS"
         },
         {
           "ref": "C:C1/CORE"
@@ -162,24 +162,6 @@
         {
           "node": "R2.C1.V",
           "w": 620
-        }
-      ]
-    },
-    "C:C1/L2": {
-      "axis": "h",
-      "even": true,
-      "children": [
-        {
-          "node": "R2.F.HAB"
-        },
-        {
-          "node": "R2.F.CORE"
-        },
-        {
-          "node": "R2.F.SEC"
-        },
-        {
-          "node": "R2.F.SKIP"
         }
       ]
     },
@@ -542,6 +524,89 @@
         },
         {
           "node": "R2.C1.A3"
+        }
+      ]
+    },
+    "C:C1/FACTORS": {
+      "axis": "v",
+      "children": [
+        {
+          "ref": "C:C1/F1"
+        },
+        {
+          "ref": "C:C1/F2"
+        },
+        {
+          "ref": "C:C1/F3"
+        },
+        {
+          "node": "R2.F.HAB"
+        }
+      ]
+    },
+    "C:C1/F1": {
+      "axis": "v",
+      "children": [
+        {
+          "node": "R2.F.CORE"
+        },
+        {
+          "ref": "C:C1/F1/I"
+        }
+      ]
+    },
+    "C:C1/F1/I": {
+      "axis": "h",
+      "even": true,
+      "children": [
+        {
+          "icon": "square"
+        },
+        {
+          "icon": "triangle"
+        }
+      ]
+    },
+    "C:C1/F2": {
+      "axis": "v",
+      "children": [
+        {
+          "node": "R2.F.SEC"
+        },
+        {
+          "ref": "C:C1/F2/I"
+        }
+      ]
+    },
+    "C:C1/F2/I": {
+      "axis": "h",
+      "even": true,
+      "children": [
+        {
+          "icon": "hexagon"
+        },
+        {
+          "icon": "circle"
+        }
+      ]
+    },
+    "C:C1/F3": {
+      "axis": "v",
+      "children": [
+        {
+          "node": "R2.F.SKIP"
+        },
+        {
+          "ref": "C:C1/F3/I"
+        }
+      ]
+    },
+    "C:C1/F3/I": {
+      "axis": "h",
+      "even": true,
+      "children": [
+        {
+          "icon": "hexagon-off"
         }
       ]
     }

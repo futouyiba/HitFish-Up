@@ -158,6 +158,18 @@ def load_sources(root):
 # 宽度只能有一个来源 —— 父容器的 fill —— 所以水平容器一律 resizeParent=0、
 # 按父容器内宽发射；重排只能沿「垂直容器的连续链」向上传播。
 
+# 矢量图标：layout.json 里写 {"icon": "triangle"}，发成一个无文字的图形 cell。
+# 用图形代替"方块/三角/六边形/圆"这些**文字**——那本来就是形状，写名字反而绕。
+ICON_SHAPES = {
+    "square":   ("rectangle;", "#dae8fc", "#6c8ebf"),
+    "triangle": ("triangle;direction=north;", "#dae8fc", "#6c8ebf"),
+    "hexagon":  ("hexagon;", "#d5e8d4", "#82b366"),
+    "circle":   ("ellipse;", "#d5e8d4", "#82b366"),
+    "hexagon-off": ("hexagon;dashed=1;", "#f5f5f5", "#aaaaaa"),
+}
+ICON_SIZE = 30
+ICON_PREFIX = "I:"
+
 LEAF_W = {
     "data": 260, "l1": 250, "process": 260, "cube": 260, "outside": 260,
     "group": 300, "core": 190, "sec": 190, "skip": 190, "gate": 130,
@@ -181,7 +193,13 @@ def resolve_layout(lay, nodes):
     def build(spec, cid, parent, axis):
         kids = []
         for ch in spec.get("children", []):
-            if "node" in ch:
+            if "icon" in ch:
+                if ch["icon"] not in ICON_SHAPES:
+                    sys.exit("error: layout.json 用了未知图标 %r" % ch["icon"])
+                icon = {"kind": "leaf", "id": ICON_PREFIX + cid + "/" + str(len(kids)),
+                        "spec": ch, "parent": cid, "icon": ch["icon"]}
+                kids.append(icon)
+            elif "node" in ch:
                 if ch["node"] not in by_id:
                     sys.exit("error: layout.json 引用了 graph.json 里没有的节点 %r"
                              % ch["node"])
@@ -223,7 +241,8 @@ def resolve_layout(lay, nodes):
             return
         out = []
         for c in node["children"]:
-            if (c["kind"] == "leaf" and not c["spec"].get("fill")
+            if (c["kind"] == "leaf" and not c["spec"].get("skip")
+                    and not c["spec"].get("fill")
                     and c["spec"].get("role") != "title"
                     and not c["spec"].get("pin")):
                 wid = "C:W:" + c["id"]
@@ -242,7 +261,7 @@ def resolve_layout(lay, nodes):
     seen = {}
 
     def count(n):
-        if n["kind"] == "leaf":
+        if n["kind"] == "leaf" and not n.get("icon"):
             seen[n["id"]] = seen.get(n["id"], 0) + 1
         for c in n.get("children", []):
             count(c)
@@ -286,6 +305,8 @@ def layout_ctx(lay, graph, views, root):
         return None
 
     def visible(child):
+        if child["spec"].get("skip"):
+            return False
         """一个子块只有在**自己与全部祖先**的折叠态都匹配时才可见。
         只查自己那一层是不够的：被收起的容器里的子孙虽然没写 `when`，
         也一起不可见，否则它们会按展开态坐标发出去。"""
@@ -339,6 +360,10 @@ def measure(node, forced_w, ctx):
     """
     b, sp = border_of(node, ctx), ctx["spacing"]
     if node["kind"] == "leaf":
+        if node.get("icon"):
+            node["_w"] = ICON_SIZE
+            node["_h"] = ICON_SIZE
+            return
         kind = ctx["kinds"].get(node["id"], DEFAULT_KIND)
         node["_w"] = (forced_w or node["spec"].get("w")
                       or LEAF_W.get(kind, DEFAULT_LEAF_W))
@@ -760,6 +785,13 @@ def emit(graph, scopes, views, plan, structural, semantic, default_view):
                         ctx["spacing"], border_of(n, ctx), indent))
             a(vertex(cid, "", style, x, y, w, h, parent,
                      visible=cid not in hidden_nodes))
+            continue
+        if n["spec"].get("skip"):
+            continue                      # 留在语义模型里，但不画（总图框＝页面标题已表达）
+        if n.get("icon"):
+            base, fill, stroke = ICON_SHAPES[n["icon"]]
+            a(vertex(cid, "", base + "fillColor=%s;strokeColor=%s;" % (fill, stroke),
+                     x, y, w, h, parent, visible=cid not in hidden_nodes))
             continue
         gn = gby[n["id"]]
         kind = gn.get("kind", DEFAULT_KIND)
