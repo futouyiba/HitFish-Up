@@ -97,7 +97,7 @@
     {
       "id": "R2",
       "label": "二、烘焙",
-      "caption": "折叠态：这一块会变大占满整条行带",
+      "caption": "折叠后只留标题条 · 展开见五条计算通道",
       "parent": "SYS",
       "lane": "main",
       "band": 340,

@@ -124,7 +124,7 @@ def main():
 
     # -- lanes --------------------------------------------------------------
     for n in nodes:
-        check(n.get("lane") in ("main", "r1a", "r1b", "r2L2a", "r2L2b", "r2L2c", "r2L2c2", "r2L2d", "r2L2e", "r2L2f", "r2c1G", "r2c1K", "r2c1S", "r2c1V", "r2c1X", "r2chG", "r2chK", "r2chS", "r2chV", "r2chX", "r2cover", "r2io", "r3cover", "r3def", "r3l0", "r3l1", "r4cover", "r4l0", "r4l1", "r5bar", "r5cover", "r5t", "r6cover", "r6l0", "r6l1", "r7l0", "r7l1"),
+        check(n.get("lane") in ("main", "r1a", "r1b", "r2L2a", "r2L2b", "r2L2c", "r2L2c2", "r2L2d", "r2L2e", "r2L2f", "r2c1G", "r2c1K", "r2c1S", "r2c1V", "r2c1X", "r2chG", "r2chK", "r2chS", "r2chV", "r2chX", "r2io", "r3def", "r3l0", "r3l1", "r4l0", "r4l1", "r5bar", "r5t", "r6l0", "r6l1", "r7l0", "r7l1"),
               "%s: unknown lane %r" % (n["id"], n.get("lane")))
     for n in nodes:
         if n.get("collapsible"):
