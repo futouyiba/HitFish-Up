@@ -1,101 +1,67 @@
 {
-  "format": 2,
+  "format": 3,
   "system": "FCF",
-  "description": "FCF Canonical System Map — semantic source of truth. Spine re-based (2026-09-17) from the 「中鱼升级｜」 design branch (Mainline First-Principles / Causal Heritage): 中鱼升级 is the substrate, and each lower design level is a projection with strictly smaller scope. The previous v0.1 skeleton (which used Simplified V0's module chain as the spine) is superseded; it remains in git history at 2d52879 for provenance. generated/ is a build artifact — never hand-edit.",
+  "description": "FCF Canonical System Map — semantic source of truth. Drawn at the 整体框架 altitude: seven rows (six modules + 范围外), top-down. Every cell carries a Chinese label; English appears only as a caption. This map expresses flow direction, module boundaries and input/output boundaries — NOT which parameters compute which downstream value.",
   "provenance": {
-    "spine": [
-      "中鱼升级｜Overall System Model：从 World State 到 Fish Spawn Commit (v20, 2026-09-15)",
-      "中鱼升级｜Mechanism Topology V2：Spatial × Response 深入下钻 (v2, 2026-09-14)",
-      "中鱼升级｜Behavioral Regime × Largemouth Bass：Spatial–Response 中层逻辑样板 (v8, 2026-09-15)"
-    ],
-    "superseded": "FCF Simplified V0 / 0.3.4 module chain 4.0–4.7 was used as the v0.1 spine; it is a projection of this branch, not the substrate."
+    "altitude": "Design Owner 2026-09-17：本图停在『整体框架』级别——表达大致流向、模块划分边界、输入输出边界，不表达具体参数如何算出下一层参数；最多表达到『哪几个参数算作一层，进入后面哪一层的前置条件』。",
+    "terminology": "原「环境权重 / EnvironmentWeight」已废弃，现行术语为「空间分布权重 / spatial distribution weight」——当前版本与远期规划同名同概念（Design Owner 2026-09-17）。",
+    "drift": "温度类环境事实只流向烘焙，在烘焙中转变为「空间分布权重」与「鱼侧动态参数」；温度不直接流向响应阶段（Design Owner 2026-09-17 给的样板）。",
+    "spine": "第一性主干（中鱼升级分支）作为内容依据；投影层级由 scopes.json 表达。"
   },
   "semantics": {
-    "hierarchy": "parent = progressive-disclosure grouping (collapsible domains). Hierarchy is NOT a dataflow claim; the causal flow is carried by the explicit edges below.",
-    "edges": "DATA_FLOW (solid) | CONTROL_OR_SELECTION (dashed) | REFERENCE_OR_CONFIG (dotted, reserved) | RETENTION (the same-support L×C join) | ANCHOR (relationship fact handed to Interaction; explicitly NOT the final EnvironmentWeight)",
-    "joinRule": "Join Before Reduce — L and C combine on the same identity/support BEFORE reducing over the Opportunity measure. q_species,j = Σ_r L_r,j × C_r,j",
-    "regimeAxis": "Behavioral Regime is a presentation-independent upstream semantic, not a cross-domain owner. It materializes only when it must carry L_r ↔ C_r correlation, and normally dies after the join.",
-    "edgeRouting": "exit/entry: N,S,E,W hints for the orthogonal router; purely visual and deterministic."
+    "hierarchy": "parent = 行 / 折叠单位。每一行是一个可折叠单元，折叠时行内全部方块与所连箭头一起隐藏。",
+    "rows": "R1 数据 → R2 烘焙 → R3 玩家策略与操作数据 → R4 响应 → R5 圆桌抽鱼 → R6 抽鱼和生成 → R7 范围外（不可折叠）",
+    "edges": "只表达流向与边界，不表达公式。label 写『流过去的是什么』，不写怎么算出来。",
+    "edgeTypes": "DATA_FLOW 实线｜CONTROL_OR_SELECTION 虚线｜REFERENCE_OR_CONFIG 点线"
   },
   "nodes": [
-    {"id": "SYS", "label": "FCF Canonical System Map", "caption": "中鱼升级(第一性主干) · 各版本为其投影", "parent": null, "lane": "main"},
+    {"id": "SYS", "label": "中鱼机制总图", "caption": "FCF Canonical System Map · 七大层", "parent": null, "lane": "main"},
 
-    {"id": "IO", "label": "因果输入 / 稳定定义", "parent": "SYS", "lane": "main", "collapsible": true},
-    {"id": "IO.WORLD", "label": "World / Ecology / History", "caption": "authoritative facts + admitted history", "parent": "IO", "lane": "io"},
-    {"id": "IO.FISH", "label": "Fish Definition", "caption": "Species / Cohort 稳定定义 ≠ 当前状态", "parent": "IO", "lane": "io"},
-    {"id": "IO.PLAYER", "label": "Player Action + Skill + Equipment", "caption": "玩家 command ≠ 水下实际发生", "parent": "IO", "lane": "io"},
-    {"id": "IO.RESOURCE", "label": "Consumable Resource", "caption": "独立窄 Domain：quantity / lineage / 资源结算", "parent": "IO", "lane": "io"},
+    {"id": "R1", "label": "一、数据", "caption": "环境上下文 / 钓场投鱼配置 / 鱼的习性配置", "parent": "SYS", "lane": "main", "collapsible": true},
+    {"id": "D.CONTEXT", "label": "环境上下文", "caption": "季节 · 水温 · 时段 · 天气史 · 地形 · 结构", "parent": "R1", "lane": "r1"},
+    {"id": "D.STOCK", "label": "钓场投鱼配置", "caption": "鱼种 × 品质 投放项 · 基础机会强度 · 背景鱼标记", "parent": "R1", "lane": "r1"},
+    {"id": "D.HABIT", "label": "鱼的习性配置", "caption": "温度 / 水层 / 结构亲和 · 时段 · 中鱼习性模式", "parent": "R1", "lane": "r1"},
 
-    {"id": "WAIST", "label": "语义腰 / Semantic Waist", "caption": "三个容易被压丢的稳定责任结构", "parent": "SYS", "lane": "main", "collapsible": true},
-    {"id": "W.READINESS", "label": "Readiness / Behavioral Context", "caption": "ResolvedBehavioralContext · 与当前呈现无关", "parent": "WAIST", "lane": "waist"},
-    {"id": "W.FUNCTIONAL", "label": "Functional Context Resolver", "caption": "ResolvedFunctionalContext · task-independent 能力的单一 derived authority", "parent": "WAIST", "lane": "waist"},
-    {"id": "W.PRESENTATION", "label": "Presentation Realization", "caption": "ActualPresentation · 经装备/技能/物理后的实际呈现", "parent": "WAIST", "lane": "waist"},
+    {"id": "R2", "label": "二、烘焙", "caption": "习性配置 × 环境上下文 → 派生环境场", "parent": "SYS", "lane": "main", "collapsible": true},
+    {"id": "BAKE", "label": "烘焙", "caption": "固定烘焙模板", "parent": "R2", "lane": "r2"},
+    {"id": "DEF", "label": "派生环境场", "caption": "Derived Environment Field", "parent": "R2", "lane": "r2"},
+    {"id": "SDW", "label": "空间分布权重", "caption": "spatial distribution weight｜原「环境权重」", "parent": "R2", "lane": "r2"},
+    {"id": "FISHCOND", "label": "鱼侧动态参数", "caption": "活性 · 进食动机 · 食性偏好", "parent": "R2", "lane": "r2"},
 
-    {"id": "WHO", "label": "WHO", "caption": "这张票上 Native 可能是什么鱼", "parent": "SYS", "lane": "main", "collapsible": true},
-    {"id": "WHO.OPPORTUNITY", "label": "Opportunity Formation", "caption": "LogicalOpportunity · species-agnostic WHEN", "parent": "WHO", "lane": "who"},
-    {"id": "WHO.SPATIAL", "label": "Spatial Resolver", "caption": "Native Supply L_i,j · WHERE · 与呈现无关", "parent": "WHO", "lane": "who", "collapsible": true},
-    {"id": "SP.GATE", "label": "Structural Gate", "caption": "StructuralZero(reason) / Unknown / continue", "parent": "WHO.SPATIAL", "lane": "spatial"},
-    {"id": "SP.HABITAT", "label": "Habitat Relation Resolver", "caption": "Anchor + 稀疏 downgrade / upgrade / override → H", "parent": "WHO.SPATIAL", "lane": "spatial"},
-    {"id": "SP.VIABILITY", "label": "Viability Constraint Resolver", "caption": "Temperature / DO / extreme Flow → 有界 V", "parent": "WHO.SPATIAL", "lane": "spatial"},
-    {"id": "SP.AMBIENT", "label": "Ambient Supply Projection", "caption": "B × optional P × H × V（串联语义，不是系数相乘）", "parent": "WHO.SPATIAL", "lane": "spatial"},
-    {"id": "SP.LOCAL", "label": "Local Dynamic Supply Resolver", "caption": "Aggregation / Disturbance 只作用于 causally-later", "parent": "WHO.SPATIAL", "lane": "spatial"},
+    {"id": "R3", "label": "三、玩家策略与操作数据", "caption": "钓具 / 钓组 · 姿态", "parent": "SYS", "lane": "main", "collapsible": true},
+    {"id": "PLAYER", "label": "玩家策略与操作数据", "caption": "钓具 / 钓组 · 姿态", "parent": "R3", "lane": "r3"},
+    {"id": "PRESENT", "label": "呈现刺激", "caption": "速度 · 动作 · 声音 · 震动 · 光 · 轮廓 · 气味", "parent": "R3", "lane": "r3"},
 
-    {"id": "WHO.INTERACTION", "label": "Interaction Resolver", "caption": "captureRetention C_i,j · 给定 presence 后的条件响应保留", "parent": "WHO", "lane": "who", "collapsible": true},
-    {"id": "IN.PERCEPTION", "label": "Perception", "caption": "Source → 传播 → Receiver Signals → Perceptual Evidence[]", "parent": "WHO.INTERACTION", "lane": "inter"},
-    {"id": "IN.INTERPRET", "label": "Semantic Interpretation", "caption": "Target / Intrusion / Novelty（不是 Detect 后乘 Preference）", "parent": "WHO.INTERACTION", "lane": "inter"},
-    {"id": "IN.FEEDING", "label": "Feeding Mode", "caption": "Target Relation × Motivation × TaskAffordance → C_feed", "parent": "WHO.INTERACTION", "lane": "inter"},
-    {"id": "IN.DEFENSE", "label": "Defense Mode", "caption": "Guarding ∧ InsideScope ∧ ThreatRelevant → C_defense", "parent": "WHO.INTERACTION", "lane": "inter"},
-    {"id": "IN.AGGREGATE", "label": "Cross-Mode Aggregator", "caption": "operator 由 route relation 决定 → C", "parent": "WHO.INTERACTION", "lane": "inter"},
+    {"id": "R4", "label": "四、响应", "caption": "适配系数", "parent": "SYS", "lane": "main", "collapsible": true},
+    {"id": "RESPONSE", "label": "响应模块", "caption": "适配系数｜较复杂逻辑，本图不展开", "parent": "R4", "lane": "r4"},
 
-    {"id": "JOIN", "label": "Candidate Resolver · 同 support Join", "caption": "q_species,j = Σ_r L_r,j × C_r,j → W_i^opp / NativeCandidateSnapshot", "parent": "SYS", "lane": "main"},
+    {"id": "R5", "label": "五、圆桌抽鱼", "caption": "", "parent": "SYS", "lane": "main", "collapsible": true},
+    {"id": "T1", "label": "品质抽取调整", "caption": "中鱼习性模式", "parent": "R5", "lane": "r5"},
+    {"id": "T2", "label": "圆桌权重表构建", "caption": "组件", "parent": "R5", "lane": "r5"},
+    {"id": "T3", "label": "硬保底", "caption": "", "parent": "R5", "lane": "r5"},
+    {"id": "T4", "label": "动态权重调整", "caption": "", "parent": "R5", "lane": "r5"},
 
-    {"id": "RESOLVE", "label": "RESOLVE", "caption": "从完整候选面到 Commit", "parent": "SYS", "lane": "main", "collapsible": true},
-    {"id": "RS.POLICY", "label": "Candidate Pre-Roll Gameplay Policy", "caption": "显式玩法规则；不改写 Native truth", "parent": "RESOLVE", "lane": "resolve"},
-    {"id": "RS.TRUEROLL", "label": "Canonical TrueRoll", "caption": "只消费 complete effective surface", "parent": "RESOLVE", "lane": "resolve"},
-    {"id": "RS.FALLBACK", "label": "Fallback Runtime State", "caption": "只消费合法 accepted post-policy outcome；不消费 incomplete", "parent": "RESOLVE", "lane": "resolve"},
-    {"id": "RS.INSTANCE", "label": "Spawn Instance Realization", "caption": "selection-neutral 具体化", "parent": "RESOLVE", "lane": "resolve"},
-    {"id": "COMMIT", "label": "Fish Spawn Commit", "caption": "中鱼系统成功边界 — Probe / Bite / Hook / Fight 不得回溯重算本次 WHO", "parent": "RESOLVE", "lane": "resolve"}
+    {"id": "R6", "label": "六、抽鱼和生成", "caption": "五的短延伸", "parent": "SYS", "lane": "main", "collapsible": true},
+    {"id": "DRAW", "label": "抽鱼和生成", "caption": "鱼种 · 品质 · 大小 · 重量 ｜ 鱼侧动态参数透传", "parent": "R6", "lane": "r6"},
+
+    {"id": "R7", "label": "七、范围外", "caption": "超出中鱼范畴 · 最简略，不折叠", "parent": "SYS", "lane": "main"},
+    {"id": "FISHAI", "label": "运行 Fish AI", "caption": "刺鱼 / 博鱼", "parent": "R7", "lane": "r7"}
   ],
   "edges": [
-    {"from": "IO.WORLD", "to": "W.READINESS", "type": "DATA_FLOW"},
-    {"from": "IO.FISH", "to": "W.READINESS", "type": "DATA_FLOW"},
-    {"from": "IO.WORLD", "to": "W.FUNCTIONAL", "type": "DATA_FLOW"},
-    {"from": "IO.FISH", "to": "W.FUNCTIONAL", "type": "DATA_FLOW"},
-    {"from": "IO.PLAYER", "to": "W.PRESENTATION", "type": "DATA_FLOW"},
-    {"from": "IO.WORLD", "to": "W.PRESENTATION", "type": "DATA_FLOW"},
+    {"from": "D.CONTEXT", "to": "BAKE", "type": "DATA_FLOW", "label": "环境上下文"},
+    {"from": "D.HABIT", "to": "BAKE", "type": "DATA_FLOW", "label": "习性配置"},
+    {"from": "BAKE", "to": "DEF", "type": "DATA_FLOW"},
+    {"from": "DEF", "to": "SDW", "type": "DATA_FLOW"},
+    {"from": "D.STOCK", "to": "SDW", "type": "DATA_FLOW", "label": "基础机会强度"},
+    {"from": "DEF", "to": "FISHCOND", "type": "DATA_FLOW"},
 
-    {"from": "IO.WORLD", "to": "WHO.SPATIAL", "type": "DATA_FLOW"},
-    {"from": "IO.FISH", "to": "WHO.SPATIAL", "type": "DATA_FLOW"},
-    {"from": "W.PRESENTATION", "to": "WHO.INTERACTION", "type": "DATA_FLOW"},
-    {"from": "W.READINESS", "to": "WHO.INTERACTION", "type": "DATA_FLOW"},
-    {"from": "W.FUNCTIONAL", "to": "WHO.INTERACTION", "type": "DATA_FLOW"},
-    {"from": "IO.FISH", "to": "WHO.INTERACTION", "type": "DATA_FLOW"},
-    {"from": "W.PRESENTATION", "to": "WHO.OPPORTUNITY", "type": "DATA_FLOW"},
-    {"from": "W.FUNCTIONAL", "to": "WHO.SPATIAL", "type": "REFERENCE_OR_CONFIG"},
+    {"from": "PLAYER", "to": "PRESENT", "type": "DATA_FLOW"},
+    {"from": "PRESENT", "to": "RESPONSE", "type": "DATA_FLOW", "label": "呈现刺激"},
+    {"from": "FISHCOND", "to": "RESPONSE", "type": "DATA_FLOW", "label": "鱼侧动态参数"},
 
-    {"from": "SP.GATE", "to": "SP.HABITAT", "type": "CONTROL_OR_SELECTION"},
-    {"from": "SP.HABITAT", "to": "SP.AMBIENT", "type": "DATA_FLOW"},
-    {"from": "SP.VIABILITY", "to": "SP.AMBIENT", "type": "DATA_FLOW"},
-    {"from": "SP.AMBIENT", "to": "SP.LOCAL", "type": "DATA_FLOW"},
-    {"from": "SP.LOCAL", "to": "WHO.SPATIAL", "type": "DATA_FLOW"},
-
-    {"from": "IN.PERCEPTION", "to": "IN.INTERPRET", "type": "DATA_FLOW"},
-    {"from": "IN.INTERPRET", "to": "IN.FEEDING", "type": "DATA_FLOW"},
-    {"from": "IN.INTERPRET", "to": "IN.DEFENSE", "type": "DATA_FLOW"},
-    {"from": "IN.FEEDING", "to": "IN.AGGREGATE", "type": "DATA_FLOW"},
-    {"from": "IN.DEFENSE", "to": "IN.AGGREGATE", "type": "DATA_FLOW"},
-    {"from": "IN.AGGREGATE", "to": "WHO.INTERACTION", "type": "DATA_FLOW"},
-
-    {"from": "WHO.SPATIAL", "to": "JOIN", "type": "DATA_FLOW", "label": "L (Native Supply)"},
-    {"from": "WHO.INTERACTION", "to": "JOIN", "type": "DATA_FLOW", "label": "C (captureRetention)"},
-    {"from": "WHO.OPPORTUNITY", "to": "JOIN", "type": "DATA_FLOW", "label": "本票 support / measure"},
-    {"from": "IO.WORLD", "to": "WHO.INTERACTION", "type": "ANCHOR", "label": "必要关系事实 / Anchor — 不是最终 EnvironmentWeight"},
-
-    {"from": "JOIN", "to": "RS.POLICY", "type": "DATA_FLOW"},
-    {"from": "RS.POLICY", "to": "RS.TRUEROLL", "type": "DATA_FLOW"},
-    {"from": "RS.TRUEROLL", "to": "RS.FALLBACK", "type": "CONTROL_OR_SELECTION", "label": "Accepted TrueNone"},
-    {"from": "RS.TRUEROLL", "to": "RS.INSTANCE", "type": "DATA_FLOW", "label": "Selected Candidate"},
-    {"from": "RS.INSTANCE", "to": "COMMIT", "type": "DATA_FLOW"},
-    {"from": "RS.FALLBACK", "to": "COMMIT", "type": "CONTROL_OR_SELECTION"}
+    {"from": "SDW", "to": "R5", "type": "DATA_FLOW", "label": "空间分布权重"},
+    {"from": "RESPONSE", "to": "R5", "type": "DATA_FLOW", "label": "适配系数"},
+    {"from": "R5", "to": "DRAW", "type": "DATA_FLOW", "label": "权重池 + NONE"},
+    {"from": "DRAW", "to": "FISHAI", "type": "CONTROL_OR_SELECTION", "label": "鱼种 / 品质 / 大小 / 重量"}
   ]
 }

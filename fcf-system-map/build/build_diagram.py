@@ -51,32 +51,43 @@ ROOT = HERE.parent
 # takes the next slot; inserting mid-lane shifts later siblings one slot
 # (documented rule).
 NODE_W, NODE_H, STAGE_W = 260, 50, 220
+# 7-row 整体框架 layout: `main` stacks the root + seven row labels; each row
+# lane lays its blocks out horizontally (dx) on that row's own y.
 LANES = {
-    "main":    {"x": 80,  "w": 240, "anchor": None,                "y0": 50,   "dy": 270},
-    "io":      {"x": 380, "w": 230, "anchor": "IO",                "y0": -40,  "dy": 52},
-    "waist":   {"x": 380, "w": 230, "anchor": "WAIST",             "y0": -40,  "dy": 52},
-    "who":     {"x": 380, "w": 230, "anchor": "WHO",               "y0": -40,  "dy": 52},
-    "spatial": {"x": 700, "w": 230, "anchor": "WHO.SPATIAL",       "y0": -130, "dy": 52},
-    "inter":   {"x": 980, "w": 230, "anchor": "WHO.INTERACTION",   "y0": -130, "dy": 52},
-    "resolve": {"x": 380, "w": 230, "anchor": "RESOLVE",           "y0": -40,  "dy": 52},
+    "main": {"x": 80,   "w": 200, "anchor": None, "y0": 60, "dy": 150},
+    "r1":   {"x": 340,  "w": 230, "anchor": "R1", "y0": 0, "dx": 250},
+    "r2":   {"x": 340,  "w": 230, "anchor": "R2", "y0": 0, "dx": 250},
+    "r3":   {"x": 840,  "w": 230, "anchor": "R3", "y0": 0, "dx": 250},
+    "r4":   {"x": 1090, "w": 230, "anchor": "R4", "y0": 0, "dx": 250},
+    "r5":   {"x": 340,  "w": 230, "anchor": "R5", "y0": 0, "dx": 250},
+    "r6":   {"x": 340,  "w": 480, "anchor": "R6", "y0": 0, "dx": 250},
+    "r7":   {"x": 340,  "w": 480, "anchor": "R7", "y0": 0, "dx": 250},
 }
-PAGE_W, PAGE_H = 1280, 1680
+PAGE_W, PAGE_H = 1420, 1250
 
 GRAY_FILL, GRAY_STROKE, GRAY_FONT = "#f5f5f5", "#a6a6a6", "#8f8f8f"
 
-# family fill/stroke by first ID segment (neutral, scope-free presentation)
+# 行 = 折叠单位（纵向层次）；色族按行区分，便于一眼看出方块属于哪一层
 FAMILIES = {
-    "SYS": ("#ffe6cc", "#d79b00"),
-    "IO": ("#dae8fc", "#6c8ebf"),
-    "WAIST": ("#fff2cc", "#d6b656"),
-    "W": ("#fff2cc", "#d6b656"),
-    "WHO": ("#d5e8d4", "#82b366"),
-    "SP": ("#dae8fc", "#6c8ebf"),
-    "IN": ("#fff2cc", "#d6b656"),
-    "JOIN": ("#ffe6cc", "#d79b00"),
-    "RESOLVE": ("#e1d5e7", "#9673a6"),
-    "RS": ("#e1d5e7", "#9673a6"),
-    "COMMIT": ("#d5e8d4", "#2d6a4f"),
+    "SYS": ("#ffffff", "#333333"),
+    "R1": ("#dae8fc", "#6c8ebf"),
+    "R2": ("#ffe6cc", "#d79b00"),
+    "R3": ("#d5e8d4", "#82b366"),
+    "R4": ("#fff2cc", "#d6b656"),
+    "R5": ("#e1d5e7", "#9673a6"),
+    "R6": ("#ffe6cc", "#d79b00"),
+    "R7": ("#f5f5f5", "#a6a6a6"),
+    "D": ("#dae8fc", "#6c8ebf"),
+    "BAKE": ("#ffe6cc", "#d79b00"),
+    "DEF": ("#dae8fc", "#6c8ebf"),
+    "SDW": ("#dae8fc", "#6c8ebf"),
+    "FISHCOND": ("#dae8fc", "#6c8ebf"),
+    "PLAYER": ("#d5e8d4", "#82b366"),
+    "PRESENT": ("#d5e8d4", "#82b366"),
+    "RESPONSE": ("#fff2cc", "#d6b656"),
+    "T": ("#e1d5e7", "#9673a6"),
+    "DRAW": ("#ffe6cc", "#d79b00"),
+    "FISHAI": ("#f5f5f5", "#a6a6a6"),
 }
 FALLBACK_FAMILY = ("#f5f5f5", "#666666")
 
@@ -134,21 +145,29 @@ def layout(nodes, edges):
     ids = [n["id"] for n in nodes]
     by_id = {n["id"]: n for n in nodes}
     pos, lane_cursor = {}, {}
-    # main lane first (anchors live there), then anchored lanes in definition order
+    # main lane first (row nodes live there), then row lanes in definition order
     for lane in ["main"] + [l for l in LANES if l != "main"]:
         spec = LANES[lane]
         i = 0
         for n in nodes:
             if n.get("lane") != lane:
                 continue
-            if spec["anchor"] is None:
-                y = spec["y0"] + i * spec["dy"]
+            if spec.get("dx"):
+                # horizontal lane: blocks sit side by side on the anchor's row
+                if spec["anchor"] not in pos:
+                    sys.exit("error: lane %s anchors on %s which is not laid out yet"
+                             % (lane, spec["anchor"]))
+                x = spec["x"] + i * spec["dx"]
+                y = pos[spec["anchor"]][1] + spec["y0"]
+            elif spec["anchor"] is None:
+                x, y = spec["x"], spec["y0"] + i * spec["dy"]
             else:
                 if spec["anchor"] not in pos:
                     sys.exit("error: lane %s anchors on %s which is not laid out yet"
                              % (lane, spec["anchor"]))
+                x = spec["x"]
                 y = pos[spec["anchor"]][1] + spec["y0"] + i * spec["dy"]
-            pos[n["id"]] = (spec["x"], y, spec["w"], NODE_H)
+            pos[n["id"]] = (x, y, spec["w"], NODE_H)
             i += 1
         lane_cursor[lane] = i
 
@@ -209,40 +228,6 @@ def subtree_cells(nid, nodes, semantic, structural):
     return cells
 
 
-def lens_actions(assignment, semantic, restore):
-    """Style actions for the lens scope. restore=False applies the lens,
-    restore=True puts everything back to the baked neutral presentation."""
-    acts = []
-
-    def style(key, value, cells):
-        acts.append({"style": {"key": key, "value": value, "cells": cells,
-                               "transient": False}})
-
-    out_nodes = sorted(assignment.get("OUT", []))
-    boundary_nodes = sorted(assignment.get("BOUNDARY", []))
-    if not restore:
-        if out_nodes:
-            style("fillColor", GRAY_FILL, out_nodes)
-            style("strokeColor", GRAY_STROKE, out_nodes)
-            style("fontColor", GRAY_FONT, out_nodes)
-        if boundary_nodes:
-            style("dashed", "1", boundary_nodes)
-            style("strokeWidth", "2", boundary_nodes)
-        gray_edges, dash_edges = [], []
-        for e in semantic:
-            tcls = class_of(e["to"], assignment)
-            scls = class_of(e["from"], assignment)
-            if tcls == "OUT":
-                gray_edges.append(e["id"])
-            elif scls == "BOUNDARY" and tcls == "ACTIVE":
-                dash_edges.append(e["id"])
-        if gray_edges:
-            style("strokeColor", LENS_EDGE_GRAY, gray_edges)
-        if dash_edges:
-            style("dashed", "1", dash_edges)
-    return acts
-
-
 def class_of(node_id, assignment):
     for cls, members in assignment.items():
         if node_id in members:
@@ -250,31 +235,35 @@ def class_of(node_id, assignment):
     return None
 
 
-def restore_actions(nodes, semantic, assignment):
-    """Reset every lensed property back to the baked neutral value."""
+def lens_actions(scope, nodes, structural, semantic, mode):
+    """Style + opacity actions for a scope lens.
+
+    mode='apply' -> colour the three classes AND dim out-of-scope cells
+    mode='clear' -> neutral colours AND full opacity
+
+    Opacity uses the native viewer action {"opacity": {"value": v, "cells": [...]}}.
+    Dimming rather than hiding is deliberate: out-of-scope elements stay legible as
+    context and the geometry never moves, so spatial memory survives the switch.
+    """
+    assignment = scope["assignment"]
+    op = scope.get("opacity", {})
     acts = []
 
     def style(key, value, cells):
-        acts.append({"style": {"key": key, "value": value, "cells": cells,
-                               "transient": False}})
+        cells = sorted(set(cells))
+        if cells:
+            acts.append({"style": {"key": key, "value": value,
+                                   "cells": cells, "transient": False}})
 
-    by_id = {n["id"]: n for n in nodes}
-    out_nodes = sorted(assignment.get("OUT", []))
-    if out_nodes:
-        for key in ("fillColor", "strokeColor", "fontColor"):
-            # group by target value to keep the payload small and deterministic
-            groups = {}
-            for nid in out_nodes:
-                fill, stroke = family(nid)
-                v = {"fillColor": fill, "strokeColor": stroke,
-                     "fontColor": "#000000"}[key]
-                groups.setdefault(v, []).append(nid)
-            for v in sorted(groups):
-                style(key, v, sorted(groups[v]))
-    boundary_nodes = sorted(assignment.get("BOUNDARY", []))
-    if boundary_nodes:
-        style("dashed", "0", boundary_nodes)
-        style("strokeWidth", "1", boundary_nodes)
+    def set_opacity(value, cells):
+        cells = sorted(set(cells))
+        if cells:
+            acts.append({"opacity": {"value": value, "cells": cells}})
+
+    by_class = {c: sorted(assignment.get(c, [])) for c in ("ACTIVE", "BOUNDARY", "OUT")}
+    all_nodes = [n["id"] for n in nodes]
+    all_edges = [e["id"] for e in semantic] + [e["id"] for e in structural]
+
     gray_edges, dash_edges = [], []
     for e in semantic:
         tcls = class_of(e["to"], assignment)
@@ -283,17 +272,37 @@ def restore_actions(nodes, semantic, assignment):
             gray_edges.append(e["id"])
         elif scls == "BOUNDARY" and tcls == "ACTIVE":
             dash_edges.append(e["id"])
-    if gray_edges:
+
+    if mode == "clear":
+        for cls in ("OUT", "BOUNDARY"):
+            for nid in by_class[cls]:
+                fill, stroke = family(nid)
+                style("fillColor", fill, [nid])
+                style("strokeColor", stroke, [nid])
+                style("fontColor", "#000000", [nid])
+        style("dashed", "0", by_class["BOUNDARY"])
+        style("strokeWidth", "1", by_class["BOUNDARY"])
         by_eid = {e["id"]: e for e in semantic}
-        groups = {}
         for eid in gray_edges:
-            e = by_eid[eid]
-            fill, stroke = family(e["from"])
-            groups.setdefault(stroke, []).append(eid)
-        for v in sorted(groups):
-            style("strokeColor", v, sorted(groups[v]))
-    if dash_edges:
-        style("dashed", "0", sorted(dash_edges))
+            fill, stroke = family(by_eid[eid]["from"])
+            style("strokeColor", stroke, [eid])
+        style("dashed", "0", dash_edges)
+        set_opacity(1, all_nodes + all_edges)
+        return acts
+
+    style("fillColor", GRAY_FILL, by_class["OUT"])
+    style("strokeColor", GRAY_STROKE, by_class["OUT"])
+    style("fontColor", GRAY_FONT, by_class["OUT"])
+    style("dashed", "1", by_class["BOUNDARY"])
+    style("strokeWidth", "2", by_class["BOUNDARY"])
+    style("strokeColor", LENS_EDGE_GRAY, gray_edges)
+    style("dashed", "1", dash_edges)
+
+    set_opacity(op.get("ACTIVE", 1.0), by_class["ACTIVE"])
+    set_opacity(op.get("BOUNDARY", 0.75), by_class["BOUNDARY"])
+    set_opacity(op.get("OUT", 0.30), by_class["OUT"])
+    set_opacity(op.get("BOUNDARY", 0.75), dash_edges)
+    set_opacity(op.get("OUT", 0.30), gray_edges)
     return acts
 
 
@@ -303,12 +312,17 @@ def view_button_payload(view, scope_by_id, nodes, semantic, structural, collapsi
     acts = []
     lens_id = view.get("scopeLens", "keep")
     if lens_id == "clear":
-        lensed = [s for s in scope_by_id.values() if s.get("lens")]
-        if lensed:
-            acts.extend(restore_actions(nodes, semantic, lensed[0]["assignment"]))
+        for s in scope_by_id.values():
+            if s.get("lens"):
+                acts.extend(lens_actions(s, nodes, structural, semantic, "clear"))
     elif lens_id not in (None, "keep"):
-        acts.extend(lens_actions(scope_by_id[lens_id]["assignment"], semantic, restore=False))
+        acts.extend(lens_actions(scope_by_id[lens_id], nodes, structural, semantic, "apply"))
     exp = view.get("expansion") or {}
+    for key in ("collapse", "expand"):
+        for nid in exp.get(key, []):
+            if nid not in collapsible_cells:
+                sys.exit("error: view %s tries to %s %r, which is not a "
+                         "collapsible node in graph.json" % (view["id"], key, nid))
     for nid in exp.get("collapse", []):
         acts.append({"hide": {"cells": collapsible_cells[nid]}})
     for nid in exp.get("expand", []):
@@ -359,58 +373,66 @@ def emit(graph, scopes, views, pos, structural, semantic, collapsible_cells, def
     a('        <mxCell id="Layer:Controls" value="Controls" parent="0" />\n')
     a('        <mxCell id="Layer:Main" value="System Map" parent="0" />\n')
 
-    # ---- controls -------------------------------------------------------
+    # ---- controls（全部中文；英文仅作副标题） ---------------------------
     a(text_cell("CTRL:TITLE",
-                "FCF Canonical System Map — Production Pilot v0.1 "
-                "(generated from semantic source; do not hand-edit)",
-                "text;html=1;align=left;verticalAlign=middle;fontSize=15;fontStyle=1;",
-                620, 60, 1000, 36))
+                "中鱼机制总图｜FCF Canonical System Map",
+                "text;html=1;align=left;verticalAlign=middle;fontSize=16;fontStyle=1;",
+                620, 56, 640, 30))
     a(text_cell("CTRL:HINT",
-                "Views: buttons above. Expand/collapse: click Spatial Opportunity or Fish Condition. "
-                "0.3.4.0 colors the scope lens only and never changes expansion; "
-                "Spatial Bake Detail expands only and never changes colors.",
+                "本图停在『整体框架』级别：只表达流向、模块边界与输入输出边界，不表达具体参数如何算出下一层。"
+                "七大层自上而下；点击行标题可折叠整行（行内方块与所连箭头一起隐藏）。",
                 "text;html=1;align=left;verticalAlign=top;fontSize=10;fontColor=#666666;",
-                80, 106, 860, 30))
+                80, 92, 1080, 28))
 
     for i, v in enumerate(views["views"]):
         payload = view_button_payload(v, {s["id"]: s for s in scopes["scopes"]},
                                       graph["nodes"], semantic, structural,
                                       collapsible_cells)
         is_default = v["id"] == default_view
-        x, y, w, h = 80 + i * 180, 60, 160, 36
+        x, y, w, h = 80 + i * 190, 54, 175, 34
         extra = "strokeWidth=2;fontStyle=1;" if is_default else "strokeWidth=1;"
         fill, stroke = ("#dae8fc", "#6c8ebf") if is_default else ("#d5e8d4", "#82b366")
         a(vertex("BTN:VIEW:%s" % v["id"], v["label"],
-                 "rounded=1;whiteSpace=wrap;html=1;fontSize=13;fillColor=%s;strokeColor=%s;%s"
+                 "rounded=1;whiteSpace=wrap;html=1;fontSize=12;fillColor=%s;strokeColor=%s;%s"
                  % (fill, stroke, extra),
                  x, y, w, h, "Layer:Controls",
                  link=action_link(payload)))
 
-    # legend: scope classes
+    # 图例：Scope 三态（右下侧栏，避开各行方块）
     legend = [
-        ("LEG:ACTIVE", "ACTIVE (owns / implements)", node_style("SPATIAL"), 80),
-        ("LEG:BOUNDARY", "BOUNDARY (consumed across boundary)",
-         node_style("SPATIAL") + "dashed=1;strokeWidth=2;", 80),
-        ("LEG:OUT", "OUT (context only — grayed, not hidden)",
-         "rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=%s;strokeColor=%s;fontColor=%s;"
-         % (GRAY_FILL, GRAY_STROKE, GRAY_FONT), 80),
+        ("LEG:ACTIVE", "ACTIVE｜本版实现 / 修改", "#dae8fc", "#6c8ebf", ""),
+        ("LEG:BOUNDARY", "BOUNDARY｜本版消费，不负责其内部", "#dae8fc", "#6c8ebf",
+         "dashed=1;strokeWidth=2;"),
+        ("LEG:OUT", "OUT｜本版不处理（置灰 + 调暗，不隐藏）", GRAY_FILL, GRAY_STROKE,
+         "fontColor=%s;" % GRAY_FONT),
     ]
-    y = 170
-    for cid, label, style, x in legend:
-        a(vertex(cid, label, style + "fontSize=11;", x, y, 250, 32, "Layer:Controls"))
-        y += 44
+    ly = 160
+    for cid, label, fill, stroke, extra in legend:
+        a(vertex(cid, label,
+                 "rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=%s;strokeColor=%s;%s"
+                 % (fill, stroke, extra),
+                 1150, ly, 250, 30, "Layer:Controls"))
+        ly += 40
     a(text_cell("LEG:EDGES",
-                "—▶ DATA_FLOW (solid)\n"
-                "--▶ CONTROL_OR_SELECTION (dashed)\n"
-                "┄┄ hierarchy / contains (faint, no arrow)\n"
-                "···· REFERENCE_OR_CONFIG (reserved, unused in v1)",
+                "——▶  数据 / 权重流向\n"
+                "– –▶  选择 · 控制\n"
+                "┄┄   层级归属（非因果主张）",
                 "text;html=1;align=left;verticalAlign=top;fontSize=10;fontColor=#666666;spacing=-4;",
-                80, 320, 340, 90))
+                1150, 292, 260, 80))
 
     # ---- nodes (single instance each) ------------------------------------
+    # Initial visibility is the DEFAULT VIEW applied at build time: every
+    # collapsible row starts collapsed, then the default view's expansion spec
+    # is baked in. A reader opening the file sees exactly the default view.
+    default_spec = next(v for v in views["views"] if v["id"] == default_view)
+    default_exp = default_spec.get("expansion") or {}
     initially_hidden = set()
-    for cells in collapsible_cells.values():
-        initially_hidden.update(cells)
+    for nid in collapsible_cells:
+        initially_hidden.update(collapsible_cells[nid])
+    for nid in default_exp.get("expand", []):
+        initially_hidden.difference_update(collapsible_cells[nid])
+    for nid in default_exp.get("collapse", []):
+        initially_hidden.update(collapsible_cells[nid])
     for n in graph["nodes"]:
         nid = n["id"]
         x, yy, w, h = pos[nid]

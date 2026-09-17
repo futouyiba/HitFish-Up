@@ -98,6 +98,13 @@ def main():
               "id uses reserved prefix: %r" % nid)
         check("::" not in nid and "->" not in nid, "id contains reserved separator: %r" % nid)
 
+    # -- label language: every cell must carry Chinese (Design Owner rule) ---
+    CJK = re.compile(u"[一-鿿]")
+    for n in nodes:
+        check(bool(CJK.search(n.get("label", ""))),
+              "%s: label has no Chinese — every cell must have a Chinese label (%r)"
+              % (n["id"], n.get("label")))
+
     # -- 4. parents exist, no cycles ---------------------------------------
     by_id = {n["id"]: n for n in nodes}
     for n in nodes:
@@ -115,8 +122,7 @@ def main():
 
     # -- lanes --------------------------------------------------------------
     for n in nodes:
-        check(n.get("lane") in ("main", "io", "waist", "who", "spatial",
-                                "inter", "resolve"),
+        check(n.get("lane") in ("main", "r1", "r2", "r3", "r4", "r5", "r6", "r7"),
               "%s: unknown lane %r" % (n["id"], n.get("lane")))
     for n in nodes:
         if n.get("collapsible"):
