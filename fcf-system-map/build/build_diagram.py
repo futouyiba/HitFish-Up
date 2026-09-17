@@ -71,10 +71,16 @@ KIND_STYLE = {
     "gtitle":  ("rounded=0;", "#eeeeee", "#999999"),
 }
 DEFAULT_KIND = "process"
+# kind 基线里自带描边宽度的那些（clear 还原时要按它写回去，不能一律写成 1）。
+# 从 KIND_STYLE 推出来，避免两处各写一份而漂移。
+KIND_STROKE_W = {}
+for _k, (_base, _fill, _stroke) in KIND_STYLE.items():
+    _i = _base.find("strokeWidth=")
+    KIND_STROKE_W[_k] = _base[_i + 12:].split(";")[0] if _i >= 0 else "1"
 # 版面容器只画一条很淡的虚线边，提示包纳关系；不留底色，避免盖住方块。
 CONTAINER_STROKE = "#e3e3e3"
 # 标题条（行标题 / 分组标题）：左对齐加粗，压低体量，便于一眼看出这是可点的把手。
-TITLE_FILL, TITLE_STROKE = "#f2f6fa", "#7d9bb8"
+TITLE_FILL, TITLE_STROKE, TITLE_FONT = "#f2f6fa", "#7d9bb8", "#1f3a52"
 TITLE_EXTRA = ("align=left;spacingLeft=12;verticalAlign=middle;fontSize=13;"
                "fontStyle=1;")
 
@@ -108,9 +114,9 @@ def style_of(kind):
 
 def node_style(kind, role=None):
     if role == "title":
-        return ("rounded=0;whiteSpace=wrap;html=1;fontColor=#1f3a52;"
+        return ("rounded=0;whiteSpace=wrap;html=1;fontColor=%s;"
                 "fillColor=%s;strokeColor=%s;strokeWidth=2;%s"
-                % (TITLE_FILL, TITLE_STROKE, TITLE_EXTRA))
+                % (TITLE_FONT, TITLE_FILL, TITLE_STROKE, TITLE_EXTRA))
     base, fill, stroke = style_of(kind)
     extra = ""
     if kind == "group":
@@ -288,11 +294,9 @@ def measure(node, forced_w, ctx):
         for c in vis:
             if c["kind"] == "leaf":
                 c["_h"] = node["_h"] - 2 * b
-        tail = off
         for c in hid:
             measure(c, None, ctx)
-            c["_x"], c["_y"] = tail, b + node["_h"]
-            tail += c["_w"] + sp
+            c["_x"], c["_y"] = ind + b, b
     else:
         node["_w"] = forced_w or natural_w(node, ctx)
         inner = node["_w"] - 2 * b - ind
@@ -304,12 +308,10 @@ def measure(node, forced_w, ctx):
             c["_x"], c["_y"] = ind + b, y
             y += c["_h"] + sp
         node["_h"] = ((y - sp) + b) if vis else (2 * b)
-        tail = node["_h"] + b
         for c in hid:
             wide = (c["kind"] == "container" and c["axis"] == "h")
             measure(c, None if wide else inner, ctx)
-            c["_x"], c["_y"] = ind + b, tail
-            tail += c["_h"] + sp
+            c["_x"], c["_y"] = ind + b, b
     # 侧钉（movable=0）：不进栈、不计入父高，坐标由声明给定。
     for c in node.get("children", []):
         if c["spec"].get("pin"):
@@ -408,7 +410,9 @@ def container_toggles(plan, structural, semantic):
             continue
         cells = []
         for c in node.get("children", []):
-            if c is title or c["spec"].get("pin") or not c["spec"].get("when"):
+            # 侧钉的子块（如行三 gutter 里的 DEF）虽然没有进栈，但**属于**这个容器：
+            # 收起时必须一起隐藏，否则它会挂着压在下一行上（独立复核抓到过这一条）。
+            if c is title or not c["spec"].get("when"):
                 continue
             cells.append(c["id"])
             cells.extend(edges_touching(subtree_node_ids(c),
@@ -467,14 +471,24 @@ def lens_actions(scope, nodes, kinds, structural, semantic, mode, titles=()):
         for cls in ("OUT", "BOUNDARY"):
             for nid in by_class[cls]:
                 if nid in titles:
-                    fill, stroke = TITLE_FILL, TITLE_STROKE
-                else:
-                    _, fill, stroke = style_of(kinds.get(nid, DEFAULT_KIND))
+                    # 标题条有一套自己的样式，clear 必须还原成它，而不是 kind 色。
+                    style("fillColor", TITLE_FILL, [nid])
+                    style("strokeColor", TITLE_STROKE, [nid])
+                    style("fontColor", TITLE_FONT, [nid])
+                    style("strokeWidth", "2", [nid])
+                    continue
+                _, fill, stroke = style_of(kinds.get(nid, DEFAULT_KIND))
                 style("fillColor", fill, [nid])
                 style("strokeColor", stroke, [nid])
                 style("fontColor", "#000000", [nid])
         style("dashed", "0", by_class["BOUNDARY"])
-        style("strokeWidth", "1", by_class["BOUNDARY"])
+        # 还原时按 kind 自己的描边宽度走，不要一律写成 1 —— 否则像 core 这种
+        # 本来就 strokeWidth=2 的节点会被 clear 改细（当前没有这种 BOUNDARY 节点，
+        # 但这是一类会随内容变化而复现的坑）。
+        for nid in by_class["BOUNDARY"]:
+            if nid not in titles:
+                style("strokeWidth", KIND_STROKE_W.get(kinds.get(nid, DEFAULT_KIND), "1"),
+                      [nid])
         by_eid = {e["id"]: e for e in semantic}
         for eid in gray_edges:
             _, fill, stroke = style_of(kinds.get(by_eid[eid]["from"], DEFAULT_KIND))
