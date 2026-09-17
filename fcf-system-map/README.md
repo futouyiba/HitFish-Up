@@ -7,6 +7,22 @@ python3 build/build_diagram.py     # 4 个 source JSON -> generated/fcf-system-m
 python3 build/validate.py          # 全部静态检查 + 确定性 + rename 稳定性 + 中文标签
 ```
 
+## 常驻预览（改完立刻能看到）
+
+在你**自己的终端**里跑一次即可（App 的 preview 启动器跑在沙箱里，读不了 `/Volumes` 卷；你自己的 shell 没有这个限制，所以不需要镜像到 /tmp）：
+
+```bash
+python3 fcf-system-map/tools/preview.py        # 默认 8799，可 --port
+```
+
+打开它打印的地址。之后：
+
+- 任何 source 改动 → 服务在**下一次请求时自动重建**（`/api/version` 与取图都会触发）；
+- 页面**每 2 秒轮询**产物哈希，一变就自动重绘 —— 不需要手动刷新，更不需要在我和你之间传文件；
+- 进程活在**你的终端**里，不随任何一次会话结束而死。
+
+实测：改 source 后仅靠轮询即可从 `776bfd0b…` 变为新哈希；服务产物与本地独立构建**逐字节一致**（确定性未被破坏）。
+
 ---
 
 ## 0. 本图的两个硬约束
