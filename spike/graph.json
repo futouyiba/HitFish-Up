@@ -1,0 +1,18 @@
+{
+  "format": 1,
+  "system": "FCF",
+  "description": "FCF Canonical System Map — spike source of truth. This file is the only hand-editable input; the .drawio file is a build artifact. Regenerate with: python3 build_diagram.py",
+  "nodes": [
+    {"id": "SYS.FCF", "label": "FCF System", "parent": null},
+    {"id": "SPATIAL", "label": "Spatial Opportunity", "parent": "SYS.FCF", "collapsible": true},
+    {"id": "SPATIAL.BASE", "label": "Base Opportunity", "parent": "SPATIAL"},
+    {"id": "SPATIAL.GATE", "label": "Gate", "parent": "SPATIAL"},
+    {"id": "SPATIAL.FACTOR", "label": "Factor Evaluate", "parent": "SPATIAL"},
+    {"id": "SPATIAL.AGGREGATE", "label": "Aggregate", "parent": "SPATIAL"},
+    {"id": "CONDITION", "label": "Fish Condition", "parent": "SYS.FCF"},
+    {"id": "CONDITION.ACTIVITY", "label": "Activity", "parent": "CONDITION"},
+    {"id": "CONDITION.FEEDING_READINESS", "label": "Feeding Readiness", "parent": "CONDITION"},
+    {"id": "RESPONSE", "label": "Response", "parent": "SYS.FCF"},
+    {"id": "SELECTION", "label": "Selection", "parent": "SYS.FCF"}
+  ]
+}

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FCF spike — container fold probe (test-only)</title>
+<style>
+  body { font-family: -apple-system, "Helvetica Neue", sans-serif; margin: 16px; color: #222; }
+  #dg { width: 100%; height: 480px; border: 1px solid #ccc; border-radius: 6px; }
+  .note { color: #666; font-size: 12px; margin: 8px 0 12px; max-width: 900px; }
+  pre { background: #f6f6f6; padding: 8px; border-radius: 4px; font-size: 12px; }
+</style>
+</head>
+<body>
+<h3>Container fold probe</h3>
+<p class="note">Test scaffolding: official viewer-static.min.js renders
+<code>container-test.drawio</code> — two real drawio containers (swimlane and
+collapsible rect group). Question: does clicking them fold them in the
+chromeless viewer?</p>
+<div id="dg" class="mxgraph"></div>
+<pre id="log">loading…</pre>
+<script src="vendor/viewer-static.min.js"></script>
+<script>
+(async function () {
+  var log = function (m) { document.getElementById('log').textContent = m; };
+  try {
+    var xml = await (await fetch('container-test.drawio')).text();
+    var el = document.getElementById('dg');
+    el.setAttribute('data-mxgraph', JSON.stringify({
+      xml: xml, toolbar: 'zoom layers', border: 10, 'auto-fit': true
+    }));
+    GraphViewer.createViewerForElement(el, function (v) {
+      window.__probe = { viewer: v, graph: v.graph };
+      log('probe viewer ready');
+    });
+  } catch (e) { log('ERROR: ' + (e && e.message ? e.message : e)); }
+})();
+</script>
+</body>
+</html>

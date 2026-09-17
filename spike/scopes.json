@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "description": "View / scope rules for the FCF spike map. First matching rule wins. In a rule's 'views' map: '*' fills every view not named explicitly; mode is 'normal' | 'gray' (grayed-out but retained); a view mapped to null (or absent with no '*') drops the node from that view. The builder materializes this as native draw.io layers + gray duplicate instances — no manual .drawio editing.",
+  "layers": {
+    "controls": {"id": "Layer:Controls", "label": "Controls", "always_visible": true},
+    "base":     {"id": "Layer:Base",     "label": "Base · all views", "always_visible": true},
+    "overall":  {"id": "Layer:ViewOverall", "label": "View · Overall"},
+    "v034":     {"id": "Layer:View034",     "label": "View · 0.3.4.0"}
+  },
+  "views": [
+    {"id": "overall", "label": "Overall",   "layer": "overall", "default": true},
+    {"id": "0.3.4.0", "label": "0.3.4.0",   "layer": "v034"}
+  ],
+  "rules": [
+    {"match": {"prefix": "SPATIAL.DEBUG"}, "views": {"overall": "normal"}},
+    {"match": {"prefix": "SPATIAL"},       "views": {"*": "normal"}},
+    {"match": {"prefix": "CONDITION"},     "views": {"*": "normal", "0.3.4.0": "gray"}},
+    {"match": {"id": "RESPONSE"},          "views": {"*": "normal", "0.3.4.0": "gray"}},
+    {"match": {"id": "SELECTION"},         "views": {"*": "normal", "0.3.4.0": "gray"}}
+  ],
+  "default_rule": {"views": {"*": "normal"}}
+}
