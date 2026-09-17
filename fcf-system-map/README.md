@@ -2,8 +2,13 @@
 
 `generated/fcf-system-map.drawio` 是**构建产物**——永远不要手工编辑。改 source JSON 后重新生成。
 
+**版面是怎么定的、为什么这么定，见 [LAYOUT.md](LAYOUT.md)。** 那里记着两条实测出来的
+硬规则（水平容器是"高度汇"、宽度只能有一个来源）、折叠语义、以及"横向=类别并列 /
+竖向=执行顺序"这条语汇。内容语义不在本页也不在 LAYOUT.md，在 Notion 的
+《FCF R0 Canonical Map Content Ledger》。
+
 ```bash
-python3 build/build_diagram.py     # 4 个 source JSON -> generated/fcf-system-map.drawio
+python3 build/build_diagram.py     # 5 个 source JSON -> generated/fcf-system-map.drawio
 python3 build/validate.py          # 全部静态检查 + 确定性 + rename 稳定性 + 中文标签
 ```
 
@@ -98,7 +103,7 @@ page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
 
 | 文件 | 职责 |
 |---|---|
-| `graph.json` | 66 个节点（stable ID + **中文 label** + 英文 caption + 行归属 + lane + `kind` 形状）+ 19 条语义边（只标"流过去的是什么"） |
+| `graph.json` | 69 个节点（stable ID + **中文 label** + 英文 caption + 行归属 + lane + `kind` 形状）+ 22 条语义边（只标"流过去的是什么"） |
 | `layout.json` | **版面**：容器包纳树（`C:` 前缀的容器 + `graph.json` 节点作叶子；轴线 / 间距 / 缩进 / 侧钉 / 折叠态） |
 | `scopes.json` | Scope = 压缩阶梯 + 透明度；`OVERALL`（不裁剪）+ `0.3.4.0-B`（lens，逐节点归类） |
 | `views.json` | View = 展开粒度 + 可选 lens |
@@ -109,11 +114,15 @@ page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
 
 **压缩阶梯**：`中鱼升级（本体）→ FCF v1 → Simplified V0 → 0.3.4 → 0.3.4.0-B（当前版本投影）`。每一层是范围更小的投影，不是不同系统。
 
-**0.3.4.0-B** 是唯一登记完毕的 lens：**15 ACTIVE / 8 BOUNDARY / 44 OUT**。
+**0.3.4.0-B** 是唯一登记完毕的 lens：**17 ACTIVE / 8 BOUNDARY / 44 OUT**。
 
-- ACTIVE：SYS / 行2 / 烘焙 / **通道 1 及其全部分解**（核心·次要·排除·该通道的值 / 栖息地动态偏好 / 门控 / 通过·不通过）
+- ACTIVE：行2 / 烘焙 / **通道 1 及其全部分解**（核心·次要·忽略三种因子 / 栖息地动态偏好 /
+  门控与通过·不通过 / 该通道的值，以及聚合之后的系数下限与权重聚合）
 - BOUNDARY：行1 及其三块与 L1 细节（B 消费的输入）
 - OUT：通道 2–5（活性·进食动机·警戒度·动态进食偏好，全在 B 的「不交付」清单里）、行3–7 全域
+
+> 原先归在 ACTIVE 的 `SYS` 节点已删除（本图有页面标题，不需要一个代表"系统"的方块），
+> `R2.C1.X`（忽略因子往下的一格）也随之删除——忽略因子往下什么都不做。
 
 **透明度**是本轮新增：`OUT` 与 `BOUNDARY` 除着色外还被调暗（`opacity` 原生 action），**不隐藏、不移位**——空间记忆得以保留。
 
@@ -136,12 +145,12 @@ page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
 ## 6. Validation
 
 ```
-stable IDs:            66 (unique, syntax-safe)
-edges:                 24 semantic + 62 structural (root->row edges not drawn)
+stable IDs:            69 (unique, syntax-safe)
+edges:                 22 semantic + 61 structural (root->row edges not drawn)
 views:                 overall, 0340b (default overall)
-scope lens:            0.3.4.0-B — 15 ACTIVE / 8 BOUNDARY / 44 OUT, all nodes classified once
+scope lens:            0.3.4.0-B — 17 ACTIVE / 8 BOUNDARY / 44 OUT, all nodes classified once
 ladder declared, unassigned: 0.3.4, SIMPLIFIED-V0, FCF-V1
-contracts:             10 entries (refs valid)
+contracts:             9 entries (refs valid)
 determinism:           consecutive builds byte-identical; committed artifact fresh
 rename stability:      cell ID set and geometry invariant under label rename
 ```
