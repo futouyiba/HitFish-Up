@@ -76,20 +76,21 @@ python3 fcf-system-map/tools/preview.py        # 默认 8799，可 --port
 
 | 文件 | 职责 |
 |---|---|
-| `graph.json` | 24 个节点（stable ID + **中文 label** + 英文 caption + 行归属 + lane）+ 13 条语义边（只标"流过去的是什么"） |
+| `graph.json` | 25 个节点（stable ID + **中文 label** + 英文 caption + 行归属 + lane + `kind` 形状）+ 16 条语义边（只标"流过去的是什么"） |
 | `scopes.json` | Scope = 压缩阶梯 + 透明度；`OVERALL`（不裁剪）+ `0.3.4.0-B`（lens，逐节点归类） |
 | `views.json` | View = 展开粒度 + 可选 lens |
 | `contracts.json` | 薄关联层：`semanticId → authorityRef / status / note` |
+| `skeleton.baseline.json` | **骨架基线**（冻结的 v1 拓扑指纹），由 `build/freeze_skeleton.py` 生成 |
 
 ## 4. Scope 与透明度
 
 **压缩阶梯**：`中鱼升级（本体）→ FCF v1 → Simplified V0 → 0.3.4 → 0.3.4.0-B（当前版本投影）`。每一层是范围更小的投影，不是不同系统。
 
-**0.3.4.0-B** 是唯一登记完毕的 lens：**5 ACTIVE / 4 BOUNDARY / 15 OUT**。
+**0.3.4.0-B** 是唯一登记完毕的 lens：**5 ACTIVE / 4 BOUNDARY / 16 OUT**。
 
 - ACTIVE：`SYS`、`R2 烘焙`、`烘焙`、`派生环境场`、`空间分布权重`
 - BOUNDARY：`R1 数据`、`环境上下文`、`钓场投鱼配置`、`鱼的习性配置`
-- OUT：玩家策略行、响应行、圆桌行、生成行、范围外，以及 `鱼侧动态参数`（B 的「不交付」清单明确含 Fish Condition）
+- OUT：玩家策略行、响应行、圆桌行（含 `TABLE` 宽条与四子块）、生成行、范围外，以及 `鱼侧动态参数`（B 的「不交付」清单明确含 Fish Condition）
 
 **透明度**是本轮新增：`OUT` 与 `BOUNDARY` 除着色外还被调暗（`opacity` 原生 action），**不隐藏、不移位**——空间记忆得以保留。
 
@@ -114,17 +115,17 @@ python3 fcf-system-map/tools/preview.py        # 默认 8799，可 --port
 ## 6. Validation
 
 ```
-stable IDs:            24 (unique, syntax-safe)
-edges:                 13 semantic + 23 structural, endpoints ok
+stable IDs:            25 (unique, syntax-safe)
+edges:                 16 semantic + 17 structural (root->row edges not drawn)
 views:                 overall, 0340b, 0340b-focus (default overall)
-scope lens:            0.3.4.0-B — 5 ACTIVE / 4 BOUNDARY / 15 OUT, all nodes classified once
+scope lens:            0.3.4.0-B — 5 ACTIVE / 4 BOUNDARY / 16 OUT, all nodes classified once
 ladder declared, unassigned: 0.3.4, SIMPLIFIED-V0, FCF-V1
 contracts:             11 entries (refs valid)
 determinism:           consecutive builds byte-identical; committed artifact fresh
 rename stability:      cell ID set and geometry invariant under label rename
 ```
 
-外加**中文标签检查**（每个 label 必须含 CJK，负向测试通过）。
+外加三项护栏，均已负向测试：**中文标签检查**（每个 label 必须含 CJK）、**顶点重叠检查**（任何两个方块碰撞即 FAIL）、**骨架漂移检查**（与 `skeleton.baseline.json` 比对，骨架一变即 FAIL）。
 
 官方 pinned viewer 运行时：七大层渲染、默认视图全展开、行折叠（连同所连箭头）、lens 着色 + 透明度（实测 ACTIVE `1.0` / BOUNDARY `0.70` / OUT `0.28`，全部仍 rendered）、零人工修补 —— 全部 PASS。
 
