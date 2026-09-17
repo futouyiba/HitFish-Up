@@ -62,7 +62,6 @@ KIND_STYLE = {
     "cube":    ("shape=cube;size=20;", "#dae8fc", "#6c8ebf"),
     "process": ("rounded=1;", "#ffe6cc", "#d79b00"),
     "l1":      ("rounded=1;", "#fff7e6", "#d79b00"),
-    "cover":   ("rounded=1;strokeWidth=3;", "#ffe6cc", "#d79b00"),
     "core":    ("rounded=1;strokeWidth=2;", "#d5e8d4", "#2d6a4f"),
     "sec":     ("rounded=1;dashed=1;", "#fff2cc", "#d6b656"),
     "skip":    ("rounded=1;dashed=1;", "#f5f5f5", "#aaaaaa"),
@@ -72,8 +71,12 @@ KIND_STYLE = {
     "gtitle":  ("rounded=0;", "#eeeeee", "#999999"),
 }
 DEFAULT_KIND = "process"
-# 版面容器只画一条很淡的边，用来提示包纳关系；不留底色，避免盖住方块。
-CONTAINER_STROKE = "#e0e0e0"
+# 版面容器只画一条很淡的虚线边，提示包纳关系；不留底色，避免盖住方块。
+CONTAINER_STROKE = "#e3e3e3"
+# 标题条（行标题 / 分组标题）：左对齐加粗，压低体量，便于一眼看出这是可点的把手。
+TITLE_FILL, TITLE_STROKE = "#f2f6fa", "#7d9bb8"
+TITLE_EXTRA = ("align=left;spacingLeft=12;verticalAlign=middle;fontSize=13;"
+               "fontStyle=1;")
 
 ANCHOR_STYLE = "endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#b3b3b3;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;"
 EDGE_BASE = (
@@ -103,7 +106,11 @@ def style_of(kind):
     return KIND_STYLE.get(kind, KIND_STYLE[DEFAULT_KIND])
 
 
-def node_style(kind):
+def node_style(kind, role=None):
+    if role == "title":
+        return ("rounded=0;whiteSpace=wrap;html=1;fontColor=#1f3a52;"
+                "fillColor=%s;strokeColor=%s;strokeWidth=2;%s"
+                % (TITLE_FILL, TITLE_STROKE, TITLE_EXTRA))
     base, fill, stroke = style_of(kind)
     extra = ""
     if kind == "group":
@@ -139,7 +146,6 @@ def load_sources(root):
 LEAF_W = {
     "data": 260, "l1": 250, "process": 260, "cube": 260, "outside": 260,
     "group": 300, "core": 190, "sec": 190, "skip": 190, "gate": 130,
-    "cover": 260,
 }
 DEFAULT_LEAF_W = 240
 ROOT_X, ROOT_Y = 40, 150
@@ -260,7 +266,9 @@ def measure(node, forced_w, ctx):
         kind = ctx["kinds"].get(node["id"], DEFAULT_KIND)
         node["_w"] = (forced_w or node["spec"].get("w")
                       or LEAF_W.get(kind, DEFAULT_LEAF_W))
-        node["_h"] = node["spec"].get("h") or ctx["leafH"].get(kind, 44)
+        node["_h"] = (node["spec"].get("h")
+                      or (ctx["titleH"] if node["spec"].get("role") == "title"
+                          else ctx["leafH"].get(kind, 44)))
         return
     kids = [c for c in node["children"] if not c["spec"].get("pin")]
     vis = [c for c in kids if ctx["visible"](c)]
@@ -349,10 +357,12 @@ def layout(lay, graph, views):
             index(c)
     index(root)
 
+    titles = {n["id"] for n in by_cid.values()
+              if n["kind"] == "leaf" and n["spec"].get("role") == "title"}
     page_w = int(ROOT_X + root["_w"] + 120)
     page_h = int(ROOT_Y + root["_h"] + 220)
     return {"root": root, "by_cid": by_cid, "order": order,
-            "parent_of": parent_of, "ctx": ctx,
+            "parent_of": parent_of, "ctx": ctx, "titles": titles,
             "page_w": page_w, "page_h": page_h}, structural, semantic
 
 
@@ -378,12 +388,13 @@ def edges_touching(ids, structural, semantic):
 
 
 def container_toggles(plan, structural, semantic):
-    """每个可折叠容器的两个方向的动作，键 = 它的**标题节点 id**（与 views.json 的
-    expansion 对齐）。
+    """每个可折叠容器要 toggle 的 cell 列表，键 = 它的**标题节点 id**
+    （与 views.json 的 expansion 对齐）。
 
-    折叠 = 隐藏展开态内容（连同相触的边）+ 显示封面；
-    展开 = 反过来。隐藏一个容器 id 会级联到它的子孙（探针 P6），所以 hide 列表
-    只需要列出**顶层**容器 id，边则必须显式枚举。
+    折叠态 = 只留标题条（Design Owner 2026-09-17 的决定：不再有「占满整条行带」
+    的封面块）。所以只需要一条 `toggle` 动作作用在这组内容 cell 上 —— 隐藏一个
+    容器 id 会级联到它的子孙（探针 P6），而 toggle 动词本身双向可用，一个链接
+    展开/收起都管。边不是容器的子孙，必须显式列进来。
     """
     toggles = {}
     for node in plan["by_cid"].values():
@@ -395,24 +406,15 @@ def container_toggles(plan, structural, semantic):
                 title = c
         if title is None:
             continue
-        content = [c for c in node["children"]
-                   if c is not title and c["spec"].get("when")
-                   and not c["spec"].get("pin")]
-        if not content:
-            continue
-        hidden, shown = [], []
-        for c in content:
-            if c["spec"]["when"] == "expanded":
-                hidden.append(c["id"])
-                hidden.extend(edges_touching(subtree_node_ids(c),
-                                             structural, semantic))
-            else:
-                shown.append(c["id"])
-        hidden, shown = sorted(set(hidden)), sorted(set(shown))
-        toggles[title["id"]] = {
-            "collapse": {"hide": hidden, "show": shown},
-            "expand": {"hide": shown, "show": hidden},
-        }
+        cells = []
+        for c in node.get("children", []):
+            if c is title or c["spec"].get("pin") or not c["spec"].get("when"):
+                continue
+            cells.append(c["id"])
+            cells.extend(edges_touching(subtree_node_ids(c),
+                                        structural, semantic))
+        if cells:
+            toggles[title["id"]] = sorted(set(cells))
     return toggles
 
 
@@ -423,7 +425,7 @@ def class_of(node_id, assignment):
     return None
 
 
-def lens_actions(scope, nodes, kinds, structural, semantic, mode):
+def lens_actions(scope, nodes, kinds, structural, semantic, mode, titles=()):
     """Style + opacity actions for a scope lens.
 
     mode='apply' -> colour the three classes AND dim out-of-scope cells
@@ -464,7 +466,10 @@ def lens_actions(scope, nodes, kinds, structural, semantic, mode):
     if mode == "clear":
         for cls in ("OUT", "BOUNDARY"):
             for nid in by_class[cls]:
-                _, fill, stroke = style_of(kinds.get(nid, DEFAULT_KIND))
+                if nid in titles:
+                    fill, stroke = TITLE_FILL, TITLE_STROKE
+                else:
+                    _, fill, stroke = style_of(kinds.get(nid, DEFAULT_KIND))
                 style("fillColor", fill, [nid])
                 style("strokeColor", stroke, [nid])
                 style("fontColor", "#000000", [nid])
@@ -496,15 +501,18 @@ def lens_actions(scope, nodes, kinds, structural, semantic, mode):
 
 # ---------------------------------------------------------------- easing ----
 
-def view_button_payload(view, scope_by_id, nodes, kinds, semantic, structural, toggles):
+def view_button_payload(view, scope_by_id, nodes, kinds, semantic, structural,
+                        toggles, titles=()):
     acts = []
     lens_id = view.get("scopeLens", "keep")
     if lens_id == "clear":
         for s in scope_by_id.values():
             if s.get("lens"):
-                acts.extend(lens_actions(s, nodes, kinds, structural, semantic, "clear"))
+                acts.extend(lens_actions(s, nodes, kinds, structural, semantic,
+                                         "clear", titles))
     elif lens_id not in (None, "keep"):
-        acts.extend(lens_actions(scope_by_id[lens_id], nodes, kinds, structural, semantic, "apply"))
+        acts.extend(lens_actions(scope_by_id[lens_id], nodes, kinds, structural,
+                                 semantic, "apply", titles))
     exp = view.get("expansion") or {}
     for key in ("collapse", "expand"):
         for nid in exp.get(key, []):
@@ -512,13 +520,9 @@ def view_button_payload(view, scope_by_id, nodes, kinds, semantic, structural, t
                 sys.exit("error: view %s tries to %s %r, which is not a "
                          "collapsible node in layout.json" % (view["id"], key, nid))
     for nid in exp.get("collapse", []):
-        t = toggles[nid]["collapse"]
-        acts.append({"hide": {"cells": t["hide"]}})
-        acts.append({"show": {"cells": t["show"]}})
+        acts.append({"hide": {"cells": toggles[nid]}})
     for nid in exp.get("expand", []):
-        t = toggles[nid]["expand"]
-        acts.append({"hide": {"cells": t["hide"]}})
-        acts.append({"show": {"cells": t["show"]}})
+        acts.append({"show": {"cells": toggles[nid]}})
     return {"actions": acts}
 
 
@@ -577,14 +581,15 @@ def emit(graph, scopes, views, plan, structural, semantic, default_view):
                 700, 56, 640, 30))
     a(text_cell("CTRL:HINT",
                 "本图停在『整体框架』级别：只表达流向、模块边界与输入输出边界，不表达具体参数如何算出下一层。"
-                "七大层自上而下；点击行标题可折叠整行（行内方块与所连箭头一起隐藏）。",
+                "七大层自上而下；每行是一个容器，点标题条上的 ⇕ 收起／展开 —— 收起时只留标题条，"
+                "下方的行自动上移；展开时整行恢复、下方的行下移。层内再展开同样会让位。",
                 "text;html=1;align=left;verticalAlign=top;fontSize=10;fontColor=#666666;",
                 80, 92, 1080, 28))
 
     for i, v in enumerate(views["views"]):
         payload = view_button_payload(v, {s["id"]: s for s in scopes["scopes"]},
                                       graph["nodes"], kinds, semantic, structural,
-                                      toggles)
+                                      toggles, plan["titles"])
         is_default = v["id"] == default_view
         x, y, w, h = 80 + i * 190, 54, 175, 34
         extra = "strokeWidth=2;fontStyle=1;" if is_default else "strokeWidth=1;"
@@ -624,12 +629,6 @@ def emit(graph, scopes, views, plan, structural, semantic, default_view):
                 hidden_nodes |= subtree_node_ids(c)
     hidden_edges = set(edges_touching(hidden_nodes, structural, semantic))
 
-    def title_of(node):
-        for c in node.get("children", []):
-            if c["kind"] == "leaf" and c["spec"].get("role") == "title":
-                return c["id"]
-        return None
-
     for cid in plan["order"]:
         n = plan["by_cid"][cid]
         parent = plan["parent_of"].get(cid, "Layer:Main")
@@ -645,27 +644,19 @@ def emit(graph, scopes, views, plan, structural, semantic, default_view):
             continue
         gn = gby[n["id"]]
         kind = gn.get("kind", DEFAULT_KIND)
-        style = node_style(kind)
-        if n["spec"].get("role") == "title":
-            style += "strokeWidth=2;"
+        style = node_style(kind, n["spec"].get("role"))
         if n["spec"].get("pin"):
             style += "movable=0;"
         value = gn["label"]
+        if n["id"] in toggles:
+            value = "⇕ " + value      # 折叠把手：⇕ = 可收起 / 展开
         if gn.get("caption"):
             value += ("<br><font style='font-size:9px;color:#555555'>%s</font>"
                       % gn["caption"])
         link = None
         if n["id"] in toggles:
-            t = toggles[n["id"]]["collapse"]
-            link = action_link({"actions": [{"hide": {"cells": t["hide"]}},
-                                            {"show": {"cells": t["show"]}}]})
-        elif kind == "cover":
-            owner = plan["by_cid"].get(n["parent"])
-            t = toggles.get(title_of(owner) if owner else None)
-            if t:
-                e = t["expand"]
-                link = action_link({"actions": [{"hide": {"cells": e["hide"]}},
-                                                {"show": {"cells": e["show"]}}]})
+            link = action_link({"actions": [
+                {"toggle": {"cells": toggles[n["id"]], "transient": False}}]})
         a(vertex(n["id"], value, style, x, y, w, h, parent, link=link,
                  visible=n["id"] not in hidden_nodes))
 
