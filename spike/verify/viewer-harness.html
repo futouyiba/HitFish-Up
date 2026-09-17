@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FCF spike — official diagrams.net viewer harness (test-only)</title>
+<style>
+  body { font-family: -apple-system, "Helvetica Neue", sans-serif; margin: 16px; color: #222; }
+  #dg { width: 100%; height: 620px; border: 1px solid #ccc; border-radius: 6px; }
+  .note { color: #666; font-size: 12px; margin: 8px 0 12px; max-width: 900px; }
+  pre { background: #f6f6f6; padding: 8px; border-radius: 4px; font-size: 12px; }
+  code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h3>FCF spike — viewer harness</h3>
+<p class="note">
+  <b>Test scaffolding only — not part of the carrier.</b> This page loads the
+  official <code>viewer-static.min.js</code> (pinned copy fetched from
+  viewer.diagrams.net into <code>vendor/</code>) and renders
+  <code>../fcf-spike.drawio</code> exactly the way the embeddable viewer would.
+  All interactions are native draw.io custom actions, no custom JS.
+  <br><b>怎么玩:</b>① 点 <b>Overall</b> / <b>0.3.4.0</b> 按钮切换视图(后者把
+  Condition/Response/Selection 置灰);② 折叠目标 = 图中左上角
+  <b>蓝色粗边框、写着 “Spatial Opportunity … click to expand / collapse” 的那个框</b>
+  (不是本行文字):点一下,下方 4 个子节点连同连线一起收起,再点一下展开。
+  刷新页面回到初始状态。
+</p>
+<div id="dg" class="mxgraph"></div>
+<pre id="log">loading…</pre>
+<script src="vendor/viewer-static.min.js"></script>
+<script>
+(async function () {
+  var log = function (m) { document.getElementById('log').textContent = m; };
+  try {
+    var xml = await (await fetch('../fcf-spike.drawio')).text();
+    var el = document.getElementById('dg');
+    el.setAttribute('data-mxgraph', JSON.stringify({
+      xml: xml,
+      toolbar: 'pages zoom layers',
+      border: 10,
+      'auto-fit': true,
+      resize: true,
+      'max-width': '100%'
+    }));
+    GraphViewer.createViewerForElement(el, function (v) {
+      window.__fcf = { viewer: v, graph: v.graph };
+      // after auto-fit settles, zoom in on the Controls + Spatial cluster:
+      // the whole canvas is ~4800px wide, fit-to-page shrinks it to ~18% and
+      // makes the collapse target hard to find and hit
+      setTimeout(function () {
+        try {
+          var g = v.graph;
+          var c = g.container;
+          var s = 0.7;
+          var vw = window.innerWidth > 0 ? window.innerWidth : c.clientWidth;
+          var vh = window.innerHeight > 0 ? window.innerHeight : c.clientHeight;
+          if (vw > 0) {
+            g.view.setScale(s);
+            // center the Controls + Spatial cluster (graph coords ~660, 280)
+            g.view.setTranslate(vw / (2 * s) - 660, vh / (2 * s) - 280);
+            g.view.validate();
+          }
+        } catch (e) { /* zoom is cosmetic; interactions work at any zoom */ }
+      }, 400);
+      log('viewer ready; inspect via window.__fcf.graph');
+    });
+  } catch (e) {
+    log('ERROR: ' + (e && e.message ? e.message : e));
+  }
+})();
+</script>
+</body>
+</html>
