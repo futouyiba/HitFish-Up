@@ -49,7 +49,7 @@
     {
       "id": "D.STOCK",
       "label": "钓场投鱼配置",
-      "caption": "鱼种 × 品质 投放项 · 基础机会强度",
+      "caption": "鱼种 × 品质 投放属性配置 · 基础机会强度",
       "parent": "R1",
       "lane": "r1a",
       "kind": "data"
@@ -57,7 +57,7 @@
     {
       "id": "D.HABIT",
       "label": "鱼的习性配置",
-      "caption": "温度 / 水层 / 结构亲和 · 时段习性",
+      "caption": "静态习性：结构亲和 / 觅食水层亲和 / 水温参数 / 时段活跃",
       "parent": "R1",
       "lane": "r1a",
       "kind": "data"
@@ -65,7 +65,7 @@
     {
       "id": "R1.L.TIME",
       "label": "时间轴",
-      "caption": "时段（天气系统与钓场轮转定义）｜历史天气序列（事件 × 阶段）",
+      "caption": "时段 TimePeriod/Diel ｜ 历史天气序列（后继输入，本版不交付）",
       "parent": "R1",
       "lane": "r1b",
       "kind": "l1"
@@ -73,23 +73,23 @@
     {
       "id": "R1.L.COND",
       "label": "条件组",
-      "caption": "结构 · 水温（计算型） · 觅食水层 · 时段（查表型）",
+      "caption": "结构 · 水温区间（计算型） · 觅食水层 · 时段（查表型）｜组合非笛卡尔积",
       "parent": "R1",
       "lane": "r1b",
       "kind": "l1"
     },
     {
       "id": "R1.L.STOCK",
-      "label": "投放项与机会强度",
-      "caption": "投放项 / 基础机会强度 / 背景鱼标记与环境系数下限",
+      "label": "投放与机会强度",
+      "caption": "投放属性配置 · 基础机会强度 · 背景鱼开关 · 环境系数下限",
       "parent": "R1",
       "lane": "r1b",
       "kind": "l1"
     },
     {
       "id": "R1.L.NATURE",
-      "label": "鱼的静态习性组件",
-      "caption": "温度 · 觅食水层 · 结构亲和 · 时段 · 中鱼习性模式",
+      "label": "鱼的习性配置的构成",
+      "caption": "四张习性表 + 条件角色绑定；分群身份 = 中鱼习性模式（Engagement Mode）",
       "parent": "R1",
       "lane": "r1b",
       "kind": "l1"
@@ -146,7 +146,7 @@
     {
       "id": "R2.GATE",
       "label": "门控",
-      "caption": "核心因子先过门控",
+      "caption": "核心因子先过；水温验收边界 temp_accept_min / temp_accept_max（曲线两端降为 0）",
       "parent": "R2.C1",
       "lane": "r2L2d",
       "kind": "gate"
