@@ -59,37 +59,28 @@ LANES = {
     "r2":   {"x": 350,  "w": 250, "anchor": "R2", "y0": 0, "dx": 275},
     "r3":   {"x": 900,  "w": 250, "anchor": "R3", "y0": 0, "dx": 275},
     "r4":   {"x": 900,  "w": 250, "anchor": "R4", "y0": 0, "dx": 275},
-    "r5":   {"x": 350,  "w": 250, "anchor": "R5", "y0": 0, "dx": 275},
+    "r5bar":{"x": 350,  "w": 1100, "anchor": "R5", "y0": 0, "dx": 0, "h": 42},
+    "r5":   {"x": 370,  "w": 250, "anchor": "R5", "y0": 56, "dx": 275},
     "r6":   {"x": 350,  "w": 480, "anchor": "R6", "y0": 0, "dx": 275},
     "r7":   {"x": 350,  "w": 480, "anchor": "R7", "y0": 0, "dx": 275},
 }
-PAGE_W, PAGE_H = 1560, 1520
+PAGE_W, PAGE_H = 1560, 1560
 
 GRAY_FILL, GRAY_STROKE, GRAY_FONT = "#f5f5f5", "#a6a6a6", "#8f8f8f"
 
-# 行 = 折叠单位（纵向层次）；色族按行区分，便于一眼看出方块属于哪一层
-FAMILIES = {
-    "SYS": ("#ffffff", "#333333"),
-    "R1": ("#dae8fc", "#6c8ebf"),
-    "R2": ("#ffe6cc", "#d79b00"),
-    "R3": ("#d5e8d4", "#82b366"),
-    "R4": ("#fff2cc", "#d6b656"),
-    "R5": ("#e1d5e7", "#9673a6"),
-    "R6": ("#ffe6cc", "#d79b00"),
-    "R7": ("#f5f5f5", "#a6a6a6"),
-    "D": ("#dae8fc", "#6c8ebf"),
-    "BAKE": ("#ffe6cc", "#d79b00"),
-    "DEF": ("#dae8fc", "#6c8ebf"),
-    "SDW": ("#dae8fc", "#6c8ebf"),
-    "FISHCOND": ("#dae8fc", "#6c8ebf"),
-    "PLAYER": ("#d5e8d4", "#82b366"),
-    "PRESENT": ("#d5e8d4", "#82b366"),
-    "RESPONSE": ("#fff2cc", "#d6b656"),
-    "T": ("#e1d5e7", "#9673a6"),
-    "DRAW": ("#ffe6cc", "#d79b00"),
-    "FISHAI": ("#f5f5f5", "#a6a6a6"),
+# 形状 / 配色按节点的 kind 字段决定（回到 v1 的图例）：
+#   数据 / 配置   -> 平行四边形
+#   派生数据      -> 立方体（派生环境场的专用图例）
+#   过程 / 模块   -> 圆角矩形
+#   范围外        -> 灰色虚线圆角矩形
+KIND_STYLE = {
+    "data":    ("shape=parallelogram;perimeter=parallelogramPerimeter;size=18;", "#dae8fc", "#6c8ebf"),
+    "cube":    ("shape=cube;size=20;", "#dae8fc", "#6c8ebf"),
+    "process": ("rounded=1;", "#ffe6cc", "#d79b00"),
+    "outside": ("rounded=1;dashed=1;", "#f5f5f5", "#a6a6a6"),
 }
-FALLBACK_FAMILY = ("#f5f5f5", "#666666")
+ROW_STYLE = ("rounded=1;strokeWidth=2;", "#ffffff", "#4477aa")   # 行标题
+DEFAULT_KIND = "process"
 
 ANCHOR_STYLE = "endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#b3b3b3;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;"
 EDGE_BASE = (
@@ -115,13 +106,13 @@ def xesc(s):
              .replace('"', "&quot;"))
 
 
-def family(node_id):
-    return FAMILIES.get(node_id.split(".")[0], FALLBACK_FAMILY)
+def style_of(kind):
+    return KIND_STYLE.get(kind, KIND_STYLE[DEFAULT_KIND])
 
 
-def node_style(node_id):
-    fill, stroke = family(node_id)
-    return ("rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;"
+def node_style(kind):
+    base, fill, stroke = style_of(kind)
+    return (base + "whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;"
             "fillColor=%s;strokeColor=%s;" % (fill, stroke))
 
 
@@ -152,8 +143,9 @@ def layout(nodes, edges):
         for n in nodes:
             if n.get("lane") != lane:
                 continue
-            if spec.get("dx"):
+            if "dx" in spec:
                 # horizontal lane: blocks sit side by side on the anchor's row
+                # (dx may be 0 — a single wide bar spanning the row)
                 if spec["anchor"] not in pos:
                     sys.exit("error: lane %s anchors on %s which is not laid out yet"
                              % (lane, spec["anchor"]))
@@ -167,7 +159,7 @@ def layout(nodes, edges):
                              % (lane, spec["anchor"]))
                 x = spec["x"]
                 y = pos[spec["anchor"]][1] + spec["y0"] + i * spec["dy"]
-            pos[n["id"]] = (x, y, spec["w"], NODE_H)
+            pos[n["id"]] = (x, y, spec["w"], spec.get("h", NODE_H))
             i += 1
         lane_cursor[lane] = i
 
@@ -238,7 +230,7 @@ def class_of(node_id, assignment):
     return None
 
 
-def lens_actions(scope, nodes, structural, semantic, mode):
+def lens_actions(scope, nodes, kinds, structural, semantic, mode):
     """Style + opacity actions for a scope lens.
 
     mode='apply' -> colour the three classes AND dim out-of-scope cells
@@ -279,7 +271,7 @@ def lens_actions(scope, nodes, structural, semantic, mode):
     if mode == "clear":
         for cls in ("OUT", "BOUNDARY"):
             for nid in by_class[cls]:
-                fill, stroke = family(nid)
+                _, fill, stroke = style_of(kinds.get(nid, DEFAULT_KIND))
                 style("fillColor", fill, [nid])
                 style("strokeColor", stroke, [nid])
                 style("fontColor", "#000000", [nid])
@@ -287,7 +279,7 @@ def lens_actions(scope, nodes, structural, semantic, mode):
         style("strokeWidth", "1", by_class["BOUNDARY"])
         by_eid = {e["id"]: e for e in semantic}
         for eid in gray_edges:
-            fill, stroke = family(by_eid[eid]["from"])
+            _, fill, stroke = style_of(kinds.get(by_eid[eid]["from"], DEFAULT_KIND))
             style("strokeColor", stroke, [eid])
         style("dashed", "0", dash_edges)
         set_opacity(1, all_nodes + all_edges)
@@ -311,15 +303,15 @@ def lens_actions(scope, nodes, structural, semantic, mode):
 
 # ---------------------------------------------------------------- easing ----
 
-def view_button_payload(view, scope_by_id, nodes, semantic, structural, collapsible_cells):
+def view_button_payload(view, scope_by_id, nodes, kinds, semantic, structural, collapsible_cells):
     acts = []
     lens_id = view.get("scopeLens", "keep")
     if lens_id == "clear":
         for s in scope_by_id.values():
             if s.get("lens"):
-                acts.extend(lens_actions(s, nodes, structural, semantic, "clear"))
+                acts.extend(lens_actions(s, nodes, kinds, structural, semantic, "clear"))
     elif lens_id not in (None, "keep"):
-        acts.extend(lens_actions(scope_by_id[lens_id], nodes, structural, semantic, "apply"))
+        acts.extend(lens_actions(scope_by_id[lens_id], nodes, kinds, structural, semantic, "apply"))
     exp = view.get("expansion") or {}
     for key in ("collapse", "expand"):
         for nid in exp.get(key, []):
@@ -362,6 +354,7 @@ def text_cell(cid, value, style, x, y, w, h):
 
 
 def emit(graph, scopes, views, pos, structural, semantic, collapsible_cells, default_view):
+    kinds = {n["id"]: n.get("kind", DEFAULT_KIND) for n in graph["nodes"]}
     out = []
     a = out.append
     a('<?xml version="1.0" encoding="UTF-8"?>\n')
@@ -389,7 +382,7 @@ def emit(graph, scopes, views, pos, structural, semantic, collapsible_cells, def
 
     for i, v in enumerate(views["views"]):
         payload = view_button_payload(v, {s["id"]: s for s in scopes["scopes"]},
-                                      graph["nodes"], semantic, structural,
+                                      graph["nodes"], kinds, semantic, structural,
                                       collapsible_cells)
         is_default = v["id"] == default_view
         x, y, w, h = 80 + i * 190, 54, 175, 34
@@ -403,24 +396,24 @@ def emit(graph, scopes, views, pos, structural, semantic, collapsible_cells, def
 
     # 图例：Scope 三态（右下侧栏，避开各行方块）
     legend = [
-        ("LEG:ACTIVE", "ACTIVE｜本版实现 / 修改", "#dae8fc", "#6c8ebf", ""),
-        ("LEG:BOUNDARY", "BOUNDARY｜本版消费，不负责其内部", "#dae8fc", "#6c8ebf",
-         "dashed=1;strokeWidth=2;"),
-        ("LEG:OUT", "OUT｜本版不处理（置灰 + 调暗，不隐藏）", GRAY_FILL, GRAY_STROKE,
-         "fontColor=%s;" % GRAY_FONT),
+        ("LEG:DATA", "数据 / 配置",
+         "shape=parallelogram;perimeter=parallelogramPerimeter;size=18;", "#dae8fc", "#6c8ebf"),
+        ("LEG:CUBE", "派生数据（环境场）", "shape=cube;size=20;", "#dae8fc", "#6c8ebf"),
+        ("LEG:PROC", "过程 / 模块", "rounded=1;", "#ffe6cc", "#d79b00"),
+        ("LEG:OUT2", "范围外", "rounded=1;dashed=1;", GRAY_FILL, GRAY_STROKE),
     ]
-    ly = PAGE_H - 110
+    ly = PAGE_H - 128
     lx = 340
-    for cid, label, fill, stroke, extra in legend:
+    for cid, label, base, fill, stroke in legend:
         a(vertex(cid, label,
-                 "rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=%s;strokeColor=%s;%s"
-                 % (fill, stroke, extra),
+                 base + "whiteSpace=wrap;html=1;fontSize=11;fontColor=#333333;"
+                 "fillColor=%s;strokeColor=%s;" % (fill, stroke),
                  lx, ly, 250, 34, "Layer:Controls"))
         lx += 260
     a(text_cell("LEG:EDGES",
-                "——▶  数据 / 权重流向　　– –▶  选择 · 控制　　┄┄  层级归属（非因果主张）",
+                "——▶  数据 / 权重流向　　– –▶  选择 · 控制　　┄┄  层属查询（非因果主张）",
                 "text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#666666;",
-                lx, ly, 400, 32))
+                350, ly + 48, 900, 30))
 
     # ---- nodes (single instance each) ------------------------------------
     # Initial visibility is the DEFAULT VIEW applied at build time: every
@@ -438,7 +431,8 @@ def emit(graph, scopes, views, pos, structural, semantic, collapsible_cells, def
     for n in graph["nodes"]:
         nid = n["id"]
         x, yy, w, h = pos[nid]
-        style = node_style(nid) + "strokeWidth=2;" if n.get("collapsible") else node_style(nid)
+        kind = n.get("kind", DEFAULT_KIND)
+        style = node_style(kind) + ("strokeWidth=2;" if n.get("collapsible") else "")
         link = None
         value = n["label"]
         if n.get("caption"):
@@ -454,7 +448,8 @@ def emit(graph, scopes, views, pos, structural, semantic, collapsible_cells, def
         a(edge(e["id"], ANCHOR_STYLE, "Layer:Main", e["from"], e["to"],
                visible=e["id"] not in initially_hidden))
     for e in semantic:
-        fill, stroke = family(e["from"])
+        kind = kinds.get(e["from"], DEFAULT_KIND)
+        _, fill, stroke = style_of(kind)
         t = EDGE_TYPES[e["type"]]
         stroke = t.get("color", stroke)
         style = (EDGE_BASE + t["dashed"] + t["dashPattern"] +

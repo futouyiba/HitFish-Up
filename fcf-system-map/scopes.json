@@ -32,7 +32,7 @@
         "OUT": 0.28
       },
       "basis": "中鱼0.3.4.0-B｜开发需求 R0 · 固定模板分层烘焙 · Authoring & Resolve Contract R0（2026-09-17 细读）",
-      "basisNote": "本版只闭合『属性编辑器 → 固定模板条件开关 / Resolve → 烘焙』。它交付的是烘焙这一层及其产物「空间分布权重」；不交付响应、圆桌、生成，也不交付鱼侧动态参数（活性 / 进食动机 / 食性偏好全在『不交付』清单里）。故 FISHCOND 记 OUT。 条件组（D.COND）属 B 消费的输入，故记 BOUNDARY。",
+      "basisNote": "本版只闭合『属性编辑器 → 固定模板条件开关 / Resolve → 烘焙』。交付的是烘焙这一层及其产物「空间分布权重」；不交付响应、圆桌、生成，也不交付鱼侧动态参数（活性 / 进食动机 / 食性偏好全在『不交付』清单里），故 FISHCOND 记 OUT。环境上下文 / 钓场投鱼配置 / 鱼的习性配置属 B 消费的输入，记 BOUNDARY。",
       "assignment": {
         "ACTIVE": [
           "SYS",
@@ -42,7 +42,6 @@
           "SDW"
         ],
         "BOUNDARY": [
-          "D.COND",
           "R1",
           "D.CONTEXT",
           "D.STOCK",
@@ -51,10 +50,11 @@
         "OUT": [
           "R3",
           "PLAYER",
-          "PRESENT",
+          "CUE",
           "R4",
           "RESPONSE",
           "R5",
+          "TABLE",
           "T1",
           "T2",
           "T3",
