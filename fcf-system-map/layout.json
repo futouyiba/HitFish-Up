@@ -35,10 +35,6 @@
     "axis": "v",
     "children": [
       {
-        "node": "SYS",
-        "skip": true
-      },
-      {
         "ref": "C:R1"
       },
       {
@@ -148,13 +144,19 @@
           "role": "title"
         },
         {
-          "ref": "C:C1/FACTORS"
+          "ref": "C:C1/F1"
         },
         {
-          "ref": "C:C1/CORE"
+          "ref": "C:C1/F2"
         },
         {
-          "ref": "C:C1/CALC"
+          "ref": "C:C1/F3"
+        },
+        {
+          "node": "R2.F.HAB"
+        },
+        {
+          "ref": "C:C1/AFF"
         },
         {
           "ref": "C:C1/AGG"
@@ -479,39 +481,6 @@
       ],
       "even": true
     },
-    "C:C1/CORE": {
-      "axis": "h",
-      "even": true,
-      "children": [
-        {
-          "node": "R2.GATE"
-        },
-        {
-          "node": "R2.PASS"
-        },
-        {
-          "node": "R2.FAIL"
-        },
-        {
-          "node": "R2.C1.GFAIL"
-        }
-      ]
-    },
-    "C:C1/CALC": {
-      "axis": "h",
-      "even": true,
-      "children": [
-        {
-          "node": "R2.C1.K"
-        },
-        {
-          "node": "R2.C1.S"
-        },
-        {
-          "node": "R2.C1.X"
-        }
-      ]
-    },
     "C:C1/AGG": {
       "axis": "h",
       "even": true,
@@ -552,6 +521,9 @@
         },
         {
           "ref": "C:C1/F1/I"
+        },
+        {
+          "ref": "C:C1/F1/GATE"
         }
       ]
     },
@@ -609,6 +581,40 @@
           "icon": "hexagon-off"
         }
       ]
+    },
+    "C:C1/F1/GATE": {
+      "axis": "h",
+      "even": true,
+      "children": [
+        {
+          "node": "R2.GATE"
+        },
+        {
+          "node": "R2.PASS"
+        },
+        {
+          "node": "R2.FAIL"
+        },
+        {
+          "node": "R2.C1.GFAIL"
+        }
+      ]
+    },
+    "C:C1/AFF": {
+      "axis": "h",
+      "even": true,
+      "children": [
+        {
+          "node": "R2.C1.K"
+        },
+        {
+          "node": "R2.C1.S"
+        },
+        {
+          "node": "R2.C1.X"
+        }
+      ]
     }
-  }
+  },
+  "titleW": 180
 }

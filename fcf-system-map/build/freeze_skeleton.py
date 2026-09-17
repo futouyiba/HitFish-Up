@@ -30,15 +30,18 @@ BASELINE = ROOT / "skeleton.baseline.json"
 def fingerprint(graph):
     """骨架指纹：只含结构与命名，不含 caption / scope / view。"""
     nodes = graph["nodes"]
-    rows = [n for n in nodes if n.get("lane") == "main" and n.get("parent") is not None]
+    # 行 = lane 为 main 的节点。SYS 删除后七行升为顶层，不能再拿"有 parent"当判据
+    # —— 那样 rows 会变成空列表，护栏就再也看不住行结构了。
+    rows = [n for n in nodes if n.get("lane") == "main"]
     blocks = {}
     for n in nodes:
         p = n.get("parent")
         if p is not None:
             blocks.setdefault(p, []).append(n["id"])
-    root = next(n["id"] for n in nodes if n.get("parent") is None)
+    # 顶层节点可以不止一个（SYS 已删，七行 + 派生环境场都是顶层）。
+    roots = sorted(n["id"] for n in nodes if n.get("parent") is None)
     return {
-        "root": root,
+        "roots": roots,
         "rows": [{"id": r["id"], "label": r["label"],
                   "collapsible": bool(r.get("collapsible"))} for r in rows],
         "blocks": {k: sorted(v) for k, v in sorted(blocks.items())},
