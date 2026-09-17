@@ -3,6 +3,7 @@
 
 Inputs (semantic source, hand/AI-editable):
     graph.json     nodes (stable IDs, hierarchy, lanes) + explicit semantic edges
+    layout.json    版面：容器包纳树（C: 前缀的容器 + graph.json 节点作叶子）
     scopes.json    lens scopes (OVERALL / 0.3.4.0) with ACTIVE/BOUNDARY/OUT classes
     views.json     view presets (expansion granularity + optional scope lens)
     contracts.json thin diagram-node -> authority links (validated only)
@@ -15,13 +16,16 @@ Design invariants (Production Pilot v0.1):
     custom-action pass on those same cells — no duplicated instances, no
     scope x view layer multiplication (`::-suffixed` copies are banned).
   * Three orthogonal dimensions:
-      Hierarchy  — semantic parent grouping; collapsible subtrees toggle cell
-                   visibility (native `toggle`/`hide`/`show` actions).
+      Hierarchy  — 版面容器（layout.json）互相包纳，由 draw.io 的布局引擎在
+                   每次编辑事务后重排：展开一层，下面的层自动让位。
       Scope      — per-node ACTIVE/BOUNDARY/OUT class; applied only as
                    fillColor/strokeColor/fontColor/dashed style changes.
                    OUT nodes are grayed, never hidden.
       View       — expansion presets; buttons that change visibility never
                    change styles and vice versa.
+  * 版面硬规则：引擎永不重算**水平**容器的高度，所以重排只能沿「垂直容器的连续链」
+    向上传播 —— 水平容器只装不可再展开的叶子，高度发射时钉死。见
+    align/dynlayout/REPORT-dynamic-layout.md 的探针 P3。
   * Deterministic: fixed constants, fixed emission order, no timestamps,
     uuids or randomness. Same sources -> byte-identical output.
   * Only native draw.io mechanisms: layers (controls/main), custom-action
@@ -45,54 +49,6 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 
-# ---------------------------------------------------------------- layout ----
-# Fixed-capacity lane grid. Anchored lanes position slots relative to their
-# anchor node's top-left. Renaming never moves anything; appending to a lane
-# takes the next slot; inserting mid-lane shifts later siblings one slot
-# (documented rule).
-NODE_W, NODE_H, STAGE_W = 260, 66, 220
-# 7-row 整体框架 layout: `main` stacks the root + seven row labels; each row
-# lane lays its blocks out horizontally (dx) on that row's own y.
-LANES = {
-    "main": {"x": 40, "w": 280, "anchor": None, "y0": 150, "dy": 0, "bandGap": 26, "tagH": 30},
-    "r1a":     {"x": 400,  "w": 270, "anchor": "R1", "y0": 72, "dy": 70, "cap": 3},
-    "r1b":     {"x": 700,  "w": 470, "anchor": "R1", "y0": 58, "dy": 46, "h": 42, "cap": 4},
-    "r2cover": {"x": 40,   "w": 280, "anchor": "R2", "y0": 0,  "dx": 0, "h": 240},
-    "r2io":    {"x": 400,  "w": 210, "anchor": "R2", "y0": 40, "dx": 0, "h": 64},
-    "r2c1G":   {"x": 660,  "w": 800, "anchor": "R2", "y0": 50, "dx": 0, "h": 240},
-    "r2c1K":   {"follow": "r2c1G", "findex": 0, "x0": 8,  "y0": 44,  "w": 240, "h": 36},
-    "r2c1S":   {"follow": "r2c1G", "findex": 0, "x0": 8,  "y0": 84,  "w": 240, "h": 36},
-    "r2c1X":   {"follow": "r2c1G", "findex": 0, "x0": 8,  "y0": 124, "w": 240, "h": 36},
-    "r2c1V":   {"follow": "r2c1G", "findex": 0, "x0": 8,  "y0": 164, "w": 240, "h": 36},
-    "r2L2a":   {"follow": "r2c1G", "findex": 0, "x0": 272, "y0": 34,  "w": 250, "h": 44},
-    "r2L2b":   {"follow": "r2c1G", "findex": 0, "x0": 272, "y0": 84,  "w": 250, "h": 44},
-    "r2L2c":   {"follow": "r2c1G", "findex": 0, "x0": 272, "y0": 134, "w": 250, "h": 44},
-    "r2L2c2":  {"follow": "r2c1G", "findex": 0, "x0": 272, "y0": 184, "w": 250, "h": 42},
-    "r2L2d":   {"follow": "r2c1G", "findex": 0, "x0": 540, "y0": 60,  "w": 100, "h": 46},
-    "r2L2e":   {"follow": "r2c1G", "findex": 0, "x0": 660, "y0": 34,  "w": 130, "h": 42},
-    "r2L2f":   {"follow": "r2c1G", "findex": 0, "x0": 660, "y0": 88,  "w": 130, "h": 42},
-    "r2chG":   {"x": 1490, "w": 200, "anchor": "R2", "y0": 50, "dx": 212, "h": 240, "cap": 4},
-    "r2chK":   {"follow": "r2chG", "x0": 8,  "y0": 40,  "w": 184, "h": 36},
-    "r2chS":   {"follow": "r2chG", "x0": 8,  "y0": 80,  "w": 184, "h": 36},
-    "r2chX":   {"follow": "r2chG", "x0": 8,  "y0": 120, "w": 184, "h": 36},
-    "r2chV":   {"follow": "r2chG", "x0": 8,  "y0": 160, "w": 184, "h": 36},
-    "r3cover": {"x": 40,   "w": 280, "anchor": "R3", "y0": 0, "dx": 0, "h": 190},
-    "r3def":   {"x": 400,  "w": 260, "anchor": "R3", "y0": 44, "dx": 0, "h": 92},
-    "r3l0":    {"x": 740,  "w": 270, "anchor": "R3", "y0": 40, "dy": 78, "cap": 2},
-    "r3l1":    {"x": 1060, "w": 430, "anchor": "R3", "y0": 40, "dy": 72, "cap": 2},
-    "r4cover": {"x": 40,   "w": 280, "anchor": "R4", "y0": 0, "dx": 0, "h": 180},
-    "r4l0":    {"x": 400,  "w": 300, "anchor": "R4", "y0": 40, "dx": 0, "h": 60},
-    "r4l1":    {"x": 740,  "w": 480, "anchor": "R4", "y0": 40, "dy": 68, "cap": 3},
-    "r5cover": {"x": 40,   "w": 280, "anchor": "R5", "y0": 0, "dx": 0, "h": 180},
-    "r5bar":   {"x": 400,  "w": 1120, "anchor": "R5", "y0": 40, "dx": 0, "h": 42},
-    "r5t":     {"x": 420,  "w": 270, "anchor": "R5", "y0": 96, "dx": 286, "cap": 4},
-    "r6cover": {"x": 40,   "w": 280, "anchor": "R6", "y0": 0, "dx": 0, "h": 140},
-    "r6l0":    {"x": 400,  "w": 300, "anchor": "R6", "y0": 40, "dx": 0, "h": 60},
-    "r6l1":    {"x": 740,  "w": 620, "anchor": "R6", "y0": 40, "dx": 0, "h": 50},
-    "r7l0":    {"x": 400,  "w": 300, "anchor": "R7", "y0": 40, "dx": 0, "h": 60},
-    "r7l1":    {"x": 740,  "w": 400, "anchor": "R7", "y0": 40, "dx": 0, "h": 50},
-}
-PAGE_W, PAGE_H = 2420, 2020
 
 GRAY_FILL, GRAY_STROKE, GRAY_FONT = "#f5f5f5", "#a6a6a6", "#8f8f8f"
 
@@ -115,8 +71,9 @@ KIND_STYLE = {
     "group":   ("rounded=1;dashed=1;strokeWidth=1;", "#fcfcfc", "#bbbbbb"),
     "gtitle":  ("rounded=0;", "#eeeeee", "#999999"),
 }
-ROW_STYLE = ("rounded=1;strokeWidth=2;", "#ffffff", "#4477aa")   # 行标题
 DEFAULT_KIND = "process"
+# 版面容器只画一条很淡的边，用来提示包纳关系；不留底色，避免盖住方块。
+CONTAINER_STROKE = "#e0e0e0"
 
 ANCHOR_STYLE = "endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#b3b3b3;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;"
 EDGE_BASE = (
@@ -172,176 +129,291 @@ def load_sources(root):
 
 
 # ---------------------------------------------------------------- layout ----
+# 版面来自 layout.json 的「包纳树」：内部节点是容器（C: 前缀，带 childLayout），
+# 叶子是 graph.json 的节点。几何必须与 mxStackLayout 的首轮结果逐像素一致，
+# 否则首次点击时整批行会跳（见 align/dynlayout/REPORT-dynamic-layout.md）。
+#
+# 硬规则（探针 P3 实测）：布局引擎永不重算**水平**容器的高度，所以重排只能沿
+# 「垂直容器的连续链」向上传播 —— 水平容器只装不可再展开的叶子，高度发射时钉死。
 
-def layout(nodes, edges):
-    ids = [n["id"] for n in nodes]
+LEAF_W = {
+    "data": 260, "l1": 250, "process": 260, "cube": 260, "outside": 260,
+    "group": 300, "core": 190, "sec": 190, "skip": 190, "gate": 130,
+    "cover": 260,
+}
+DEFAULT_LEAF_W = 240
+ROOT_X, ROOT_Y = 40, 150
+
+
+def load_layout(root):
+    with open(root / "layout.json", "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def resolve_layout(lay, nodes):
+    """把 layout.json 的 ref 展开成实树，并校验「每个节点恰好出现一次」。"""
     by_id = {n["id"]: n for n in nodes}
-    pos, lane_cursor, row_bands, lane_positions = {}, {}, {}, {}
-    # main lane first (row nodes live there), then row lanes in definition order
-    for lane in ["main"] + [l for l in LANES if l != "main"]:
-        spec = LANES[lane]
-        i = 0
-        cursor_y = spec.get("y0", 0) if lane == "main" else 0
-        for n in nodes:
-            if n.get("lane") != lane:
-                continue
-            if lane == "main" and n.get("parent") is not None:
-                # 行：按累积 band 高度定位；行带边界固定，展开不会推动它。
-                # 行节点自身只有一条窄标签，但它向后推进整个 band 的高度。
-                y = cursor_y
-                cursor_y += n.get("band", 160) + spec.get("bandGap", 26)
-                pos[n["id"]] = (spec["x"], y, spec["w"], spec.get("tagH", 28))
-                row_bands[n["id"]] = (y, n.get("band", 160))
-                i += 1
-                continue
-            if "follow" in spec:
-                src = spec["follow"]
-                fi = spec.get("findex", i)
-                if src not in lane_positions or fi >= len(lane_positions[src]):
-                    sys.exit("error: lane %s follows %s but has no slot %d"
-                             % (lane, src, fi))
-                bx, by = lane_positions[src][fi]
-                x, y = bx + spec.get("x0", 0), by + spec.get("y0", 0)
-                pos[n["id"]] = (x, y, spec["w"], spec.get("h", NODE_H))
-                lane_positions.setdefault(lane, []).append((x, y))
-                i += 1
-                continue
-            if "dx" in spec:
-                # horizontal lane: blocks sit side by side on the anchor's row
-                # (dx may be 0 — a single wide bar spanning the row)
-                if spec["anchor"] not in pos:
-                    sys.exit("error: lane %s anchors on %s which is not laid out yet"
-                             % (lane, spec["anchor"]))
-                x = spec["x"] + i * spec["dx"]
-                y = pos[spec["anchor"]][1] + spec["y0"]
-            elif spec["anchor"] is None:
-                x, y = spec["x"], cursor_y
-                cursor_y += (54 if n.get("parent") is None else NODE_H) + spec.get("bandGap", 26)
+    containers = lay["containers"]
+
+    def build(spec, cid, parent):
+        kids = []
+        for ch in spec.get("children", []):
+            if "node" in ch:
+                if ch["node"] not in by_id:
+                    sys.exit("error: layout.json 引用了 graph.json 里没有的节点 %r"
+                             % ch["node"])
+                kids.append({"kind": "leaf", "id": ch["node"], "spec": ch,
+                             "parent": cid})
+            elif "ref" in ch:
+                if ch["ref"] not in containers:
+                    sys.exit("error: layout.json 引用了未定义的容器 %r" % ch["ref"])
+                sub = build(containers[ch["ref"]], ch["ref"], cid)
+                sub["spec"] = ch
+                kids.append(sub)
             else:
-                if spec["anchor"] not in pos:
-                    sys.exit("error: lane %s anchors on %s which is not laid out yet"
-                             % (lane, spec["anchor"]))
-                x = spec["x"]
-                y = pos[spec["anchor"]][1] + spec["y0"] + i * spec["dy"]
-            pos[n["id"]] = (x, y, spec["w"], spec.get("h", NODE_H))
-            lane_positions.setdefault(lane, []).append((x, y))
-            i += 1
-        cap = spec.get("cap")
-        if cap is not None and i > cap:
-            sys.exit("error: 行 %s 已超出其声明容量 %d（当前 %d 个方块）。"
-                     "该行已满 —— 扩容是一次需要重新规划布局的事件，"
-                     "请调整 LANES 里的 cap / 页宽后重新冻结骨架，而不是让方块挤在一起。"
-                     % (lane, cap, i))
-        lane_cursor[lane] = i
+                sys.exit("error: layout.json 的子项既非 node 也非 ref: %r" % (ch,))
+        return {"kind": "container", "id": cid, "axis": spec.get("axis", "v"),
+                "indent": spec.get("indent", 0), "spec": spec,
+                "children": kids, "parent": parent}
 
-    # 按「容量」而非「当前用量」校验行宽：预留的位置必须真的在页内
-    for lane, spec in LANES.items():
-        if "dx" not in spec or not spec.get("cap"):
-            continue
-        right = spec["x"] + (spec["cap"] - 1) * spec["dx"] + spec["w"]
-        if right > PAGE_W:
-            sys.exit("error: 行 %s 的容量 %d 需要宽度到 x=%d，超出页宽 %d。"
-                     "要么缩小 dx，要么加宽 PAGE_W。" % (lane, spec["cap"], right, PAGE_W))
+    root = build(lay["root"], "C:ROOT", None)
+    seen = {}
 
-    # 页高按行带累积结果算（确定性），随后再做越界检查
-    global PAGE_H
-    bottom = max((pos[nid][1] + row_bands[nid][1] if nid in row_bands else y + h)
-                 for nid, (x, y, w, h) in pos.items())
-    PAGE_H = int(bottom + 220)
+    def count(n):
+        if n["kind"] == "leaf":
+            seen[n["id"]] = seen.get(n["id"], 0) + 1
+        for c in n.get("children", []):
+            count(c)
+    count(root)
+    dup = sorted(k for k, v in seen.items() if v > 1)
+    miss = sorted(n["id"] for n in nodes if n["id"] not in seen)
+    if dup or miss:
+        sys.exit("error: layout.json 覆盖不全 —— 重复 %r / 缺失 %r" % (dup, miss))
+    return root
 
-    for nid, (x, y, w, h) in pos.items():
-        if x + w > PAGE_W or y + h > PAGE_H or x < 0 or y < 0:
-            sys.exit("error: node %s lands outside the page canvas: %r" % (nid, pos[nid]))
 
-    # structural (hierarchy) edges, deterministic order: node array order
+def layout_ctx(lay, graph, views, root):
+    """可见性 + 尺寸上下文。
+
+    容器的折叠态由 default view 决定：它的**标题节点**出现在 expansion.expand 里
+    就是展开态，否则折叠态。子项的 `when` 与之匹配时才在初态可见。
+    """
+    spec = next(v for v in views["views"] if v["id"] == views["defaultView"])
+    expanded = set((spec.get("expansion") or {}).get("expand", []))
+
+    by_cid = {}
+
+    def index(n):
+        by_cid[n["id"]] = n
+        for c in n.get("children", []):
+            index(c)
+    index(root)
+
+    def state_of(cid):
+        container = by_cid.get(cid)
+        if container is None:
+            return None
+        for c in container.get("children", []):
+            if c["kind"] == "leaf" and c["spec"].get("role") == "title":
+                return "expanded" if c["id"] in expanded else "collapsed"
+        return None
+
+    def visible(child):
+        when = child["spec"].get("when")
+        if when is None:
+            return True
+        return when == state_of(child["parent"])
+
+    return {
+        "border": lay["border"], "spacing": lay["spacing"],
+        "titleH": lay["titleH"], "leafH": lay["leafH"],
+        "kinds": {n["id"]: n.get("kind", DEFAULT_KIND) for n in graph["nodes"]},
+        "visible": visible, "state_of": state_of, "expanded": expanded,
+        "leaf_w": {},
+    }
+
+
+def natural_w(node, ctx):
+    if node["kind"] == "leaf":
+        kind = ctx["kinds"].get(node["id"], DEFAULT_KIND)
+        return (node["spec"].get("w") or LEAF_W.get(kind, DEFAULT_LEAF_W))
+    b, sp = ctx["border"], ctx["spacing"]
+    laid = [c for c in node.get("children", [])
+            if ctx["visible"](c) and not c["spec"].get("pin")]
+    if not laid:
+        return 2 * b + node["indent"]
+    if node["axis"] == "h":
+        return (2 * b + node["indent"] + sum(natural_w(c, ctx) for c in laid)
+                + sp * (len(laid) - 1))
+    return 2 * b + node["indent"] + max(natural_w(c, ctx) for c in laid)
+
+
+def measure(node, forced_w, ctx):
+    """自底向上算尺寸、自顶向下落局部坐标（相对父容器左上角）。
+
+    容器的高度/宽度只由**初态可见**的子块决定（发射出来的几何就是布局引擎的
+    首轮不动点）。初态不可见的子块照样要发出去（带 visible="0"），所以也得给
+    它们一组坐标 —— 顺排在可见内容之后，仅供存储，引擎在它们变可见时会重排。
+    """
+    b, sp = ctx["border"], ctx["spacing"]
+    if node["kind"] == "leaf":
+        kind = ctx["kinds"].get(node["id"], DEFAULT_KIND)
+        node["_w"] = (forced_w or node["spec"].get("w")
+                      or LEAF_W.get(kind, DEFAULT_LEAF_W))
+        node["_h"] = node["spec"].get("h") or ctx["leafH"].get(kind, 44)
+        return
+    kids = [c for c in node["children"] if not c["spec"].get("pin")]
+    vis = [c for c in kids if ctx["visible"](c)]
+    hid = [c for c in kids if not ctx["visible"](c)]
+    ind = node["indent"]
+    if node["axis"] == "h":
+        # 水平容器：子块保留自己的宽度；容器宽向上汇总，高发射时钉死。
+        # 引擎会给**叶子**子块按 fill 拉平高度（容器子块则用自己的内容高度，
+        # 见探针 P3），所以叶子的发射高度必须写成容器内高，否则首次点击会跳。
+        off = ind + b
+        for c in vis:
+            measure(c, None, ctx)
+            c["_x"], c["_y"] = off, b
+            off += c["_w"] + sp
+        node["_w"] = ((off - sp) + b) if vis else (2 * b + ind)
+        node["_h"] = 2 * b + max([c["_h"] for c in vis] or [0])
+        for c in vis:
+            if c["kind"] == "leaf":
+                c["_h"] = node["_h"] - 2 * b
+        tail = off
+        for c in hid:
+            measure(c, None, ctx)
+            c["_x"], c["_y"] = tail, b + node["_h"]
+            tail += c["_w"] + sp
+    else:
+        node["_w"] = forced_w or natural_w(node, ctx)
+        inner = node["_w"] - 2 * b - ind
+        y = b
+        for c in vis:
+            # 垂直容器把子块宽度撑满；但水平子容器会按自己的内容重算宽度。
+            wide = (c["kind"] == "container" and c["axis"] == "h")
+            measure(c, None if wide else inner, ctx)
+            c["_x"], c["_y"] = ind + b, y
+            y += c["_h"] + sp
+        node["_h"] = ((y - sp) + b) if vis else (2 * b)
+        tail = node["_h"] + b
+        for c in hid:
+            wide = (c["kind"] == "container" and c["axis"] == "h")
+            measure(c, None if wide else inner, ctx)
+            c["_x"], c["_y"] = ind + b, tail
+            tail += c["_h"] + sp
+    # 侧钉（movable=0）：不进栈、不计入父高，坐标由声明给定。
+    for c in node.get("children", []):
+        if c["spec"].get("pin"):
+            measure(c, c["spec"].get("w"), ctx)
+            c["_x"], c["_y"] = c["spec"]["pin"]
+
+
+def layout(lay, graph, views):
+    """递归版面 → 发射计划。坐标是**父相对**的（mxGeometry 语义）。"""
+    root = resolve_layout(lay, graph["nodes"])
+    ctx = layout_ctx(lay, graph, views, root)
+    measure(root, None, ctx)
+    root["_x"], root["_y"] = ROOT_X, ROOT_Y
+
+    order, parent_of = [], {}
+
+    def walk(n):
+        order.append(n["id"])
+        for c in n.get("children", []):
+            parent_of[c["id"]] = n["id"]
+            walk(c)
+    walk(root)
+
+    # 结构边：仍是「父节点 → 子节点」的语义层级（与版面树无关），保持原样
+    nodes = graph["nodes"]
     root_ids = {n["id"] for n in nodes if n.get("parent") is None}
     structural = []
     for n in nodes:
         p = n.get("parent")
         if p is None or p in root_ids:
-            # 根节点 -> 行 的包含关系由行的纵向顺序表达，不画线（否则是一条贯穿全图的竖线）
             continue
         structural.append({"from": p, "to": n["id"],
                            "id": "EX:%s->%s" % (p, n["id"])})
-    # semantic edges keep source order with stable ids
     semantic = []
-    for e in edges:
+    for e in graph["edges"]:
         semantic.append({"from": e["from"], "to": e["to"], "type": e["type"],
                          "exit": e.get("exit"), "entry": e.get("entry"),
                          "id": "E:%s->%s" % (e["from"], e["to"])})
-    return pos, structural, semantic, row_bands
+
+    by_cid = {}
+
+    def index(n):
+        by_cid[n["id"]] = n
+        for c in n.get("children", []):
+            index(c)
+    index(root)
+
+    page_w = int(ROOT_X + root["_w"] + 120)
+    page_h = int(ROOT_Y + root["_h"] + 220)
+    return {"root": root, "by_cid": by_cid, "order": order,
+            "parent_of": parent_of, "ctx": ctx,
+            "page_w": page_w, "page_h": page_h}, structural, semantic
 
 
-def page_height(pos, row_bands):
-    """页高按内容算（仍确定性）：最后一条行带底部 + 图例区。"""
-    bottom = 0
-    for nid, (x, y, w, h) in pos.items():
-        if nid in row_bands:
-            bottom = max(bottom, y + row_bands[nid][1])
-        else:
-            bottom = max(bottom, y + h)
-    return int(bottom + 220)
+def subtree_node_ids(node):
+    """版面树里某个节点下面的全部 graph.json 节点 id（含自身若是叶子）。"""
+    out = set()
 
-
-def descendants(nid, nodes):
-    by_parent = {}
-    for n in nodes:
-        by_parent.setdefault(n.get("parent"), []).append(n["id"])
-    out, stack = [], [nid]
-    while stack:
-        cur = stack.pop()
-        for child in by_parent.get(cur, []):
-            out.append(child)
-            stack.append(child)
+    def walk(n):
+        if n["kind"] == "leaf":
+            out.add(n["id"])
+        for c in n.get("children", []):
+            walk(c)
+    walk(node)
     return out
 
 
-# ------------------------------------------------------- scope lens data ----
-
-def lens_of(scopes):
-    """Returns (scope_by_id, lens_scope) where lens_scope is the scope entry
-    with lens=true, or None."""
-    scope_by_id = {s["id"]: s for s in scopes["scopes"]}
-    lensed = [s for s in scopes["scopes"] if s.get("lens")]
-    return scope_by_id, (lensed[0] if lensed else None)
+def edges_touching(ids, structural, semantic):
+    out = []
+    for e in semantic + structural:
+        if e["from"] in ids or e["to"] in ids:
+            out.append(e["id"])
+    return sorted(out)
 
 
-def row_content_cells(nid, nodes, semantic, structural):
-    """行的「内容」= 后代中除封面块以外的全部 cell，加上它们之间的边。
-    封面块是折叠态的对立面，两者互斥，故不算在内容里。"""
-    cover = cover_of(nid, nodes)
-    desc = set(descendants(nid, nodes))
-    if cover:
-        desc.discard(cover)
-    cells = sorted(desc)
-    for e in semantic:
-        if e["from"] in desc or e["to"] in desc:
-            cells.append(e["id"])
-    for e in structural:
-        if e["from"] in desc or e["to"] in desc:
-            cells.append(e["id"])
-    return sorted(set(cells))
+def container_toggles(plan, structural, semantic):
+    """每个可折叠容器的两个方向的动作，键 = 它的**标题节点 id**（与 views.json 的
+    expansion 对齐）。
 
-
-def cover_of(nid, nodes):
-    for n in nodes:
-        if n.get("parent") == nid and n.get("kind") == "cover":
-            return n["id"]
-    return None
-
-
-def subtree_cells(nid, nodes, semantic, structural):
-    """All cell ids hidden together when `nid` collapses: descendant vertex
-    cells + every edge (structural or semantic) touching a descendant."""
-    desc = set(descendants(nid, nodes))
-    cells = sorted(desc)
-    for e in semantic:
-        if e["from"] in desc or e["to"] in desc:
-            cells.append(e["id"])
-    for e in structural:
-        if e["from"] in desc or e["to"] in desc:
-            cells.append(e["id"])
-    return cells
+    折叠 = 隐藏展开态内容（连同相触的边）+ 显示封面；
+    展开 = 反过来。隐藏一个容器 id 会级联到它的子孙（探针 P6），所以 hide 列表
+    只需要列出**顶层**容器 id，边则必须显式枚举。
+    """
+    toggles = {}
+    for node in plan["by_cid"].values():
+        if node["kind"] != "container":
+            continue
+        title = None
+        for c in node.get("children", []):
+            if c["kind"] == "leaf" and c["spec"].get("role") == "title":
+                title = c
+        if title is None:
+            continue
+        content = [c for c in node["children"]
+                   if c is not title and c["spec"].get("when")
+                   and not c["spec"].get("pin")]
+        if not content:
+            continue
+        hidden, shown = [], []
+        for c in content:
+            if c["spec"]["when"] == "expanded":
+                hidden.append(c["id"])
+                hidden.extend(edges_touching(subtree_node_ids(c),
+                                             structural, semantic))
+            else:
+                shown.append(c["id"])
+        hidden, shown = sorted(set(hidden)), sorted(set(shown))
+        toggles[title["id"]] = {
+            "collapse": {"hide": hidden, "show": shown},
+            "expand": {"hide": shown, "show": hidden},
+        }
+    return toggles
 
 
 def class_of(node_id, assignment):
@@ -424,7 +496,7 @@ def lens_actions(scope, nodes, kinds, structural, semantic, mode):
 
 # ---------------------------------------------------------------- easing ----
 
-def view_button_payload(view, scope_by_id, nodes, kinds, semantic, structural, collapsible_cells):
+def view_button_payload(view, scope_by_id, nodes, kinds, semantic, structural, toggles):
     acts = []
     lens_id = view.get("scopeLens", "keep")
     if lens_id == "clear":
@@ -436,13 +508,17 @@ def view_button_payload(view, scope_by_id, nodes, kinds, semantic, structural, c
     exp = view.get("expansion") or {}
     for key in ("collapse", "expand"):
         for nid in exp.get(key, []):
-            if nid not in collapsible_cells:
+            if nid not in toggles:
                 sys.exit("error: view %s tries to %s %r, which is not a "
-                         "collapsible node in graph.json" % (view["id"], key, nid))
+                         "collapsible node in layout.json" % (view["id"], key, nid))
     for nid in exp.get("collapse", []):
-        acts.append({"hide": {"cells": collapsible_cells[nid]}})
+        t = toggles[nid]["collapse"]
+        acts.append({"hide": {"cells": t["hide"]}})
+        acts.append({"show": {"cells": t["show"]}})
     for nid in exp.get("expand", []):
-        acts.append({"show": {"cells": collapsible_cells[nid]}})
+        t = toggles[nid]["expand"]
+        acts.append({"hide": {"cells": t["hide"]}})
+        acts.append({"show": {"cells": t["show"]}})
     return {"actions": acts}
 
 
@@ -474,8 +550,12 @@ def text_cell(cid, value, style, x, y, w, h):
     return vertex(cid, value, style, x, y, w, h, "Layer:Controls")
 
 
-def emit(graph, scopes, views, pos, structural, semantic, collapsible_cells, default_view):
+def emit(graph, scopes, views, plan, structural, semantic, default_view):
     kinds = {n["id"]: n.get("kind", DEFAULT_KIND) for n in graph["nodes"]}
+    gby = {n["id"]: n for n in graph["nodes"]}
+    toggles = container_toggles(plan, structural, semantic)
+    ctx = plan["ctx"]
+    PAGE_W, PAGE_H = plan["page_w"], plan["page_h"]
     out = []
     a = out.append
     a('<?xml version="1.0" encoding="UTF-8"?>\n')
@@ -504,7 +584,7 @@ def emit(graph, scopes, views, pos, structural, semantic, collapsible_cells, def
     for i, v in enumerate(views["views"]):
         payload = view_button_payload(v, {s["id"]: s for s in scopes["scopes"]},
                                       graph["nodes"], kinds, semantic, structural,
-                                      collapsible_cells)
+                                      toggles)
         is_default = v["id"] == default_view
         x, y, w, h = 80 + i * 190, 54, 175, 34
         extra = "strokeWidth=2;fontStyle=1;" if is_default else "strokeWidth=1;"
@@ -536,52 +616,63 @@ def emit(graph, scopes, views, pos, structural, semantic, collapsible_cells, def
                 "text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#666666;",
                 350, ly + 48, 900, 30))
 
-    # ---- nodes (single instance each) ------------------------------------
-    # Initial visibility is the DEFAULT VIEW applied at build time: every
-    # collapsible row starts collapsed, then the default view's expansion spec
-    # is baked in. A reader opening the file sees exactly the default view.
-    default_spec = next(v for v in views["views"] if v["id"] == default_view)
-    default_exp = default_spec.get("expansion") or {}
-    initially_hidden = set()
-    for row in [n["id"] for n in graph["nodes"] if n.get("band")]:
-        cover = cover_of(row, graph["nodes"])
-        content = row_content_cells(row, graph["nodes"], semantic, structural)
-        if not cover:
-            continue          # 没有封面 = 这行不可折叠（行1 常显 section、行7 范围外）
-        if row in default_exp.get("expand", []):
-            initially_hidden.add(cover)          # 展开态：封面藏起，内容可见
-        else:
-            initially_hidden.update(content)     # 折叠态：内容藏起，封面可见
-    for row in default_exp.get("collapse", []):
-        cover = cover_of(row, graph["nodes"])
-        if cover:
-            initially_hidden.add(cover)
-    for n in graph["nodes"]:
-        nid = n["id"]
-        x, yy, w, h = pos[nid]
-        kind = n.get("kind", DEFAULT_KIND)
-        style = node_style(kind) + ("strokeWidth=2;" if n.get("collapsible") else "")
-        link = None
-        value = n["label"]
-        if n.get("caption"):
+    # ---- nodes: 容器 + 叶子，按版面树 DFS 顺序（父先于子） -----------------
+    hidden_nodes, hidden_edges = set(), set()
+    for node in plan["by_cid"].values():
+        for c in node.get("children", []):
+            if not ctx["visible"](c):
+                hidden_nodes |= subtree_node_ids(c)
+    hidden_edges = set(edges_touching(hidden_nodes, structural, semantic))
+
+    def title_of(node):
+        for c in node.get("children", []):
+            if c["kind"] == "leaf" and c["spec"].get("role") == "title":
+                return c["id"]
+        return None
+
+    for cid in plan["order"]:
+        n = plan["by_cid"][cid]
+        parent = plan["parent_of"].get(cid, "Layer:Main")
+        x, y, w, h = n["_x"], n["_y"], n["_w"], n["_h"]
+        if n["kind"] == "container":
+            indent = ("marginLeft=%d;" % n["indent"]) if n["indent"] else ""
+            style = ("rounded=0;html=1;fillColor=none;strokeColor=%s;"
+                     "childLayout=stackLayout;resizeParent=1;resizeParentMax=0;"
+                     "horizontalStack=%d;stackSpacing=%d;stackBorder=%d;%s"
+                     % (CONTAINER_STROKE, 1 if n["axis"] == "h" else 0,
+                        ctx["spacing"], ctx["border"], indent))
+            a(vertex(cid, "", style, x, y, w, h, parent))
+            continue
+        gn = gby[n["id"]]
+        kind = gn.get("kind", DEFAULT_KIND)
+        style = node_style(kind)
+        if n["spec"].get("role") == "title":
+            style += "strokeWidth=2;"
+        if n["spec"].get("pin"):
+            style += "movable=0;"
+        value = gn["label"]
+        if gn.get("caption"):
             value += ("<br><font style='font-size:9px;color:#555555'>%s</font>"
-                      % n["caption"])
-        if n.get("collapsible"):
-            # 行标签 = 折叠（显示封面、隐藏内容）
-            link = action_link({"actions": [{"show": {"cells": [cover_of(nid, graph["nodes"])] if cover_of(nid, graph["nodes"]) else []}},
-                                            {"hide": {"cells": row_content_cells(nid, graph["nodes"], semantic, structural)}}]})
-        elif n.get("kind") == "cover":
-            # 封面 = 展开（隐藏封面、显示内容）
-            row = n["parent"]
-            link = action_link({"actions": [{"hide": {"cells": [nid]}},
-                                            {"show": {"cells": row_content_cells(row, graph["nodes"], semantic, structural)}}]})
-        a(vertex(nid, value, style, x, yy, w, h, "Layer:Main", link=link,
-                 visible=nid not in initially_hidden))
+                      % gn["caption"])
+        link = None
+        if n["id"] in toggles:
+            t = toggles[n["id"]]["collapse"]
+            link = action_link({"actions": [{"hide": {"cells": t["hide"]}},
+                                            {"show": {"cells": t["show"]}}]})
+        elif kind == "cover":
+            owner = plan["by_cid"].get(n["parent"])
+            t = toggles.get(title_of(owner) if owner else None)
+            if t:
+                e = t["expand"]
+                link = action_link({"actions": [{"hide": {"cells": e["hide"]}},
+                                                {"show": {"cells": e["show"]}}]})
+        a(vertex(n["id"], value, style, x, y, w, h, parent, link=link,
+                 visible=n["id"] not in hidden_nodes))
 
     # ---- edges: structural (faint) then semantic (typed) -----------------
     for e in structural:
         a(edge(e["id"], ANCHOR_STYLE, "Layer:Main", e["from"], e["to"],
-               visible=e["id"] not in initially_hidden))
+               visible=e["id"] not in hidden_edges))
     for e in semantic:
         kind = kinds.get(e["from"], DEFAULT_KIND)
         _, fill, stroke = style_of(kind)
@@ -600,7 +691,7 @@ def emit(graph, scopes, views, pos, structural, semantic, collapsible_cells, def
                     "exit" if key == "exit" else "entry",
                     "exit" if key == "exit" else "entry")
         a(edge(e["id"], style, "Layer:Main", e["from"], e["to"],
-               visible=e["id"] not in initially_hidden, value=e.get("label", "")))
+               visible=e["id"] not in hidden_edges, value=e.get("label", "")))
 
     a('      </root>\n')
     a('    </mxGraphModel>\n')
@@ -615,30 +706,27 @@ def build(root):
     src = load_sources(root)
     graph, scopes, views = src["graph"], src["scopes"], src["views"]
 
-    pos, structural, semantic, row_bands = layout(graph["nodes"], graph["edges"])
-    collapsible_cells = {
-        n["id"]: subtree_cells(n["id"], graph["nodes"], semantic, structural)
-        for n in graph["nodes"] if n.get("collapsible")
-    }
-    default_view = views["defaultView"]
-    xml = emit(graph, scopes, views, pos, structural, semantic,
-               collapsible_cells, default_view)
+    plan, structural, semantic = layout(load_layout(root), graph, views)
+    xml = emit(graph, scopes, views, plan, structural, semantic,
+               views["defaultView"])
     out_path = root / "generated" / "fcf-system-map.drawio"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w", encoding="utf-8", newline="\n") as f:
         f.write(xml)
     digest = hashlib.sha256(xml.encode("utf-8")).hexdigest()
-    n_cells = len(graph["nodes"]) + len(structural) + len(semantic)
-    print("wrote %s: %d nodes, %d structural + %d semantic edges, %d cells total, "
-          "sha256=%s" % (out_path, len(graph["nodes"]), len(structural),
-                         len(semantic), n_cells, digest[:16]))
+    n_cont = sum(1 for n in plan["by_cid"].values() if n["kind"] == "container")
+    n_cells = len(graph["nodes"]) + n_cont + len(structural) + len(semantic)
+    print("wrote %s: %d nodes + %d containers, %d structural + %d semantic edges, "
+          "%d cells total, sha256=%s" % (out_path, len(graph["nodes"]), n_cont,
+                                         len(structural), len(semantic), n_cells,
+                                         digest[:16]))
     return out_path
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--root", default=str(ROOT),
-                    help="fcf-system-map root directory (contains the four source JSONs)")
+                    help="fcf-system-map root directory (contains the source JSONs)")
     ap.add_argument("--out", default=None,
                     help="override output path (default <root>/generated/fcf-system-map.drawio)")
     args = ap.parse_args()
@@ -646,13 +734,9 @@ def main():
     if args.out:
         src = load_sources(root)
         graph, scopes, views = src["graph"], src["scopes"], src["views"]
-        pos, structural, semantic, row_bands = layout(graph["nodes"], graph["edges"])
-        collapsible_cells = {
-            n["id"]: subtree_cells(n["id"], graph["nodes"], semantic, structural)
-            for n in graph["nodes"] if n.get("collapsible")
-        }
-        xml = emit(graph, scopes, views, pos, structural, semantic,
-                   collapsible_cells, views["defaultView"])
+        plan, structural, semantic = layout(load_layout(root), graph, views)
+        xml = emit(graph, scopes, views, plan, structural, semantic,
+                   views["defaultView"])
         with open(args.out, "w", encoding="utf-8", newline="\n") as f:
             f.write(xml)
         print("wrote %s" % args.out)

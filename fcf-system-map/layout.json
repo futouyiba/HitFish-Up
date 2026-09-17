@@ -1,0 +1,198 @@
+{
+  "_comment": [
+    "版面声明：把 canonical 总图从「手工绝对坐标表」改成「容器包纳树」。",
+    "graph.json 一个字节都不动 —— 本文件只描述版面，节点仍然取自 graph.json。",
+    "内部节点 = 容器（C: 前缀，轴线 h/v）；叶子 = graph.json 的节点 id。",
+    "",
+    "一条硬规则（来自 align/dynlayout/REPORT-dynamic-layout.md 的探针 P3）：",
+    "布局引擎永不重算水平容器的高度，所以重排只能沿「垂直容器的连续链」向上传播。",
+    "因此：凡是「展开时必须推动下方」的东西，都必须是垂直容器里的兄弟；",
+    "水平容器只装不可再展开的叶子，高度在发射时钉死。",
+    "",
+    "children 里每一项：",
+    "  {\"node\": \"<graph.json id>\"}          叶子",
+    "  {\"ref\":  \"<容器 id>\"}                引用 containers 里的容器",
+    "  \"when\": \"collapsed\"|\"expanded\"      该项只在该态可见（省缺 = 永远可见，即标题）",
+    "  {\"pin\": [x, y], \"w\": w}              侧钉：movable=0，不进栈、不计入父高、但随父移动"
+  ],
+  "format": 1,
+  "border": 12,
+  "spacing": 14,
+  "titleH": 26,
+  "leafH": {
+    "data": 44, "l1": 40, "process": 48, "cube": 64, "outside": 40,
+    "group": 40, "core": 34, "sec": 34, "skip": 34, "gate": 46, "cover": 220
+  },
+
+  "root": {
+    "axis": "v",
+    "children": [
+      { "node": "SYS", "h": 66 },
+      { "ref": "C:R1" }, { "ref": "C:R2" }, { "ref": "C:R3" },
+      { "ref": "C:R4" }, { "ref": "C:R5" }, { "ref": "C:R6" },
+      { "ref": "C:R7" }
+    ]
+  },
+
+  "containers": {
+    "C:R1": {
+      "axis": "v",
+      "children": [
+        { "node": "R1", "role": "title" },
+        { "ref": "C:R1/TOP" },
+        { "ref": "C:R1/DET" }
+      ]
+    },
+    "C:R1/TOP": {
+      "axis": "h",
+      "children": [
+        { "node": "D.CONTEXT" }, { "node": "D.STOCK" }, { "node": "D.HABIT" }
+      ]
+    },
+    "C:R1/DET": {
+      "axis": "h",
+      "children": [
+        { "node": "R1.L.TIME" }, { "node": "R1.L.COND" },
+        { "node": "R1.L.STOCK" }, { "node": "R1.L.NATURE" }
+      ]
+    },
+
+    "C:R2": {
+      "axis": "v",
+      "children": [
+        { "node": "R2", "role": "title" },
+        { "node": "R2.COVER", "when": "collapsed", "h": 220 },
+        { "ref": "C:R2/CH", "when": "expanded" }
+      ]
+    },
+    "C:R2/CH": {
+      "axis": "h",
+      "children": [
+        { "node": "BAKE" },
+        { "ref": "C:C1" }, { "ref": "C:C2" }, { "ref": "C:C3" },
+        { "ref": "C:C4" }, { "ref": "C:C5" }
+      ]
+    },
+    "C:C1": {
+      "axis": "v",
+      "children": [
+        { "node": "R2.C1", "role": "title" },
+        { "ref": "C:C1/COLS" },
+        { "ref": "C:C1/L2" },
+        { "node": "R2.GATE" }, { "node": "R2.PASS" }, { "node": "R2.FAIL" }
+      ]
+    },
+    "C:C1/COLS": {
+      "axis": "h",
+      "children": [
+        { "node": "R2.C1.K" }, { "node": "R2.C1.S" },
+        { "node": "R2.C1.X" }, { "node": "R2.C1.V" }
+      ]
+    },
+    "C:C1/L2": {
+      "axis": "h",
+      "children": [
+        { "node": "R2.F.HAB" }, { "node": "R2.F.CORE" },
+        { "node": "R2.F.SEC" }, { "node": "R2.F.SKIP" }
+      ]
+    },
+    "C:C2": {
+      "axis": "v",
+      "children": [
+        { "node": "R2.C2" }, { "node": "R2.C2.K" }, { "node": "R2.C2.S" },
+        { "node": "R2.C2.X" }, { "node": "R2.C2.V" }
+      ]
+    },
+    "C:C3": {
+      "axis": "v",
+      "children": [
+        { "node": "R2.C3" }, { "node": "R2.C3.K" }, { "node": "R2.C3.S" },
+        { "node": "R2.C3.X" }, { "node": "R2.C3.V" }
+      ]
+    },
+    "C:C4": {
+      "axis": "v",
+      "children": [
+        { "node": "R2.C4" }, { "node": "R2.C4.K" }, { "node": "R2.C4.S" },
+        { "node": "R2.C4.X" }, { "node": "R2.C4.V" }
+      ]
+    },
+    "C:C5": {
+      "axis": "v",
+      "children": [
+        { "node": "R2.C5" }, { "node": "R2.C5.K" }, { "node": "R2.C5.S" },
+        { "node": "R2.C5.X" }, { "node": "R2.C5.V" }
+      ]
+    },
+
+    "C:R3": {
+      "axis": "v",
+      "indent": 300,
+      "children": [
+        { "node": "R3", "role": "title" },
+        { "node": "R3.COVER", "when": "collapsed", "h": 110 },
+        { "ref": "C:R3/L0", "when": "expanded" },
+        { "ref": "C:R3/L1", "when": "expanded" },
+        { "node": "DEF", "pin": [12, 40], "w": 260, "h": 92 }
+      ]
+    },
+    "C:R3/L0": {
+      "axis": "h",
+      "children": [{ "node": "PLAYER" }, { "node": "CUE" }]
+    },
+    "C:R3/L1": {
+      "axis": "h",
+      "children": [{ "node": "R3.A" }, { "node": "R3.B" }]
+    },
+
+    "C:R4": {
+      "axis": "v",
+      "children": [
+        { "node": "R4", "role": "title" },
+        { "node": "R4.COVER", "when": "collapsed", "h": 110 },
+        { "node": "RESPONSE", "when": "expanded" },
+        { "ref": "C:R4/L1", "when": "expanded" }
+      ]
+    },
+    "C:R4/L1": {
+      "axis": "h",
+      "children": [
+        { "node": "R4.A" }, { "node": "R4.B" }, { "node": "R4.C" }
+      ]
+    },
+
+    "C:R5": {
+      "axis": "v",
+      "children": [
+        { "node": "R5", "role": "title" },
+        { "node": "R5.COVER", "when": "collapsed", "h": 110 },
+        { "node": "TABLE", "when": "expanded" },
+        { "ref": "C:R5/L1", "when": "expanded" }
+      ]
+    },
+    "C:R5/L1": {
+      "axis": "h",
+      "children": [
+        { "node": "T1" }, { "node": "T2" }, { "node": "T3" }, { "node": "T4" }
+      ]
+    },
+
+    "C:R6": {
+      "axis": "v",
+      "children": [
+        { "node": "R6", "role": "title" },
+        { "node": "R6.COVER", "when": "collapsed", "h": 80 },
+        { "node": "DRAW", "when": "expanded" },
+        { "node": "R6.L", "when": "expanded" }
+      ]
+    },
+
+    "C:R7": {
+      "axis": "v",
+      "children": [
+        { "node": "R7", "role": "title" },
+        { "node": "FISHAI" }, { "node": "R7.L" }
+      ]
+    }
+  }
+}
