@@ -274,16 +274,31 @@ two edited Notion pages. Recorded project decisions belong in Main Control
 (§26-style ruling section) — that page was outside this session's two-page write scope, so
 **the ruling trace is still outstanding.**
 
-## 7. Next minimal action
+## 7. Write-back status
 
-**Record the ruling.** Append one narrow section to
-`Checkpoint｜0.3.4.0-B Main Agent Control` capturing the 2026-09-18 adjudications
-(GAP-001 … GAP-004) plus the residual fixed below, so the decisions are traceable in the
-place this branch keeps its rulings. Then the Fixed Bake contract is closed for
-implementation.
+**Done 2026-09-18** — the two authorised authority pages were edited and each read
+back in full:
 
-**Residual fixed in the same pass:** 开发需求 §4.1's inline example writes
-`time_period_coefficient[DAWN]` while §4.0's own table writes
-`time_period_activity_coefficient[DAWN]`. Under the GAP-001 ruling the §4.0 spelling wins,
-so that one example string should be corrected — a third page, likewise outside this
-session's write scope.
+| Page | Edit | Verified |
+| --- | --- | --- |
+| Schema & Validator (`3dca4137d23681e28c5bc2f29c63dc16`) | new §1.1 canonical `resolvedComponentProfiles` key table; §3.8 `BakeEvaluationTrace` rewritten to the post-2026-09-17 key set; 2026-09-17 field-name note replaced by the 2026-09-18 ruling + negative-knowledge warning | headings §1–§11 intact, new §1.1 present, no `****` corruption |
+| Bake Authoring / 条件开关 Working (`3dca4137d236816ab0add70228a80d51`) | §6.2 Feeding Layer keys and §6.3 Structure key → snake_case, plus a one-line ruling note | §6.1–§6.4 and the historical tail intact |
+
+Both pages had a `last_edited_time` of 2026-09-17 (≈24h stale) before the edit, so no
+concurrent writer was active. Writes were narrow `update_content` deltas with distinct
+anchors, then read back whole-page.
+
+**Still outstanding (both outside the authorised two-page scope):**
+
+1. **Ruling trace.** Recorded project decisions belong in Main Control
+   (`3dda4137d2368109aa54ec4f7acbab26`, §26-style section). The four adjudications
+   currently live in this repository plus the two edited pages, but not in the branch's
+   ruling log. Append one narrow section.
+2. **One residual string.** 开发需求 §4.1's inline example writes
+   `time_period_coefficient[DAWN]` while §4.0's own table writes
+   `time_period_activity_coefficient[DAWN]`. Under the GAP-001 ruling the §4.0 spelling
+   wins, so that example should be corrected.
+
+**Also noticed but not touched:** the 条件开关 page's *title* still reads
+`…｜AggregationRole constrains GatePolicy`, which references the deleted field. Renaming a
+page changes its link/URL, so it was left alone — worth a separate decision.
