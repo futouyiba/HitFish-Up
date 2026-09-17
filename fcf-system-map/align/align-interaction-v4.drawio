@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="fcf-align-sketch" agent="align_interaction.py" version="26.0.0" type="device">
+  <diagram id="fcf-align-interaction-v4" name="FCF 压缩阶梯 × Interaction 下钻 v4">
+    <mxGraphModel dx="1422" dy="796" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1680" pageHeight="1620" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="TITLE" value="FCF 总图 · 压缩阶梯 × Interaction 下钻 v4 — 依据「中鱼升级｜」Mechanism Topology V2 + 中层逻辑样板 v8，与 0.3.4.0-B 三页" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+            <mxGeometry x="60" y="14" width="1300" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="HINT" value="上排 = 压缩阶梯：中鱼升级是本体，每一层是范围更小的投影（v1 本轮未读）。下排 = Interaction 下钻：真正产生“玩家策略差异”的地方。橙色粗框 = 当前版本投影 0.3.4.0-B 落点。" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+            <mxGeometry x="60" y="40" width="1300" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="A_T" value="A. 压缩阶梯｜每一层是范围更小的投影" style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#4477aa;" vertex="1" parent="1">
+            <mxGeometry x="80" y="84" width="600" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="B_T" value="B. Interaction 内部拓扑｜Source → Evidence → Interpretation → Modes → Aggregator" style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#4477aa;" vertex="1" parent="1">
+            <mxGeometry x="120" y="422" width="900" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="C_T" value="C. 四层分离（不得混淆）" style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#4477aa;" vertex="1" parent="1">
+            <mxGeometry x="120" y="1222" width="400" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="L0" value="中鱼升级&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;第一性 / 总体范围 · WHO / WHEN / RESOLVE · q = Σ_r L_r × C_r&lt;/font&gt;" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+            <mxGeometry x="80" y="110" width="520" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="L1" value="FCF v1&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;压缩 1（范围更小）· 本轮不读&lt;/font&gt;" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+            <mxGeometry x="620" y="110" width="400" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="L2" value="Simplified V0&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;压缩 2 · 4.0–4.7 模块链 · Engagement Mode / 4 语义边界&lt;/font&gt;" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+            <mxGeometry x="1040" y="110" width="400" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="L3" value="0.3.4&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;更小 · Bake DSL 与 Fixed Template 两条并行方案&lt;/font&gt;" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+            <mxGeometry x="1040" y="210" width="400" height="68" as="geometry" />
+        </mxCell>
+        <mxCell id="L4" value="0.3.4.0-B&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;当前版本投影 · Fixed Template Bake · AggregationRole 开关 · 无 DSL&lt;/font&gt;" style="rounded=1;strokeWidth=3;fontSize=12;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d79b00;" vertex="1" parent="1">
+            <mxGeometry x="1040" y="296" width="400" height="68" as="geometry" />
+        </mxCell>
+        <mxCell id="NAP" value="本轮未读&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;FCF v1 骨架未读，压缩 1 与 2 之间的差异待补&lt;/font&gt;" style="rounded=1;dashed=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#a6a6a6;fontColor=#8f8f8f;" vertex="1" parent="1">
+            <mxGeometry x="620" y="210" width="400" height="68" as="geometry" />
+        </mxCell>
+        <mxCell id="SRC" value="Visual / Chemical / Mechanical Source&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;呈现源（三通道并列）&lt;/font&gt;" style="shape=parallelogram;perimeter=parallelogramPerimeter;size=16;fontSize=12;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+            <mxGeometry x="120" y="450" width="340" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="PROP" value="Fish-agnostic Propagation&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;传播语境：距离 · 光照 · 浑浊 · 遮挡 · 流场&lt;/font&gt;" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+            <mxGeometry x="120" y="556" width="340" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="SIG" value="Receiver-local Signals&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;到达受体的信号（Source ≠ Evidence）&lt;/font&gt;" style="shape=parallelogram;perimeter=parallelogramPerimeter;size=16;fontSize=12;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+            <mxGeometry x="120" y="662" width="340" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="EV" value="Perceptual Evidence[]&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;+ FishSensoryCapability → 各通道 Evidence&lt;/font&gt;" style="shape=parallelogram;perimeter=parallelogramPerimeter;size=16;fontSize=12;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+            <mxGeometry x="120" y="768" width="340" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="INTERP" value="Semantic Interpretation&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;Target / Intrusion / Novelty
+（低证据 → hypothesis 更 broad，而不是先乘低 detection）&lt;/font&gt;" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+            <mxGeometry x="120" y="874" width="340" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="MFEED" value="Feeding Mode&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;Target Relation × Motivation
+× TaskAffordance → C_feed&lt;/font&gt;" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+            <mxGeometry x="560" y="874" width="300" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="MDEF" value="Defense Mode&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;Guarding ∧ InsideScope
+∧ ThreatRelevant → C_defense&lt;/font&gt;" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+            <mxGeometry x="900" y="874" width="300" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="MINV" value="Investigation Mode&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;V0 不 admission：
+不能独立闭合到 SpawnCommit 兼容响应&lt;/font&gt;" style="rounded=1;dashed=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#a6a6a6;fontColor=#8f8f8f;" vertex="1" parent="1">
+            <mxGeometry x="1240" y="874" width="320" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="AGG" value="Cross-Mode Aggregator&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;operator 必须由 route relation 决定
+A ▷ B（PrimaryWithFallback）&lt;/font&gt;" style="rounded=1;strokeWidth=3;fontSize=12;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+            <mxGeometry x="120" y="1010" width="1080" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="CRET" value="captureRetention  C" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+            <mxGeometry x="120" y="1130" width="1080" height="66" as="geometry" />
+        </mxCell>
+        <mxCell id="F1" value="① Behavior Enabled&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;该行为在当前 presentation-independent 行为语境中是否存在&lt;/font&gt;" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+            <mxGeometry x="120" y="1250" width="520" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="F2" value="② Mode Applicability&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;Applicable | NotApplicable(reason) | Unknown(reason)&lt;/font&gt;" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+            <mxGeometry x="120" y="1322" width="520" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="F3" value="③ TaskAffordance&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;Feasible | Constrained | Infeasible(reason) | Unknown&lt;/font&gt;" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+            <mxGeometry x="120" y="1394" width="520" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="F4" value="④ Response&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;完整求解后保留多少 Native Supply → C_mode&lt;/font&gt;" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+            <mxGeometry x="120" y="1466" width="520" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="FRULE" value="NotApplicable → 才可 fallback　|　Applicable + C=0 → 不得 fallback
+Unknown → fail closed　|　Infeasible 是 Applicable route 的 Task 结果，不撤销 Applicability" style="rounded=0;fontSize=12;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=10;fontColor=#444444;align=left;spacingLeft=10;" vertex="1" parent="1">
+            <mxGeometry x="120" y="1540" width="520" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="OP_T" value="Operator Admission｜先定语义关系，再定算子&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;q = L×C 是合法 retention join；TemperatureCoeff×DOCoeff×StructureCoeff 没有默认语义资格&lt;/font&gt;" style="rounded=0;fontSize=12;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=10;fontColor=#444444;align=left;spacingLeft=10;" vertex="1" parent="1">
+            <mxGeometry x="700" y="1250" width="900" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="OP1" value="高度重叠的完整 alternative routes  →  max&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;避免重复计同一 response population&lt;/font&gt;" style="rounded=0;fontSize=12;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=10;fontColor=#444444;align=left;spacingLeft=10;" vertex="1" parent="1">
+            <mxGeometry x="700" y="1320" width="900" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="OP2" value="Primary 失败后才进入 Fallback  →  C = C_P + (1−C_P)·C_F&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;残差形式；max(C_feed,C_defense) 已明确拒绝&lt;/font&gt;" style="rounded=0;fontSize=12;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=10;fontColor=#444444;align=left;spacingLeft=10;" vertex="1" parent="1">
+            <mxGeometry x="700" y="1370" width="900" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="OP3" value="稳定互斥 mixture / regime  →  Σ π_m C_m&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;必须有可识别 partition&lt;/font&gt;" style="rounded=0;fontSize=12;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=10;fontColor=#444444;align=left;spacingLeft=10;" vertex="1" parent="1">
+            <mxGeometry x="700" y="1420" width="900" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="OP4" value="真实集合 union  →  μ(∪A_m)/μ(Ω)&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;必须处理 overlap；不默认 independent Noisy-OR&lt;/font&gt;" style="rounded=0;fontSize=12;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=10;fontColor=#444444;align=left;spacingLeft=10;" vertex="1" parent="1">
+            <mxGeometry x="700" y="1470" width="900" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="OP5" value="Hard prerequisite  →  typed Gate　|　Capacity vs Demand  →  Compare→Affordance&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;反模式：让高分补偿 hard impossible；SpeedCoeff×TurnCoeff×EnergyCoeff&lt;/font&gt;" style="rounded=0;fontSize=12;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=10;fontColor=#444444;align=left;spacingLeft=10;" vertex="1" parent="1">
+            <mxGeometry x="700" y="1520" width="900" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="OP6" value="多个 viability constraints  →  Joint bottleneck resolver　|　Support aggregation  →  Reduce by μT&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;反模式：Temp×DO×Flow 默认乘法；Join 前分别平均 L/C&lt;/font&gt;" style="rounded=0;fontSize=12;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=10;fontColor=#444444;align=left;spacingLeft=10;" vertex="1" parent="1">
+            <mxGeometry x="700" y="1570" width="900" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="E0" value="" style="endArrow=block;strokeColor=#555555;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;fontColor=#444444;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="SRC" target="PROP">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E1" value="" style="endArrow=block;strokeColor=#555555;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;fontColor=#444444;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="PROP" target="SIG">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E2" value="" style="endArrow=block;strokeColor=#555555;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;fontColor=#444444;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="SIG" target="EV">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E3" value="" style="endArrow=block;strokeColor=#555555;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;fontColor=#444444;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="EV" target="INTERP">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E4" value="" style="endArrow=block;strokeColor=#555555;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;fontColor=#444444;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="INTERP" target="MFEED">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E5" value="" style="endArrow=block;strokeColor=#555555;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;fontColor=#444444;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="INTERP" target="MDEF">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E6" value="" style="endArrow=block;dashed=1;strokeColor=#999999;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;fontColor=#777777;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="INTERP" target="MINV">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E7" value="" style="endArrow=block;strokeColor=#555555;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;fontColor=#444444;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="MFEED" target="AGG">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E8" value="" style="endArrow=block;strokeColor=#555555;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;fontColor=#444444;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.55;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="MDEF" target="AGG">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E9" value="" style="endArrow=block;dashed=1;strokeColor=#999999;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;fontColor=#777777;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.85;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="MINV" target="AGG">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E10" value="" style="endArrow=block;strokeColor=#555555;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;fontColor=#444444;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="AGG" target="CRET">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E11" value="压缩 1" style="endArrow=block;strokeColor=#6c8ebf;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;fontColor=#5a7fa8;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="L0" target="L1">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E12" value="压缩 2" style="endArrow=block;strokeColor=#6c8ebf;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;fontColor=#5a7fa8;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="L1" target="L2">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E13" value="" style="endArrow=block;strokeColor=#6c8ebf;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;fontColor=#5a7fa8;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="L2" target="L3">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E14" value="" style="endArrow=block;strokeColor=#6c8ebf;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;fontColor=#5a7fa8;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="L3" target="L4">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E15" value="" style="endArrow=block;dashed=1;strokeColor=#999999;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;fontColor=#777777;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="L1" target="NAP">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
