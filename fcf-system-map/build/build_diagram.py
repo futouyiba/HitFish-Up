@@ -169,28 +169,60 @@ def resolve_layout(lay, nodes):
     by_id = {n["id"]: n for n in nodes}
     containers = lay["containers"]
 
-    def build(spec, cid, parent):
+    def build(spec, cid, parent, axis):
         kids = []
         for ch in spec.get("children", []):
             if "node" in ch:
                 if ch["node"] not in by_id:
                     sys.exit("error: layout.json 引用了 graph.json 里没有的节点 %r"
                              % ch["node"])
-                kids.append({"kind": "leaf", "id": ch["node"], "spec": ch,
-                             "parent": cid})
+                leaf = {"kind": "leaf", "id": ch["node"], "spec": ch,
+                        "parent": cid}
+                kids.append(leaf)
             elif "ref" in ch:
                 if ch["ref"] not in containers:
                     sys.exit("error: layout.json 引用了未定义的容器 %r" % ch["ref"])
-                sub = build(containers[ch["ref"]], ch["ref"], cid)
+                sub = build(containers[ch["ref"]], ch["ref"], cid,
+                            containers[ch["ref"]].get("axis", "v"))
                 sub["spec"] = ch
                 kids.append(sub)
             else:
                 sys.exit("error: layout.json 的子项既非 node 也非 ref: %r" % (ch,))
-        return {"kind": "container", "id": cid, "axis": spec.get("axis", "v"),
+        return {"kind": "container", "id": cid, "axis": axis,
                 "indent": spec.get("indent", 0), "spec": spec,
                 "children": kids, "parent": parent}
 
-    root = build(lay["root"], "C:ROOT", None)
+    root = build(lay["root"], "C:ROOT", None, lay["root"].get("axis", "v"))
+
+    # 垂直栈会把**每个子块撑满容器内宽**（引擎的 fill 行为；它和 resizeParent 由
+    # 同一个开关控制，没法单独关掉）。所以想保住块自己的宽度，就不能让它当垂直栈的
+    # 直接子块：给它套一层「贴边壳」—— border=0、不画边、不重算尺寸的水平容器。
+    # 壳被撑满（无所谓，它没有边），块在壳里按自身宽度左对齐；壳高 = 块高，所以
+    # 父容器算出来的高度一点没变，重排链也不受影响。
+    # 例外：`role: title` 的标题条本来就要通栏；`fill: true` 是显式要求撑满；
+    # `pin` 的侧钉子块不进栈，压根不会被撑。
+    def wrap(node):
+        if node["kind"] != "container":
+            return
+        for c in node["children"]:
+            wrap(c)
+        if node["axis"] != "v":
+            return
+        out = []
+        for c in node["children"]:
+            if (c["kind"] == "leaf" and not c["spec"].get("fill")
+                    and c["spec"].get("role") != "title"
+                    and not c["spec"].get("pin")):
+                wid = "C:W:" + c["id"]
+                c["parent"] = wid
+                out.append({"kind": "container", "id": wid, "axis": "h",
+                            "indent": 0, "border": 0, "bare": True,
+                            "spec": {"when": c["spec"].get("when")},
+                            "children": [c], "parent": node["id"]})
+            else:
+                out.append(c)
+        node["children"] = out
+    wrap(root)
     seen = {}
 
     def count(n):
@@ -224,12 +256,17 @@ def layout_ctx(lay, graph, views, root):
     index(root)
 
     def state_of(cid):
-        container = by_cid.get(cid)
-        if container is None:
-            return None
-        for c in container.get("children", []):
-            if c["kind"] == "leaf" and c["spec"].get("role") == "title":
-                return "expanded" if c["id"] in expanded else "collapsed"
+        """容器当前的折叠态 = **最近的、有标题的**祖先的状态。
+
+        自己没标题的容器（比如贴边壳）不构成一个折叠层，态要沿祖先链找上去；
+        否则它的子块 `when` 永远匹配不上，会被当成不可见。
+        """
+        node = by_cid.get(cid)
+        while node is not None:
+            for c in node.get("children", []):
+                if c["kind"] == "leaf" and c["spec"].get("role") == "title":
+                    return "expanded" if c["id"] in expanded else "collapsed"
+            node = by_cid.get(node["parent"]) if node["parent"] else None
         return None
 
     def visible(child):
@@ -257,7 +294,7 @@ def natural_w(node, ctx):
     if node["kind"] == "leaf":
         kind = ctx["kinds"].get(node["id"], DEFAULT_KIND)
         return (node["spec"].get("w") or LEAF_W.get(kind, DEFAULT_LEAF_W))
-    b, sp = ctx["border"], ctx["spacing"]
+    b, sp = border_of(node, ctx), ctx["spacing"]
     laid = [c for c in node.get("children", [])
             if ctx["visible"](c) and not c["spec"].get("pin")]
     if not laid:
@@ -268,6 +305,10 @@ def natural_w(node, ctx):
     return 2 * b + node["indent"] + max(natural_w(c, ctx) for c in laid)
 
 
+def border_of(node, ctx):
+    return node.get("border", ctx["border"])
+
+
 def measure(node, forced_w, ctx):
     """自底向上算尺寸、自顶向下落局部坐标（相对父容器左上角）。
 
@@ -275,7 +316,7 @@ def measure(node, forced_w, ctx):
     首轮不动点）。初态不可见的子块照样要发出去（带 visible="0"），所以也得给
     它们一组坐标 —— 顺排在可见内容之后，仅供存储，引擎在它们变可见时会重排。
     """
-    b, sp = ctx["border"], ctx["spacing"]
+    b, sp = border_of(node, ctx), ctx["spacing"]
     if node["kind"] == "leaf":
         kind = ctx["kinds"].get(node["id"], DEFAULT_KIND)
         node["_w"] = (forced_w or node["spec"].get("w")
@@ -297,7 +338,10 @@ def measure(node, forced_w, ctx):
             measure(c, None, ctx)
             c["_x"], c["_y"] = off, b
             off += c["_w"] + sp
-        node["_w"] = ((off - sp) + b) if vis else (2 * b + ind)
+        if node.get("bare") and forced_w:
+            node["_w"] = forced_w          # 父容器 fill 撑成内宽，自己不定宽
+        else:
+            node["_w"] = ((off - sp) + b) if vis else (2 * b + ind)
         node["_h"] = 2 * b + max([c["_h"] for c in vis] or [0])
         for c in vis:
             if c["kind"] == "leaf":
@@ -310,9 +354,11 @@ def measure(node, forced_w, ctx):
         inner = node["_w"] - 2 * b - ind
         y = b
         for c in vis:
-            # 垂直容器把子块宽度撑满；但水平子容器会按自己的内容重算宽度。
-            wide = (c["kind"] == "container" and c["axis"] == "h")
-            measure(c, None if wide else inner, ctx)
+            # 垂直容器把**所有**子块宽度撑满 —— 叶子、垂直子容器、贴边壳都算。
+            # 唯一例外是普通的水平子容器：它按自己的内容重算宽度。
+            sized_by_parent = not (c["kind"] == "container"
+                                   and c["axis"] == "h" and not c.get("bare"))
+            measure(c, inner if sized_by_parent else None, ctx)
             c["_x"], c["_y"] = ind + b, y
             y += c["_h"] + sp
         node["_h"] = ((y - sp) + b) if vis else (2 * b)
@@ -672,11 +718,14 @@ def emit(graph, scopes, views, plan, structural, semantic, default_view):
         x, y, w, h = n["_x"], n["_y"], n["_w"], n["_h"]
         if n["kind"] == "container":
             indent = ("marginLeft=%d;" % n["indent"]) if n["indent"] else ""
-            style = ("rounded=0;html=1;fillColor=none;strokeColor=%s;"
-                     "childLayout=stackLayout;resizeParent=1;resizeParentMax=0;"
+            bare = "strokeColor=none;" if n.get("bare") else \
+                   ("strokeColor=%s;" % CONTAINER_STROKE)
+            style = ("rounded=0;html=1;fillColor=none;%s"
+                     "childLayout=stackLayout;resizeParent=%d;resizeParentMax=0;"
                      "horizontalStack=%d;stackSpacing=%d;stackBorder=%d;%s"
-                     % (CONTAINER_STROKE, 1 if n["axis"] == "h" else 0,
-                        ctx["spacing"], ctx["border"], indent))
+                     % (bare, 0 if n.get("bare") else 1,
+                        1 if n["axis"] == "h" else 0,
+                        ctx["spacing"], border_of(n, ctx), indent))
             a(vertex(cid, "", style, x, y, w, h, parent,
                      visible=cid not in hidden_nodes))
             continue
