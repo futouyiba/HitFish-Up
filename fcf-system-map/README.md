@@ -94,7 +94,7 @@ page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
 
 | 文件 | 职责 |
 |---|---|
-| `graph.json` | 25 个节点（stable ID + **中文 label** + 英文 caption + 行归属 + lane + `kind` 形状）+ 16 条语义边（只标"流过去的是什么"） |
+| `graph.json` | 71 个节点（stable ID + **中文 label** + 英文 caption + 行归属 + lane + `kind` 形状 + `band` 行带高）+ 24 条语义边（只标"流过去的是什么"） |
 | `scopes.json` | Scope = 压缩阶梯 + 透明度；`OVERALL`（不裁剪）+ `0.3.4.0-B`（lens，逐节点归类） |
 | `views.json` | View = 展开粒度 + 可选 lens |
 | `contracts.json` | 薄关联层：`semanticId → authorityRef / status / note` |
@@ -104,11 +104,11 @@ page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
 
 **压缩阶梯**：`中鱼升级（本体）→ FCF v1 → Simplified V0 → 0.3.4 → 0.3.4.0-B（当前版本投影）`。每一层是范围更小的投影，不是不同系统。
 
-**0.3.4.0-B** 是唯一登记完毕的 lens：**5 ACTIVE / 4 BOUNDARY / 16 OUT**。
+**0.3.4.0-B** 是唯一登记完毕的 lens：**17 ACTIVE / 8 BOUNDARY / 46 OUT**。
 
-- ACTIVE：`SYS`、`R2 烘焙`、`烘焙`、`派生环境场`、`空间分布权重`
-- BOUNDARY：`R1 数据`、`环境上下文`、`钓场投鱼配置`、`鱼的习性配置`
-- OUT：玩家策略行、响应行、圆桌行（含 `TABLE` 宽条与四子块）、生成行、范围外，以及 `鱼侧动态参数`（B 的「不交付」清单明确含 Fish Condition）
+- ACTIVE：SYS / 行2 / 封面 / 烘焙 / 派生环境场 / **通道 1 及其全部分解**（核心·次要·排除·该通道的值 / 栖息地动态偏好 / 门控 / 通过·不通过）
+- BOUNDARY：行1 及其三块与 L1 细节（B 消费的输入）
+- OUT：通道 2–5（活性·进食动机·警戒度·动态进食偏好，全在 B 的「不交付」清单里）、行3–7 全域
 
 **透明度**是本轮新增：`OUT` 与 `BOUNDARY` 除着色外还被调暗（`opacity` 原生 action），**不隐藏、不移位**——空间记忆得以保留。
 
@@ -126,19 +126,17 @@ page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
 |---|---|---|
 | **总图**（默认） | 七大层全展开 | 清除 lens，恢复中性 + 全不透明 |
 | **0.3.4.0-B** | **绝不触碰** | 应用 lens（范围外调暗但不隐藏） |
-| **0.3.4.0-B 聚焦** | 收起本版不触及的行 | 应用 lens |
-
-前两个是正交性示例；第三个是**组合预设**——即"只看这个版本"。想比较范围差异时用第二个（结构不动），想专注本版时用第三个。
+前一个是纯 lens 示例（结构不动）；第二个是**组合预设**——上 lens 并收起本版不涉及的行，即"只看这个版本"。
 
 ## 6. Validation
 
 ```
-stable IDs:            25 (unique, syntax-safe)
-edges:                 16 semantic + 17 structural (root->row edges not drawn)
-views:                 overall, 0340b, 0340b-focus (default overall)
-scope lens:            0.3.4.0-B — 5 ACTIVE / 4 BOUNDARY / 16 OUT, all nodes classified once
+stable IDs:            71 (unique, syntax-safe)
+edges:                 24 semantic + 62 structural (root->row edges not drawn)
+views:                 overall, 0340b (default overall)
+scope lens:            0.3.4.0-B — 17 ACTIVE / 8 BOUNDARY / 46 OUT, all nodes classified once
 ladder declared, unassigned: 0.3.4, SIMPLIFIED-V0, FCF-V1
-contracts:             11 entries (refs valid)
+contracts:             10 entries (refs valid)
 determinism:           consecutive builds byte-identical; committed artifact fresh
 rename stability:      cell ID set and geometry invariant under label rename
 ```
@@ -155,8 +153,8 @@ rename stability:      cell ID set and geometry invariant under label rename
 |---|---|
 | 001 | 压缩阶梯其余三层（0.3.4 / Simplified V0 / FCF v1）的 per-node scope 归属未登记——不足的阅读量下归类等于编造 |
 | 002 | 「空间分布权重」的 Current 归属页待登记（术语已确认，页面未确认） |
-| 003 | 时段在第一性主干上的归向**已由 Design Owner 回答**（当前版本汇入空间分布权重；后续版本汇入 Activity + FeedingMotivation）——但 Design Owner 口述中还有第三个归向未能与文档对上，待确认 |
-| 004 | 圆桌抽鱼四件（品质抽取调整 / 权重表构建 / 硬保底 / 动态权重调整）的 Current 归属页未读 |
+| 003 | 时段归向**已闭合**：当前版本汇入空间分布权重；后续版本汇入 Activity + FeedingMotivation + **警戒度**（Design Owner 确认）。条目保留作 provenance |
+| 004 | 圆桌四件的**语义已确认**（见 Notion 清单），但各自的 Current 归属页未逐一登记；其中「动态权重调整」的具体规则仍未细化 |
 | 005 | 环境上下文、钓场投鱼配置的 Current 归属页未读 |
 
 ## 8. 本轮不做的事
