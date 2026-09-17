@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "description": "View dimension of the FCF Canonical System Map: 'how far is the hierarchy currently expanded'. Views are presentation presets rendered as native draw.io custom-action buttons. scopeLens: 'clear' = restore neutral colors, a scope id = apply that lens, 'keep' = do not touch colors. expansion: 'collapse'/'expand' name collapsible nodes; presets use idempotent hide/show sets (never toggle) so they never fight manual expand/collapse state.",
+  "defaultView": "overall",
+  "views": [
+    {
+      "id": "overall",
+      "label": "Overall",
+      "scopeLens": "clear",
+      "expansion": {"collapse": ["SPATIAL", "CONDITION"]},
+      "comment": "Canonical reset: main chain only, neutral colors."
+    },
+    {
+      "id": "0340",
+      "label": "0.3.4.0",
+      "scopeLens": "0.3.4.0",
+      "expansion": null,
+      "comment": "Applies the 0.3.4.0 scope lens only; never touches expansion state (orthogonality requirement)."
+    },
+    {
+      "id": "spatial-detail",
+      "label": "Spatial Bake Detail",
+      "scopeLens": "keep",
+      "expansion": {"expand": ["SPATIAL"]},
+      "comment": "Expands the Spatial Opportunity subtree only; never touches the scope lens, so it composes with the 0.3.4.0 coloring."
+    }
+  ]
+}

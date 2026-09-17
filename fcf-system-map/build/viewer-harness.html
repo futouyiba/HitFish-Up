@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FCF System Map — official viewer harness (test-only)</title>
+<style>
+  body { font-family: -apple-system, "Helvetica Neue", sans-serif; margin: 16px; color: #222; }
+  #dg { width: 100%; height: 700px; border: 1px solid #ccc; border-radius: 6px; }
+  .note { color: #666; font-size: 12px; margin: 8px 0 12px; max-width: 980px; }
+  pre { background: #f6f6f6; padding: 8px; border-radius: 4px; font-size: 12px; }
+</style>
+</head>
+<body>
+<h3>FCF Canonical System Map — Production Pilot v0.1</h3>
+<p class="note">
+  <b>Test scaffolding only — not part of the carrier.</b> Loads the pinned official
+  <code>viewer-static.min.js</code> and renders
+  <code>../generated/fcf-system-map.drawio</code> exactly as the embeddable viewer would.
+  <b>怎么玩:</b>① <b>0.3.4.0</b> 按钮 = 只上 scope 配色(ACTIVE 正常 / BOUNDARY 虚线 /
+  OUT 置灰),不改展开状态;② <b>Spatial Bake Detail</b> = 只展开 Spatial 子树,不改配色;
+  ③ <b>Overall</b> = 复位(收起细节 + 恢复中性配色);④ 点击 <b>Spatial Opportunity</b> /
+  <b>Fish Condition</b> 框本身可手动展开/收起,与按钮状态自由组合。全部为 draw.io 原生
+  custom action,页面零逻辑。
+</p>
+<div id="dg" class="mxgraph"></div>
+<pre id="log">loading…</pre>
+<script src="../../spike/verify/vendor/viewer-static.min.js"></script>
+<script>
+(async function () {
+  var log = function (m) { document.getElementById('log').textContent = m; };
+  try {
+    var xml = await (await fetch('../generated/fcf-system-map.drawio')).text();
+    var el = document.getElementById('dg');
+    el.setAttribute('data-mxgraph', JSON.stringify({
+      xml: xml, toolbar: 'pages zoom layers', border: 10,
+      'auto-fit': true, resize: true, 'max-width': '100%'
+    }));
+    GraphViewer.createViewerForElement(el, function (v) {
+      window.__fcf = { viewer: v, graph: v.graph };
+      log('viewer ready; inspect via window.__fcf.graph');
+    });
+  } catch (e) { log('ERROR: ' + (e && e.message ? e.message : e)); }
+})();
+</script>
+</body>
+</html>

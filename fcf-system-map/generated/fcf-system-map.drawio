@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="fcf-system-map" agent="build_diagram.py" version="26.0.0" type="device">
+  <diagram id="fcf-canonical-system-map" name="FCF System Map">
+    <mxGraphModel dx="1422" dy="796" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2240" pageHeight="1480" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Layer:Controls" value="Controls" parent="0" />
+        <mxCell id="Layer:Main" value="System Map" parent="0" />
+        <mxCell id="CTRL:TITLE" value="FCF Canonical System Map — Production Pilot v0.1 (generated from semantic source; do not hand-edit)" style="text;html=1;align=left;verticalAlign=middle;fontSize=15;fontStyle=1;" vertex="1" parent="Layer:Controls">
+            <mxGeometry x="620" y="60" width="1000" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="CTRL:HINT" value="Views: buttons above. Expand/collapse: click Spatial Opportunity or Fish Condition. 0.3.4.0 colors the scope lens only and never changes expansion; Spatial Bake Detail expands only and never changes colors." style="text;html=1;align=left;verticalAlign=top;fontSize=10;fontColor=#666666;" vertex="1" parent="Layer:Controls">
+            <mxGeometry x="80" y="106" width="860" height="30" as="geometry" />
+        </mxCell>
+        <UserObject label="Overall" link="data:action/json,{&quot;actions&quot;:[{&quot;style&quot;:{&quot;key&quot;:&quot;fillColor&quot;,&quot;value&quot;:&quot;#d5e8d4&quot;,&quot;cells&quot;:[&quot;PRESENTATION.EXPOSURE&quot;,&quot;RESPONSE&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;fillColor&quot;,&quot;value&quot;:&quot;#e1d5e7&quot;,&quot;cells&quot;:[&quot;MATERIALIZATION&quot;,&quot;SELECTION&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;fillColor&quot;,&quot;value&quot;:&quot;#ffe6cc&quot;,&quot;cells&quot;:[&quot;MODE.ROUTING&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;fillColor&quot;,&quot;value&quot;:&quot;#fff2cc&quot;,&quot;cells&quot;:[&quot;CONDITION&quot;,&quot;CONDITION.ACTIVITY&quot;,&quot;CONDITION.FEEDING_READINESS&quot;,&quot;CONDITION.FUNCTIONAL_CAPACITY&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;strokeColor&quot;,&quot;value&quot;:&quot;#82b366&quot;,&quot;cells&quot;:[&quot;PRESENTATION.EXPOSURE&quot;,&quot;RESPONSE&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;strokeColor&quot;,&quot;value&quot;:&quot;#9673a6&quot;,&quot;cells&quot;:[&quot;MATERIALIZATION&quot;,&quot;SELECTION&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;strokeColor&quot;,&quot;value&quot;:&quot;#d6b656&quot;,&quot;cells&quot;:[&quot;CONDITION&quot;,&quot;CONDITION.ACTIVITY&quot;,&quot;CONDITION.FEEDING_READINESS&quot;,&quot;CONDITION.FUNCTIONAL_CAPACITY&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;strokeColor&quot;,&quot;value&quot;:&quot;#d79b00&quot;,&quot;cells&quot;:[&quot;MODE.ROUTING&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;fontColor&quot;,&quot;value&quot;:&quot;#000000&quot;,&quot;cells&quot;:[&quot;CONDITION&quot;,&quot;CONDITION.ACTIVITY&quot;,&quot;CONDITION.FEEDING_READINESS&quot;,&quot;CONDITION.FUNCTIONAL_CAPACITY&quot;,&quot;MATERIALIZATION&quot;,&quot;MODE.ROUTING&quot;,&quot;PRESENTATION.EXPOSURE&quot;,&quot;RESPONSE&quot;,&quot;SELECTION&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;dashed&quot;,&quot;value&quot;:&quot;0&quot;,&quot;cells&quot;:[&quot;CANDIDATE.RESOLVED&quot;,&quot;OPPORTUNITY.BASE&quot;,&quot;SYS.CONTEXT&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;strokeWidth&quot;,&quot;value&quot;:&quot;1&quot;,&quot;cells&quot;:[&quot;CANDIDATE.RESOLVED&quot;,&quot;OPPORTUNITY.BASE&quot;,&quot;SYS.CONTEXT&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;strokeColor&quot;,&quot;value&quot;:&quot;#6c8ebf&quot;,&quot;cells&quot;:[&quot;E:SPATIAL-&gt;PRESENTATION.EXPOSURE&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;strokeColor&quot;,&quot;value&quot;:&quot;#82b366&quot;,&quot;cells&quot;:[&quot;E:PRESENTATION.EXPOSURE-&gt;RESPONSE&quot;,&quot;E:RESPONSE-&gt;SELECTION&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;strokeColor&quot;,&quot;value&quot;:&quot;#9673a6&quot;,&quot;cells&quot;:[&quot;E:SELECTION-&gt;MATERIALIZATION&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;strokeColor&quot;,&quot;value&quot;:&quot;#d6b656&quot;,&quot;cells&quot;:[&quot;E:CONDITION-&gt;PRESENTATION.EXPOSURE&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;strokeColor&quot;,&quot;value&quot;:&quot;#d79b00&quot;,&quot;cells&quot;:[&quot;E:CANDIDATE.RESOLVED-&gt;CONDITION&quot;,&quot;E:OPPORTUNITY.BASE-&gt;MODE.ROUTING&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;dashed&quot;,&quot;value&quot;:&quot;0&quot;,&quot;cells&quot;:[&quot;E:CANDIDATE.RESOLVED-&gt;SPATIAL&quot;,&quot;E:CANDIDATE.RESOLVED-&gt;SPATIAL.SUBJECT&quot;,&quot;E:OPPORTUNITY.BASE-&gt;SPATIAL.BASE&quot;,&quot;E:SYS.CONTEXT-&gt;SPATIAL.SNAPSHOT&quot;],&quot;transient&quot;:false}},{&quot;hide&quot;:{&quot;cells&quot;:[&quot;SPATIAL.AGGREGATE&quot;,&quot;SPATIAL.BASE&quot;,&quot;SPATIAL.CORE_LOSS&quot;,&quot;SPATIAL.DEBUG&quot;,&quot;SPATIAL.ENV_COEFF&quot;,&quot;SPATIAL.FACTOR&quot;,&quot;SPATIAL.GATE&quot;,&quot;SPATIAL.INTENSITY&quot;,&quot;SPATIAL.SECONDARY_LOSS&quot;,&quot;SPATIAL.SNAPSHOT&quot;,&quot;SPATIAL.SUBJECT&quot;,&quot;SPATIAL.TEMPLATE&quot;,&quot;E:CANDIDATE.RESOLVED-&gt;SPATIAL.SUBJECT&quot;,&quot;E:SYS.CONTEXT-&gt;SPATIAL.SNAPSHOT&quot;,&quot;E:OPPORTUNITY.BASE-&gt;SPATIAL.BASE&quot;,&quot;E:SPATIAL.SUBJECT-&gt;SPATIAL.TEMPLATE&quot;,&quot;E:SPATIAL.SNAPSHOT-&gt;SPATIAL.TEMPLATE&quot;,&quot;E:SPATIAL.BASE-&gt;SPATIAL.TEMPLATE&quot;,&quot;E:SPATIAL.TEMPLATE-&gt;SPATIAL.ENV_COEFF&quot;,&quot;E:SPATIAL.ENV_COEFF-&gt;SPATIAL.INTENSITY&quot;,&quot;E:SPATIAL.INTENSITY-&gt;SPATIAL.DEBUG&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.SUBJECT&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.SNAPSHOT&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.BASE&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.TEMPLATE&quot;,&quot;EX:SPATIAL.TEMPLATE-&gt;SPATIAL.GATE&quot;,&quot;EX:SPATIAL.TEMPLATE-&gt;SPATIAL.FACTOR&quot;,&quot;EX:SPATIAL.TEMPLATE-&gt;SPATIAL.CORE_LOSS&quot;,&quot;EX:SPATIAL.TEMPLATE-&gt;SPATIAL.SECONDARY_LOSS&quot;,&quot;EX:SPATIAL.TEMPLATE-&gt;SPATIAL.AGGREGATE&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.ENV_COEFF&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.INTENSITY&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.DEBUG&quot;]}},{&quot;hide&quot;:{&quot;cells&quot;:[&quot;CONDITION.ACTIVITY&quot;,&quot;CONDITION.FEEDING_READINESS&quot;,&quot;CONDITION.FUNCTIONAL_CAPACITY&quot;,&quot;EX:CONDITION-&gt;CONDITION.ACTIVITY&quot;,&quot;EX:CONDITION-&gt;CONDITION.FUNCTIONAL_CAPACITY&quot;,&quot;EX:CONDITION-&gt;CONDITION.FEEDING_READINESS&quot;]}}]}" id="BTN:VIEW:overall">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;fontStyle=1;" vertex="1" parent="Layer:Controls">
+            <mxGeometry x="80" y="60" width="160" height="36" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="0.3.4.0" link="data:action/json,{&quot;actions&quot;:[{&quot;style&quot;:{&quot;key&quot;:&quot;fillColor&quot;,&quot;value&quot;:&quot;#f5f5f5&quot;,&quot;cells&quot;:[&quot;CONDITION&quot;,&quot;CONDITION.ACTIVITY&quot;,&quot;CONDITION.FEEDING_READINESS&quot;,&quot;CONDITION.FUNCTIONAL_CAPACITY&quot;,&quot;MATERIALIZATION&quot;,&quot;MODE.ROUTING&quot;,&quot;PRESENTATION.EXPOSURE&quot;,&quot;RESPONSE&quot;,&quot;SELECTION&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;strokeColor&quot;,&quot;value&quot;:&quot;#a6a6a6&quot;,&quot;cells&quot;:[&quot;CONDITION&quot;,&quot;CONDITION.ACTIVITY&quot;,&quot;CONDITION.FEEDING_READINESS&quot;,&quot;CONDITION.FUNCTIONAL_CAPACITY&quot;,&quot;MATERIALIZATION&quot;,&quot;MODE.ROUTING&quot;,&quot;PRESENTATION.EXPOSURE&quot;,&quot;RESPONSE&quot;,&quot;SELECTION&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;fontColor&quot;,&quot;value&quot;:&quot;#8f8f8f&quot;,&quot;cells&quot;:[&quot;CONDITION&quot;,&quot;CONDITION.ACTIVITY&quot;,&quot;CONDITION.FEEDING_READINESS&quot;,&quot;CONDITION.FUNCTIONAL_CAPACITY&quot;,&quot;MATERIALIZATION&quot;,&quot;MODE.ROUTING&quot;,&quot;PRESENTATION.EXPOSURE&quot;,&quot;RESPONSE&quot;,&quot;SELECTION&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;dashed&quot;,&quot;value&quot;:&quot;1&quot;,&quot;cells&quot;:[&quot;CANDIDATE.RESOLVED&quot;,&quot;OPPORTUNITY.BASE&quot;,&quot;SYS.CONTEXT&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;strokeWidth&quot;,&quot;value&quot;:&quot;2&quot;,&quot;cells&quot;:[&quot;CANDIDATE.RESOLVED&quot;,&quot;OPPORTUNITY.BASE&quot;,&quot;SYS.CONTEXT&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;strokeColor&quot;,&quot;value&quot;:&quot;#a6a6a6&quot;,&quot;cells&quot;:[&quot;E:OPPORTUNITY.BASE-&gt;MODE.ROUTING&quot;,&quot;E:CANDIDATE.RESOLVED-&gt;CONDITION&quot;,&quot;E:SPATIAL-&gt;PRESENTATION.EXPOSURE&quot;,&quot;E:CONDITION-&gt;PRESENTATION.EXPOSURE&quot;,&quot;E:PRESENTATION.EXPOSURE-&gt;RESPONSE&quot;,&quot;E:RESPONSE-&gt;SELECTION&quot;,&quot;E:SELECTION-&gt;MATERIALIZATION&quot;],&quot;transient&quot;:false}},{&quot;style&quot;:{&quot;key&quot;:&quot;dashed&quot;,&quot;value&quot;:&quot;1&quot;,&quot;cells&quot;:[&quot;E:CANDIDATE.RESOLVED-&gt;SPATIAL&quot;,&quot;E:CANDIDATE.RESOLVED-&gt;SPATIAL.SUBJECT&quot;,&quot;E:SYS.CONTEXT-&gt;SPATIAL.SNAPSHOT&quot;,&quot;E:OPPORTUNITY.BASE-&gt;SPATIAL.BASE&quot;],&quot;transient&quot;:false}}]}" id="BTN:VIEW:0340">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=1;" vertex="1" parent="Layer:Controls">
+            <mxGeometry x="260" y="60" width="160" height="36" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Spatial Bake Detail" link="data:action/json,{&quot;actions&quot;:[{&quot;show&quot;:{&quot;cells&quot;:[&quot;SPATIAL.AGGREGATE&quot;,&quot;SPATIAL.BASE&quot;,&quot;SPATIAL.CORE_LOSS&quot;,&quot;SPATIAL.DEBUG&quot;,&quot;SPATIAL.ENV_COEFF&quot;,&quot;SPATIAL.FACTOR&quot;,&quot;SPATIAL.GATE&quot;,&quot;SPATIAL.INTENSITY&quot;,&quot;SPATIAL.SECONDARY_LOSS&quot;,&quot;SPATIAL.SNAPSHOT&quot;,&quot;SPATIAL.SUBJECT&quot;,&quot;SPATIAL.TEMPLATE&quot;,&quot;E:CANDIDATE.RESOLVED-&gt;SPATIAL.SUBJECT&quot;,&quot;E:SYS.CONTEXT-&gt;SPATIAL.SNAPSHOT&quot;,&quot;E:OPPORTUNITY.BASE-&gt;SPATIAL.BASE&quot;,&quot;E:SPATIAL.SUBJECT-&gt;SPATIAL.TEMPLATE&quot;,&quot;E:SPATIAL.SNAPSHOT-&gt;SPATIAL.TEMPLATE&quot;,&quot;E:SPATIAL.BASE-&gt;SPATIAL.TEMPLATE&quot;,&quot;E:SPATIAL.TEMPLATE-&gt;SPATIAL.ENV_COEFF&quot;,&quot;E:SPATIAL.ENV_COEFF-&gt;SPATIAL.INTENSITY&quot;,&quot;E:SPATIAL.INTENSITY-&gt;SPATIAL.DEBUG&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.SUBJECT&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.SNAPSHOT&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.BASE&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.TEMPLATE&quot;,&quot;EX:SPATIAL.TEMPLATE-&gt;SPATIAL.GATE&quot;,&quot;EX:SPATIAL.TEMPLATE-&gt;SPATIAL.FACTOR&quot;,&quot;EX:SPATIAL.TEMPLATE-&gt;SPATIAL.CORE_LOSS&quot;,&quot;EX:SPATIAL.TEMPLATE-&gt;SPATIAL.SECONDARY_LOSS&quot;,&quot;EX:SPATIAL.TEMPLATE-&gt;SPATIAL.AGGREGATE&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.ENV_COEFF&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.INTENSITY&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.DEBUG&quot;]}}]}" id="BTN:VIEW:spatial-detail">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=13;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=1;" vertex="1" parent="Layer:Controls">
+            <mxGeometry x="440" y="60" width="160" height="36" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="LEG:ACTIVE" value="ACTIVE (owns / implements)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="Layer:Controls">
+            <mxGeometry x="80" y="170" width="250" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="LEG:BOUNDARY" value="BOUNDARY (consumed across boundary)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=1;strokeWidth=2;fontSize=11;" vertex="1" parent="Layer:Controls">
+            <mxGeometry x="80" y="214" width="250" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="LEG:OUT" value="OUT (context only — grayed, not hidden)" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#f5f5f5;strokeColor=#a6a6a6;fontColor=#8f8f8f;fontSize=11;" vertex="1" parent="Layer:Controls">
+            <mxGeometry x="80" y="258" width="250" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="LEG:EDGES" value="—▶ DATA_FLOW (solid)
+--▶ CONTROL_OR_SELECTION (dashed)
+┄┄ hierarchy / contains (faint, no arrow)
+···· REFERENCE_OR_CONFIG (reserved, unused in v1)" style="text;html=1;align=left;verticalAlign=top;fontSize=10;fontColor=#666666;spacing=-4;" vertex="1" parent="Layer:Controls">
+            <mxGeometry x="80" y="320" width="340" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="SYS.CONTEXT" value="World / Context / History" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="Layer:Main">
+            <mxGeometry x="560" y="80" width="260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="OPPORTUNITY.BASE" value="Base Opportunity / Candidate" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="Layer:Main">
+            <mxGeometry x="560" y="220" width="260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="MODE.ROUTING" value="Engagement Mode Routing" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="Layer:Main">
+            <mxGeometry x="560" y="360" width="260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="CANDIDATE.RESOLVED" value="Resolved Candidate" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="Layer:Main">
+            <mxGeometry x="560" y="500" width="260" height="50" as="geometry" />
+        </mxCell>
+        <UserObject label="Spatial Opportunity&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;click to expand / collapse&lt;/font&gt;" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;SPATIAL.AGGREGATE&quot;,&quot;SPATIAL.BASE&quot;,&quot;SPATIAL.CORE_LOSS&quot;,&quot;SPATIAL.DEBUG&quot;,&quot;SPATIAL.ENV_COEFF&quot;,&quot;SPATIAL.FACTOR&quot;,&quot;SPATIAL.GATE&quot;,&quot;SPATIAL.INTENSITY&quot;,&quot;SPATIAL.SECONDARY_LOSS&quot;,&quot;SPATIAL.SNAPSHOT&quot;,&quot;SPATIAL.SUBJECT&quot;,&quot;SPATIAL.TEMPLATE&quot;,&quot;E:CANDIDATE.RESOLVED-&gt;SPATIAL.SUBJECT&quot;,&quot;E:SYS.CONTEXT-&gt;SPATIAL.SNAPSHOT&quot;,&quot;E:OPPORTUNITY.BASE-&gt;SPATIAL.BASE&quot;,&quot;E:SPATIAL.SUBJECT-&gt;SPATIAL.TEMPLATE&quot;,&quot;E:SPATIAL.SNAPSHOT-&gt;SPATIAL.TEMPLATE&quot;,&quot;E:SPATIAL.BASE-&gt;SPATIAL.TEMPLATE&quot;,&quot;E:SPATIAL.TEMPLATE-&gt;SPATIAL.ENV_COEFF&quot;,&quot;E:SPATIAL.ENV_COEFF-&gt;SPATIAL.INTENSITY&quot;,&quot;E:SPATIAL.INTENSITY-&gt;SPATIAL.DEBUG&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.SUBJECT&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.SNAPSHOT&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.BASE&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.TEMPLATE&quot;,&quot;EX:SPATIAL.TEMPLATE-&gt;SPATIAL.GATE&quot;,&quot;EX:SPATIAL.TEMPLATE-&gt;SPATIAL.FACTOR&quot;,&quot;EX:SPATIAL.TEMPLATE-&gt;SPATIAL.CORE_LOSS&quot;,&quot;EX:SPATIAL.TEMPLATE-&gt;SPATIAL.SECONDARY_LOSS&quot;,&quot;EX:SPATIAL.TEMPLATE-&gt;SPATIAL.AGGREGATE&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.ENV_COEFF&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.INTENSITY&quot;,&quot;EX:SPATIAL-&gt;SPATIAL.DEBUG&quot;]}}]}" id="SPATIAL">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;" vertex="1" parent="Layer:Main">
+            <mxGeometry x="560" y="640" width="260" height="50" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Fish Condition&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;click to expand / collapse&lt;/font&gt;" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;CONDITION.ACTIVITY&quot;,&quot;CONDITION.FEEDING_READINESS&quot;,&quot;CONDITION.FUNCTIONAL_CAPACITY&quot;,&quot;EX:CONDITION-&gt;CONDITION.ACTIVITY&quot;,&quot;EX:CONDITION-&gt;CONDITION.FUNCTIONAL_CAPACITY&quot;,&quot;EX:CONDITION-&gt;CONDITION.FEEDING_READINESS&quot;]}}]}" id="CONDITION">
+          <mxCell style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;" vertex="1" parent="Layer:Main">
+            <mxGeometry x="560" y="780" width="260" height="50" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="PRESENTATION.EXPOSURE" value="Presentation / Exposure" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="Layer:Main">
+            <mxGeometry x="560" y="920" width="260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="RESPONSE" value="Response" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="Layer:Main">
+            <mxGeometry x="560" y="1060" width="260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SELECTION" value="Selection + NONE" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="Layer:Main">
+            <mxGeometry x="560" y="1200" width="260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="MATERIALIZATION" value="Fish Materialization" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="Layer:Main">
+            <mxGeometry x="560" y="1340" width="260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SPATIAL.SUBJECT" value="Resolved Bake Subject" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="Layer:Main" visible="0">
+            <mxGeometry x="1060" y="520" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SPATIAL.SNAPSHOT" value="ConditionGroupSnapshot" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="Layer:Main" visible="0">
+            <mxGeometry x="1060" y="630" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SPATIAL.BASE" value="Base Opportunity" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="Layer:Main" visible="0">
+            <mxGeometry x="1060" y="740" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SPATIAL.TEMPLATE" value="Fixed Bake Template" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="Layer:Main" visible="0">
+            <mxGeometry x="1400" y="640" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SPATIAL.GATE" value="Gate Evaluation" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="Layer:Main" visible="0">
+            <mxGeometry x="1740" y="440" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SPATIAL.FACTOR" value="Atomic Factor Evaluation" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="Layer:Main" visible="0">
+            <mxGeometry x="1740" y="550" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SPATIAL.CORE_LOSS" value="Core Loss" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="Layer:Main" visible="0">
+            <mxGeometry x="1740" y="660" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SPATIAL.SECONDARY_LOSS" value="Secondary Loss" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="Layer:Main" visible="0">
+            <mxGeometry x="1740" y="770" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SPATIAL.AGGREGATE" value="Aggregation" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="Layer:Main" visible="0">
+            <mxGeometry x="1740" y="880" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SPATIAL.ENV_COEFF" value="Final EnvCoeff" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="Layer:Main" visible="0">
+            <mxGeometry x="1740" y="1010" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SPATIAL.INTENSITY" value="SpatialOpportunityIntensity" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="Layer:Main" visible="0">
+            <mxGeometry x="1740" y="1120" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="SPATIAL.DEBUG" value="Debug Trace" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="Layer:Main" visible="0">
+            <mxGeometry x="1740" y="1230" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="CONDITION.ACTIVITY" value="Activity" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="Layer:Main" visible="0">
+            <mxGeometry x="120" y="670" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="CONDITION.FUNCTIONAL_CAPACITY" value="Functional Capacity" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="Layer:Main" visible="0">
+            <mxGeometry x="120" y="780" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="CONDITION.FEEDING_READINESS" value="Feeding Readiness" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="Layer:Main" visible="0">
+            <mxGeometry x="120" y="890" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="EX:SPATIAL-&gt;SPATIAL.SUBJECT" style="endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#b3b3b3;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;" edge="1" parent="Layer:Main" source="SPATIAL" target="SPATIAL.SUBJECT" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EX:SPATIAL-&gt;SPATIAL.SNAPSHOT" style="endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#b3b3b3;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;" edge="1" parent="Layer:Main" source="SPATIAL" target="SPATIAL.SNAPSHOT" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EX:SPATIAL-&gt;SPATIAL.BASE" style="endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#b3b3b3;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;" edge="1" parent="Layer:Main" source="SPATIAL" target="SPATIAL.BASE" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EX:SPATIAL-&gt;SPATIAL.TEMPLATE" style="endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#b3b3b3;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;" edge="1" parent="Layer:Main" source="SPATIAL" target="SPATIAL.TEMPLATE" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EX:SPATIAL.TEMPLATE-&gt;SPATIAL.GATE" style="endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#b3b3b3;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;" edge="1" parent="Layer:Main" source="SPATIAL.TEMPLATE" target="SPATIAL.GATE" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EX:SPATIAL.TEMPLATE-&gt;SPATIAL.FACTOR" style="endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#b3b3b3;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;" edge="1" parent="Layer:Main" source="SPATIAL.TEMPLATE" target="SPATIAL.FACTOR" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EX:SPATIAL.TEMPLATE-&gt;SPATIAL.CORE_LOSS" style="endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#b3b3b3;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;" edge="1" parent="Layer:Main" source="SPATIAL.TEMPLATE" target="SPATIAL.CORE_LOSS" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EX:SPATIAL.TEMPLATE-&gt;SPATIAL.SECONDARY_LOSS" style="endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#b3b3b3;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;" edge="1" parent="Layer:Main" source="SPATIAL.TEMPLATE" target="SPATIAL.SECONDARY_LOSS" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EX:SPATIAL.TEMPLATE-&gt;SPATIAL.AGGREGATE" style="endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#b3b3b3;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;" edge="1" parent="Layer:Main" source="SPATIAL.TEMPLATE" target="SPATIAL.AGGREGATE" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EX:SPATIAL-&gt;SPATIAL.ENV_COEFF" style="endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#b3b3b3;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;" edge="1" parent="Layer:Main" source="SPATIAL" target="SPATIAL.ENV_COEFF" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EX:SPATIAL-&gt;SPATIAL.INTENSITY" style="endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#b3b3b3;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;" edge="1" parent="Layer:Main" source="SPATIAL" target="SPATIAL.INTENSITY" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EX:SPATIAL-&gt;SPATIAL.DEBUG" style="endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#b3b3b3;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;" edge="1" parent="Layer:Main" source="SPATIAL" target="SPATIAL.DEBUG" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EX:CONDITION-&gt;CONDITION.ACTIVITY" style="endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#b3b3b3;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;" edge="1" parent="Layer:Main" source="CONDITION" target="CONDITION.ACTIVITY" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EX:CONDITION-&gt;CONDITION.FUNCTIONAL_CAPACITY" style="endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#b3b3b3;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;" edge="1" parent="Layer:Main" source="CONDITION" target="CONDITION.FUNCTIONAL_CAPACITY" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EX:CONDITION-&gt;CONDITION.FEEDING_READINESS" style="endArrow=none;dashed=1;dashPattern=1 3;strokeColor=#b3b3b3;strokeWidth=1;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;" edge="1" parent="Layer:Main" source="CONDITION" target="CONDITION.FEEDING_READINESS" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E:SYS.CONTEXT-&gt;OPPORTUNITY.BASE" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=1.5;endArrow=block;strokeColor=#d79b00;" edge="1" parent="Layer:Main" source="SYS.CONTEXT" target="OPPORTUNITY.BASE">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E:OPPORTUNITY.BASE-&gt;MODE.ROUTING" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=1.5;endArrow=block;strokeColor=#d79b00;" edge="1" parent="Layer:Main" source="OPPORTUNITY.BASE" target="MODE.ROUTING">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E:MODE.ROUTING-&gt;CANDIDATE.RESOLVED" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=1.5;dashed=1;endArrow=block;strokeColor=#d79b00;" edge="1" parent="Layer:Main" source="MODE.ROUTING" target="CANDIDATE.RESOLVED">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E:CANDIDATE.RESOLVED-&gt;SPATIAL" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=1.5;endArrow=block;strokeColor=#d79b00;" edge="1" parent="Layer:Main" source="CANDIDATE.RESOLVED" target="SPATIAL">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E:CANDIDATE.RESOLVED-&gt;CONDITION" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=1.5;endArrow=block;strokeColor=#d79b00;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="Layer:Main" source="CANDIDATE.RESOLVED" target="CONDITION">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E:SPATIAL-&gt;PRESENTATION.EXPOSURE" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=1.5;endArrow=block;strokeColor=#6c8ebf;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="Layer:Main" source="SPATIAL" target="PRESENTATION.EXPOSURE">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E:CONDITION-&gt;PRESENTATION.EXPOSURE" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=1.5;endArrow=block;strokeColor=#d6b656;" edge="1" parent="Layer:Main" source="CONDITION" target="PRESENTATION.EXPOSURE">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E:PRESENTATION.EXPOSURE-&gt;RESPONSE" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=1.5;endArrow=block;strokeColor=#82b366;" edge="1" parent="Layer:Main" source="PRESENTATION.EXPOSURE" target="RESPONSE">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E:RESPONSE-&gt;SELECTION" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=1.5;endArrow=block;strokeColor=#82b366;" edge="1" parent="Layer:Main" source="RESPONSE" target="SELECTION">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E:SELECTION-&gt;MATERIALIZATION" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=1.5;endArrow=block;strokeColor=#9673a6;" edge="1" parent="Layer:Main" source="SELECTION" target="MATERIALIZATION">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E:CANDIDATE.RESOLVED-&gt;SPATIAL.SUBJECT" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=1.5;endArrow=block;strokeColor=#d79b00;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="Layer:Main" source="CANDIDATE.RESOLVED" target="SPATIAL.SUBJECT" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E:SYS.CONTEXT-&gt;SPATIAL.SNAPSHOT" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=1.5;endArrow=block;strokeColor=#d79b00;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="Layer:Main" source="SYS.CONTEXT" target="SPATIAL.SNAPSHOT" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E:OPPORTUNITY.BASE-&gt;SPATIAL.BASE" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=1.5;endArrow=block;strokeColor=#d79b00;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="Layer:Main" source="OPPORTUNITY.BASE" target="SPATIAL.BASE" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E:SPATIAL.SUBJECT-&gt;SPATIAL.TEMPLATE" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=1.5;endArrow=block;strokeColor=#6c8ebf;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="Layer:Main" source="SPATIAL.SUBJECT" target="SPATIAL.TEMPLATE" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E:SPATIAL.SNAPSHOT-&gt;SPATIAL.TEMPLATE" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=1.5;endArrow=block;strokeColor=#6c8ebf;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="Layer:Main" source="SPATIAL.SNAPSHOT" target="SPATIAL.TEMPLATE" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E:SPATIAL.BASE-&gt;SPATIAL.TEMPLATE" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=1.5;endArrow=block;strokeColor=#6c8ebf;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="Layer:Main" source="SPATIAL.BASE" target="SPATIAL.TEMPLATE" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E:SPATIAL.TEMPLATE-&gt;SPATIAL.ENV_COEFF" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=1.5;endArrow=block;strokeColor=#6c8ebf;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="Layer:Main" source="SPATIAL.TEMPLATE" target="SPATIAL.ENV_COEFF" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E:SPATIAL.ENV_COEFF-&gt;SPATIAL.INTENSITY" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=1.5;endArrow=block;strokeColor=#6c8ebf;" edge="1" parent="Layer:Main" source="SPATIAL.ENV_COEFF" target="SPATIAL.INTENSITY" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E:SPATIAL.INTENSITY-&gt;SPATIAL.DEBUG" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;jettySize=auto;orthogonalLoop=1;strokeWidth=1.5;endArrow=block;strokeColor=#6c8ebf;" edge="1" parent="Layer:Main" source="SPATIAL.INTENSITY" target="SPATIAL.DEBUG" visible="0">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
