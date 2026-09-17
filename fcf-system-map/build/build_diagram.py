@@ -23,9 +23,11 @@ Design invariants (Production Pilot v0.1):
                    OUT nodes are grayed, never hidden.
       View       — expansion presets; buttons that change visibility never
                    change styles and vice versa.
-  * 版面硬规则：引擎永不重算**水平**容器的高度，所以重排只能沿「垂直容器的连续链」
-    向上传播 —— 水平容器只装不可再展开的叶子，高度发射时钉死。见
-    align/dynlayout/REPORT-dynamic-layout.md 的探针 P3。
+  * 版面硬规则（探针 P3 实测 + 后续独立复核）：引擎从不重算**水平**容器的高度，
+    也不会让它自己定宽 —— 宽度只能有一个来源（父容器的 fill），否则两边互相覆盖，
+    发出来的坐标就不是不动点了。所以「展开时要推动下方」的东西必须是垂直容器里的
+    兄弟；水平容器的高度与宽度都在发射时按父容器定死。
+    见 align/dynlayout/REPORT-dynamic-layout.md 的探针 P3。
   * Deterministic: fixed constants, fixed emission order, no timestamps,
     uuids or randomness. Same sources -> byte-identical output.
   * Only native draw.io mechanisms: layers (controls/main), custom-action
@@ -146,8 +148,9 @@ def load_sources(root):
 # 叶子是 graph.json 的节点。几何必须与 mxStackLayout 的首轮结果逐像素一致，
 # 否则首次点击时整批行会跳（见 align/dynlayout/REPORT-dynamic-layout.md）。
 #
-# 硬规则（探针 P3 实测）：布局引擎永不重算**水平**容器的高度，所以重排只能沿
-# 「垂直容器的连续链」向上传播 —— 水平容器只装不可再展开的叶子，高度发射时钉死。
+# 硬规则（探针 P3 实测）：引擎从不重算**水平**容器的高度，也不让它自己定宽。
+# 宽度只能有一个来源 —— 父容器的 fill —— 所以水平容器一律 resizeParent=0、
+# 按父容器内宽发射；重排只能沿「垂直容器的连续链」向上传播。
 
 LEAF_W = {
     "data": 260, "l1": 250, "process": 260, "cube": 260, "outside": 260,
@@ -188,9 +191,12 @@ def resolve_layout(lay, nodes):
                 kids.append(sub)
             else:
                 sys.exit("error: layout.json 的子项既非 node 也非 ref: %r" % (ch,))
-        return {"kind": "container", "id": cid, "axis": axis,
+        node = {"kind": "container", "id": cid, "axis": axis,
                 "indent": spec.get("indent", 0), "spec": spec,
                 "children": kids, "parent": parent}
+        if "border" in spec:          # 容器可自带 border（贴边壳是 0）
+            node["border"] = spec["border"]
+        return node
 
     root = build(lay["root"], "C:ROOT", None, lay["root"].get("axis", "v"))
 
@@ -214,6 +220,9 @@ def resolve_layout(lay, nodes):
                     and c["spec"].get("role") != "title"
                     and not c["spec"].get("pin")):
                 wid = "C:W:" + c["id"]
+                if wid in containers:
+                    sys.exit("error: 贴边壳 id %r 与 layout.json 里声明的容器重名，"
+                             "请给那个容器改个 id" % wid)
                 c["parent"] = wid
                 out.append({"kind": "container", "id": wid, "axis": "h",
                             "indent": 0, "border": 0, "bare": True,
@@ -286,7 +295,6 @@ def layout_ctx(lay, graph, views, root):
         "titleH": lay["titleH"], "leafH": lay["leafH"],
         "kinds": {n["id"]: n.get("kind", DEFAULT_KIND) for n in graph["nodes"]},
         "visible": visible, "state_of": state_of, "expanded": expanded,
-        "leaf_w": {},
     }
 
 
@@ -338,10 +346,12 @@ def measure(node, forced_w, ctx):
             measure(c, None, ctx)
             c["_x"], c["_y"] = off, b
             off += c["_w"] + sp
-        if node.get("bare") and forced_w:
-            node["_w"] = forced_w          # 父容器 fill 撑成内宽，自己不定宽
-        else:
-            node["_w"] = ((off - sp) + b) if vis else (2 * b + ind)
+        # 水平容器的宽度**只有一个来源**：父容器的 fill。它自己如果也去 resizeParent，
+        # 两边会互相覆盖，哪次布局跑赢就取哪个值 —— 那样发出来的坐标就不是不动点了
+        # （独立复核实测过：行一的行内横带在 824 与 1336 之间来回跳）。所以水平容器
+        # 一律 resizeParent=0、按父容器内宽发射；没有父容器（根）时才按内容定宽。
+        node["_w"] = forced_w if forced_w else (
+            ((off - sp) + b) if vis else (2 * b + ind))
         node["_h"] = 2 * b + max([c["_h"] for c in vis] or [0])
         for c in vis:
             if c["kind"] == "leaf":
@@ -354,17 +364,13 @@ def measure(node, forced_w, ctx):
         inner = node["_w"] - 2 * b - ind
         y = b
         for c in vis:
-            # 垂直容器把**所有**子块宽度撑满 —— 叶子、垂直子容器、贴边壳都算。
-            # 唯一例外是普通的水平子容器：它按自己的内容重算宽度。
-            sized_by_parent = not (c["kind"] == "container"
-                                   and c["axis"] == "h" and not c.get("bare"))
-            measure(c, inner if sized_by_parent else None, ctx)
+            # 垂直容器把所有子块宽度撑满 —— 叶子、子容器、贴边壳一律如此。
+            measure(c, inner, ctx)
             c["_x"], c["_y"] = ind + b, y
             y += c["_h"] + sp
         node["_h"] = ((y - sp) + b) if vis else (2 * b)
         for c in hid:
-            wide = (c["kind"] == "container" and c["axis"] == "h")
-            measure(c, None if wide else inner, ctx)
+            measure(c, inner, ctx)
             c["_x"], c["_y"] = ind + b, b
     # 侧钉（movable=0）：不进栈、不计入父高，坐标由声明给定。
     for c in node.get("children", []):
@@ -723,7 +729,7 @@ def emit(graph, scopes, views, plan, structural, semantic, default_view):
             style = ("rounded=0;html=1;fillColor=none;%s"
                      "childLayout=stackLayout;resizeParent=%d;resizeParentMax=0;"
                      "horizontalStack=%d;stackSpacing=%d;stackBorder=%d;%s"
-                     % (bare, 0 if n.get("bare") else 1,
+                     % (bare, 0 if n["axis"] == "h" else 1,
                         1 if n["axis"] == "h" else 0,
                         ctx["spacing"], border_of(n, ctx), indent))
             a(vertex(cid, "", style, x, y, w, h, parent,
