@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>三层嵌套容器 · 逐级展开 demo</title>
+<style>
+  body{font-family:-apple-system,"PingFang SC",sans-serif;margin:10px;color:#222}
+  #dg{width:100%;height:820px;border:1px solid #ccc;border-radius:6px;background:#fff}
+  .bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}
+  button{font-size:13px;padding:6px 12px;border-radius:6px;border:1px solid #82b366;
+         background:#d5e8d4;cursor:pointer}
+  button.alt{border-color:#6c8ebf;background:#dae8fc}
+  label{font-size:12px;color:#444}
+  #stat{font-size:12px;color:#333;background:#f6f6f6;border-radius:6px;
+        padding:8px 10px;line-height:1.7;font-family:ui-monospace,Menlo,monospace}
+  .note{font-size:12px;color:#666;margin:6px 0 0;line-height:1.6;max-width:1100px}
+  .warn{color:#b03a2e;font-weight:600}
+  .ok{color:#2d6a4f}
+</style>
+</head>
+<body>
+<h3 style="margin:4px 0 8px">三层嵌套容器 · 逐级展开 demo</h3>
+<p class="note">
+  <b>结构：</b>L1 ×2（并排两列）→ 每个 L1 里 L2 ×3（共 6）→ 每个 L2 里 L3 ×3（共 18）→ 每个 L3 里内容块 ×3（共 54）。
+  全是 drawio 原生容器（<code>childLayout=stackLayout</code>）。
+  <b>点图里任意一条标题条</b>即展开/收起该容器：收起时容器缩回标题条高度、下方内容整体上移，展开时下移，
+  没有任何预留空档。（两列 L1 各自独立，不共用一个外层栈，这样全展开是 720×1099 而不是 340×2213，面板里能一眼看全。）
+</p>
+
+<div class="bar">
+  <button id="bExp">全部展开</button>
+  <button id="bCol">全部收起</button>
+  <button class="alt" id="bFit">适应画面</button>
+  <button class="alt" id="bFrame">稳定取景（按全展开）</button>
+  <button class="alt" id="bTest">跑一次自检</button>
+  <label><input type="checkbox" id="cbRefit" checked> 每次点击后重新取景</label>
+</div>
+
+<div id="dg" class="mxgraph"></div>
+<pre id="stat">加载中…</pre>
+
+<script src="../../../spike/verify/vendor/viewer-static.min.js"></script>
+<script>
+(function(){
+  var G=null, XML=null;
+  var stat=document.getElementById('stat');
+  var HDR_H=18, B=5;               // must match demo_build.py
+  var IDS={L1:[],L2:[],L3:[],leaf:[]};
+
+  function log(m){ stat.textContent = m; }
+
+  // The viewer writes its own inline height onto #dg (a guess based on the
+  // viewport, which is 0 while the panel is hidden).  Take the size into our
+  // own hands so the fit below is predictable.
+  function applyPanel(){
+    var dg=document.getElementById('dg');
+    var vh = window.innerHeight || document.documentElement.clientHeight || 900;
+    var h = Math.max(380, Math.min(900, vh - 185));
+    dg.style.height = h + 'px';
+    if(G) G.graph.container.style.height = h + 'px';
+    return h;
+  }
+
+  // ---- build/rebuild the viewer ------------------------------------------
+  function build(xml, cb){
+    var el=document.getElementById('dg');
+    el.innerHTML=''; el.removeAttribute('data-mxgraph');
+    applyPanel();
+    // resize:false is essential.  With resize:true the viewer writes the GRAPH
+    // size onto #dg as an inline height (a fully expanded tree made it 4458px),
+    // so the page just grew instead of the graph scaling down and the drawing
+    // looked cut off.  With resize:false the panel keeps its own size and the
+    // fit below is what governs the zoom.
+    el.setAttribute('data-mxgraph', JSON.stringify({
+      xml: xml, toolbar:'zoom', border:10, 'auto-fit':false, resize:false,
+      'max-width':'100%', 'nav':false
+    }));
+    GraphViewer.createViewerForElement(el, function(v){
+      G={viewer:v, graph:v.graph, model:v.graph.model};
+      applyPanel();
+      if(cb) cb();
+    });
+  }
+
+  // ---- framing ------------------------------------------------------------
+  function visibleBounds(){
+    var g=G.graph, minX=1e9,minY=1e9,maxX=-1e9,maxY=-1e9,n=0;
+    Object.keys(g.model.cells).forEach(function(k){
+      var st=g.view.getState(g.model.getCell(k));
+      if(!st||!st.width||!st.height) return;
+      n++;
+      minX=Math.min(minX,st.x); minY=Math.min(minY,st.y);
+      maxX=Math.max(maxX,st.x+st.width); maxY=Math.max(maxY,st.y+st.height);
+    });
+    return n? {x:minX,y:minY,w:maxX-minX,h:maxY-minY} : null;
+  }
+  var fittedAt = '';                 // container size the last fit was made for
+  function fitTo(box, tries){
+    if(!box) return;
+    var g=G.graph, c=g.container;
+    // The container can still be degenerate (e.g. the embedding panel was not
+    // laid out yet); a fit computed against it would be nonsense, so retry.
+    if(c.clientWidth<200 || c.clientHeight<200){
+      if((tries||0) < 24) setTimeout(function(){ fitTo(box,(tries||0)+1); }, 250);
+      return;
+    }
+    var s=Math.min((c.clientWidth-24)/box.w, (c.clientHeight-24)/box.h);
+    if(!(s>0)||!isFinite(s)) return;
+    fittedAt = c.clientWidth+'x'+c.clientHeight;
+    g.view.setScale(s);
+    g.view.setTranslate(c.clientWidth/(2*s)-(box.x+box.w/2),
+                        c.clientHeight/(2*s)-(box.y+box.h/2));
+    g.view.validate();
+  }
+
+  // ---- actions ------------------------------------------------------------
+  function run(actions){
+    var g=G.graph;
+    // handleCustomLink takes the full link STRING — the same shape the builder
+    // writes into the .drawio. event=null would default the verbs to transient,
+    // so every payload below carries transient:false to force a real edit batch.
+    g.handleCustomLink('data:action/json,' +
+                       JSON.stringify({actions: actions}), null);
+  }
+  function showAll(){ run([{show:{cells:IDS.L2.concat(IDS.L3,IDS.leaf),transient:false}}]); }
+  function hideAll(){ run([{hide:{cells:IDS.L2.concat(IDS.L3,IDS.leaf),transient:false}}]); }
+
+  function refitIfWanted(){ if(document.getElementById('cbRefit').checked) fitTo(visibleBounds()); }
+
+  // Re-frame on ANY completed edit batch.  This is what makes clicks on the
+  // title bars INSIDE the diagram behave like the buttons: those clicks go
+  // through the viewer's own custom-action chain and never touch this page's
+  // code, so without a model listener the drawing grows past the panel.
+  var suppress = false;
+  function scheduleUpdate(){
+    if(suppress) return;
+    [0, 140].forEach(function(d){          // second pass lets a deferred
+      setTimeout(function(){               // async layout settle first
+        if(!G) return;
+        refresh();
+        refitIfWanted();
+      }, d);
+    });
+  }
+
+  window.D={
+    ready:false,
+    graph:function(){return G.graph;},
+    run:run,
+    showAll:showAll, hideAll:hideAll,
+    selfTest:selfTest,
+    refit:function(){ fitTo(visibleBounds()); },
+    frame:function(){ showAll(); var b=visibleBounds(); hideAll(); fitTo(b); },
+    bounds:visibleBounds,
+    audit:audit, step:step, ids:function(){return IDS;},
+    quiet:function(fn){ suppress=true; try{ fn(); } finally { suppress=false; } }
+  };
+
+  // ---- audit: counts, content height, and the no-gap invariant ------------
+  function audit(){
+    var g=G.graph, m=g.model, gaps=[], counts={L1:0,L2:0,L3:0,leaf:0};
+    var minY=1e9, maxY=-1e9, boxH=0;
+    Object.keys(m.cells).forEach(function(k){
+      var c=m.cells[k], id=c.getId();
+      var lvl = /^L1-/.test(id)?'L1' : /^L2-/.test(id)?'L2'
+              : /^L3-/.test(id)?'L3'
+              : /^[AB]\d{3}$/.test(id)?'leaf' : null;
+      if(!lvl) return;
+      var st=g.view.getState(c);
+      if(st && st.width){
+        counts[lvl]++;
+        minY=Math.min(minY, st.y); maxY=Math.max(maxY, st.y+st.height);
+      }
+      if(lvl==='leaf') return;
+      if(!st || !st.width) return;                 // container not rendered
+      var geo=m.getGeometry(c);
+      var kids=m.getChildren(c).filter(function(x){ return x.getId()!=='H:'+id; });
+      var anyKidVisible = kids.some(function(x){ return g.view.getState(x); });
+      if(!anyKidVisible && geo.height !== HDR_H + 2*B)
+        gaps.push(id + ' 高 ' + geo.height + '（应为 ' + (HDR_H+2*B) + '）');
+    });
+    if(maxY>-1e9) boxH = maxY - minY;
+    return {counts:counts, boxH:boxH, minY:minY, maxY:maxY, gaps:gaps,
+            text:auditLines(counts, gaps)};
+  }
+  function auditLines(counts, gaps){
+    var g=G.graph, b=visibleBounds();
+    var lines = [
+      '可见：L1 ' + counts.L1 + '/2 · L2 ' + counts.L2 + '/6 · L3 ' + counts.L3 + '/18 · 内容块 ' + counts.leaf + '/54',
+      '可见内容 ' + (b ? Math.round(b.w) + '×' + Math.round(b.h) : '—') +
+        'px　当前缩放 ×' + (Math.round(g.view.scale*100)/100) +
+        '　（全折叠 720×28 / 全展开 720×1099）',
+      '空档检查：' + (gaps.length ? 'FAIL ' + gaps.join('; ') : 'PASS —— 每个收起容器的高度都正好是 标题18 + 2×border5 = 28')
+    ];
+    return lines.join('\n');
+  }
+  function refresh(){
+    var a=audit();
+    log(a.text);
+    return a;
+  }
+
+  // ---- progressive drill-down helper (used by tests; the user clicks the
+  //      title bars in the diagram itself) -----------------------------------
+  function step(n){                      // 0..3 : reveal down to level n
+    var show=[], hide=[];
+    function put(list, want){ var t = want ? show : hide; t.push.apply(t, list); }
+    put(IDS.L2, n>=1); put(IDS.L3, n>=2); put(IDS.leaf, n>=3);
+    var acts=[];
+    if(show.length) acts.push({show:{cells:show, transient:false}});
+    if(hide.length) acts.push({hide:{cells:hide, transient:false}});
+    run(acts);
+    refresh(); refitIfWanted();
+  }
+
+  // ---- wire up ------------------------------------------------------------
+  document.getElementById('bExp').onclick=function(){ showAll(); };
+  document.getElementById('bCol').onclick=function(){ hideAll(); };
+  document.getElementById('bFit').onclick=function(){ fitTo(visibleBounds()); };
+  document.getElementById('bFrame').onclick=function(){ window.D.frame(); };
+  document.getElementById('bTest').onclick=function(){
+    var st;
+    window.D.quiet(function(){ st=window.D.selfTest(); });
+    refresh(); refitIfWanted();
+    log(stat.textContent + '\n逐级往返自检：' + (st.ok ? 'PASS' : 'FAIL') +
+        '　各级可见内容高度 ' + st.report.map(function(r){
+          return 'L'+r.level+'='+r.boxH[0]; }).join(' / '));
+  };
+
+  // Signature of the RENDERED cells' geometry. Hidden cells keep a stale stored
+  // y after a cycle (the stack only rewrites the direct children it can see),
+  // but they are always recomputed before they become visible again — so the
+  // meaningful claim is that the note emitted in the .drawio is already the
+  // fixed point for the initial, all-collapsed state.
+  function sig(){
+    var g=G.graph, m=g.model, o=[];
+    Object.keys(m.cells).sort().forEach(function(k){
+      var c=m.cells[k], id=c.getId();
+      if(!/^(L1-|L2-|L3-)/.test(id) && !/^[AB]\d{3}$/.test(id)) return;
+      if(!g.view.getState(c)) return;              // hidden -> not part of the claim
+      var e=m.getGeometry(c);
+      o.push(id+':'+[e.x,e.y,e.width,e.height].join(','));
+    });
+    return o.join('|');
+  }
+
+  // ---- self test: round-trip every drill level and compare visible geometry -
+  function selfTest(){
+    var g=G.graph, m=g.model, report=[];
+    function apply(n){
+      var show=[], hide=[];
+      function put(list, want){ var t = want ? show : hide; t.push.apply(t, list); }
+      put(IDS.L2, n>=1); put(IDS.L3, n>=2); put(IDS.leaf, n>=3);
+      var acts=[];
+      if(show.length) acts.push({show:{cells:show, transient:false}});
+      if(hide.length) acts.push({hide:{cells:hide, transient:false}});
+      run(acts);
+    }
+    for(var n=0;n<=3;n++){
+      apply(n);
+      var a=sig(), ha=Math.round(visibleBounds().h);
+      apply(0);                       // all the way back to collapsed
+      apply(n);                       // and forward again
+      var b=sig(), hb=Math.round(visibleBounds().h);
+      report.push({level:n, boxH:[ha,hb], exact:(a===b)});
+    }
+    apply(0);
+    var ok=report.every(function(r){ return r.exact && r.boxH[0]===r.boxH[1]; });
+    return {ok:ok, report:report};
+  }
+
+  function start(){
+    // Collect the id lists the page needs (js-side, from the model).
+    var m=G.model;
+    IDS.L1=[]; IDS.L2=[]; IDS.L3=[]; IDS.leaf=[];
+    Object.keys(m.cells).forEach(function(k){
+      var id=m.cells[k].getId();
+      if(/^L1-/.test(id)) IDS.L1.push(id);
+      else if(/^L2-/.test(id)) IDS.L2.push(id);
+      else if(/^L3-/.test(id)) IDS.L3.push(id);
+      else if(/^[AB]\d{3}$/.test(id)) IDS.leaf.push(id);
+    });
+    var collapsedAtLoad = sig();           // what the .drawio itself says
+    var st;
+    // Quiet: the load-time self-test fires a lot of edit batches; don't let
+    // each one schedule its own re-frame.
+    window.D.quiet(function(){ st = selfTest(); });   // leaves the graph collapsed
+    // From here on, ANY completed edit batch re-frames — including clicks on
+    // the title bars inside the diagram, which never reach this page's code.
+    G.graph.model.addListener('endUpdate', scheduleUpdate);
+    window.D.ready=true;
+    applyPanel();
+    fitTo(visibleBounds());                // show the COLLAPSED state, fitted
+    refresh();
+    log(stat.textContent +
+        '\n① 初始折叠几何 = 文件里写死的坐标：' +
+        (collapsedAtLoad === sig() ? 'PASS（未发生任何位移）' : 'FAIL') +
+        '\n② 逐级往返自检：' + (st.ok
+            ? 'PASS（4 级各「展开 → 全收起 → 再展开」，可见几何逐字节一致）'
+            : 'FAIL ' + JSON.stringify(st.report)) +
+        '\n   各级可见内容高度：' + st.report.map(function(r){
+              return 'L' + r.level + '=' + r.boxH[0]; }).join('  '));
+  }
+
+  fetch('demo-nested.drawio',{cache:'no-store'})
+    .then(function(r){return r.text();})
+    .then(function(t){ XML=t; build(XML, start); })
+    .catch(function(e){ log('加载失败: '+(e&&e.message?e.message:e)); });
+
+  window.addEventListener('resize', function(){
+    if(!G) return;
+    applyPanel();
+    fitTo(visibleBounds());
+  });
+
+  // If the page was laid out only after load (panel opened later), the initial
+  // fit was computed against a degenerate box. Catch that on first interaction.
+  document.getElementById('dg').addEventListener('pointerdown', function(){
+    if(!G) return;
+    var c=G.graph.container;
+    if((c.clientWidth+'x'+c.clientHeight) !== fittedAt){
+      applyPanel();
+      fitTo(visibleBounds());
+    }
+  }, true);
+})();
+</script>
+</body>
+</html>
