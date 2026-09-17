@@ -33,7 +33,8 @@ BUILDER = HERE / "build_diagram.py"
 
 RESERVED_PREFIXES = ("E:", "EX:", "BTN:", "CTRL:", "LEG:", "Layer:")
 ID_RE = re.compile(r"^[A-Z][A-Z0-9_]*(\.[A-Z0-9_]+)*$")
-EDGE_TYPES = {"DATA_FLOW", "CONTROL_OR_SELECTION", "REFERENCE_OR_CONFIG"}
+EDGE_TYPES = {"DATA_FLOW", "CONTROL_OR_SELECTION", "REFERENCE_OR_CONFIG",
+              "RETENTION", "ANCHOR"}
 CLASSES = {"ACTIVE", "BOUNDARY", "OUT"}
 
 failures = []
@@ -114,8 +115,8 @@ def main():
 
     # -- lanes --------------------------------------------------------------
     for n in nodes:
-        check(n.get("lane") in ("main", "cond_detail", "spatial_inputs",
-                                "spatial_template", "spatial_stages", "spatial_out"),
+        check(n.get("lane") in ("main", "io", "waist", "who", "spatial",
+                                "inter", "resolve"),
               "%s: unknown lane %r" % (n["id"], n.get("lane")))
     for n in nodes:
         if n.get("collapsible"):
@@ -239,12 +240,17 @@ def main():
     print("  stable IDs:            %d (unique, syntax-safe)" % stable_count)
     print("  edges:                 %d semantic + %d structural, endpoints ok"
           % (len(graph["edges"]), len([n for n in nodes if n.get("parent")])))
-    print("  scope 0.3.4.0:         %d ACTIVE / %d BOUNDARY / %d OUT, all nodes classified once"
-          % (len(scopes["scopes"][1]["assignment"]["ACTIVE"]),
-             len(scopes["scopes"][1]["assignment"]["BOUNDARY"]),
-             len(scopes["scopes"][1]["assignment"]["OUT"])))
     print("  views:                 %s (default %s)"
           % (", ".join(view_ids), views["defaultView"]))
+    lensed = [s for s in scopes["scopes"] if s.get("lens")]
+    if lensed:
+        s = lensed[0]
+        a = s["assignment"]
+        print("  scope lens:            %s — %d ACTIVE / %d BOUNDARY / %d OUT, all nodes classified once"
+              % (s["id"], len(a.get("ACTIVE", [])), len(a.get("BOUNDARY", [])), len(a.get("OUT", []))))
+    declared = [s["id"] for s in scopes["scopes"] if s.get("status") == "DECLARED-UNASSIGNED"]
+    if declared:
+        print("  ladder declared, unassigned: %s" % ", ".join(declared))
     print("  contracts:             %d entries (refs valid)"
           % len(contracts["contracts"]))
     print("  determinism:           consecutive builds byte-identical; committed artifact fresh")

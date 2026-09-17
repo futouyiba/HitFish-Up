@@ -52,29 +52,31 @@ ROOT = HERE.parent
 # (documented rule).
 NODE_W, NODE_H, STAGE_W = 260, 50, 220
 LANES = {
-    "main":             {"x": 560,  "w": NODE_W,   "anchor": None,           "y0": 80,   "dy": 140},
-    "cond_detail":      {"x": 120,  "w": 200,      "anchor": "CONDITION",    "y0": -110, "dy": 110},
-    "spatial_inputs":   {"x": 1060, "w": STAGE_W,  "anchor": "SPATIAL",      "y0": -120, "dy": 110},
-    "spatial_template": {"x": 1400, "w": STAGE_W,  "anchor": "SPATIAL",      "y0": 0,    "dy": 0},
-    "spatial_stages":   {"x": 1740, "w": STAGE_W,  "anchor": "SPATIAL",      "y0": -200, "dy": 110},
-    "spatial_out":      {"x": 1740, "w": STAGE_W,  "anchor": "SPATIAL",      "y0": 370,  "dy": 110},
+    "main":    {"x": 80,  "w": 240, "anchor": None,                "y0": 50,   "dy": 270},
+    "io":      {"x": 380, "w": 230, "anchor": "IO",                "y0": -40,  "dy": 52},
+    "waist":   {"x": 380, "w": 230, "anchor": "WAIST",             "y0": -40,  "dy": 52},
+    "who":     {"x": 380, "w": 230, "anchor": "WHO",               "y0": -40,  "dy": 52},
+    "spatial": {"x": 700, "w": 230, "anchor": "WHO.SPATIAL",       "y0": -130, "dy": 52},
+    "inter":   {"x": 980, "w": 230, "anchor": "WHO.INTERACTION",   "y0": -130, "dy": 52},
+    "resolve": {"x": 380, "w": 230, "anchor": "RESOLVE",           "y0": -40,  "dy": 52},
 }
-PAGE_W, PAGE_H = 2240, 1480
+PAGE_W, PAGE_H = 1280, 1680
 
 GRAY_FILL, GRAY_STROKE, GRAY_FONT = "#f5f5f5", "#a6a6a6", "#8f8f8f"
 
 # family fill/stroke by first ID segment (neutral, scope-free presentation)
 FAMILIES = {
     "SYS": ("#ffe6cc", "#d79b00"),
-    "OPPORTUNITY": ("#ffe6cc", "#d79b00"),
-    "MODE": ("#ffe6cc", "#d79b00"),
-    "CANDIDATE": ("#ffe6cc", "#d79b00"),
-    "SPATIAL": ("#dae8fc", "#6c8ebf"),
-    "CONDITION": ("#fff2cc", "#d6b656"),
-    "PRESENTATION": ("#d5e8d4", "#82b366"),
-    "RESPONSE": ("#d5e8d4", "#82b366"),
-    "SELECTION": ("#e1d5e7", "#9673a6"),
-    "MATERIALIZATION": ("#e1d5e7", "#9673a6"),
+    "IO": ("#dae8fc", "#6c8ebf"),
+    "WAIST": ("#fff2cc", "#d6b656"),
+    "W": ("#fff2cc", "#d6b656"),
+    "WHO": ("#d5e8d4", "#82b366"),
+    "SP": ("#dae8fc", "#6c8ebf"),
+    "IN": ("#fff2cc", "#d6b656"),
+    "JOIN": ("#ffe6cc", "#d79b00"),
+    "RESOLVE": ("#e1d5e7", "#9673a6"),
+    "RS": ("#e1d5e7", "#9673a6"),
+    "COMMIT": ("#d5e8d4", "#2d6a4f"),
 }
 FALLBACK_FAMILY = ("#f5f5f5", "#666666")
 
@@ -86,6 +88,8 @@ EDGE_TYPES = {
     "DATA_FLOW": {"dashed": "", "arrow": "block", "dashPattern": ""},
     "CONTROL_OR_SELECTION": {"dashed": "dashed=1;", "arrow": "block", "dashPattern": ""},
     "REFERENCE_OR_CONFIG": {"dashed": "dashed=1;", "arrow": "open", "dashPattern": "dashPattern=1 4;"},
+    "RETENTION": {"dashed": "", "arrow": "block", "dashPattern": "", "color": "#2d6a4f"},
+    "ANCHOR": {"dashed": "dashed=1;", "arrow": "open", "dashPattern": "dashPattern=1 3;", "color": "#b03a2e"},
 }
 
 DIRS = {
@@ -328,12 +332,12 @@ def vertex(cid, value, style, x, y, w, h, layer, link=None, visible=True):
             % (xesc(cid), xesc(value), xesc(style), xesc(layer), vis, geo))
 
 
-def edge(eid, estyle, layer, src, tgt, visible=True):
+def edge(eid, estyle, layer, src, tgt, visible=True, value=""):
     vis = "" if visible else ' visible="0"'
-    return ('        <mxCell id="%s" style="%s" edge="1" parent="%s" source="%s" target="%s"%s>\n'
+    return ('        <mxCell id="%s" value="%s" style="%s" edge="1" parent="%s" source="%s" target="%s"%s>\n'
             '            <mxGeometry relative="1" as="geometry" />\n'
             '        </mxCell>\n'
-            % (xesc(eid), xesc(estyle), xesc(layer), xesc(src), xesc(tgt), vis))
+            % (xesc(eid), xesc(value), xesc(estyle), xesc(layer), xesc(src), xesc(tgt), vis))
 
 
 def text_cell(cid, value, style, x, y, w, h):
@@ -413,10 +417,13 @@ def emit(graph, scopes, views, pos, structural, semantic, collapsible_cells, def
         style = node_style(nid) + "strokeWidth=2;" if n.get("collapsible") else node_style(nid)
         link = None
         value = n["label"]
+        if n.get("caption"):
+            value += ("<br><font style='font-size:9px;color:#555555'>%s</font>"
+                      % n["caption"])
         if n.get("collapsible"):
             link = action_link({"actions": [{"toggle": {"cells": collapsible_cells[nid]}}]})
-            value = ("%s<br><font style='font-size:9px;color:#555555'>"
-                     "click to expand / collapse</font>" % n["label"])
+            value += ("<br><font style='font-size:9px;color:#888888'>"
+                      "click to expand / collapse</font>")
         a(vertex(nid, value, style, x, yy, w, h, "Layer:Main", link=link,
                  visible=nid not in initially_hidden))
 
@@ -427,8 +434,11 @@ def emit(graph, scopes, views, pos, structural, semantic, collapsible_cells, def
     for e in semantic:
         fill, stroke = family(e["from"])
         t = EDGE_TYPES[e["type"]]
+        stroke = t.get("color", stroke)
         style = (EDGE_BASE + t["dashed"] + t["dashPattern"] +
                  "endArrow=%s;strokeColor=%s;" % (t["arrow"], stroke))
+        if e.get("label"):
+            style += "fontSize=10;fontColor=%s;" % stroke
         for key, val in (("exit", e.get("exit")), ("entry", e.get("entry"))):
             if val:
                 fx, fy = DIRS[val]
@@ -438,7 +448,7 @@ def emit(graph, scopes, views, pos, structural, semantic, collapsible_cells, def
                     "exit" if key == "exit" else "entry",
                     "exit" if key == "exit" else "entry")
         a(edge(e["id"], style, "Layer:Main", e["from"], e["to"],
-               visible=e["id"] not in initially_hidden))
+               visible=e["id"] not in initially_hidden, value=e.get("label", "")))
 
     a('      </root>\n')
     a('    </mxGraphModel>\n')
