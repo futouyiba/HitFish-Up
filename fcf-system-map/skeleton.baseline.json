@@ -1,0 +1,154 @@
+{
+  "root": "SYS",
+  "rows": [
+    {
+      "id": "R1",
+      "label": "一、数据",
+      "collapsible": true
+    },
+    {
+      "id": "R2",
+      "label": "二、烘焙",
+      "collapsible": true
+    },
+    {
+      "id": "R3",
+      "label": "三、玩家策略与操作数据",
+      "collapsible": true
+    },
+    {
+      "id": "R4",
+      "label": "四、响应",
+      "collapsible": true
+    },
+    {
+      "id": "R5",
+      "label": "五、圆桌抽鱼",
+      "collapsible": true
+    },
+    {
+      "id": "R6",
+      "label": "六、抽鱼和生成",
+      "collapsible": true
+    },
+    {
+      "id": "R7",
+      "label": "七、范围外",
+      "collapsible": false
+    }
+  ],
+  "blocks": {
+    "R1": [
+      "D.CONTEXT",
+      "D.HABIT",
+      "D.STOCK"
+    ],
+    "R2": [
+      "BAKE",
+      "DEF",
+      "FISHCOND",
+      "SDW"
+    ],
+    "R3": [
+      "CUE",
+      "PLAYER"
+    ],
+    "R4": [
+      "RESPONSE"
+    ],
+    "R5": [
+      "T1",
+      "T2",
+      "T3",
+      "T4",
+      "TABLE"
+    ],
+    "R6": [
+      "DRAW"
+    ],
+    "R7": [
+      "FISHAI"
+    ],
+    "SYS": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5",
+      "R6",
+      "R7"
+    ]
+  },
+  "shapes": {
+    "SYS": "process",
+    "R1": "process",
+    "D.CONTEXT": "data",
+    "D.STOCK": "data",
+    "D.HABIT": "data",
+    "R2": "process",
+    "BAKE": "process",
+    "DEF": "cube",
+    "SDW": "data",
+    "FISHCOND": "data",
+    "R3": "process",
+    "PLAYER": "data",
+    "CUE": "data",
+    "R4": "process",
+    "RESPONSE": "process",
+    "R5": "process",
+    "TABLE": "process",
+    "T1": "process",
+    "T2": "process",
+    "T3": "process",
+    "T4": "process",
+    "R6": "process",
+    "DRAW": "process",
+    "R7": "process",
+    "FISHAI": "outside"
+  },
+  "labels": {
+    "SYS": "中鱼机制总图",
+    "R1": "一、数据",
+    "D.CONTEXT": "环境上下文",
+    "D.STOCK": "钓场投鱼配置",
+    "D.HABIT": "鱼的习性配置",
+    "R2": "二、烘焙",
+    "BAKE": "烘焙",
+    "DEF": "派生环境场",
+    "SDW": "空间分布权重",
+    "FISHCOND": "鱼侧动态参数",
+    "R3": "三、玩家策略与操作数据",
+    "PLAYER": "玩家策略与操作数据",
+    "CUE": "Cue 吸引元素",
+    "R4": "四、响应",
+    "RESPONSE": "响应模块",
+    "R5": "五、圆桌抽鱼",
+    "TABLE": "圆桌抽鱼",
+    "T1": "品质抽取调整",
+    "T2": "圆桌权重表构建",
+    "T3": "硬保底",
+    "T4": "动态权重调整",
+    "R6": "六、抽鱼和生成",
+    "DRAW": "抽鱼和生成",
+    "R7": "七、范围外",
+    "FISHAI": "运行 Fish AI"
+  },
+  "edges": [
+    "BAKE->DEF:DATA_FLOW",
+    "CUE->RESPONSE:DATA_FLOW",
+    "D.CONTEXT->BAKE:DATA_FLOW",
+    "D.HABIT->BAKE:DATA_FLOW",
+    "D.STOCK->BAKE:DATA_FLOW",
+    "D.STOCK->D.CONTEXT:REFERENCE_OR_CONFIG",
+    "D.STOCK->D.HABIT:REFERENCE_OR_CONFIG",
+    "D.STOCK->SDW:DATA_FLOW",
+    "DEF->FISHCOND:DATA_FLOW",
+    "DEF->SDW:DATA_FLOW",
+    "DRAW->FISHAI:CONTROL_OR_SELECTION",
+    "FISHCOND->RESPONSE:DATA_FLOW",
+    "PLAYER->CUE:DATA_FLOW",
+    "R5->DRAW:DATA_FLOW",
+    "RESPONSE->R5:DATA_FLOW",
+    "SDW->R5:DATA_FLOW"
+  ]
+}

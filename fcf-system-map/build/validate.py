@@ -209,6 +209,29 @@ def main():
                 failures.append("%s overflows the page: (%d,%d)+%dx%d vs page %dx%d"
                                 % (mx.get("id"), gx, gy, gw, gh, pw, ph))
 
+    # -- skeleton invariant: the agreed v1 topology must not drift -------------
+    # 见 memory: fcf-map-topology-invariant。骨架=行/方块/连接/形状/命名；
+    # caption / scope / view 属内容，改了不报警。骨架确实要改时，
+    # 走 build/freeze_skeleton.py 显式重冻（那是一次需要重新对齐的事件）。
+    try:
+        sys.path.insert(0, str(HERE))
+        from freeze_skeleton import fingerprint  # noqa: E402
+        baseline_path = ROOT / "skeleton.baseline.json"
+        if baseline_path.exists():
+            base = json.loads(baseline_path.read_text(encoding="utf-8"))
+            cur = fingerprint(graph)
+            for key in ("root", "rows", "blocks", "shapes", "labels", "edges"):
+                if key in base and base[key] != cur[key]:
+                    failures.append(
+                        "SKELETON DRIFT in %r — 骨架冻结在 v1，只允许加内容/细化格式；"
+                        "确需改动请走 build/freeze_skeleton.py 并与 Design Owner 对齐。"
+                        "\n      baseline: %s\n      current : %s"
+                        % (key,
+                           json.dumps(base[key], ensure_ascii=False)[:300],
+                           json.dumps(cur[key], ensure_ascii=False)[:300]))
+    except Exception as exc:  # 基线缺失/损坏不应静默通过
+        failures.append("skeleton baseline check failed to run: %r" % exc)
+
     # -- vertex overlaps: no two squares may collide on the page ---------------
     # 这条是「看渲染」那一轮补上的：几何重叠在结构校验里完全看不见。
     _r = ET.parse(str(ROOT / "generated" / "fcf-system-map.drawio")).getroot()
