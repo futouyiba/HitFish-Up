@@ -122,7 +122,7 @@ def main():
 
     # -- lanes --------------------------------------------------------------
     for n in nodes:
-        check(n.get("lane") in ("main", "r1a", "r1b", "r2ch", "r2core", "r2cover", "r2gate", "r2io", "r2l2", "r2out", "r2sec", "r2skip", "r2val", "r3cover", "r3l0", "r3l1", "r4cover", "r4l0", "r4l1", "r5bar", "r5cover", "r5t", "r6cover", "r6l0", "r6l1", "r7l0", "r7l1"),
+        check(n.get("lane") in ("main", "r1a", "r1b", "r2chG", "r2chK", "r2chS", "r2chV", "r2chX", "r2cover", "r2gate", "r2io", "r2l2", "r2out", "r2val", "r3cover", "r3def", "r3l0", "r3l1", "r4cover", "r4l0", "r4l1", "r5bar", "r5cover", "r5t", "r6cover", "r6l0", "r6l1", "r7l0", "r7l1"),
               "%s: unknown lane %r" % (n["id"], n.get("lane")))
     for n in nodes:
         if n.get("collapsible"):
@@ -265,8 +265,25 @@ def main():
             _, ax, ay, aw, ah = boxes[i]
             _, bx, by, bw, bh = boxes[j]
             if not (ax + aw <= bx or bx + bw <= ax or ay + ah <= by or by + bh <= ay):
-                # 同一 slot = 互斥可见性（如折叠封面块与其 L0 内容），重叠是设计
+                # 同一 slot = 互斥可见性（如折叠封面块与其内容），重叠是设计
                 if slots.get(boxes[i][0]) is not None and slots.get(boxes[i][0]) == slots.get(boxes[j][0]):
+                    continue
+                # 真包含 = 分组框包住自己的成员（内层节点的祖先链里有外层节点）
+                def contains(o, t):
+                    return (o[1] <= t[1] and o[2] <= t[2]
+                            and o[1] + o[3] >= t[1] + t[3]
+                            and o[2] + o[4] >= t[2] + t[4])
+                hit = boxes[i]
+                for outer, inner in ((boxes[i], boxes[j]), (boxes[j], boxes[i])):
+                    if contains(outer, inner):
+                        anc, cur = set(), inner[0]
+                        while cur is not None:
+                            anc.add(cur)
+                            cur = by_id.get(cur, {}).get("parent")
+                        if outer[0] in anc:
+                            hit = None
+                            break
+                if hit is None:
                     continue
                 failures.append("vertices overlap: %s and %s" % (boxes[i][0], boxes[j][0]))
 
