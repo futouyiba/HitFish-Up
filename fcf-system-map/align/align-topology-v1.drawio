@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="fcf-align-sketch" agent="align_topology.py" version="26.0.0" type="device">
+  <diagram id="fcf-align-topology-v1" name="FCF 总图拓扑对齐 v1">
+    <mxGraphModel dx="1422" dy="796" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1560" pageHeight="1420" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="TITLE" value="FCF 总图 · 大块拓扑对齐草图 v1 — 只对齐结构(非 canonical;对齐后落回 fcf-system-map 重画)" style="text;html=1;align=left;verticalAlign=middle;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+            <mxGeometry x="60" y="14" width="860" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="HINT" value="点击各行 ①..⑥ 行标 = 折叠 / 展开该行:行内块与所连箭头一起隐藏(范围外不可折叠)" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+            <mxGeometry x="60" y="42" width="640" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="LEG0" value="数据 / 配置" style="shape=parallelogram;perimeter=parallelogramPerimeter;size=16;fontSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#333333;" vertex="1" parent="1">
+            <mxGeometry x="1180" y="16" width="150" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="LEG1" value="派生数据(环境场)" style="shape=cube;size=18;fontSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#333333;" vertex="1" parent="1">
+            <mxGeometry x="1180" y="50" width="150" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="LEG2" value="过程 / 模块" style="rounded=1;fontSize=10;fillColor=#ffe6cc;strokeColor=#d79b00;fontColor=#333333;" vertex="1" parent="1">
+            <mxGeometry x="1180" y="84" width="150" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="LEG3" value="范围外" style="rounded=1;dashed=1;fontSize=10;fillColor=#f5f5f5;strokeColor=#a6a6a6;fontColor=#333333;dashed=1;" vertex="1" parent="1">
+            <mxGeometry x="1180" y="118" width="150" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="SEP250" style="endArrow=none;strokeColor=#e0e0e0;dashed=1;" edge="1" parent="1">
+            <mxGeometry relative="1" as="geometry">
+                <mxPoint x="40" y="250" as="sourcePoint" />
+                <mxPoint x="1520" y="250" as="targetPoint" />
+            </mxGeometry>
+        </mxCell>
+        <mxCell id="SEP480" style="endArrow=none;strokeColor=#e0e0e0;dashed=1;" edge="1" parent="1">
+            <mxGeometry relative="1" as="geometry">
+                <mxPoint x="40" y="480" as="sourcePoint" />
+                <mxPoint x="1520" y="480" as="targetPoint" />
+            </mxGeometry>
+        </mxCell>
+        <mxCell id="SEP730" style="endArrow=none;strokeColor=#e0e0e0;dashed=1;" edge="1" parent="1">
+            <mxGeometry relative="1" as="geometry">
+                <mxPoint x="40" y="730" as="sourcePoint" />
+                <mxPoint x="1520" y="730" as="targetPoint" />
+            </mxGeometry>
+        </mxCell>
+        <mxCell id="SEP910" style="endArrow=none;strokeColor=#e0e0e0;dashed=1;" edge="1" parent="1">
+            <mxGeometry relative="1" as="geometry">
+                <mxPoint x="40" y="910" as="sourcePoint" />
+                <mxPoint x="1520" y="910" as="targetPoint" />
+            </mxGeometry>
+        </mxCell>
+        <mxCell id="SEP1150" style="endArrow=none;strokeColor=#e0e0e0;dashed=1;" edge="1" parent="1">
+            <mxGeometry relative="1" as="geometry">
+                <mxPoint x="40" y="1150" as="sourcePoint" />
+                <mxPoint x="1520" y="1150" as="targetPoint" />
+            </mxGeometry>
+        </mxCell>
+        <mxCell id="SEP1300" style="endArrow=none;strokeColor=#e0e0e0;dashed=1;" edge="1" parent="1">
+            <mxGeometry relative="1" as="geometry">
+                <mxPoint x="40" y="1300" as="sourcePoint" />
+                <mxPoint x="1520" y="1300" as="targetPoint" />
+            </mxGeometry>
+        </mxCell>
+        <UserObject label="① 数据  ⇕" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;D.A&quot;,&quot;D.B&quot;,&quot;D.C&quot;,&quot;E0&quot;,&quot;E1&quot;,&quot;E2&quot;,&quot;E3&quot;,&quot;E4&quot;]}}]}" id="RL:R1">
+          <mxCell style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#4477aa;" vertex="1" parent="1">
+            <mxGeometry x="40" y="70" width="330" height="24" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="② 烘焙  ⇕" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;BAKE&quot;,&quot;FIELD&quot;,&quot;E2&quot;,&quot;E3&quot;,&quot;E4&quot;,&quot;E5&quot;,&quot;E7&quot;]}}]}" id="RL:R2">
+          <mxCell style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#4477aa;" vertex="1" parent="1">
+            <mxGeometry x="40" y="270" width="330" height="24" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="③ 玩家策略与操作数据  ⇕" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;PLAYER&quot;,&quot;CUE&quot;,&quot;E6&quot;,&quot;E8&quot;]}}]}" id="RL:R3">
+          <mxCell style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#4477aa;" vertex="1" parent="1">
+            <mxGeometry x="40" y="480" width="330" height="24" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="④ 响应  ⇕" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;RESP&quot;,&quot;E7&quot;,&quot;E8&quot;,&quot;E9&quot;]}}]}" id="RL:R4">
+          <mxCell style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#4477aa;" vertex="1" parent="1">
+            <mxGeometry x="40" y="750" width="330" height="24" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="⑤ 圆桌抽鱼  ⇕" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;TABLE&quot;,&quot;T1&quot;,&quot;T2&quot;,&quot;T3&quot;,&quot;T4&quot;,&quot;E9&quot;,&quot;E10&quot;]}}]}" id="RL:R5">
+          <mxCell style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#4477aa;" vertex="1" parent="1">
+            <mxGeometry x="40" y="910" width="330" height="24" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="⑥ 抽鱼和生成(⑤ 的短延伸)  ⇕" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;DRAW&quot;,&quot;E10&quot;,&quot;E11&quot;]}}]}" id="RL:R6">
+          <mxCell style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#4477aa;" vertex="1" parent="1">
+            <mxGeometry x="40" y="1160" width="330" height="24" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="RL:NONE" value="范围外" style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontStyle=1;fontColor=#999999;" vertex="1" parent="1">
+            <mxGeometry x="40" y="1310" width="200" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="D.A" value="环境上下文" style="shape=parallelogram;perimeter=parallelogramPerimeter;size=16;fontSize=12;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+            <mxGeometry x="100" y="100" width="300" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="D.B" value="钓场投鱼配置" style="shape=parallelogram;perimeter=parallelogramPerimeter;size=16;fontSize=12;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+            <mxGeometry x="480" y="100" width="330" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="D.C" value="鱼的习性配置" style="shape=parallelogram;perimeter=parallelogramPerimeter;size=16;fontSize=12;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+            <mxGeometry x="890" y="100" width="300" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="BAKE" value="烘焙" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+            <mxGeometry x="240" y="290" width="340" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="FIELD" value="派生环境场&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;derived environment field&lt;/font&gt;" style="shape=cube;size=18;fontSize=12;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+            <mxGeometry x="340" y="430" width="320" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="PLAYER" value="玩家策略与操作数据&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;钓具 / 钓组 · 姿态&lt;/font&gt;" style="shape=parallelogram;perimeter=parallelogramPerimeter;size=16;fontSize=12;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+            <mxGeometry x="1100" y="520" width="360" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="CUE" value="Cue 吸引元素" style="shape=parallelogram;perimeter=parallelogramPerimeter;size=16;fontSize=12;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+            <mxGeometry x="1150" y="660" width="280" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="RESP" value="响应模块&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;(适配系数 — 逻辑暂不展开)&lt;/font&gt;" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+            <mxGeometry x="640" y="770" width="320" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="TABLE" value="圆桌抽鱼" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;verticalAlign=top;align=center;spacingTop=2;fontStyle=1;" vertex="1" parent="1">
+            <mxGeometry x="440" y="930" width="760" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="T1" value="品质抽取调整&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;Engagement Mode&lt;/font&gt;" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+            <mxGeometry x="460" y="990" width="170" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="T2" value="圆桌权重表 Building&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;组件&lt;/font&gt;" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+            <mxGeometry x="645" y="990" width="170" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="T3" value="硬保底" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+            <mxGeometry x="830" y="990" width="160" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="T4" value="动态权重调整" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+            <mxGeometry x="1005" y="990" width="175" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="DRAW" value="抽鱼和生成&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;鱼种 · 品质 · 大小 · 重量 | fish condition 透传&lt;/font&gt;" style="rounded=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+            <mxGeometry x="560" y="1180" width="480" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="FISHAI" value="运行 Fish AI(刺鱼 / 博鱼)&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;超出中鱼范畴 · 最简略,无折叠&lt;/font&gt;" style="rounded=1;dashed=1;fontSize=12;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#a6a6a6;fontColor=#8f8f8f;" vertex="1" parent="1">
+            <mxGeometry x="640" y="1330" width="340" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="E0" value="钓场ID + 时段/天气 常量表(外部驱动)→ 查询" style="endArrow=open;dashed=1;dashPattern=1 3;strokeColor=#7f8fa6;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;fontColor=#555555;" edge="1" parent="1" source="D.B" target="D.A">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E1" value="习性ID(Engagement Mode)→ 查询 fish env affinity(= 习性配置记录)" style="endArrow=open;dashed=1;dashPattern=1 3;strokeColor=#7f8fa6;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;fontColor=#555555;" edge="1" parent="1" source="D.B" target="D.C">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E2" value="" style="endArrow=block;dashed=1;strokeColor=#d79b00;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="D.A" target="BAKE">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E3" value="" style="endArrow=block;dashed=1;strokeColor=#d79b00;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="D.B" target="BAKE">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E4" value="" style="endArrow=block;dashed=1;strokeColor=#d79b00;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="D.C" target="BAKE">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E5" value="" style="endArrow=block;strokeColor=#666666;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="BAKE" target="FIELD">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E6" value="" style="endArrow=block;strokeColor=#666666;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="PLAYER" target="CUE">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E7" value="" style="endArrow=block;strokeColor=#666666;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="FIELD" target="RESP">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E8" value="" style="endArrow=block;strokeColor=#666666;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="CUE" target="RESP">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E9" value="" style="endArrow=block;strokeColor=#666666;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="RESP" target="TABLE">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E10" value="" style="endArrow=block;strokeColor=#666666;strokeWidth=2;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="TABLE" target="DRAW">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="E11" value="" style="endArrow=block;dashed=1;strokeColor=#a6a6a6;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;" edge="1" parent="1" source="DRAW" target="FISHAI">
+            <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
