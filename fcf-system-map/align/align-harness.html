@@ -21,7 +21,7 @@
 (async function () {
   var log = function (m) { document.getElementById('log').textContent = m; };
   try {
-    var xml = await (await fetch('align-topology-v1.drawio')).text();
+    var xml = await (await fetch('align-midlevel-v2.drawio')).text();
     var el = document.getElementById('dg');
     el.setAttribute('data-mxgraph', JSON.stringify({
       xml: xml, toolbar: 'zoom', border: 10, 'auto-fit': true, resize: true, 'max-width': '100%'
