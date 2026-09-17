@@ -59,7 +59,8 @@
       {
         "ref": "C:R7"
       }
-    ]
+    ],
+    "w": 1300
   },
   "containers": {
     "C:R1": {
@@ -82,45 +83,40 @@
       "children": [
         {
           "node": "D.CONTEXT",
-          "w": 300,
           "h": 48
         },
         {
           "node": "D.STOCK",
-          "w": 300,
           "h": 48
         },
         {
           "node": "D.HABIT",
-          "w": 300,
           "h": 48
         }
-      ]
+      ],
+      "even": true
     },
     "C:R1/DET": {
       "axis": "h",
       "children": [
         {
           "node": "R1.L.TIME",
-          "w": 320,
           "h": 56
         },
         {
           "node": "R1.L.COND",
-          "w": 320,
           "h": 56
         },
         {
           "node": "R1.L.STOCK",
-          "w": 320,
           "h": 56
         },
         {
           "node": "R1.L.NATURE",
-          "w": 320,
           "h": 56
         }
-      ]
+      ],
+      "even": true
     },
     "C:R2": {
       "axis": "v",
@@ -131,7 +127,8 @@
         },
         {
           "node": "BAKE",
-          "when": "expanded"
+          "when": "expanded",
+          "w": 590
         },
         {
           "ref": "C:C1",
@@ -157,19 +154,7 @@
           "ref": "C:C1/L2"
         },
         {
-          "node": "R2.GATE",
-          "w": 360,
-          "h": 76
-        },
-        {
-          "node": "R2.PASS",
-          "w": 360,
-          "h": 56
-        },
-        {
-          "node": "R2.FAIL",
-          "w": 360,
-          "h": 56
+          "ref": "C:C1/FLOW"
         }
       ]
     },
@@ -188,7 +173,8 @@
         {
           "node": "R2.C1.V"
         }
-      ]
+      ],
+      "even": true
     },
     "C:C1/L2": {
       "axis": "h",
@@ -205,7 +191,8 @@
         {
           "node": "R2.F.SKIP"
         }
-      ]
+      ],
+      "even": true
     },
     "C:C2": {
       "axis": "v",
@@ -214,16 +201,7 @@
           "node": "R2.C2"
         },
         {
-          "node": "R2.C2.K"
-        },
-        {
-          "node": "R2.C2.S"
-        },
-        {
-          "node": "R2.C2.X"
-        },
-        {
-          "node": "R2.C2.V"
+          "ref": "C:C2/KV"
         }
       ]
     },
@@ -234,16 +212,7 @@
           "node": "R2.C3"
         },
         {
-          "node": "R2.C3.K"
-        },
-        {
-          "node": "R2.C3.S"
-        },
-        {
-          "node": "R2.C3.X"
-        },
-        {
-          "node": "R2.C3.V"
+          "ref": "C:C3/KV"
         }
       ]
     },
@@ -254,16 +223,7 @@
           "node": "R2.C4"
         },
         {
-          "node": "R2.C4.K"
-        },
-        {
-          "node": "R2.C4.S"
-        },
-        {
-          "node": "R2.C4.X"
-        },
-        {
-          "node": "R2.C4.V"
+          "ref": "C:C4/KV"
         }
       ]
     },
@@ -274,16 +234,7 @@
           "node": "R2.C5"
         },
         {
-          "node": "R2.C5.K"
-        },
-        {
-          "node": "R2.C5.S"
-        },
-        {
-          "node": "R2.C5.X"
-        },
-        {
-          "node": "R2.C5.V"
+          "ref": "C:C5/KV"
         }
       ]
     },
@@ -324,7 +275,8 @@
         {
           "node": "CUE"
         }
-      ]
+      ],
+      "even": true
     },
     "C:R3/L1": {
       "axis": "h",
@@ -335,7 +287,8 @@
         {
           "node": "R3.B"
         }
-      ]
+      ],
+      "even": true
     },
     "C:R4": {
       "axis": "v",
@@ -346,7 +299,8 @@
         },
         {
           "node": "RESPONSE",
-          "when": "expanded"
+          "when": "expanded",
+          "w": 590
         },
         {
           "ref": "C:R4/L1",
@@ -366,7 +320,8 @@
         {
           "node": "R4.C"
         }
-      ]
+      ],
+      "even": true
     },
     "C:R5": {
       "axis": "v",
@@ -401,7 +356,8 @@
         {
           "node": "T4"
         }
-      ]
+      ],
+      "even": true
     },
     "C:R6": {
       "axis": "v",
@@ -412,11 +368,13 @@
         },
         {
           "node": "DRAW",
-          "when": "expanded"
+          "when": "expanded",
+          "w": 590
         },
         {
           "node": "R6.L",
-          "when": "expanded"
+          "when": "expanded",
+          "w": 590
         }
       ]
     },
@@ -428,27 +386,12 @@
           "role": "title"
         },
         {
-          "node": "FISHAI"
+          "node": "FISHAI",
+          "w": 590
         },
         {
-          "node": "R7.L"
-        }
-      ]
-    },
-    "C:R2/CH2": {
-      "axis": "h",
-      "children": [
-        {
-          "ref": "C:C2"
-        },
-        {
-          "ref": "C:C3"
-        },
-        {
-          "ref": "C:C4"
-        },
-        {
-          "ref": "C:C5"
+          "node": "R7.L",
+          "w": 590
         }
       ]
     },
@@ -460,10 +403,128 @@
           "role": "title"
         },
         {
-          "ref": "C:R2/CH2",
+          "ref": "C:R2/FC/TOP",
+          "when": "expanded"
+        },
+        {
+          "ref": "C:R2/FC/BOT",
           "when": "expanded"
         }
       ]
+    },
+    "C:C1/FLOW": {
+      "axis": "h",
+      "children": [
+        {
+          "node": "R2.GATE",
+          "h": 76
+        },
+        {
+          "node": "R2.PASS",
+          "h": 56
+        },
+        {
+          "node": "R2.FAIL",
+          "h": 56
+        }
+      ],
+      "even": true
+    },
+    "C:R2/FC/TOP": {
+      "axis": "h",
+      "children": [
+        {
+          "ref": "C:C2"
+        },
+        {
+          "ref": "C:C3"
+        }
+      ],
+      "even": true
+    },
+    "C:R2/FC/BOT": {
+      "axis": "h",
+      "children": [
+        {
+          "ref": "C:C4"
+        },
+        {
+          "ref": "C:C5"
+        }
+      ],
+      "even": true
+    },
+    "C:C2/KV": {
+      "axis": "h",
+      "children": [
+        {
+          "node": "R2.C2.K"
+        },
+        {
+          "node": "R2.C2.S"
+        },
+        {
+          "node": "R2.C2.X"
+        },
+        {
+          "node": "R2.C2.V"
+        }
+      ],
+      "even": true
+    },
+    "C:C3/KV": {
+      "axis": "h",
+      "children": [
+        {
+          "node": "R2.C3.K"
+        },
+        {
+          "node": "R2.C3.S"
+        },
+        {
+          "node": "R2.C3.X"
+        },
+        {
+          "node": "R2.C3.V"
+        }
+      ],
+      "even": true
+    },
+    "C:C4/KV": {
+      "axis": "h",
+      "children": [
+        {
+          "node": "R2.C4.K"
+        },
+        {
+          "node": "R2.C4.S"
+        },
+        {
+          "node": "R2.C4.X"
+        },
+        {
+          "node": "R2.C4.V"
+        }
+      ],
+      "even": true
+    },
+    "C:C5/KV": {
+      "axis": "h",
+      "children": [
+        {
+          "node": "R2.C5.K"
+        },
+        {
+          "node": "R2.C5.S"
+        },
+        {
+          "node": "R2.C5.X"
+        },
+        {
+          "node": "R2.C5.V"
+        }
+      ],
+      "even": true
     }
   }
 }

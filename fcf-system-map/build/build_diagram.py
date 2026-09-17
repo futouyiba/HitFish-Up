@@ -79,8 +79,15 @@ KIND_STROKE_W = {}
 for _k, (_base, _fill, _stroke) in KIND_STYLE.items():
     _i = _base.find("strokeWidth=")
     KIND_STROKE_W[_k] = _base[_i + 12:].split(";")[0] if _i >= 0 else "1"
-# 版面容器只画一条很淡的虚线边，提示包纳关系；不留底色，避免盖住方块。
-CONTAINER_STROKE = "#e3e3e3"
+# 版面容器：**按嵌套深度给深浅不同的实线边**，让"谁包着谁"一眼看得见。
+# 不留底色，避免盖住方块。深度从 0（根）往下。
+CONTAINER_STROKE_BY_DEPTH = (
+    "none",      # 根：不画
+    "#9fb4c7",   # 行
+    "#b9c9d8",   # 行内带
+    "#d0dbe5",   # 更深一层
+)
+CONTAINER_STROKE_DEEP = "#dde5ec"
 # 标题条（行标题 / 分组标题）：左对齐加粗，压低体量，便于一眼看出这是可点的把手。
 TITLE_FILL, TITLE_STROKE, TITLE_FONT = "#f2f6fa", "#7d9bb8", "#1f3a52"
 TITLE_EXTRA = ("align=left;spacingLeft=12;verticalAlign=middle;fontSize=13;"
@@ -185,9 +192,10 @@ def resolve_layout(lay, nodes):
             elif "ref" in ch:
                 if ch["ref"] not in containers:
                     sys.exit("error: layout.json 引用了未定义的容器 %r" % ch["ref"])
-                sub = build(containers[ch["ref"]], ch["ref"], cid,
-                            containers[ch["ref"]].get("axis", "v"))
-                sub["spec"] = ch
+                spec2 = containers[ch["ref"]]
+                sub = build(spec2, ch["ref"], cid, spec2.get("axis", "v"))
+                sub["spec"] = spec2                  # 容器自己的定义
+                sub["when"] = ch.get("when")         # 引用处决定的可见性
                 kids.append(sub)
             else:
                 sys.exit("error: layout.json 的子项既非 node 也非 ref: %r" % (ch,))
@@ -226,7 +234,7 @@ def resolve_layout(lay, nodes):
                 c["parent"] = wid
                 out.append({"kind": "container", "id": wid, "axis": "h",
                             "indent": 0, "border": 0, "bare": True,
-                            "spec": {"when": c["spec"].get("when")},
+                            "spec": {"when": when_of(c)},
                             "children": [c], "parent": node["id"]})
             else:
                 out.append(c)
@@ -284,7 +292,7 @@ def layout_ctx(lay, graph, views, root):
         也一起不可见，否则它们会按展开态坐标发出去。"""
         node = child
         while node is not None:
-            when = node["spec"].get("when")
+            when = when_of(node)
             if when is not None and when != state_of(node["parent"]):
                 return False
             node = by_cid.get(node["parent"]) if node["parent"] else None
@@ -313,6 +321,12 @@ def natural_w(node, ctx):
     return 2 * b + node["indent"] + max(natural_w(c, ctx) for c in laid)
 
 
+def when_of(node):
+    """子块在引用/定义处的可见性条件。叶子把 spec 存成子项对象，容器存成容器定义，
+    引用处还可能覆盖 —— 两处都要认。"""
+    return node.get("when") or node["spec"].get("when")
+
+
 def border_of(node, ctx):
     return node.get("border", ctx["border"])
 
@@ -338,12 +352,19 @@ def measure(node, forced_w, ctx):
     hid = [c for c in kids if not ctx["visible"](c)]
     ind = node["indent"]
     if node["axis"] == "h":
+        # `even`：把可用内宽**均分**给可见子块，让每行的块左右两边对齐成一个格子阵。
+        # 硬编码块宽在内容一变就得重算，而且行与行的块宽不齐看着就乱。
+        # 算出来的宽度只作为 forced_w 往下传，**不改写 spec** —— 改写会让几何依赖
+        # 调用顺序，破坏"发射坐标 = 引擎首轮不动点"。
+        each = None
+        if node["spec"].get("even") and forced_w and vis:
+            each = (forced_w - 2 * b - ind - sp * (len(vis) - 1)) // len(vis)
         # 水平容器：子块保留自己的宽度；容器宽向上汇总，高发射时钉死。
         # 引擎会给**叶子**子块按 fill 拉平高度（容器子块则用自己的内容高度，
         # 见探针 P3），所以叶子的发射高度必须写成容器内高，否则首次点击会跳。
         off = ind + b
         for c in vis:
-            measure(c, None, ctx)
+            measure(c, each, ctx)
             c["_x"], c["_y"] = off, b
             off += c["_w"] + sp
         # 水平容器的宽度**只有一个来源**：父容器的 fill。它自己如果也去 resizeParent，
@@ -360,7 +381,10 @@ def measure(node, forced_w, ctx):
             measure(c, None, ctx)
             c["_x"], c["_y"] = ind + b, b
     else:
-        node["_w"] = forced_w or natural_w(node, ctx)
+        # 根没有父容器，宽度只能自己声明（layout.json 的 root.w）。
+        # 不声明就会退化成 natural_w，而 natural_w 对 `even` 横带只能拿叶子默认宽
+        # 去估，估出来的数会一路放大到根 —— 实测把根从 1300 撑到 1904。
+        node["_w"] = forced_w or node["spec"].get("w") or natural_w(node, ctx)
         inner = node["_w"] - 2 * b - ind
         y = b
         for c in vis:
@@ -388,11 +412,12 @@ def layout(lay, graph, views):
 
     order, parent_of = [], {}
 
-    def walk(n):
+    def walk(n, depth=0):
+        n["_depth"] = depth
         order.append(n["id"])
         for c in n.get("children", []):
             parent_of[c["id"]] = n["id"]
-            walk(c)
+            walk(c, depth + 1)
     walk(root)
 
     # 结构边：仍是「父节点 → 子节点」的语义层级（与版面树无关），保持原样
@@ -487,7 +512,7 @@ def container_toggles(plan, structural, semantic):
         for c in node.get("children", []):
             # 侧钉的子块（如行三 gutter 里的 DEF）虽然没有进栈，但**属于**这个容器：
             # 收起时必须一起隐藏，否则它会挂着压在下一行上（独立复核抓到过这一条）。
-            if c is title or not c["spec"].get("when"):
+            if c is title or not when_of(c):
                 continue
             cells.append(c["id"])
             cells.extend(edges_touching(subtree_node_ids(c),
@@ -724,12 +749,14 @@ def emit(graph, scopes, views, plan, structural, semantic, default_view):
         x, y, w, h = n["_x"], n["_y"], n["_w"], n["_h"]
         if n["kind"] == "container":
             indent = ("marginLeft=%d;" % n["indent"]) if n["indent"] else ""
-            bare = "strokeColor=none;" if n.get("bare") else \
-                   ("strokeColor=%s;" % CONTAINER_STROKE)
-            style = ("rounded=0;html=1;fillColor=none;%s"
+            d = n.get("_depth", 99)
+            stroke = "none" if n.get("bare") else (
+                CONTAINER_STROKE_BY_DEPTH[d] if d < len(CONTAINER_STROKE_BY_DEPTH)
+                else CONTAINER_STROKE_DEEP)
+            style = ("rounded=0;html=1;fillColor=none;strokeColor=%s;strokeWidth=1;"
                      "childLayout=stackLayout;resizeParent=%d;resizeParentMax=0;"
                      "horizontalStack=%d;stackSpacing=%d;stackBorder=%d;%s"
-                     % (bare, 0 if n["axis"] == "h" else 1,
+                     % (stroke, 0 if n["axis"] == "h" else 1,
                         1 if n["axis"] == "h" else 0,
                         ctx["spacing"], border_of(n, ctx), indent))
             a(vertex(cid, "", style, x, y, w, h, parent,
@@ -744,7 +771,7 @@ def emit(graph, scopes, views, plan, structural, semantic, default_view):
         if n["id"] in toggles:
             value = "⇕ " + value      # 折叠把手：⇕ = 可收起 / 展开
         if gn.get("caption"):
-            value += ("<br><font style='font-size:9px;color:#555555'>%s</font>"
+            value += ("<br><font style='font-size:10px;color:#444444'>%s</font>"
                       % gn["caption"])
         link = None
         if n["id"] in toggles:

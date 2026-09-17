@@ -49,7 +49,7 @@
     {
       "id": "D.STOCK",
       "label": "钓场投鱼配置",
-      "caption": "鱼种 × 品质 投放属性配置 · 基础机会强度",
+      "caption": "鱼种 × 品质 投放属性配置",
       "parent": "R1",
       "lane": "r1a",
       "kind": "data"
@@ -57,7 +57,7 @@
     {
       "id": "D.HABIT",
       "label": "鱼的习性配置",
-      "caption": "静态习性：结构亲和 / 觅食水层亲和 / 水温参数 / 时段活跃",
+      "caption": "四张静态习性表",
       "parent": "R1",
       "lane": "r1a",
       "kind": "data"
@@ -65,7 +65,7 @@
     {
       "id": "R1.L.TIME",
       "label": "时间轴",
-      "caption": "时段 TimePeriod/Diel ｜ 历史天气序列（后继输入，本版不交付）",
+      "caption": "时段 ｜ 历史天气序列（后继输入）",
       "parent": "R1",
       "lane": "r1b",
       "kind": "l1"
@@ -73,7 +73,7 @@
     {
       "id": "R1.L.COND",
       "label": "条件组",
-      "caption": "结构 · 水温区间（计算型） · 觅食水层 · 时段（查表型）｜组合非笛卡尔积",
+      "caption": "结构 · 水温区间 · 觅食水层 · 时段",
       "parent": "R1",
       "lane": "r1b",
       "kind": "l1"
@@ -81,7 +81,7 @@
     {
       "id": "R1.L.STOCK",
       "label": "投放与机会强度",
-      "caption": "投放属性配置 · 基础机会强度 · 背景鱼开关 · 环境系数下限",
+      "caption": "基础机会强度 · 背景鱼开关 · 下限",
       "parent": "R1",
       "lane": "r1b",
       "kind": "l1"
@@ -89,7 +89,7 @@
     {
       "id": "R1.L.NATURE",
       "label": "鱼的习性配置的构成",
-      "caption": "四张习性表 + 条件角色绑定；分群身份 = 中鱼习性模式（Engagement Mode）",
+      "caption": "四张习性表 + 条件角色绑定",
       "parent": "R1",
       "lane": "r1b",
       "kind": "l1"
@@ -146,7 +146,7 @@
     {
       "id": "R2.GATE",
       "label": "门控",
-      "caption": "核心因子先过；水温验收边界 temp_accept_min / temp_accept_max（曲线两端降为 0）",
+      "caption": "水温验收边界 temp_accept_min / max",
       "parent": "R2.C1",
       "lane": "r2L2d",
       "kind": "gate"
@@ -170,7 +170,7 @@
     {
       "id": "R3",
       "label": "三、玩家策略与操作数据",
-      "caption": "整体向右错开",
+      "caption": "整体向右错开，左侧让给派生环境场",
       "parent": "SYS",
       "lane": "main",
       "band": 210,
@@ -179,7 +179,7 @@
     {
       "id": "DEF",
       "label": "派生环境场",
-      "caption": "行2 与 行4 之间的交接数据 · 落在行3 的正左（行3 整体偏右）",
+      "caption": "行2 与 行4 之间的交接数据",
       "parent": "SYS",
       "lane": "r3def",
       "kind": "cube"
@@ -211,7 +211,7 @@
     {
       "id": "R3.B",
       "label": "呈现刺激通道",
-      "caption": "速度 · 轨迹动作 · 声音 · 震动 · 光闪烁 · 轮廓 · 气味",
+      "caption": "速度 · 声音 · 震动 · 光 · 轮廓 · 气味",
       "parent": "R3",
       "lane": "r3l1",
       "kind": "l1"
@@ -236,7 +236,7 @@
     {
       "id": "R4.A",
       "label": "四层分离",
-      "caption": "行为使能 → 模式适用性 → 任务可负担性 → 响应",
+      "caption": "行为使能 → 模式适用性 → 任务可负担性",
       "parent": "R4",
       "lane": "r4l1",
       "kind": "l1"
@@ -244,7 +244,7 @@
     {
       "id": "R4.B",
       "label": "两条完整模式",
-      "caption": "摄食：目标关系 × 动机 × 任务｜防御：护巢 ∧ 在范围内 ∧ 威胁相关",
+      "caption": "摄食 ｜ 防御",
       "parent": "R4",
       "lane": "r4l1",
       "kind": "l1"
@@ -285,7 +285,7 @@
     {
       "id": "T2",
       "label": "圆桌权重表构建",
-      "caption": "权重池：空间分布权重 × 适配系数 → 权重行 + NONE",
+      "caption": "权重池 = 空间分布权重 × 响应度",
       "parent": "R5",
       "lane": "r5t",
       "kind": "process"
@@ -358,7 +358,7 @@
     {
       "id": "R2.C1",
       "label": "1 空间分布权重",
-      "caption": "环境侧 · 内含 L2 细展开",
+      "caption": "环境侧",
       "parent": "R2",
       "lane": "r2c1G",
       "kind": "group"
@@ -370,7 +370,7 @@
       "lane": "r2chG",
       "kind": "group",
       "collapsible": true,
-      "caption": "Fish Condition · 通道 2–5 · 随条件组变化"
+      "caption": "通道 2–5"
     },
     {
       "id": "R2.C1.K",
