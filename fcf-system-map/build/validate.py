@@ -276,9 +276,9 @@ def main():
 
     # -- vertex overlaps: no two RENDERED squares may collide ------------------
     # 这条是「看渲染」那一轮补上的：几何重叠在结构校验里完全看不见。
-    # 嵌套之后有两条豁免：**同一个 slot**（互斥可见性）、**真包含**（外框是内层
-    # 在 .drawio 里的祖先）—— 版面容器就是靠后者合法地包住自己的子块。
-    _slot = {n["id"]: n.get("slot") for n in nodes}
+    # 嵌套之后靠**真包含**豁免：外框是内层在 .drawio 里的祖先 —— 版面容器
+    # 就是靠它合法地包住自己的子块。（早前还有一条「同一 slot = 互斥可见性」，
+    # 那是折叠封面块方案的产物；封面块已随方案二移除，该豁免一并删掉。）
     _boxes = []
     for cid in _geo:
         if not _rendered(cid):
@@ -296,9 +296,6 @@ def main():
             _, ax, ay, aw, ah = _boxes[i]
             _, bx, by, bw, bh = _boxes[j]
             if ax + aw <= bx or bx + bw <= ax or ay + ah <= by or by + bh <= ay:
-                continue
-            if _slot.get(_boxes[i][0]) is not None and \
-                    _slot.get(_boxes[i][0]) == _slot.get(_boxes[j][0]):
                 continue
             hit = True
             for outer, inner in ((_boxes[i], _boxes[j]), (_boxes[j], _boxes[i])):
