@@ -213,3 +213,19 @@ python3 build/build_diagram.py && python3 build/validate.py
 1. **几何必须与引擎首轮结果一致**（"首次点击不跳"）—— 在 viewer 里点一下标题条，
    看有没有整体位移。
 2. **边不许穿过方块** —— 在浏览器里取每条边的 `absolutePoints`，逐段与全部渲染方块求交。
+
+---
+
+## 9. 手工改版面：`roundtrip.py`
+
+上面那张表是"我说、你改 source"。反过来也通了：**你在 draw.io 里拖，我读懂**。
+
+```bash
+python3 build/roundtrip.py init     # 建工作副本 working/edited.drawio
+python3 build/roundtrip.py open     # 用 draw.io 打开它，改完存回同一路径
+python3 build/roundtrip.py diff     # 结构化改动清单：动了哪些 cell、怎么动的
+```
+
+这是**文件往返**，不是实时共编：你保存 → 我读到。换来的是保住整张图的声明式
+布局与折叠语义（实时白板平台没有布局引擎，用它等于退回自由画布重来）。
+详见 README 的「人机共创」一节。
