@@ -5,7 +5,9 @@
 <title>中鱼机制总图 · 预览</title>
 <style>
   body { font-family: -apple-system, "PingFang SC", sans-serif; margin: 14px; color: #222; }
-  #dg { width: 100%; height: 840px; border: 1px solid #ccc; border-radius: 6px; }
+  /* 画布跟着窗口长：整张图是竖长的（约 1376×2078），固定 840px 会把它压得太小。 */
+  #dg { width: 100%; height: calc(100vh - 235px); min-height: 520px;
+        border: 1px solid #ccc; border-radius: 6px; background: #fff; }
   .note { color: #666; font-size: 12px; margin: 6px 0 10px; max-width: 1100px; line-height: 1.6; }
   pre { background: #f6f6f6; padding: 8px; border-radius: 4px; font-size: 12px; }
   #ver { color: #999; font-size: 11px; }
@@ -60,14 +62,18 @@
     el.removeAttribute('data-mxgraph');
     delete window.__fcf;
     el.setAttribute('data-mxgraph', JSON.stringify({
-      xml: xml, toolbar: 'zoom', border: 10, 'auto-fit': true,
-      resize: true, 'max-width': '100%'
+      // resize:false 是必要的：resize:true 时 viewer 会把**图的内容尺寸**写成
+      // 本容器的 inline 高度，页面被撑长而图不缩放，表现就是"显示不全"。
+      // 关掉之后容器保持 CSS 尺寸，下面的 fit() 才是真正决定缩放的唯一来源。
+      xml: xml, toolbar: 'zoom', border: 10, 'auto-fit': false,
+      resize: false, 'max-width': '100%'
     }));
     GraphViewer.createViewerForElement(el, function (v) {
       window.__fcf = { viewer: v, graph: v.graph };
       fit(v);
       setTimeout(function () { fit(v); }, 120);
-      log('就绪。改完 source 后本页会自动刷新；点击行标题可折叠整行。');
+      log('就绪。改完 source 后本页会自动刷新；点标题条上的 ⇕ 收起／展开该层，'
+          + '下面的层会自动让位。');
     });
   }
 
