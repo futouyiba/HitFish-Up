@@ -35,7 +35,8 @@ MAP_ROOT = HERE.parent                      # fcf-system-map/
 REPO_ROOT = MAP_ROOT.parent                 # 工作区根（harness 要引用 ../spike/...）
 BUILDER = MAP_ROOT / "build" / "build_diagram.py"
 DRAWIO = MAP_ROOT / "generated" / "fcf-system-map.drawio"
-SOURCES = [MAP_ROOT / n for n in ("graph.json", "scopes.json", "views.json", "contracts.json")]
+SOURCES = [MAP_ROOT / n for n in ("graph.json", "layout.json", "scopes.json",
+                                  "views.json", "contracts.json")]
 HARNESS = "/fcf-system-map/build/viewer-harness.html"
 
 _build_lock = threading.Lock()
