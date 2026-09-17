@@ -57,17 +57,25 @@ LANES = {
     "main": {"x": 40, "w": 280, "anchor": None, "y0": 150, "dy": 0, "bandGap": 26, "tagH": 30},
     "r1a":     {"x": 400,  "w": 270, "anchor": "R1", "y0": 72, "dy": 70, "cap": 3},
     "r1b":     {"x": 700,  "w": 470, "anchor": "R1", "y0": 58, "dy": 46, "h": 42, "cap": 4},
-    "r2cover": {"x": 40,   "w": 280, "anchor": "R2", "y0": 0,  "dx": 0, "h": 480},
-    "r2io":    {"x": 400,  "w": 210, "anchor": "R2", "y0": 60, "dx": 0, "h": 64},
-    "r2chG":   {"x": 660,  "w": 220, "anchor": "R2", "y0": 56, "dx": 232, "h": 224, "cap": 5},
-    "r2chK":   {"follow": "r2chG", "x0": 8,  "y0": 44,  "w": 204, "h": 40},
-    "r2chS":   {"follow": "r2chG", "x0": 8,  "y0": 88,  "w": 204, "h": 40},
-    "r2chX":   {"follow": "r2chG", "x0": 8,  "y0": 132, "w": 204, "h": 40},
-    "r2chV":   {"follow": "r2chG", "x0": 8,  "y0": 176, "w": 204, "h": 40},
-    "r2l2":    {"x": 660,  "w": 250, "anchor": "R2", "y0": 310, "dy": 56, "h": 50, "cap": 4},
-    "r2gate":  {"x": 950,  "w": 110, "anchor": "R2", "y0": 368, "dx": 0, "h": 50},
-    "r2out":   {"x": 1090, "w": 220, "anchor": "R2", "y0": 348, "dy": 56, "h": 50, "cap": 2},
-    "r2val":   {"x": 1350, "w": 150, "anchor": "R2", "y0": 376, "dx": 0, "h": 42},
+    "r2cover": {"x": 40,   "w": 280, "anchor": "R2", "y0": 0,  "dx": 0, "h": 240},
+    "r2io":    {"x": 400,  "w": 210, "anchor": "R2", "y0": 40, "dx": 0, "h": 64},
+    "r2c1G":   {"x": 660,  "w": 800, "anchor": "R2", "y0": 50, "dx": 0, "h": 240},
+    "r2c1K":   {"follow": "r2c1G", "findex": 0, "x0": 8,  "y0": 44,  "w": 240, "h": 36},
+    "r2c1S":   {"follow": "r2c1G", "findex": 0, "x0": 8,  "y0": 84,  "w": 240, "h": 36},
+    "r2c1X":   {"follow": "r2c1G", "findex": 0, "x0": 8,  "y0": 124, "w": 240, "h": 36},
+    "r2c1V":   {"follow": "r2c1G", "findex": 0, "x0": 8,  "y0": 164, "w": 240, "h": 36},
+    "r2L2a":   {"follow": "r2c1G", "findex": 0, "x0": 272, "y0": 34,  "w": 250, "h": 44},
+    "r2L2b":   {"follow": "r2c1G", "findex": 0, "x0": 272, "y0": 84,  "w": 250, "h": 44},
+    "r2L2c":   {"follow": "r2c1G", "findex": 0, "x0": 272, "y0": 134, "w": 250, "h": 44},
+    "r2L2c2":  {"follow": "r2c1G", "findex": 0, "x0": 272, "y0": 184, "w": 250, "h": 42},
+    "r2L2d":   {"follow": "r2c1G", "findex": 0, "x0": 540, "y0": 60,  "w": 100, "h": 46},
+    "r2L2e":   {"follow": "r2c1G", "findex": 0, "x0": 660, "y0": 34,  "w": 130, "h": 42},
+    "r2L2f":   {"follow": "r2c1G", "findex": 0, "x0": 660, "y0": 88,  "w": 130, "h": 42},
+    "r2chG":   {"x": 1490, "w": 200, "anchor": "R2", "y0": 50, "dx": 212, "h": 240, "cap": 4},
+    "r2chK":   {"follow": "r2chG", "x0": 8,  "y0": 40,  "w": 184, "h": 36},
+    "r2chS":   {"follow": "r2chG", "x0": 8,  "y0": 80,  "w": 184, "h": 36},
+    "r2chX":   {"follow": "r2chG", "x0": 8,  "y0": 120, "w": 184, "h": 36},
+    "r2chV":   {"follow": "r2chG", "x0": 8,  "y0": 160, "w": 184, "h": 36},
     "r3cover": {"x": 40,   "w": 280, "anchor": "R3", "y0": 0, "dx": 0, "h": 190},
     "r3def":   {"x": 400,  "w": 260, "anchor": "R3", "y0": 44, "dx": 0, "h": 92},
     "r3l0":    {"x": 740,  "w": 270, "anchor": "R3", "y0": 40, "dy": 78, "cap": 2},
@@ -84,7 +92,7 @@ LANES = {
     "r7l0":    {"x": 400,  "w": 300, "anchor": "R7", "y0": 40, "dx": 0, "h": 60},
     "r7l1":    {"x": 740,  "w": 400, "anchor": "R7", "y0": 40, "dx": 0, "h": 50},
 }
-PAGE_W, PAGE_H = 1820, 2400
+PAGE_W, PAGE_H = 2420, 2020
 
 GRAY_FILL, GRAY_STROKE, GRAY_FONT = "#f5f5f5", "#a6a6a6", "#8f8f8f"
 
@@ -188,10 +196,11 @@ def layout(nodes, edges):
                 continue
             if "follow" in spec:
                 src = spec["follow"]
-                if src not in lane_positions or i >= len(lane_positions[src]):
+                fi = spec.get("findex", i)
+                if src not in lane_positions or fi >= len(lane_positions[src]):
                     sys.exit("error: lane %s follows %s but has no slot %d"
-                             % (lane, src, i))
-                bx, by = lane_positions[src][i]
+                             % (lane, src, fi))
+                bx, by = lane_positions[src][fi]
                 x, y = bx + spec.get("x0", 0), by + spec.get("y0", 0)
                 pos[n["id"]] = (x, y, spec["w"], spec.get("h", NODE_H))
                 lane_positions.setdefault(lane, []).append((x, y))

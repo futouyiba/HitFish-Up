@@ -99,14 +99,14 @@
       "caption": "折叠态：这一块会变大占满整条行带",
       "parent": "SYS",
       "lane": "main",
-      "band": 540,
+      "band": 340,
       "collapsible": true,
       "slot": "R2"
     },
     {
       "id": "R2.COVER",
       "label": "二、烘焙",
-      "caption": "展开后见五条计算通道",
+      "caption": "展开后见五条计算通道（通道 1 更宽，内含细展开）",
       "parent": "R2",
       "lane": "r2cover",
       "kind": "cover",
@@ -124,65 +124,57 @@
       "id": "R2.F.HAB",
       "label": "鱼的栖息地动态偏好",
       "caption": "与其它因子一起参与计算",
-      "parent": "R2",
-      "lane": "r2l2",
+      "parent": "R2.C1",
+      "lane": "r2L2a",
       "kind": "process"
     },
     {
       "id": "R2.F.CORE",
       "label": "核心因子（例：方块 · 三角）",
       "caption": "按中鱼习性模式配置",
-      "parent": "R2",
-      "lane": "r2l2",
+      "parent": "R2.C1",
+      "lane": "r2L2b",
       "kind": "core"
     },
     {
       "id": "R2.F.SEC",
       "label": "次要因子（例：六边形 · 圆）",
       "caption": "",
-      "parent": "R2",
-      "lane": "r2l2",
+      "parent": "R2.C1",
+      "lane": "r2L2c",
       "kind": "sec"
     },
     {
       "id": "R2.F.SKIP",
       "label": "不计算（六角形）",
       "caption": "",
-      "parent": "R2",
-      "lane": "r2l2",
+      "parent": "R2.C1",
+      "lane": "r2L2c2",
       "kind": "skip"
     },
     {
       "id": "R2.GATE",
       "label": "门控",
       "caption": "核心因子先过门控",
-      "parent": "R2",
-      "lane": "r2gate",
+      "parent": "R2.C1",
+      "lane": "r2L2d",
       "kind": "gate"
     },
     {
       "id": "R2.PASS",
       "label": "满足 → 核心路径结算",
       "caption": "",
-      "parent": "R2",
-      "lane": "r2out",
+      "parent": "R2.C1",
+      "lane": "r2L2e",
       "kind": "process"
     },
     {
       "id": "R2.FAIL",
       "label": "不满足 → 失败路径 / 背景鱼下限",
       "caption": "",
-      "parent": "R2",
-      "lane": "r2out",
+      "parent": "R2.C1",
+      "lane": "r2L2f",
       "kind": "process"
-    },
-    {
-      "id": "R2.VAL",
-      "label": "通道 1 的值",
-      "caption": "",
-      "parent": "R2",
-      "lane": "r2val",
-      "kind": "data"
     },
     {
       "id": "R3",
@@ -415,9 +407,9 @@
     {
       "id": "R2.C1",
       "label": "1 空间分布权重",
-      "caption": "环境侧",
+      "caption": "环境侧 · 内含 L2 细展开",
       "parent": "R2",
-      "lane": "r2chG",
+      "lane": "r2c1G",
       "kind": "group"
     },
     {
@@ -425,7 +417,7 @@
       "label": "核心因子计算",
       "caption": "",
       "parent": "R2.C1",
-      "lane": "r2chK",
+      "lane": "r2c1K",
       "kind": "core"
     },
     {
@@ -433,7 +425,7 @@
       "label": "次要因子计算",
       "caption": "",
       "parent": "R2.C1",
-      "lane": "r2chS",
+      "lane": "r2c1S",
       "kind": "sec"
     },
     {
@@ -441,7 +433,7 @@
       "label": "排除忽略",
       "caption": "",
       "parent": "R2.C1",
-      "lane": "r2chX",
+      "lane": "r2c1X",
       "kind": "skip"
     },
     {
@@ -449,7 +441,7 @@
       "label": "该通道的值",
       "caption": "",
       "parent": "R2.C1",
-      "lane": "r2chV",
+      "lane": "r2c1V",
       "kind": "data"
     },
     {
@@ -686,16 +678,6 @@
       "to": "R2.FAIL",
       "type": "CONTROL_OR_SELECTION",
       "label": "不通过"
-    },
-    {
-      "from": "R2.PASS",
-      "to": "R2.VAL",
-      "type": "DATA_FLOW"
-    },
-    {
-      "from": "R2.FAIL",
-      "to": "R2.VAL",
-      "type": "DATA_FLOW"
     },
     {
       "from": "R3.COVER",

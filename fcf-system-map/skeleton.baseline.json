@@ -54,21 +54,20 @@
       "R2.C3",
       "R2.C4",
       "R2.C5",
-      "R2.COVER",
+      "R2.COVER"
+    ],
+    "R2.C1": [
+      "R2.C1.K",
+      "R2.C1.S",
+      "R2.C1.V",
+      "R2.C1.X",
       "R2.F.CORE",
       "R2.F.HAB",
       "R2.F.SEC",
       "R2.F.SKIP",
       "R2.FAIL",
       "R2.GATE",
-      "R2.PASS",
-      "R2.VAL"
-    ],
-    "R2.C1": [
-      "R2.C1.K",
-      "R2.C1.S",
-      "R2.C1.V",
-      "R2.C1.X"
+      "R2.PASS"
     ],
     "R2.C2": [
       "R2.C2.K",
@@ -156,7 +155,6 @@
     "R2.GATE": "gate",
     "R2.PASS": "process",
     "R2.FAIL": "process",
-    "R2.VAL": "data",
     "R3": "process",
     "R3.COVER": "cover",
     "DEF": "cube",
@@ -230,7 +228,6 @@
     "R2.GATE": "门控",
     "R2.PASS": "满足 → 核心路径结算",
     "R2.FAIL": "不满足 → 失败路径 / 背景鱼下限",
-    "R2.VAL": "通道 1 的值",
     "R3": "三、玩家策略与操作数据",
     "R3.COVER": "三、玩家策略与操作数据",
     "DEF": "派生环境场",
@@ -301,10 +298,8 @@
     "R2.COVER->BAKE:DATA_FLOW",
     "R2.F.CORE->R2.GATE:DATA_FLOW",
     "R2.F.HAB->R2.GATE:DATA_FLOW",
-    "R2.FAIL->R2.VAL:DATA_FLOW",
     "R2.GATE->R2.FAIL:CONTROL_OR_SELECTION",
     "R2.GATE->R2.PASS:CONTROL_OR_SELECTION",
-    "R2.PASS->R2.VAL:DATA_FLOW",
     "R3.COVER->PLAYER:DATA_FLOW",
     "R4.COVER->RESPONSE:DATA_FLOW",
     "R5->DRAW:DATA_FLOW",
