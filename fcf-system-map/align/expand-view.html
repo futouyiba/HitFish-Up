@@ -1,0 +1,24 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>行2 三层展开模型</title>
+<style>body{font-family:-apple-system,"PingFang SC",sans-serif;margin:12px}
+#dg{width:100%;height:1000px;border:1px solid #ccc;background:#fff}</style></head><body>
+<div id="dg" class="mxgraph"></div>
+<script src="../../spike/verify/vendor/viewer-static.min.js"></script>
+<script>
+function fit(v){
+  try{var g=v.graph,c=g.container;
+    var mnX=1e9,mnY=1e9,mxX=-1e9,mxY=-1e9,n=0;
+    Object.keys(g.model.cells).forEach(function(k){var st=g.view.getState(g.model.getCell(k));
+      if(!st||!st.width)return;n++;mnX=Math.min(mnX,st.x);mnY=Math.min(mnY,st.y);mxX=Math.max(mxX,st.x+st.width);mxY=Math.max(mxY,st.y+st.height);});
+    if(!n||!(mxX>mnX)||!(mxY>mnY))return;
+    var s=Math.min((c.clientWidth-24)/(mxX-mnX),(c.clientHeight-24)/(mxY-mnY));
+    if(!(s>0)||!isFinite(s))return;
+    g.view.setScale(s);
+    g.view.setTranslate(c.clientWidth/(2*s)-(mnX+mxX)/2,c.clientHeight/(2*s)-(mnY+mxY)/2);
+    g.view.validate();}catch(e){}
+}
+fetch('expand-model-row2.drawio',{cache:'no-store'}).then(r=>r.text()).then(xml=>{
+ var el=document.getElementById('dg');
+ el.setAttribute('data-mxgraph', JSON.stringify({xml:xml,toolbar:'zoom',border:10,'auto-fit':true,resize:true}));
+ GraphViewer.createViewerForElement(el,function(v){fit(v);setTimeout(function(){fit(v);},120);});
+});
+</script></body></html>
