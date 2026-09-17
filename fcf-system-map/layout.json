@@ -29,7 +29,9 @@
     "core": 34,
     "sec": 34,
     "skip": 34,
-    "gate": 46
+    "gate": 46,
+    "end": 44,
+    "factor": 34
   },
   "root": {
     "axis": "v",
@@ -142,6 +144,10 @@
         {
           "node": "R2.C1",
           "role": "title"
+        },
+        {
+          "node": "R2.F.HAB",
+          "fill": true
         },
         {
           "ref": "C:C1/GRID"
@@ -467,35 +473,24 @@
     },
     "C:C1/AGG": {
       "axis": "v",
+      "w": 620,
+      "center": true,
       "children": [
         {
-          "node": "R2.C1.A1"
+          "node": "R2.C1.A1",
+          "fill": true
         },
         {
-          "node": "R2.C1.A2"
+          "ref": "C:C1/AGG/SPLIT"
         },
         {
-          "node": "R2.C1.A3"
+          "node": "R2.C1.A3",
+          "fill": true
         },
         {
-          "node": "R2.C1.V"
-        }
-      ]
-    },
-    "C:C1/FACTORS": {
-      "axis": "v",
-      "children": [
-        {
-          "ref": "C:C1/F1"
-        },
-        {
-          "ref": "C:C1/F2"
-        },
-        {
-          "ref": "C:C1/F3"
-        },
-        {
-          "node": "R2.F.HAB"
+          "node": "R2.C1.V",
+          "w": 320,
+          "center": true
         }
       ]
     },
@@ -518,40 +513,21 @@
       "axis": "v",
       "children": [
         {
-          "node": "R2.F.CORE"
+          "node": "R2.F.CORE",
+          "center": true,
+          "w": 140
         },
         {
-          "ref": "C:C1/C1/I"
+          "ref": "C:C1/C1/F"
         },
         {
-          "node": "R2.F.HAB"
+          "node": "R2.GATE",
+          "w": 320,
+          "center": true,
+          "h": 64
         },
         {
-          "node": "R2.GATE"
-        },
-        {
-          "node": "R2.PASS"
-        },
-        {
-          "node": "R2.FAIL"
-        },
-        {
-          "node": "R2.C1.GFAIL"
-        },
-        {
-          "node": "R2.C1.K"
-        }
-      ]
-    },
-    "C:C1/C1/I": {
-      "axis": "h",
-      "even": true,
-      "children": [
-        {
-          "icon": "square"
-        },
-        {
-          "icon": "triangle"
+          "ref": "C:C1/C1/OUT"
         }
       ]
     },
@@ -559,25 +535,16 @@
       "axis": "v",
       "children": [
         {
-          "node": "R2.F.SEC"
+          "node": "R2.F.SEC",
+          "center": true,
+          "w": 140
         },
         {
-          "ref": "C:C1/C2/I"
+          "ref": "C:C1/C2/F"
         },
         {
-          "node": "R2.C1.S"
-        }
-      ]
-    },
-    "C:C1/C2/I": {
-      "axis": "h",
-      "even": true,
-      "children": [
-        {
-          "icon": "hexagon"
-        },
-        {
-          "icon": "circle"
+          "node": "R2.C1.S",
+          "fill": true
         }
       ]
     },
@@ -585,19 +552,80 @@
       "axis": "v",
       "children": [
         {
-          "node": "R2.F.SKIP"
+          "node": "R2.F.SKIP",
+          "center": true,
+          "w": 140
         },
         {
-          "ref": "C:C1/C3/I"
+          "ref": "C:C1/C3/F"
         }
       ]
     },
-    "C:C1/C3/I": {
+    "C:C1/C1/F": {
       "axis": "h",
       "even": true,
       "children": [
         {
+          "node": "R2.C1.F1",
+          "icon": "square"
+        },
+        {
+          "node": "R2.C1.F2",
+          "icon": "triangle"
+        }
+      ]
+    },
+    "C:C1/C1/OUT": {
+      "axis": "h",
+      "even": true,
+      "children": [
+        {
+          "node": "R2.C1.K",
+          "h": 56
+        },
+        {
+          "node": "R2.C1.GFAIL",
+          "h": 56
+        }
+      ]
+    },
+    "C:C1/C2/F": {
+      "axis": "h",
+      "even": true,
+      "children": [
+        {
+          "node": "R2.C1.F3",
+          "icon": "hexagon"
+        },
+        {
+          "node": "R2.C1.F4",
+          "icon": "circle"
+        }
+      ]
+    },
+    "C:C1/C3/F": {
+      "axis": "h",
+      "even": true,
+      "children": [
+        {
+          "node": "R2.C1.F5",
           "icon": "hexagon-off"
+        }
+      ]
+    },
+    "C:C1/AGG/SPLIT": {
+      "axis": "h",
+      "even": true,
+      "children": [
+        {
+          "node": "R2.C1.BG",
+          "w": 240,
+          "center": true
+        },
+        {
+          "node": "R2.C1.A2",
+          "w": 280,
+          "center": true
         }
       ]
     }

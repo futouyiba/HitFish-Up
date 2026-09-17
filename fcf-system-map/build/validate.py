@@ -124,7 +124,7 @@ def main():
 
     # -- lanes --------------------------------------------------------------
     for n in nodes:
-        check(n.get("lane") in ("main", "r1a", "r1b", "r2L2a", "r2L2b", "r2L2c", "r2L2c2", "r2L2d", "r2L2e", "r2L2f", "r2c1G", "r2c1K", "r2c1S", "r2c1V", "r2c1X", "r2chG", "r2chK", "r2chS", "r2chV", "r2chX", "r2io", "r3def", "r3l0", "r3l1", "r4l0", "r4l1", "r5bar", "r5t", "r6l0", "r6l1", "r7l0", "r7l1"),
+        check(n.get("lane") in ("main", "r1a", "r1b", "r2L2a", "r2L2b", "r2L2c", "r2L2c2", "r2L2d", "r2L2e", "r2L2f", "r2c1F", "r2c1G", "r2c1K", "r2c1S", "r2c1V", "r2c1X", "r2chG", "r2chK", "r2chS", "r2chV", "r2chX", "r2io", "r3def", "r3l0", "r3l1", "r4l0", "r4l1", "r5bar", "r5t", "r6l0", "r6l1", "r7l0", "r7l1"),
               "%s: unknown lane %r" % (n["id"], n.get("lane")))
     for n in nodes:
         if n.get("collapsible"):
@@ -348,8 +348,11 @@ def main():
                     check(not diff, "rename moved geometry for %s" % diff)
                     semantic_cells = [cid for cid in base if not cid.startswith(
                         RESERVED_PREFIXES)]
+                    # 画成矢量图形的节点（因子：形状即身份）本来就不带文字，
+                    # 它们的 label 改了不会、也不该出现在 cell 上 —— 排除掉。
                     label_diff = [cid for cid in semantic_cells
-                                  if cid in ren and base[cid][0] == ren[cid][0]]
+                                  if cid in ren and base[cid][0] == ren[cid][0]
+                                  and (base[cid][0] or "") != ""]
                     check(not label_diff,
                           "rename did not propagate to labels: %s" % label_diff)
 
@@ -362,11 +365,9 @@ def main():
         sys.exit(1)
     print("VALIDATION: PASS")
     print("  stable IDs:            %d (unique, syntax-safe)" % stable_count)
-    # 构建器现在给每个"有 parent"的节点都画一条结构边（SYS 删掉之后，原来那条
-    # "父是根就不画" 的规则会把行→方块也一起吞掉）。这里跟着改，别再报一个错的数。
-    drawn_structural = [n for n in nodes if n.get("parent")]
-    print("  edges:                 %d semantic + %d structural, endpoints ok"
-          % (len(graph["edges"]), len(drawn_structural)))
+    # 结构边（行 → 顶层块）已不再绘制：容器嵌套已经表达了"谁包着谁"，再叠一层线
+    # 是本图最主要的"挡内容"来源。报告里只留语义边数。
+    print("  edges:                 %d semantic, endpoints ok" % len(graph["edges"]))
     print("  views:                 %s (default %s)"
           % (", ".join(view_ids), views["defaultView"]))
     lensed = [s for s in scopes["scopes"] if s.get("lens")]
