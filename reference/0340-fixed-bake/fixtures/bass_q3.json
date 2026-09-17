@@ -2,7 +2,8 @@
   "_readme": [
     "REFERENCE / VALIDATION fixture. Not production data.",
     "Source: Notion '0.3.4.0-B | Bass NORMAL Fixed Template Vertical Slice' §3 / §6 / §7.",
-    "Golden values CG-01/02/03 reproduced independently from 开发需求 §3.4 + §7.",
+    "Golden values CG-01/02/03 reproduced independently from 开发需求 §3.4 + §7",
+    "by verify_goldens.py (no import of the reference implementation).",
     "TIME_PERIOD is deliberately absent from resolvedComponentProfiles: an IGNORED",
     "condition must not force the author to fabricate a profile (Bass Slice §3.5)."
   ],

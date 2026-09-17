@@ -99,9 +99,9 @@ treating §4.0 names as raw table columns only (i.e. resolved payload ≠ table 
 
 **Affected code/tests:** `fixed_bake.evaluate_fit`, `fixtures/bass_q3.json`, every
 fixture and any serializer/deserializer pair.
-**Blocking:** YES.
-**Do not decide:** this reference uses Candidate A so the slice can run at all; it is
-not a recommendation.
+**Blocking:** was YES.
+**Decided 2026-09-18:** Candidate A — see Rulings above. Written back to Schema &
+Validator §1.1 and 开发需求 §4.1.
 
 ---
 
@@ -133,15 +133,17 @@ excluded by the text.
 
 **Candidate A:** `spatialDistributionWeight`; replace the cap key with
 `gateFailureBranch {applied, branch, failedConditions}`; keep the dead keys as `null`
-for shape compatibility (this reference does this).
+for shape compatibility.
 **Candidate B:** snake_case `spatial_distribution_weight`; delete superseded keys; express
 the branch only through `gateResults[].passed`.
 
 **Affected code/tests:** the whole Trace surface; any Bake Preview / inspector;
 `test_case15_trace_explains_the_result`.
-**Blocking:** YES for exact trace conformance; NO for the numeric contract (every
+**Blocking:** was YES for exact trace conformance; NO for the numeric contract (every
 candidate yields the same weight).
-**Do not decide:** the reference picks A to be runnable, not as a ruling.
+**Decided 2026-09-18:** neither candidate verbatim — the ruling takes B's deletion of the
+three dead keys plus A's `gateFailureBranch` key, on the snake_case output name — see
+Rulings above.
 
 ---
 
@@ -172,9 +174,9 @@ explicit author decision is being claimed.
 
 **Affected code/tests:** `fixed_bake.role_of` / `_binding_rows`; `test_case14_*`;
 every serialized subject.
-**Blocking:** NO for the Bass fixture under A; the choice is unavoidable for any other
+**Blocking:** was NO for the Bass fixture under A; the choice is unavoidable for any other
 payload.
-**Do not decide:** the reference follows A only because the P0 fixture demands it.
+**Decided 2026-09-18:** Candidate A — see Rulings above.
 
 ---
 
@@ -196,14 +198,16 @@ a hard error (V6) or an accepted migration read-in (§5.1).
 **Why code cannot uniquely decide:** §5.1 says `GatePolicy NONE / absent` is fine; V6 says
 any occurrence is an error. Both are Current pages of the same branch.
 
-**Candidate A:** any `gatePolicy` key at all → ERROR (V6 / delta 2 reading).
+**Candidate A:** any `gatePolicy` key at all → ERROR (V6 / delta 2 reading) — this
+reference does this.
 **Candidate B:** `gatePolicy` absent or `NONE` → inert; any other value → migration
-diagnostic requiring an explicit content decision (this reference does this).
+diagnostic requiring an explicit content decision.
 
 **Affected code/tests:** `fixed_bake.role_of`; `TestMigrationAndLegacy`.
-**Blocking:** NO — both readings agree on the important case (a non-NONE policy must never
-be silently coerced).
-**Do not decide:** needs one adjudication line in §26 or the Schema page.
+**Blocking:** was NO — both readings agreed on the important case (a non-NONE policy must
+never be silently coerced).
+**Decided 2026-09-18:** Candidate A, V6 read literally — see Rulings above. Written back
+to Schema & Validator and the Bake Authoring / 条件开关 page.
 
 ---
 

@@ -172,7 +172,8 @@ skipped     0
   CG-03 `0.1125000000`, temperature-gate failure (non-background `0` / background
   `0.10`), background floor `0.0306818182 → 0.10`, and two Base-scaling cases. The goldens
   were reproduced a second time by an independent script that applies the §3.4 / §4.3
-  formulas without importing the reference.
+  formulas without importing the reference — committed alongside as `verify_goldens.py`,
+  so the check is reproducible from the artifact (`python3 verify_goldens.py`, 8/8, exit 0).
 - **Semantic cases (20)** — the task's Case 1–15 re-expressed against the Current contract
   (Case 7 "residual gate" is now "a near-zero nonzero coefficient is not a gate failure";
   Case 9 "multiple failed gates" collapses to one branch because there is no cap to
