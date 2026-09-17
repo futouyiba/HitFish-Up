@@ -1,0 +1,9 @@
+# 人机共创的草稿区 —— 这里的 .drawio 不进 git。
+#
+# 为什么：这一轮回路的**产物是 graph.json / layout.json 的改动**（那才要留痕、
+# 要 review），而这个目录里的 .drawio 每一轮都会被新基线覆盖。提交它只会在 PR 里
+# 制造几十 KB 的 XML 噪声。文件仍在磁盘上，随时可改、可续。
+#
+# manifest.json 入库：它记着"这份工作副本是从哪个 build / commit 快照下来的"，
+# 是回路的 provenance，且只在 init 时变。
+*.drawio

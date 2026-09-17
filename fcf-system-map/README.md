@@ -31,6 +31,54 @@ python3 fcf-system-map/tools/preview.py        # 默认 8799，可 --port
 
 ---
 
+## 人机共创：你手拖，我读懂
+
+"我说你改"这条路是**有损**的 —— 你说"这个框往右一点"，我得猜是哪个框、往右多少。
+你在 draw.io 里拖一下，落到磁盘上就是**精确的坐标变化**。这条回路把它翻译成我能
+直接执行的清单。
+
+三个文件，别混：
+
+| 文件 | 谁动 |
+|---|---|
+| `generated/fcf-system-map.drawio` | 构建产物，**永远不要手改**（一重建就没了） |
+| `working/baseline.drawio` | 快照：建工作副本时那份基线（对差的**参照系**） |
+| `working/edited.drawio` | **你在这里改** |
+
+```bash
+python3 build/roundtrip.py init     # 建/刷新工作副本（已存在改动时会拒绝覆盖）
+python3 build/roundtrip.py open     # 怎么打开它
+#   → draw.io Desktop：open -a draw.io <path>   （或 app.diagrams.net → Open from → Device）
+#   → 改完**存回同一路径**（Save / Cmd-S），别用 Save as 存到别处
+python3 build/roundtrip.py status   # 一句话：改了几处
+python3 build/roundtrip.py diff     # 结构化改动清单（--json 给机器读）
+python3 build/roundtrip.py reset --force   # 丢掉改动、回到新基线
+```
+
+`diff` 的产出按"该改哪个源文件"分三类：
+
+- **语义**（`added`/`removed`/`relabeled`/`reparented`/`reconnected`/`rerouted`）→ 改 `graph.json` / `layout.json` 的结构；
+- **几何**（`moved`/`resized`）→ 声明式地块改 `layout.json`，一次性手摆改 overrides 层；
+- **样式**（`restyled`/`visibility`）→ 先确认是不是有意的（多半是 lens 或临时试色）。
+
+对差是**按 cell 语义**比的，不是文本 diff：draw.io 保存时会把整份文件重写
+（属性顺序、视口的 `dx/dy` 都会变），文本 diff 全是噪声。忽略项由回归测试锁住：
+
+```bash
+python3 build/test_roundtrip.py     # 该抓的 8 类 / 该忽略的 2 类，逐一断言
+```
+
+**AI 侧的 MCP**：仓库根的 `.mcp.json` 登记了官方 `@drawio/mcp`（v1.6.0，7 个工具），
+其中 `get_page` / `set_page` 读写本地 `.drawio` 文件的某一页、**自动解压** draw.io
+默认的压缩页 —— 上面那条回路就是靠它们打通的。装上后需要**重启会话**才生效。
+
+> 为什么不用实时协作平台（Excalidraw 房间之类）：那要放弃本图的**声明式布局 +
+> 折叠语义**（`childLayout`、mxStackLayout 的自动让位）—— 而 Excalidraw 根本没有
+> 布局引擎。实时共编换来的是把整张图退回自由画布重来。所以这里是**文件往返**，
+> 不是实时共编；代价只是"你保存 → 我读到"这一拍，而这一拍很短。
+
+---
+
 ## 内容语义的权威在 Notion
 
 **版面在这里迭代，含义在 Notion 固化。** 每个节点「要表达的意思」以
