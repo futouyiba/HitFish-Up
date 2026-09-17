@@ -146,7 +146,7 @@
     {
       "id": "R2.GATE",
       "label": "门控",
-      "caption": "水温验收边界 temp_accept_min / max",
+      "caption": "核心条件门控；各影响因素 / 习性组各有自己的门控",
       "parent": "R2.C1",
       "lane": "r2L2d",
       "kind": "gate"
@@ -154,7 +154,7 @@
     {
       "id": "R2.PASS",
       "label": "满足 → 核心路径结算",
-      "caption": "",
+      "caption": "通过 → 核心条件结果",
       "parent": "R2.C1",
       "lane": "r2L2e",
       "kind": "process"
@@ -162,10 +162,42 @@
     {
       "id": "R2.FAIL",
       "label": "不满足 → 失败路径 / 背景鱼下限",
-      "caption": "",
+      "caption": "不通过 → 条件判断失败 → 背景鱼下限",
       "parent": "R2.C1",
       "lane": "r2L2f",
       "kind": "process"
+    },
+    {
+      "id": "R2.C1.GFAIL",
+      "label": "条件判断失败",
+      "parent": "R2.C1",
+      "lane": "r2c1G",
+      "kind": "process",
+      "caption": "门控不通过 → 转背景鱼下限"
+    },
+    {
+      "id": "R2.C1.A1",
+      "label": "系数聚合",
+      "parent": "R2.C1",
+      "lane": "r2c1G",
+      "kind": "process",
+      "caption": "各条件算出的亲和系数汇总"
+    },
+    {
+      "id": "R2.C1.A2",
+      "label": "背景鱼系数下限",
+      "parent": "R2.C1",
+      "lane": "r2c1G",
+      "kind": "process",
+      "caption": "仅背景鱼；低于 threshold 就抬到 threshold"
+    },
+    {
+      "id": "R2.C1.A3",
+      "label": "环境权重",
+      "parent": "R2.C1",
+      "lane": "r2c1G",
+      "kind": "data",
+      "caption": "= 基础机会强度 × 环境权重系数"
     },
     {
       "id": "R3",
@@ -375,7 +407,7 @@
     {
       "id": "R2.C1.K",
       "label": "核心因子计算",
-      "caption": "",
+      "caption": "各组各自算法 → 亲和系数",
       "parent": "R2.C1",
       "lane": "r2c1K",
       "kind": "core"
@@ -383,7 +415,7 @@
     {
       "id": "R2.C1.S",
       "label": "次要因子计算",
-      "caption": "",
+      "caption": "综合习性配置 + 条件组 → 亲和系数",
       "parent": "R2.C1",
       "lane": "r2c1S",
       "kind": "sec"
@@ -399,7 +431,7 @@
     {
       "id": "R2.C1.V",
       "label": "该通道的值",
-      "caption": "",
+      "caption": "返回给烘焙求解器",
       "parent": "R2.C1",
       "lane": "r2c1V",
       "kind": "data"
