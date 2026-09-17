@@ -1,0 +1,65 @@
+{
+  "format": 1,
+  "system": "FCF",
+  "description": "FCF Canonical System Map — semantic source of truth (Production Pilot v0.1). This file is hand/AI-editable; generated/fcf-system-map.drawio is a deterministic build artifact and must never be hand-edited. Regenerate: python3 build/build_diagram.py",
+  "semantics": {
+    "hierarchy": "parent = progressive-disclosure grouping (collapsible subtrees). Hierarchy is NOT a dataflow claim.",
+    "edges": "Explicit semantic edges. type: DATA_FLOW (solid) | CONTROL_OR_SELECTION (dashed) | REFERENCE_OR_CONFIG (dotted, reserved in v1). Structural hierarchy edges are rendered separately (faint, no arrow) and are not semantic claims.",
+    "mergeNote": "SPATIAL -> PRESENTATION.EXPOSURE and CONDITION -> PRESENTATION.EXPOSURE express only 'domain hands off into the downstream chain'. No combine math is implied (see SEMANTIC_OPEN-002).",
+    "edgeRouting": "exit/entry: N,S,E,W hints for the orthogonal router; purely visual, deterministic."
+  },
+  "nodes": [
+    {"id": "SYS.CONTEXT", "label": "World / Context / History", "parent": null, "lane": "main"},
+    {"id": "OPPORTUNITY.BASE", "label": "Base Opportunity / Candidate", "parent": null, "lane": "main"},
+    {"id": "MODE.ROUTING", "label": "Engagement Mode Routing", "parent": null, "lane": "main"},
+    {"id": "CANDIDATE.RESOLVED", "label": "Resolved Candidate", "parent": null, "lane": "main"},
+    {"id": "SPATIAL", "label": "Spatial Opportunity", "parent": null, "lane": "main", "collapsible": true},
+    {"id": "CONDITION", "label": "Fish Condition", "parent": null, "lane": "main", "collapsible": true},
+    {"id": "PRESENTATION.EXPOSURE", "label": "Presentation / Exposure", "parent": null, "lane": "main"},
+    {"id": "RESPONSE", "label": "Response", "parent": null, "lane": "main"},
+    {"id": "SELECTION", "label": "Selection + NONE", "parent": null, "lane": "main"},
+    {"id": "MATERIALIZATION", "label": "Fish Materialization", "parent": null, "lane": "main"},
+
+    {"id": "SPATIAL.SUBJECT", "label": "Resolved Bake Subject", "parent": "SPATIAL", "lane": "spatial_inputs"},
+    {"id": "SPATIAL.SNAPSHOT", "label": "ConditionGroupSnapshot", "parent": "SPATIAL", "lane": "spatial_inputs"},
+    {"id": "SPATIAL.BASE", "label": "Base Opportunity", "parent": "SPATIAL", "lane": "spatial_inputs"},
+    {"id": "SPATIAL.TEMPLATE", "label": "Fixed Bake Template", "parent": "SPATIAL", "lane": "spatial_template"},
+    {"id": "SPATIAL.GATE", "label": "Gate Evaluation", "parent": "SPATIAL.TEMPLATE", "lane": "spatial_stages"},
+    {"id": "SPATIAL.FACTOR", "label": "Atomic Factor Evaluation", "parent": "SPATIAL.TEMPLATE", "lane": "spatial_stages"},
+    {"id": "SPATIAL.CORE_LOSS", "label": "Core Loss", "parent": "SPATIAL.TEMPLATE", "lane": "spatial_stages"},
+    {"id": "SPATIAL.SECONDARY_LOSS", "label": "Secondary Loss", "parent": "SPATIAL.TEMPLATE", "lane": "spatial_stages"},
+    {"id": "SPATIAL.AGGREGATE", "label": "Aggregation", "parent": "SPATIAL.TEMPLATE", "lane": "spatial_stages"},
+    {"id": "SPATIAL.ENV_COEFF", "label": "Final EnvCoeff", "parent": "SPATIAL", "lane": "spatial_out"},
+    {"id": "SPATIAL.INTENSITY", "label": "SpatialOpportunityIntensity", "parent": "SPATIAL", "lane": "spatial_out"},
+    {"id": "SPATIAL.DEBUG", "label": "Debug Trace", "parent": "SPATIAL", "lane": "spatial_out"},
+
+    {"id": "CONDITION.ACTIVITY", "label": "Activity", "parent": "CONDITION", "lane": "cond_detail"},
+    {"id": "CONDITION.FUNCTIONAL_CAPACITY", "label": "Functional Capacity", "parent": "CONDITION", "lane": "cond_detail"},
+    {"id": "CONDITION.FEEDING_READINESS", "label": "Feeding Readiness", "parent": "CONDITION", "lane": "cond_detail"}
+  ],
+  "edges": [
+    {"from": "SYS.CONTEXT", "to": "OPPORTUNITY.BASE", "type": "DATA_FLOW"},
+    {"from": "OPPORTUNITY.BASE", "to": "MODE.ROUTING", "type": "DATA_FLOW"},
+    {"from": "MODE.ROUTING", "to": "CANDIDATE.RESOLVED", "type": "CONTROL_OR_SELECTION"},
+
+    {"from": "CANDIDATE.RESOLVED", "to": "SPATIAL", "type": "DATA_FLOW"},
+    {"from": "CANDIDATE.RESOLVED", "to": "CONDITION", "type": "DATA_FLOW", "exit": "E", "entry": "N"},
+
+    {"from": "SPATIAL", "to": "PRESENTATION.EXPOSURE", "type": "DATA_FLOW", "exit": "E", "entry": "N"},
+    {"from": "CONDITION", "to": "PRESENTATION.EXPOSURE", "type": "DATA_FLOW"},
+    {"from": "PRESENTATION.EXPOSURE", "to": "RESPONSE", "type": "DATA_FLOW"},
+    {"from": "RESPONSE", "to": "SELECTION", "type": "DATA_FLOW"},
+    {"from": "SELECTION", "to": "MATERIALIZATION", "type": "DATA_FLOW"},
+
+    {"from": "CANDIDATE.RESOLVED", "to": "SPATIAL.SUBJECT", "type": "DATA_FLOW", "exit": "E", "entry": "W"},
+    {"from": "SYS.CONTEXT", "to": "SPATIAL.SNAPSHOT", "type": "DATA_FLOW", "exit": "E", "entry": "W"},
+    {"from": "OPPORTUNITY.BASE", "to": "SPATIAL.BASE", "type": "DATA_FLOW", "exit": "E", "entry": "W"},
+
+    {"from": "SPATIAL.SUBJECT", "to": "SPATIAL.TEMPLATE", "type": "DATA_FLOW", "exit": "E", "entry": "W"},
+    {"from": "SPATIAL.SNAPSHOT", "to": "SPATIAL.TEMPLATE", "type": "DATA_FLOW", "exit": "E", "entry": "W"},
+    {"from": "SPATIAL.BASE", "to": "SPATIAL.TEMPLATE", "type": "DATA_FLOW", "exit": "E", "entry": "W"},
+    {"from": "SPATIAL.TEMPLATE", "to": "SPATIAL.ENV_COEFF", "type": "DATA_FLOW", "exit": "S", "entry": "W"},
+    {"from": "SPATIAL.ENV_COEFF", "to": "SPATIAL.INTENSITY", "type": "DATA_FLOW"},
+    {"from": "SPATIAL.INTENSITY", "to": "SPATIAL.DEBUG", "type": "DATA_FLOW"}
+  ]
+}

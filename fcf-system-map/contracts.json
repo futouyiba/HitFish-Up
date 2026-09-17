@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "description": "Diagram node -> external authority links. References only; authority content is never copied into this repo. Editing any authority source (Notion / Feishu) is out of scope for the map pipeline. status: linked = authority read and matched to the node; pending = authority not yet identified/confirmed (an assumption, not a claim).",
+  "contracts": [
+    {"semanticId": "SPATIAL.TEMPLATE", "authorityRef": "https://pisn3u3ony2.feishu.cn/docx/RgWQdLKQkoYmf1xCP14cHMnondh", "status": "linked", "note": "中鱼0.3.4.0 烘焙逻辑语义化-开发需求(bake 流程与模板定义)"},
+    {"semanticId": "SPATIAL.SNAPSHOT", "authorityRef": "https://pisn3u3ony2.feishu.cn/docx/RgWQdLKQkoYmf1xCP14cHMnondh", "status": "linked", "note": "同上;bake 输入之环境条件组"},
+    {"semanticId": "SPATIAL.GATE", "authorityRef": "https://pisn3u3ony2.feishu.cn/docx/RgWQdLKQkoYmf1xCP14cHMnondh", "status": "linked", "note": "同上;核心条件门控"},
+    {"semanticId": "SPATIAL.CORE_LOSS", "authorityRef": "https://pisn3u3ony2.feishu.cn/docx/RgWQdLKQkoYmf1xCP14cHMnondh", "status": "linked", "note": "同上;核心条件失败/损失路径"},
+    {"semanticId": "SPATIAL.SECONDARY_LOSS", "authorityRef": "https://pisn3u3ony2.feishu.cn/docx/RgWQdLKQkoYmf1xCP14cHMnondh", "status": "linked", "note": "同上;次级条件损失"},
+    {"semanticId": "SPATIAL.FACTOR", "authorityRef": "https://pisn3u3ony2.feishu.cn/docx/VUdJdinA3oHTQsx0SP7cmCHfnkh", "status": "linked", "note": "中鱼参数组件计算机制 R0|各组件如何进入权重计算"},
+    {"semanticId": "SPATIAL.AGGREGATE", "authorityRef": "https://app.notion.com/p/3dca4137d23681309a7cf6b43216c036", "status": "linked", "note": "权重算法思路(Notion)"},
+    {"semanticId": "SPATIAL.ENV_COEFF", "authorityRef": "https://app.notion.com/p/3dca4137d23681309a7cf6b43216c036", "status": "linked", "note": "权重算法思路(Notion);环境权重系数聚合输出"},
+
+    {"semanticId": "SPATIAL.SUBJECT", "authorityRef": null, "status": "pending", "note": "解析后投鱼配置的权威来源(species/品质解析)待登记"},
+    {"semanticId": "SPATIAL.BASE", "authorityRef": null, "status": "pending", "note": "bake 输入之基础机会强度的权威登记待补"},
+    {"semanticId": "SPATIAL.INTENSITY", "authorityRef": null, "status": "pending", "note": "SpatialOpportunityIntensity 输出契约待登记"},
+    {"semanticId": "SPATIAL.DEBUG", "authorityRef": null, "status": "pending", "note": "Debug Trace 的消费契约待确认(见 SEMANTIC_OPEN-004)"},
+    {"semanticId": "CONDITION.ACTIVITY", "authorityRef": null, "status": "pending", "note": "Activity 是否进入 0.3.4.0 仍在讨论(见 SEMANTIC_OPEN-003)"}
+  ]
+}

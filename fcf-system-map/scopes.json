@@ -1,0 +1,56 @@
+{
+  "format": 1,
+  "description": "Scope dimension of the FCF Canonical System Map. Scope answers: 'does version X own this node?' — it is orthogonal to Hierarchy (progressive disclosure) and View (current granularity). A lens scope drives a coloring pass on the SAME single cell per node (no duplicated instances, no scope x view layer multiplication).",
+  "classes": {
+    "ACTIVE": "implemented / modified by the version",
+    "BOUNDARY": "consumed or produced across the version boundary; internals not owned",
+    "OUT": "exists in the overall system; not handled by the version — grayed but never hidden"
+  },
+  "scopes": [
+    {
+      "id": "OVERALL",
+      "label": "OVERALL",
+      "lens": false,
+      "comment": "No scope clipping or coloring; the whole system in neutral colors."
+    },
+    {
+      "id": "0.3.4.0",
+      "label": "0.3.4.0",
+      "lens": true,
+      "basis": "Per Production Pilot v0.1 directive: SPATIAL subtree ACTIVE; upstream nodes consumed by Bake are BOUNDARY (minimum necessary boundary only); the rest OUT. BOUNDARY membership rule: 'upstream, consumed by the current Bake, internals not owned by this task'.",
+      "assignment": {
+        "ACTIVE": [
+          "SPATIAL",
+          "SPATIAL.SUBJECT",
+          "SPATIAL.SNAPSHOT",
+          "SPATIAL.BASE",
+          "SPATIAL.TEMPLATE",
+          "SPATIAL.GATE",
+          "SPATIAL.FACTOR",
+          "SPATIAL.CORE_LOSS",
+          "SPATIAL.SECONDARY_LOSS",
+          "SPATIAL.AGGREGATE",
+          "SPATIAL.ENV_COEFF",
+          "SPATIAL.INTENSITY",
+          "SPATIAL.DEBUG"
+        ],
+        "BOUNDARY": [
+          "SYS.CONTEXT",
+          "OPPORTUNITY.BASE",
+          "CANDIDATE.RESOLVED"
+        ],
+        "OUT": [
+          "MODE.ROUTING",
+          "CONDITION",
+          "CONDITION.ACTIVITY",
+          "CONDITION.FUNCTIONAL_CAPACITY",
+          "CONDITION.FEEDING_READINESS",
+          "PRESENTATION.EXPOSURE",
+          "RESPONSE",
+          "SELECTION",
+          "MATERIALIZATION"
+        ]
+      }
+    }
+  ]
+}
