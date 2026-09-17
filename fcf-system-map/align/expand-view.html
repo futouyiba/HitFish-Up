@@ -16,7 +16,7 @@ function fit(v){
     g.view.setTranslate(c.clientWidth/(2*s)-(mnX+mxX)/2,c.clientHeight/(2*s)-(mnY+mxY)/2);
     g.view.validate();}catch(e){}
 }
-fetch('expand-model-row2.drawio',{cache:'no-store'}).then(r=>r.text()).then(xml=>{
+fetch('expand-model-v2.drawio',{cache:'no-store'}).then(r=>r.text()).then(xml=>{
  var el=document.getElementById('dg');
  el.setAttribute('data-mxgraph', JSON.stringify({xml:xml,toolbar:'zoom',border:10,'auto-fit':true,resize:true}));
  GraphViewer.createViewerForElement(el,function(v){fit(v);setTimeout(function(){fit(v);},120);});
