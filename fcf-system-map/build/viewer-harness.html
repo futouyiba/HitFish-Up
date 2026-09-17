@@ -34,25 +34,40 @@
 
   // 稳健适配：viewer 创建时容器尺寸可能还没定，内置 auto-fit 会算成 scale=1。
   // 自己量一遍可见元素的真实范围再设定缩放，并在窗口尺寸变化时重算。
+  //
+  // 竖长的图按**宽度**适配、让页面纵向滚动，而不是硬塞进一屏：这张图约
+  // 1376×2078，塞进 660px 高的画布会缩到 0.27，行标题条只剩 9px —— 看起来
+  // 像一条发丝，既读不出文字也看不出是可点的折叠把手。按宽度适配得到 ~1:1，
+  // 标题条恢复 34px，滚动看下半部分即可。
+  var MAX_SCALE = 1.0;
+
+  function contentBounds(g) {
+    var minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9, n = 0;
+    Object.keys(g.model.cells).forEach(function (k) {
+      var st = g.view.getState(g.model.getCell(k));
+      if (!st || !st.width) return;
+      n++;
+      minX = Math.min(minX, st.x); minY = Math.min(minY, st.y);
+      maxX = Math.max(maxX, st.x + st.width); maxY = Math.max(maxY, st.y + st.height);
+    });
+    return n && maxX > minX && maxY > minY
+      ? {x: minX, y: minY, w: maxX - minX, h: maxY - minY} : null;
+  }
+
   function fit(v) {
     try {
       var g = v.graph, c = g.container;
-      var minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9, n = 0;
-      Object.keys(g.model.cells).forEach(function (k) {
-        var st = g.view.getState(g.model.getCell(k));
-        if (!st || !st.width) return;
-        n++;
-        minX = Math.min(minX, st.x); minY = Math.min(minY, st.y);
-        maxX = Math.max(maxX, st.x + st.width); maxY = Math.max(maxY, st.y + st.height);
-      });
-      if (!n || !(maxX > minX) || !(maxY > minY)) return;
-      var s = Math.min((c.clientWidth - 24) / (maxX - minX),
-                       (c.clientHeight - 24) / (maxY - minY));
+      var b = contentBounds(g);
+      if (!b) return;
+      var s = Math.min((c.clientWidth - 24) / b.w, MAX_SCALE);
       if (!(s > 0) || !isFinite(s)) return;
       g.view.setScale(s);
-      g.view.setTranslate(c.clientWidth / (2 * s) - (minX + maxX) / 2,
-                          c.clientHeight / (2 * s) - (minY + maxY) / 2);
+      g.view.setTranslate(12 / s - b.x, 12 / s - b.y);   // 左上角留一点边距
       g.view.validate();
+      // 容器是 overflow:hidden，画布必须和内容一样高，否则下半张图直接被裁掉。
+      // （控件里的图例钉在页面底部，所以这个高度基本恒定，收起一层会在图例前
+      //   留一段空白 —— 这是已知的观感小账，换来的是页面高度不跳。）
+      c.style.height = Math.round(b.h * s) + 28 + 'px';
     } catch (e) { /* 适配失败不影响交互 */ }
   }
 
@@ -100,8 +115,13 @@
       .catch(function () { /* 没有 /api/version（例如直接用静态服务）时静默降级 */ });
   }
 
+  // 只在**宽度**变化时重算：fit() 会写画布高度，若窗口任一变化都重算，
+  // 会自己触发自己，缩放反复跳。
+  var lastW = 0;
   window.addEventListener('resize', function () {
-    if (window.__fcf) fit(window.__fcf.viewer);
+    if (!window.__fcf) return;
+    var w = window.__fcf.graph.container.clientWidth;
+    if (w !== lastW) { lastW = w; fit(window.__fcf.viewer); }
   });
 
   load().then(function () { poll(); setInterval(poll, 2000); });
