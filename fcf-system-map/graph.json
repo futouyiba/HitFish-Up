@@ -165,23 +165,23 @@
     },
     {
       "id": "R2.C1.A1",
-      "label": "系数聚合",
+      "label": "环境权重系数聚合",
       "parent": "R2.C1",
       "lane": "r2c1G",
       "kind": "process",
-      "caption": "各条件算出的亲和系数汇总"
+      "caption": "把各路算出的亲和系数汇总"
     },
     {
       "id": "R2.C1.A2",
-      "label": "背景鱼系数下限",
+      "label": "环境系数下限",
       "parent": "R2.C1",
       "lane": "r2c1G",
       "kind": "process",
-      "caption": "仅背景鱼；低于 threshold 就抬到 threshold"
+      "caption": "仅背景鱼：先判是否背景鱼，低于 threshold 就抬到 threshold"
     },
     {
       "id": "R2.C1.A3",
-      "label": "环境权重",
+      "label": "环境权重聚合",
       "parent": "R2.C1",
       "lane": "r2c1G",
       "kind": "data",
@@ -390,7 +390,7 @@
     {
       "id": "R2.C1.K",
       "label": "核心因子计算",
-      "caption": "核心因子各自算法 → 亲和系数",
+      "caption": "通过门控的一路，各自算法 → 亲和系数",
       "parent": "R2.C1",
       "lane": "r2c1K",
       "kind": "core"
@@ -402,13 +402,6 @@
       "parent": "R2.C1",
       "lane": "r2c1S",
       "kind": "sec"
-    },
-    {
-      "id": "R2.C1.X",
-      "label": "不参与计算",
-      "parent": "R2.C1",
-      "lane": "r2c1X",
-      "kind": "skip"
     },
     {
       "id": "R2.C1.V",
@@ -687,6 +680,21 @@
       "to": "FISHAI",
       "type": "CONTROL_OR_SELECTION",
       "label": "鱼种 / 品质 / 大小 / 重量"
+    },
+    {
+      "from": "R2.C1.K",
+      "to": "R2.C1.A1",
+      "type": "DATA_FLOW"
+    },
+    {
+      "from": "R2.C1.S",
+      "to": "R2.C1.A1",
+      "type": "DATA_FLOW"
+    },
+    {
+      "from": "R2.C1.GFAIL",
+      "to": "R2.C1.A2",
+      "type": "DATA_FLOW"
     }
   ]
 }
