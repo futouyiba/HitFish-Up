@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>0.3.4.0-B 速览｜中鱼因子聚合逻辑化</title>
+<style>
+/* ---------- palette (validated: light #2a78d6/#eb6834/#1baf7a, dark #3987e5/#d95926/#199e70) ---------- */
+:root, .viz-root {
+  color-scheme: light;
+  --surface-1:#fcfcfb; --plane:#f9f9f7;
+  --text-primary:#0b0b0b; --text-secondary:#52514e; --muted:#898781;
+  --grid:#e1e0d9; --axis:#c3c2b7; --border:rgba(11,11,11,0.10);
+  --series-1:#2a78d6; --series-2:#eb6834; --series-3:#1baf7a;
+  --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
+  --good-ink:#006300;
+  --tier-1:#184f95; --tier-2:#2a78d6; --tier-3:#6da7ec; --tier-4:#86b6ef;
+  --wash:rgba(42,120,214,0.08);
+  --hatch:#a9a7a0;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) .viz-root, :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --surface-1:#1a1a19; --plane:#0d0d0d;
+    --text-primary:#ffffff; --text-secondary:#c3c2b7; --muted:#898781;
+    --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,0.10);
+    --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70;
+    --good-ink:#0ca30c;
+    --tier-1:#184f95; --tier-2:#2a78d6; --tier-3:#6da7ec; --tier-4:#b7d3f6;
+    --wash:rgba(57,135,229,0.14);
+    --hatch:#5c5b55;
+  }
+}
+:root[data-theme="dark"] .viz-root, :root[data-theme="dark"] {
+  color-scheme: dark;
+  --surface-1:#1a1a19; --plane:#0d0d0d;
+  --text-primary:#ffffff; --text-secondary:#c3c2b7; --muted:#898781;
+  --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,0.10);
+  --series-1:#3987e5; --series-2:#d95926; --series-3:#199e70;
+  --good-ink:#0ca30c;
+  --tier-1:#184f95; --tier-2:#2a78d6; --tier-3:#6da7ec; --tier-4:#b7d3f6;
+  --wash:rgba(57,135,229,0.14);
+  --hatch:#383835;
+}
+
+* { box-sizing:border-box; }
+html,body { margin:0; padding:0; }
+body {
+  background:var(--plane); color:var(--text-primary);
+  font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  font-size:15px; line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+.wrap { max-width:960px; margin:0 auto; padding:28px 22px 64px; }
+.card {
+  background:var(--surface-1); border:1px solid var(--border);
+  border-radius:12px; padding:20px 22px; margin:0 0 18px;
+}
+h1 { font-size:27px; line-height:1.3; margin:0 0 8px; letter-spacing:-0.01em; }
+h2 { font-size:19px; margin:0 0 4px; letter-spacing:-0.01em; }
+h3 { font-size:15px; margin:18px 0 6px; }
+p  { margin:8px 0; color:var(--text-secondary); }
+strong { color:var(--text-primary); }
+.lede { font-size:16px; color:var(--text-secondary); }
+.muted { color:var(--muted); font-size:13px; }
+code, .mono { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:13px; }
+code { background:var(--wash); padding:1px 5px; border-radius:4px; color:var(--text-primary); }
+a { color:var(--series-1); text-decoration:none; border-bottom:1px solid transparent; }
+a:hover { border-bottom-color:currentColor; }
+.badge {
+  display:inline-block; font-size:12px; padding:2px 9px; border-radius:999px;
+  border:1px solid var(--border); color:var(--text-secondary); background:var(--wash);
+}
+.head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.toggle {
+  border:1px solid var(--border); background:var(--surface-1); color:var(--text-secondary);
+  border-radius:8px; padding:6px 11px; font-size:13px; cursor:pointer; font-family:inherit;
+}
+.toggle:hover { color:var(--text-primary); }
+
+/* section label */
+.eyebrow { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:0 0 6px; }
+
+/* ---------- three-layer diagram ---------- */
+.layer { border:1px solid var(--border); border-radius:10px; padding:14px 16px; background:var(--surface-1); }
+.layer + .arrowdown { text-align:center; color:var(--muted); font-size:13px; padding:7px 0; }
+.layer h4 { margin:0 0 8px; font-size:14px; }
+.layer .tag { font-size:11px; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); }
+.tree { margin:0; padding-left:0; list-style:none; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12.5px; color:var(--text-secondary); line-height:1.9; }
+.tree li { white-space:pre-wrap; }
+.tree .k { color:var(--text-primary); }
+.pill { display:inline-block; font-size:11px; padding:1px 7px; border-radius:999px; background:var(--wash); color:var(--text-secondary); margin-left:6px; }
+
+/* ---------- pipeline ---------- */
+.flow { display:flex; flex-wrap:wrap; gap:8px; align-items:stretch; margin:10px 0 4px; }
+.step {
+  flex:1 1 168px; min-width:152px; border:1px solid var(--border); border-radius:10px;
+  padding:10px 12px; background:var(--surface-1); position:relative;
+}
+.step .n { font-size:11px; color:var(--muted); font-variant-numeric:tabular-nums; }
+.step .t { font-size:13.5px; color:var(--text-primary); margin-top:2px; }
+.step .d { font-size:12px; color:var(--muted); margin-top:3px; line-height:1.5; }
+.formula {
+  background:var(--wash); border:1px solid var(--border); border-radius:10px;
+  padding:12px 14px; margin:12px 0 0; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:12.5px; line-height:1.9; color:var(--text-primary); overflow-x:auto; white-space:pre;
+}
+
+/* ---------- grid of cards ---------- */
+.grid3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(232px,1fr)); gap:12px; margin-top:10px; }
+.grid2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; margin-top:10px; }
+.mini { border:1px solid var(--border); border-radius:10px; padding:13px 15px; background:var(--surface-1); }
+.mini h4 { margin:0 0 6px; font-size:14.5px; }
+.mini p { margin:5px 0; font-size:13px; }
+.state { border-left:3px solid var(--axis); }
+.state.ok  { border-left-color:var(--good); }
+.state.bad { border-left-color:var(--critical); }
+.state .lbl { font-size:13.5px; color:var(--text-primary); }
+.state .out { font-family:ui-monospace,Menlo,monospace; font-size:13px; color:var(--text-primary); margin-top:4px; }
+
+/* ---------- tier ladder ---------- */
+.ladder { margin-top:10px; }
+.tier { display:grid; grid-template-columns:132px 1fr 92px; gap:10px; align-items:center; margin:7px 0; }
+.tier .name { font-size:13.5px; color:var(--text-primary); }
+.tier .bar { height:16px; border-radius:0 4px 4px 0; min-width:3px; }
+.tier .val { font-family:ui-monospace,Menlo,monospace; font-size:13px; color:var(--text-secondary); text-align:right; font-variant-numeric:tabular-nums; }
+.t1 { background:var(--tier-1); } .t2 { background:var(--tier-2); }
+.t3 { background:var(--tier-3); } .t4 { background:var(--tier-4); }
+
+/* ---------- charts ---------- */
+.chart { position:relative; margin-top:12px; }
+.chart svg { display:block; width:100%; height:auto; overflow:visible; }
+.axis-lbl { font-size:11px; fill:var(--muted); font-family:system-ui,sans-serif; font-variant-numeric:tabular-nums; }
+.annot { font-size:11.5px; fill:var(--text-secondary); font-family:system-ui,sans-serif; }
+.crosshair { stroke:var(--axis); stroke-width:1; opacity:0; }
+.tipbox {
+  position:absolute; pointer-events:none; opacity:0; transition:opacity .08s;
+  background:var(--surface-1); border:1px solid var(--border); border-radius:8px;
+  padding:7px 10px; font-size:12.5px; color:var(--text-primary);
+  box-shadow:0 4px 14px rgba(0,0,0,.14); white-space:nowrap; z-index:3;
+  font-variant-numeric:tabular-nums;
+}
+.tipbox.on { opacity:1; }
+.legendline { display:flex; gap:16px; flex-wrap:wrap; font-size:12.5px; color:var(--text-secondary); margin-top:8px; }
+.legendline i { display:inline-block; width:14px; height:3px; border-radius:2px; vertical-align:middle; margin-right:6px; }
+.legendline .dash { background:transparent; border-top:2px dashed var(--axis); height:0; }
+
+/* bars */
+.bars { display:grid; grid-template-columns:104px 1fr 84px; gap:10px 12px; align-items:end; margin-top:16px; }
+.bars .bl { font-size:13px; color:var(--text-primary); text-align:right; padding-bottom:2px; }
+.bars .bt { font-family:ui-monospace,Menlo,monospace; font-size:13px; color:var(--text-secondary); text-align:right; padding-bottom:2px; font-variant-numeric:tabular-nums; }
+.bar { position:relative; background:var(--series-1); border-radius:0 4px 4px 0; height:20px; }
+.bar:hover { outline:2px solid var(--surface-1); outline-offset:0; }
+.bar .btip {
+  position:absolute; left:calc(100% + 8px); top:50%; transform:translateY(-50%);
+  background:var(--surface-1); border:1px solid var(--border); border-radius:8px;
+  padding:5px 9px; font-size:12px; white-space:nowrap; opacity:0; transition:opacity .08s;
+  box-shadow:0 4px 14px rgba(0,0,0,.14); z-index:3;
+}
+.bar:hover .btip { opacity:1; }
+.baseline { grid-column:2 / 3; height:1px; background:var(--axis); }
+
+table { border-collapse:collapse; width:100%; margin-top:12px; font-size:13px; }
+th,td { text-align:left; padding:7px 9px; border-bottom:1px solid var(--grid); }
+th { color:var(--muted); font-weight:500; font-size:12px; }
+td.num, th.num { text-align:right; font-family:ui-monospace,Menlo,monospace; font-variant-numeric:tabular-nums; }
+
+ul.tight { margin:8px 0 0; padding-left:20px; }
+ul.tight li { margin:5px 0; font-size:13.5px; color:var(--text-secondary); }
+.chips { display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; }
+.chip { font-size:12.5px; padding:4px 10px; border-radius:999px; border:1px solid var(--border); color:var(--text-secondary); background:var(--surface-1); }
+.chip.no { border-color:var(--border); color:var(--muted); text-decoration:line-through; text-decoration-color:var(--muted); }
+.foot { font-size:12.5px; color:var(--muted); }
+.foot a { color:var(--series-1); }
+@media (forced-colors: active) {
+  .bar, .tier .bar { forced-color-adjust:none; background:Highlight; }
+  .card, .mini, .layer, .step { border:1px solid CanvasText; }
+}
+</style>
+</head>
+<body>
+<div class="viz-root">
+<div class="wrap">
+
+  <div class="card">
+    <div class="head">
+      <div>
+        <p class="eyebrow">0.3.4.0-B｜速览</p>
+        <h1>中鱼因子聚合逻辑化</h1>
+        <p class="lede">实现方式：<strong>固定模板烘焙</strong>（Fixed Template Bake） —— 算法是<span style="color:var(--text-primary);font-weight:600">写死的一套</span>，策划只调<span style="color:var(--text-primary);font-weight:600">开关</span>：哪些条件参与、各算什么角色。</p>
+      </div>
+      <div style="text-align:right">
+        <span class="badge">WORKING ALTERNATIVE · NOT PROMOTED</span><br>
+        <button class="toggle" id="themeBtn" type="button" style="margin-top:8px">切换深浅色</button>
+      </div>
+    </div>
+    <div class="formula">不写 if / else · 不改执行顺序 · 不换算子 · 不选程序
+一条鱼 = 4 个固定条件槽位：TEMPERATURE · STRUCTURE · FEEDING_LAYER · TIME_PERIOD</div>
+  </div>
+
+  <!-- 1. three layers -->
+  <div class="card">
+    <p class="eyebrow">全局</p>
+    <h2>三层：编辑器 → 配置表 → 运行时</h2>
+    <p>编辑器可以长得像未来版本；<strong>配置表与运行时不需要假装未来版本已经存在</strong>。</p>
+
+    <div style="margin-top:14px">
+      <div class="layer">
+        <h4>① Editor / Authoring<span class="pill">作者只在这一层工作</span></h4>
+        <ul class="tree">
+          <li>Engagement Mode（兼容壳）</li>
+          <li>  ↕ 1:1</li>
+          <li>Fish Env Affinity（中鱼习性）</li>
+          <li>  ← 1..N FishQuality</li>
+        </ul>
+      </div>
+      <div class="arrowdown">↓ compile / export（解析后落表）</div>
+      <div class="layer">
+        <h4>② Existing Persistence<span class="pill">表结构本版不动</span></h4>
+        <ul class="tree">
+          <li><span class="k">FishPond</span>（纽带，含场次关键信息）</li>
+          <li>└─ <span class="k">StockRelease[]</span>（权重池）</li>
+          <li>   ├─ FishQuality</li>
+          <li>   ├─ FishEnvAffinity <span style="color:var(--muted)">（品质 ↔ 习性 的关联）</span></li>
+          <li>   └─ <span class="k">FishRelease</span></li>
+          <li>      ├─ Base Opportunity Weight</li>
+          <li>      ├─ 各类 legacy 最小阈值 / 兜底参数</li>
+          <li>      └─ min/max length · min/max weight</li>
+        </ul>
+      </div>
+      <div class="arrowdown">↓ resolve（运行时求值）</div>
+      <div class="layer">
+        <h4>③ Runtime<span class="pill">固定模板程序</span></h4>
+        <ul class="tree">
+          <li>ResolvedSpatialOpportunitySubject</li>
+          <li>+ runtime opportunity / release projection</li>
+          <li>+ ConditionGroup</li>
+          <li>→ <span class="k">SpatialDistributionWeight</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. pipeline -->
+  <div class="card">
+    <p class="eyebrow">一次烘焙</p>
+    <h2>七步走完，顺序不可改</h2>
+    <div class="flow">
+      <div class="step"><div class="n">01</div><div class="t">读角色</div><div class="d">每个条件读它的 AggregationRole</div></div>
+      <div class="step"><div class="n">02</div><div class="t">门控</div><div class="d">CORE 自动带门控，判据固定</div></div>
+      <div class="step"><div class="n">03</div><div class="t">求适配值</div><div class="d">查表 / 曲线 → 0~1 的 fit</div></div>
+      <div class="step"><div class="n">04</div><div class="t">Core 乘积</div><div class="d">各 CORE 的 fit 相乘</div></div>
+      <div class="step"><div class="n">05</div><div class="t">Secondary 折减</div><div class="d">差额缩到四分之一，最多扣 25%</div></div>
+      <div class="step"><div class="n">06</div><div class="t">合成环境系数</div><div class="d">RawEnvCoeff = exp(−损失)</div></div>
+      <div class="step"><div class="n">07</div><div class="t">门控失败 / 保底</div><div class="d">失败分两条路；通过才吃保底</div></div>
+    </div>
+    <div class="formula">CoreProduct      = Π_CORE fit                      # 核心相乘
+SecondaryProduct = Π_SECONDARY fit                 # 次要原始乘积
+SecondaryFactor  = 1 − (1 − SecondaryProduct) / 4  # 差额缩到四分之一
+RawEnvCoeff      = CoreProduct × SecondaryFactor   # 环境权重系数
+FinalEnvCoeff    = 门控失败 ? (背景鱼 ? envCoeffMin : 0) : max(RawEnvCoeff, envCoeffMin)
+SpatialDistributionWeight = BaseOpportunityIntensity × FinalEnvCoeff   # Base 只乘一次</div>
+    <p class="muted" style="margin-top:10px">越差的环境 → fit 越小 → 核心乘积越小、次要折减越大 → 环境系数越小。次要整体<strong>最多扣 25%</strong>，不比最弱的核心更狠；这一条链是整机制“因果可解释”的根。</p>
+  </div>
+
+  <!-- 3. roles -->
+  <div class="card">
+    <p class="eyebrow">开关一</p>
+    <h2>角色三态：CORE / SECONDARY / IGNORED</h2>
+    <p>每个条件槽位选一个，互斥。这是策划购买“差异化”的唯一杠杆。</p>
+    <div class="grid3">
+      <div class="mini">
+        <h4><span style="color:var(--series-1)">●</span> CORE｜核心</h4>
+        <p>进 Core 损失池，<strong>自动拥有门控</strong>（没有单独的门控开关）。</p>
+        <p class="muted">例：水温、结构 —— 值得形成完整环境选择差异。</p>
+      </div>
+      <div class="mini">
+        <h4><span style="color:var(--series-2)">●</span> SECONDARY｜次要</h4>
+        <p>全部次要条件合起来<strong>最多扣 25%</strong>，<strong>无门控</strong>。挡不住鱼，只让机会变差。</p>
+        <p class="muted">例：觅食水层 —— 真实但较弱的静态差异。</p>
+      </div>
+      <div class="mini">
+        <h4><span style="color:var(--muted)">○</span> IGNORED｜忽略因子</h4>
+        <p>本执行面<strong>自动不消费</strong>该条件。不是错误，不阻断。</p>
+        <p class="muted">例：时段 —— 本版没有足够静态校准，就先不配。</p>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:10px">旧写法 <code>OFF</code> / <code>EXCLUDED</code> 只作为迁移别名读入，不是现行状态。</p>
+  </div>
+
+  <!-- 4. gate -->
+  <div class="card">
+    <p class="eyebrow">开关二</p>
+    <h2>门控：随 CORE 自动存在，没有 Gate 控件</h2>
+    <p>作者只需要把条件配成 <code>CORE</code>，门控就自动生效；<strong>没有 GatePolicy 字段，编辑器里也没有门控开关</strong>。判据是写死的两条：</p>
+    <div class="grid2">
+      <div class="mini">
+        <h4>离散查表条件</h4>
+        <p>系数<strong>恰好等于 0</strong> 即门控失败。</p>
+        <p class="muted">想真正排除某结构 → 在编辑器里把它调到 <code>0.00</code>。留一点点非零 = 极低概率，不是排除。</p>
+      </div>
+      <div class="mini">
+        <h4>水温（连续曲线）</h4>
+        <p>适配值<strong>低于 <code>temp_threshold</code></strong> 即门控失败（超出可接受区间的点 fit 本来就是 0）。</p>
+        <p class="muted">阈值线画在温度曲线控件上，作者看得见自己划在哪。</p>
+      </div>
+    </div>
+
+    <h3>门控失败之后，只有两条路</h3>
+    <div class="grid2">
+      <div class="mini state bad">
+        <div class="lbl"><span style="color:var(--critical)">✕</span> 背景鱼（保底鱼）</div>
+        <div class="out">FinalEnvCoeff = envCoeffMin</div>
+        <p class="muted">保底鱼在任何环境都得有点机会，所以直接给它的下限。</p>
+      </div>
+      <div class="mini state bad">
+        <div class="lbl"><span style="color:var(--critical)">✕</span> 非背景鱼</div>
+        <div class="out">FinalEnvCoeff = 0</div>
+        <p class="muted">不存在。玩家唯一的策略是换位置，而不是硬钓。</p>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:10px"><span style="color:var(--good)">✓</span> 门控全通过时，背景鱼才吃 <code>envCoeffMin</code> 这个下限（比较大小取大者）。<code>envCoeffMin</code> 只对背景鱼存在，范围 <code>(0, 0.30]</code>。</p>
+  </div>
+
+  <!-- 5. temperature curve -->
+  <div class="card">
+    <p class="eyebrow">看得见的一条曲线</p>
+    <h2>水温：6 个参数决定一条曲线</h2>
+    <p>可接受区间 <code>temp_accept_min~temp_accept_max</code> · 偏好区间 <code>temp_fav_min~temp_fav_max</code> · 阈值 <code>temp_threshold</code> · 衰减形状 <code>falloff_shape</code>（LINEAR / SMOOTHSTEP）。<strong>连续曲线不套四档</strong>——档位是离散查表条件的事。</p>
+    <p class="muted">下图用大口黑鲈（Bass Q3）的算例参数：可接受 <code>[2, 35]</code>、偏好 <code>[24, 29]</code>、LINEAR、阈值 <code>0.05</code>。把鼠标移到曲线上可读值。</p>
+
+    <div class="chart" id="curveChart">
+      <svg viewBox="0 0 720 300" role="img" aria-label="水温适配值曲线：可接受区间 2 到 35 度，偏好区间 24 到 29 度，阈值 0.05">
+        <defs>
+          <pattern id="hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0" x2="0" y2="7" stroke="var(--hatch)" stroke-width="1.4"></line>
+          </pattern>
+        </defs>
+        <!-- gate-fail zones (texture, never colour alone) -->
+        <rect x="52" y="24" width="49.9" height="228" fill="url(#hatch)"></rect>
+        <rect x="610.7" y="24" width="85.3" height="228" fill="url(#hatch)"></rect>
+        <!-- gridlines -->
+        <g stroke="var(--grid)" stroke-width="1">
+          <line x1="52" y1="24"  x2="696" y2="24"></line>
+          <line x1="52" y1="81"  x2="696" y2="81"></line>
+          <line x1="52" y1="138" x2="696" y2="138"></line>
+          <line x1="52" y1="195" x2="696" y2="195"></line>
+        </g>
+        <!-- preferred band -->
+        <rect x="438.4" y="24" width="80.5" height="228" fill="var(--wash)"></rect>
+        <text class="annot" x="478.6" y="40" text-anchor="middle">偏好区</text>
+        <!-- threshold -->
+        <line x1="52" y1="240.6" x2="696" y2="240.6" stroke="var(--axis)" stroke-width="1.5" stroke-dasharray="5 4"></line>
+        <text class="annot" x="60" y="236">temp_threshold = 0.05</text>
+        <!-- baseline -->
+        <line x1="52" y1="252" x2="696" y2="252" stroke="var(--axis)" stroke-width="1"></line>
+        <!-- curve -->
+        <polyline id="curve" fill="none" stroke="var(--series-1)" stroke-width="2" stroke-linejoin="round"
+          points="52,252 84.2,252 438.4,24 518.9,24 615.5,252 696,252"></polyline>
+        <!-- gate fail labels -->
+        <text class="annot" x="76"  y="268" text-anchor="middle">门控失败</text>
+        <text class="annot" x="654" y="268" text-anchor="middle">门控失败</text>
+        <!-- y ticks -->
+        <text class="axis-lbl" x="44" y="256" text-anchor="end">0</text>
+        <text class="axis-lbl" x="44" y="199" text-anchor="end">0.25</text>
+        <text class="axis-lbl" x="44" y="142" text-anchor="end">0.50</text>
+        <text class="axis-lbl" x="44" y="85"  text-anchor="end">0.75</text>
+        <text class="axis-lbl" x="44" y="28"  text-anchor="end">1.00</text>
+        <!-- x ticks -->
+        <g class="axis-lbl" text-anchor="middle">
+          <text x="52"  y="292">0</text>
+          <text x="132" y="292">5</text>
+          <text x="213" y="292">10</text>
+          <text x="294" y="292">15</text>
+          <text x="374" y="292">20</text>
+          <text x="455" y="292">25</text>
+          <text x="535" y="292">30</text>
+          <text x="616" y="292">35</text>
+          <text x="696" y="292">40</text>
+        </g>
+        <text class="axis-lbl" x="696" y="292" text-anchor="end" dx="0" dy="16">水温 ℃</text>
+        <line class="crosshair" id="cross" x1="0" y1="24" x2="0" y2="252"></line>
+        <circle id="dot" r="4.5" fill="var(--series-1)" stroke="var(--surface-1)" stroke-width="2" opacity="0"></circle>
+      </svg>
+      <div class="tipbox" id="curveTip"></div>
+    </div>
+    <div class="legendline">
+      <span><i style="background:var(--series-1)"></i>温度适配值 TemperatureFit</span>
+      <span><i class="dash"></i>门控阈值线</span>
+      <span>▨ 斜纹区 = 门控失败区</span>
+    </div>
+  </div>
+
+  <!-- 6. tiers -->
+  <div class="card">
+    <p class="eyebrow">填表用的档位</p>
+    <h2>四档亲和：填表时选档，存表时只存数字</h2>
+    <p>档位和档内微调<strong>只是编辑器的输入方式</strong>；保存 / 解析前会确定性地算成最终数字，配置表里只存那个数字，运行时不认识“档位名”。</p>
+
+    <div class="ladder">
+      <div class="tier"><div class="name">最优 PREFERRED</div><div><div class="bar t1" style="width:100%"></div></div><div class="val">1.00</div></div>
+      <div class="tier"><div class="name">次优 SUBOPTIMAL</div><div><div class="bar t2" style="width:60%"></div></div><div class="val">0.60</div></div>
+      <div class="tier"><div class="name">较差 ACCEPTABLE</div><div><div class="bar t3" style="width:25%"></div></div><div class="val">0.25</div></div>
+      <div class="tier"><div class="name">不适 REJECT</div><div><div class="bar t4" style="width:5%"></div></div><div class="val">0.05</div></div>
+    </div>
+
+    <ul class="tight">
+      <li><strong>最优恒为 1.00，不可调</strong>；其余三档各自有允许区间（0.50–0.75 / 0.20–0.30 / 0.00–0.10）。</li>
+      <li><strong>恰好 0 = 门控失败线</strong>。这是离散条件实现“真正排除”的唯一方式，不是“很小的档位”。</li>
+      <li>较差档锚在 0.25：与最优相差约 <strong>4 倍</strong>——足以让玩家感知到位置差异，又不至于一步踩空。</li>
+      <li>也允许直接填 Custom 精确值，只要是合法的 <code>[0, 1]</code>；但填了精确值就不再声称它属于哪一档。</li>
+    </ul>
+  </div>
+
+  <!-- 7. worked example -->
+  <div class="card">
+    <p class="eyebrow">算一遍</p>
+    <h2>算例：大口黑鲈 Q3，三个位置谁更好</h2>
+    <p>同一套鱼配置，只换三个位置（条件组）。结果可直接用于验收——<strong>排序稳定，数值可复算</strong>。</p>
+
+    <div class="chart">
+      <div class="bars" role="img" aria-label="三个条件组的空间分布权重：条件组一 1.0000，条件组二 0.3191，条件组三 0.1125">
+        <div class="bl">① 水草边 / 中层 / 26℃</div>
+        <div><div class="bar" style="width:100%"><span class="btip">温度 1.00 · 结构 1.00 · 水层 1.00 → 1.0000</span></div></div>
+        <div class="bt">1.0000</div>
+
+        <div class="bl">② 落差带 / 底层 / 15℃</div>
+        <div><div class="bar" style="width:31.9%"><span class="btip">核心 0.5909 × 0.60 = 0.3545；次要折减 0.90 → 0.3191</span></div></div>
+        <div class="bt">0.3191</div>
+
+        <div class="bl">③ 开阔区 / 表层 / 32℃</div>
+        <div><div class="bar" style="width:11.3%"><span class="btip">核心 0.50 × 0.25 = 0.1250；次要折减 0.90 → 0.1125</span></div></div>
+        <div class="bt">0.1125</div>
+
+        <div class="baseline"></div>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:12px">柱长 = 空间分布权重 SpatialDistributionWeight（本例 Base = 1.0，所以等于环境系数）。三条的差异全部来自适配值，没有额外魔法。</p>
+
+    <table>
+      <thead>
+        <tr><th>条件组</th><th class="num">温度 fit</th><th class="num">结构 fit</th><th class="num">水层 fit</th><th class="num">Core 乘积</th><th class="num">环境系数</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>① 水草边 · 中层 · 26℃</td><td class="num">1.0000</td><td class="num">1.00</td><td class="num">1.00</td><td class="num">1.0000</td><td class="num">1.0000</td></tr>
+        <tr><td>② 落差带 · 底层 · 15℃</td><td class="num">0.5909</td><td class="num">0.60</td><td class="num">0.60</td><td class="num">0.3545</td><td class="num">0.3191</td></tr>
+        <tr><td>③ 开阔区 · 表层 · 32℃</td><td class="num">0.5000</td><td class="num">0.25</td><td class="num">0.60</td><td class="num">0.1250</td><td class="num">0.1125</td></tr>
+      </tbody>
+    </table>
+    <p class="muted" style="margin-top:8px">三条都不触发门控（fit 都远高于阈值 0.05），所以走的是正常路径；门控失败的那两条路见上一节。</p>
+  </div>
+
+  <!-- 8. editor -->
+  <div class="card">
+    <p class="eyebrow">编辑器</p>
+    <h2>编辑器长什么样：给未来留位置，但不提前实现</h2>
+    <p>本版本<strong>不引入 Engagement Mode 的实际逻辑</strong>，也不做分群逻辑与分群 DSL。但界面上保留未来版本的框架，用“看得见但点不动”的方式表达方向。</p>
+    <div class="grid2">
+      <div class="mini">
+        <h4>看得见（保留框架）</h4>
+        <ul class="tight">
+          <li>一条鱼下面可以有多个 Engagement Mode</li>
+          <li>每个 Engagement Mode 可以占据一到多个品质</li>
+          <li>本版实际只表达<strong>多对一</strong>：几个品质 → 一个 Engagement Group</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h4>点不动（本版关闭）</h4>
+        <ul class="tight">
+          <li><strong>占比 / 比例编辑框：灰化</strong>，不可编辑</li>
+          <li><strong>分群逻辑编辑框：关闭</strong></li>
+          <li>没有按时间 / 天气 / 环境切换分群的逻辑</li>
+        </ul>
+      </div>
+    </div>
+    <h3>编辑器改完，数据落到哪</h3>
+    <ul class="tight">
+      <li><strong>StockRelease</strong>：承接 <code>FishQuality ↔ FishEnvAffinity</code> 的关联关系（哪个品质属于哪套习性）。</li>
+      <li><strong>Fish Env Affinity（中鱼习性）表</strong>：大量习性数据按<strong>分组</strong>落进来，不是每个品质各存一份。</li>
+      <li><strong>FishRelease</strong>：基础权重、最小环境阈值、最小响应强度、min/max 长度与重量等字段，本版<strong>不由编辑器编辑</strong>，沿用既有生产数据。</li>
+    </ul>
+    <p class="muted" style="margin-top:8px">后续版本才会改表结构：让不同时间 / 天气 / 环境下的 DSL 逻辑产出不同的分群比例——那时才开放比例与分群编辑框。</p>
+  </div>
+
+  <!-- 9. not delivered -->
+  <div class="card">
+    <p class="eyebrow">边界</p>
+    <h2>本版不做这些</h2>
+    <div class="chips">
+      <span class="chip no">作者可编辑 Bake DSL</span>
+      <span class="chip no">per-Mode BakeProgramRef</span>
+      <span class="chip no">if / else / return</span>
+      <span class="chip no">自定义算子</span>
+      <span class="chip no">AST / Structure Lens</span>
+      <span class="chip no">Engagement Mode 分群 / Routing</span>
+      <span class="chip no">Mode Share</span>
+      <span class="chip no">Response / 品质选择</span>
+      <span class="chip no">动态 Fish Condition（Activity 等）</span>
+      <span class="chip no">时段单独输出 Activity</span>
+      <span class="chip no">门控开关 / GatePolicy</span>
+    </div>
+    <p class="muted" style="margin-top:12px">完整不交付清单以开发需求 §6 为唯一 canonical。</p>
+  </div>
+
+  <!-- footer -->
+  <div class="card">
+    <p class="eyebrow">以契约页为准</p>
+    <p class="foot">
+      本页是<strong>速览</strong>，与契约页冲突时以契约页为准。数值来自 work tree 的 Bass Q3 垂直切片 golden fixture。<br>
+      契约页：[开发需求 R0](https://app.notion.com/p/3dda4137d23681c68ec3fb1944573af4) ·
+      [Authoring & Resolve R0](https://app.notion.com/p/3dda4137d23681408e4fe0f35ced39d9) ·
+      [Schema & Validator R0](https://app.notion.com/p/3dca4137d23681e28c5bc2f29c63dc16) ·
+      [Runtime / AFLA Owner](https://app.notion.com/p/3dca4137d236815c88a0e56e15ceaf85) ·
+      [Bass 垂直切片](https://app.notion.com/p/3dda4137d236818c9b61e6bc7fc348a7) ·
+      [族根](https://app.notion.com/p/3dda4137d236812e89b5cf846c528b6c) ·
+      [Main Control Checkpoint](https://app.notion.com/p/3dda4137d2368109aa54ec4f7acbab26)<br>
+      口径基准：2026-09-17 Owner 裁决（三态角色 · 门控随 CORE 自动存在 · 较差档 0.25 · 合成输出名 SpatialDistributionWeight）。<br>
+      文档状态：WORKING ALTERNATIVE / NOT PROMOTED。
+    </p>
+  </div>
+
+</div>
+</div>
+
+<script>
+(function () {
+  // ---- theme toggle: wins over OS setting both ways ----
+  var root = document.documentElement, btn = document.getElementById('themeBtn');
+  function currentDark() {
+    var t = root.getAttribute('data-theme');
+    if (t === 'dark') return true;
+    if (t === 'light') return false;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  btn.addEventListener('click', function () {
+    root.setAttribute('data-theme', currentDark() ? 'light' : 'dark');
+  });
+
+  // ---- temperature fit (Bass Q3: accept 2..35, preferred 24..29, LINEAR) ----
+  var ACC_MIN = 2, ACC_MAX = 35, PREF_MIN = 24, PREF_MAX = 29, THRESHOLD = 0.05;
+  function fit(t) {
+    if (t < ACC_MIN || t > ACC_MAX) return 0;
+    if (t < PREF_MIN) return (t - ACC_MIN) / (PREF_MIN - ACC_MIN);
+    if (t <= PREF_MAX) return 1;
+    return (ACC_MAX - t) / (ACC_MAX - PREF_MAX);
+  }
+
+  // SVG user-space -> element px mapping for the curve chart
+  var svg = document.querySelector('#curveChart svg');
+  var X0 = 52, X1 = 696, T0 = 0, T1 = 40, Y0 = 252, Y1 = 24; // Y0 = fit 0, Y1 = fit 1
+  var cross = document.getElementById('cross'), dot = document.getElementById('dot');
+  var tip = document.getElementById('curveTip'), host = document.getElementById('curveChart');
+
+  function px(temp) { return X0 + (temp - T0) / (T1 - T0) * (X1 - X0); }
+  function py(f)    { return Y0 - f * (Y0 - Y1); }
+
+  function move(ev) {
+    var r = svg.getBoundingClientRect();
+    var clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
+    var xUser = (clientX - r.left) / r.width * 720;
+    var temp = (xUser - X0) / (X1 - X0) * (T1 - T0) + T0;
+    temp = Math.max(T0, Math.min(T1, temp));
+    var f = fit(temp), gated = f < THRESHOLD;
+    cross.setAttribute('x1', px(temp)); cross.setAttribute('x2', px(temp));
+    cross.style.opacity = 1;
+    dot.setAttribute('cx', px(temp)); dot.setAttribute('cy', py(f)); dot.style.opacity = 1;
+    tip.innerHTML = '水温 ' + temp.toFixed(1) + ' ℃<br>fit ' + f.toFixed(3) +
+      '<br><span style="color:var(' + (gated ? '--critical' : '--good') + ')">' +
+      (gated ? '✕ 门控失败' : '✓ 门控通过') + '</span>';
+    tip.classList.add('on');
+    var left = (px(temp) / 720) * host.clientWidth + 12;
+    var top  = (py(f) / 300) * (host.clientWidth * 300 / 720) - 18;
+    if (left > host.clientWidth - 132) left = left - 150;
+    tip.style.left = Math.max(0, left) + 'px';
+    tip.style.top = Math.max(0, top) + 'px';
+  }
+  function leave() {
+    cross.style.opacity = 0; dot.style.opacity = 0; tip.classList.remove('on');
+  }
+  svg.addEventListener('mousemove', move);
+  svg.addEventListener('mouseleave', leave);
+  svg.addEventListener('touchmove', function (e) { move(e); e.preventDefault(); }, { passive: false });
+  svg.addEventListener('touchend', leave);
+})();
+</script>
+</body>
+</html>
