@@ -73,7 +73,7 @@
         <mxCell id="SDW" value="空间分布权重&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;spatial distribution weight｜原「环境权重」&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="Layer:Main">
             <mxGeometry x="840" y="360" width="230" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="FISHCOND" value="鱼侧动态参数&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;活性 · 进食动机 · 食性偏好&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="Layer:Main">
+        <mxCell id="FISHCOND" value="鱼侧动态参数&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;活性 · 进食动机 · 警戒度（后续版本）· 食性偏好&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fontSize=12;fontColor=#000000;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="Layer:Main">
             <mxGeometry x="1090" y="360" width="230" height="50" as="geometry" />
         </mxCell>
         <UserObject label="三、玩家策略与操作数据&lt;br&gt;&lt;font style='font-size:9px;color:#555555'&gt;钓具 / 钓组 · 姿态&lt;/font&gt;&lt;br&gt;&lt;font style='font-size:9px;color:#888888'&gt;click to expand / collapse&lt;/font&gt;" link="data:action/json,{&quot;actions&quot;:[{&quot;toggle&quot;:{&quot;cells&quot;:[&quot;PLAYER&quot;,&quot;PRESENT&quot;,&quot;E:PLAYER-&gt;PRESENT&quot;,&quot;E:PRESENT-&gt;RESPONSE&quot;,&quot;EX:R3-&gt;PLAYER&quot;,&quot;EX:R3-&gt;PRESENT&quot;]}}]}" id="R3">

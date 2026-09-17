@@ -15,53 +15,255 @@
     "edgeTypes": "DATA_FLOW 实线｜CONTROL_OR_SELECTION 虚线｜REFERENCE_OR_CONFIG 点线"
   },
   "nodes": [
-    {"id": "SYS", "label": "中鱼机制总图", "caption": "FCF Canonical System Map · 七大层", "parent": null, "lane": "main"},
-
-    {"id": "R1", "label": "一、数据", "caption": "环境上下文 / 钓场投鱼配置 / 鱼的习性配置", "parent": "SYS", "lane": "main", "collapsible": true},
-    {"id": "D.CONTEXT", "label": "环境上下文", "caption": "季节 · 水温 · 时段 · 天气史 · 地形 · 结构", "parent": "R1", "lane": "r1"},
-    {"id": "D.STOCK", "label": "钓场投鱼配置", "caption": "鱼种 × 品质 投放项 · 基础机会强度 · 背景鱼标记", "parent": "R1", "lane": "r1"},
-    {"id": "D.HABIT", "label": "鱼的习性配置", "caption": "温度 / 水层 / 结构亲和 · 时段 · 中鱼习性模式", "parent": "R1", "lane": "r1"},
-
-    {"id": "R2", "label": "二、烘焙", "caption": "习性配置 × 环境上下文 → 派生环境场", "parent": "SYS", "lane": "main", "collapsible": true},
-    {"id": "BAKE", "label": "烘焙", "caption": "固定烘焙模板", "parent": "R2", "lane": "r2"},
-    {"id": "DEF", "label": "派生环境场", "caption": "Derived Environment Field", "parent": "R2", "lane": "r2"},
-    {"id": "SDW", "label": "空间分布权重", "caption": "spatial distribution weight｜原「环境权重」", "parent": "R2", "lane": "r2"},
-    {"id": "FISHCOND", "label": "鱼侧动态参数", "caption": "活性 · 进食动机 · 食性偏好", "parent": "R2", "lane": "r2"},
-
-    {"id": "R3", "label": "三、玩家策略与操作数据", "caption": "钓具 / 钓组 · 姿态", "parent": "SYS", "lane": "main", "collapsible": true},
-    {"id": "PLAYER", "label": "玩家策略与操作数据", "caption": "钓具 / 钓组 · 姿态", "parent": "R3", "lane": "r3"},
-    {"id": "PRESENT", "label": "呈现刺激", "caption": "速度 · 动作 · 声音 · 震动 · 光 · 轮廓 · 气味", "parent": "R3", "lane": "r3"},
-
-    {"id": "R4", "label": "四、响应", "caption": "适配系数", "parent": "SYS", "lane": "main", "collapsible": true},
-    {"id": "RESPONSE", "label": "响应模块", "caption": "适配系数｜较复杂逻辑，本图不展开", "parent": "R4", "lane": "r4"},
-
-    {"id": "R5", "label": "五、圆桌抽鱼", "caption": "", "parent": "SYS", "lane": "main", "collapsible": true},
-    {"id": "T1", "label": "品质抽取调整", "caption": "中鱼习性模式", "parent": "R5", "lane": "r5"},
-    {"id": "T2", "label": "圆桌权重表构建", "caption": "组件", "parent": "R5", "lane": "r5"},
-    {"id": "T3", "label": "硬保底", "caption": "", "parent": "R5", "lane": "r5"},
-    {"id": "T4", "label": "动态权重调整", "caption": "", "parent": "R5", "lane": "r5"},
-
-    {"id": "R6", "label": "六、抽鱼和生成", "caption": "五的短延伸", "parent": "SYS", "lane": "main", "collapsible": true},
-    {"id": "DRAW", "label": "抽鱼和生成", "caption": "鱼种 · 品质 · 大小 · 重量 ｜ 鱼侧动态参数透传", "parent": "R6", "lane": "r6"},
-
-    {"id": "R7", "label": "七、范围外", "caption": "超出中鱼范畴 · 最简略，不折叠", "parent": "SYS", "lane": "main"},
-    {"id": "FISHAI", "label": "运行 Fish AI", "caption": "刺鱼 / 博鱼", "parent": "R7", "lane": "r7"}
+    {
+      "id": "SYS",
+      "label": "中鱼机制总图",
+      "caption": "FCF Canonical System Map · 七大层",
+      "parent": null,
+      "lane": "main"
+    },
+    {
+      "id": "R1",
+      "label": "一、数据",
+      "caption": "环境上下文 / 钓场投鱼配置 / 鱼的习性配置",
+      "parent": "SYS",
+      "lane": "main",
+      "collapsible": true
+    },
+    {
+      "id": "D.CONTEXT",
+      "label": "环境上下文",
+      "caption": "季节 · 水温 · 时段 · 天气史 · 地形 · 结构",
+      "parent": "R1",
+      "lane": "r1"
+    },
+    {
+      "id": "D.STOCK",
+      "label": "钓场投鱼配置",
+      "caption": "鱼种 × 品质 投放项 · 基础机会强度 · 背景鱼标记",
+      "parent": "R1",
+      "lane": "r1"
+    },
+    {
+      "id": "D.HABIT",
+      "label": "鱼的习性配置",
+      "caption": "温度 / 水层 / 结构亲和 · 时段 · 中鱼习性模式",
+      "parent": "R1",
+      "lane": "r1"
+    },
+    {
+      "id": "R2",
+      "label": "二、烘焙",
+      "caption": "习性配置 × 环境上下文 → 派生环境场",
+      "parent": "SYS",
+      "lane": "main",
+      "collapsible": true
+    },
+    {
+      "id": "BAKE",
+      "label": "烘焙",
+      "caption": "固定烘焙模板",
+      "parent": "R2",
+      "lane": "r2"
+    },
+    {
+      "id": "DEF",
+      "label": "派生环境场",
+      "caption": "Derived Environment Field",
+      "parent": "R2",
+      "lane": "r2"
+    },
+    {
+      "id": "SDW",
+      "label": "空间分布权重",
+      "caption": "spatial distribution weight｜原「环境权重」",
+      "parent": "R2",
+      "lane": "r2"
+    },
+    {
+      "id": "FISHCOND",
+      "label": "鱼侧动态参数",
+      "caption": "活性 · 进食动机 · 警戒度（后续版本）· 食性偏好",
+      "parent": "R2",
+      "lane": "r2"
+    },
+    {
+      "id": "R3",
+      "label": "三、玩家策略与操作数据",
+      "caption": "钓具 / 钓组 · 姿态",
+      "parent": "SYS",
+      "lane": "main",
+      "collapsible": true
+    },
+    {
+      "id": "PLAYER",
+      "label": "玩家策略与操作数据",
+      "caption": "钓具 / 钓组 · 姿态",
+      "parent": "R3",
+      "lane": "r3"
+    },
+    {
+      "id": "PRESENT",
+      "label": "呈现刺激",
+      "caption": "速度 · 动作 · 声音 · 震动 · 光 · 轮廓 · 气味",
+      "parent": "R3",
+      "lane": "r3"
+    },
+    {
+      "id": "R4",
+      "label": "四、响应",
+      "caption": "适配系数",
+      "parent": "SYS",
+      "lane": "main",
+      "collapsible": true
+    },
+    {
+      "id": "RESPONSE",
+      "label": "响应模块",
+      "caption": "适配系数｜较复杂逻辑，本图不展开",
+      "parent": "R4",
+      "lane": "r4"
+    },
+    {
+      "id": "R5",
+      "label": "五、圆桌抽鱼",
+      "caption": "",
+      "parent": "SYS",
+      "lane": "main",
+      "collapsible": true
+    },
+    {
+      "id": "T1",
+      "label": "品质抽取调整",
+      "caption": "中鱼习性模式",
+      "parent": "R5",
+      "lane": "r5"
+    },
+    {
+      "id": "T2",
+      "label": "圆桌权重表构建",
+      "caption": "组件",
+      "parent": "R5",
+      "lane": "r5"
+    },
+    {
+      "id": "T3",
+      "label": "硬保底",
+      "caption": "",
+      "parent": "R5",
+      "lane": "r5"
+    },
+    {
+      "id": "T4",
+      "label": "动态权重调整",
+      "caption": "",
+      "parent": "R5",
+      "lane": "r5"
+    },
+    {
+      "id": "R6",
+      "label": "六、抽鱼和生成",
+      "caption": "五的短延伸",
+      "parent": "SYS",
+      "lane": "main",
+      "collapsible": true
+    },
+    {
+      "id": "DRAW",
+      "label": "抽鱼和生成",
+      "caption": "鱼种 · 品质 · 大小 · 重量 ｜ 鱼侧动态参数透传",
+      "parent": "R6",
+      "lane": "r6"
+    },
+    {
+      "id": "R7",
+      "label": "七、范围外",
+      "caption": "超出中鱼范畴 · 最简略，不折叠",
+      "parent": "SYS",
+      "lane": "main"
+    },
+    {
+      "id": "FISHAI",
+      "label": "运行 Fish AI",
+      "caption": "刺鱼 / 博鱼",
+      "parent": "R7",
+      "lane": "r7"
+    }
   ],
   "edges": [
-    {"from": "D.CONTEXT", "to": "BAKE", "type": "DATA_FLOW", "label": "环境上下文"},
-    {"from": "D.HABIT", "to": "BAKE", "type": "DATA_FLOW", "label": "习性配置"},
-    {"from": "BAKE", "to": "DEF", "type": "DATA_FLOW"},
-    {"from": "DEF", "to": "SDW", "type": "DATA_FLOW"},
-    {"from": "D.STOCK", "to": "SDW", "type": "DATA_FLOW", "label": "基础机会强度"},
-    {"from": "DEF", "to": "FISHCOND", "type": "DATA_FLOW"},
-
-    {"from": "PLAYER", "to": "PRESENT", "type": "DATA_FLOW"},
-    {"from": "PRESENT", "to": "RESPONSE", "type": "DATA_FLOW", "label": "呈现刺激"},
-    {"from": "FISHCOND", "to": "RESPONSE", "type": "DATA_FLOW", "label": "鱼侧动态参数"},
-
-    {"from": "SDW", "to": "R5", "type": "DATA_FLOW", "label": "空间分布权重"},
-    {"from": "RESPONSE", "to": "R5", "type": "DATA_FLOW", "label": "适配系数"},
-    {"from": "R5", "to": "DRAW", "type": "DATA_FLOW", "label": "权重池 + NONE"},
-    {"from": "DRAW", "to": "FISHAI", "type": "CONTROL_OR_SELECTION", "label": "鱼种 / 品质 / 大小 / 重量"}
+    {
+      "from": "D.CONTEXT",
+      "to": "BAKE",
+      "type": "DATA_FLOW",
+      "label": "环境上下文"
+    },
+    {
+      "from": "D.HABIT",
+      "to": "BAKE",
+      "type": "DATA_FLOW",
+      "label": "习性配置"
+    },
+    {
+      "from": "BAKE",
+      "to": "DEF",
+      "type": "DATA_FLOW"
+    },
+    {
+      "from": "DEF",
+      "to": "SDW",
+      "type": "DATA_FLOW"
+    },
+    {
+      "from": "D.STOCK",
+      "to": "SDW",
+      "type": "DATA_FLOW",
+      "label": "基础机会强度"
+    },
+    {
+      "from": "DEF",
+      "to": "FISHCOND",
+      "type": "DATA_FLOW"
+    },
+    {
+      "from": "PLAYER",
+      "to": "PRESENT",
+      "type": "DATA_FLOW"
+    },
+    {
+      "from": "PRESENT",
+      "to": "RESPONSE",
+      "type": "DATA_FLOW",
+      "label": "呈现刺激"
+    },
+    {
+      "from": "FISHCOND",
+      "to": "RESPONSE",
+      "type": "DATA_FLOW",
+      "label": "鱼侧动态参数"
+    },
+    {
+      "from": "SDW",
+      "to": "R5",
+      "type": "DATA_FLOW",
+      "label": "空间分布权重"
+    },
+    {
+      "from": "RESPONSE",
+      "to": "R5",
+      "type": "DATA_FLOW",
+      "label": "适配系数"
+    },
+    {
+      "from": "R5",
+      "to": "DRAW",
+      "type": "DATA_FLOW",
+      "label": "权重池 + NONE"
+    },
+    {
+      "from": "DRAW",
+      "to": "FISHAI",
+      "type": "CONTROL_OR_SELECTION",
+      "label": "鱼种 / 品质 / 大小 / 重量"
+    }
   ]
 }

@@ -1,45 +1,73 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<title>FCF System Map — official viewer harness (test-only)</title>
+<title>中鱼机制总图 · 预览</title>
 <style>
-  body { font-family: -apple-system, "Helvetica Neue", sans-serif; margin: 16px; color: #222; }
-  #dg { width: 100%; height: 700px; border: 1px solid #ccc; border-radius: 6px; }
-  .note { color: #666; font-size: 12px; margin: 8px 0 12px; max-width: 980px; }
+  body { font-family: -apple-system, "PingFang SC", sans-serif; margin: 14px; color: #222; }
+  #dg { width: 100%; height: 840px; border: 1px solid #ccc; border-radius: 6px; }
+  .note { color: #666; font-size: 12px; margin: 6px 0 10px; max-width: 1100px; line-height: 1.6; }
   pre { background: #f6f6f6; padding: 8px; border-radius: 4px; font-size: 12px; }
+  #ver { color: #999; font-size: 11px; }
 </style>
 </head>
 <body>
-<h3>FCF Canonical System Map — Production Pilot v0.1</h3>
+<h3>中鱼机制总图 <span id="ver"></span></h3>
 <p class="note">
-  <b>Test scaffolding only — not part of the carrier.</b> Loads the pinned official
-  <code>viewer-static.min.js</code> and renders
-  <code>../generated/fcf-system-map.drawio</code> exactly as the embeddable viewer would.
-  <b>怎么玩:</b>① <b>0.3.4.0</b> 按钮 = 只上 scope 配色(ACTIVE 正常 / BOUNDARY 虚线 /
-  OUT 置灰),不改展开状态;② <b>Spatial Bake Detail</b> = 只展开 Spatial 子树,不改配色;
-  ③ <b>Overall</b> = 复位(收起细节 + 恢复中性配色);④ 点击 <b>Spatial Opportunity</b> /
-  <b>Fish Condition</b> 框本身可手动展开/收起,与按钮状态自由组合。全部为 draw.io 原生
-  custom action,页面零逻辑。
+  <b>怎么看：</b>① 顶部三个按钮切换视图——<b>总图</b>（七大层全展开、中性配色）、
+  <b>0.3.4.0-B</b>（只上配色与透明度：范围外元素调暗但不隐藏、不移位）、
+  <b>0.3.4.0-B 聚焦</b>（只留本版触及的行）。<br>
+  ② <b>点击任意行标题</b>可折叠整行——行内方块与所连箭头一起隐藏。<br>
+  ③ 改完 source 后本页会<b>自动刷新</b>；也可以手动刷新。
 </p>
 <div id="dg" class="mxgraph"></div>
-<pre id="log">loading…</pre>
+<pre id="log">加载中…</pre>
 <script src="../../spike/verify/vendor/viewer-static.min.js"></script>
 <script>
-(async function () {
+(function () {
   var log = function (m) { document.getElementById('log').textContent = m; };
-  try {
-    var xml = await (await fetch('../generated/fcf-system-map.drawio')).text();
+  var verEl = document.getElementById('ver');
+  var currentVersion = null;
+
+  function render(xml) {
     var el = document.getElementById('dg');
+    el.innerHTML = '';
+    el.removeAttribute('data-mxgraph');
+    delete window.__fcf;
     el.setAttribute('data-mxgraph', JSON.stringify({
-      xml: xml, toolbar: 'pages zoom layers', border: 10,
-      'auto-fit': true, resize: true, 'max-width': '100%'
+      xml: xml, toolbar: 'zoom', border: 10, 'auto-fit': true,
+      resize: true, 'max-width': '100%'
     }));
     GraphViewer.createViewerForElement(el, function (v) {
       window.__fcf = { viewer: v, graph: v.graph };
-      log('viewer ready; inspect via window.__fcf.graph');
+      log('就绪。改完 source 后本页会自动刷新；点击行标题可折叠整行。');
     });
-  } catch (e) { log('ERROR: ' + (e && e.message ? e.message : e)); }
+  }
+
+  function load() {
+    return fetch('../generated/fcf-system-map.drawio', { cache: 'no-store' })
+      .then(function (r) { return r.text(); })
+      .then(render)
+      .catch(function (e) { log('加载失败: ' + (e && e.message ? e.message : e)); });
+  }
+
+  // 自动刷新：轮询产物哈希，变了就重绘
+  function poll() {
+    fetch('/api/version', { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        verEl.textContent = '· ' + d.version;
+        if (currentVersion === null) { currentVersion = d.version; return; }
+        if (d.version !== currentVersion) {
+          currentVersion = d.version;
+          log('检测到新版本 ' + d.version + '，正在重新加载…');
+          load();
+        }
+      })
+      .catch(function () { /* 没有 /api/version（例如直接用静态服务）时静默降级 */ });
+  }
+
+  load().then(function () { poll(); setInterval(poll, 2000); });
 })();
 </script>
 </body>
