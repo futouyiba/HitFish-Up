@@ -29,6 +29,30 @@
   var verEl = document.getElementById('ver');
   var currentVersion = null;
 
+  // 稳健适配：viewer 创建时容器尺寸可能还没定，内置 auto-fit 会算成 scale=1。
+  // 自己量一遍可见元素的真实范围再设定缩放，并在窗口尺寸变化时重算。
+  function fit(v) {
+    try {
+      var g = v.graph, c = g.container;
+      var minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9, n = 0;
+      Object.keys(g.model.cells).forEach(function (k) {
+        var st = g.view.getState(g.model.getCell(k));
+        if (!st || !st.width) return;
+        n++;
+        minX = Math.min(minX, st.x); minY = Math.min(minY, st.y);
+        maxX = Math.max(maxX, st.x + st.width); maxY = Math.max(maxY, st.y + st.height);
+      });
+      if (!n || !(maxX > minX) || !(maxY > minY)) return;
+      var s = Math.min((c.clientWidth - 24) / (maxX - minX),
+                       (c.clientHeight - 24) / (maxY - minY));
+      if (!(s > 0) || !isFinite(s)) return;
+      g.view.setScale(s);
+      g.view.setTranslate(c.clientWidth / (2 * s) - (minX + maxX) / 2,
+                          c.clientHeight / (2 * s) - (minY + maxY) / 2);
+      g.view.validate();
+    } catch (e) { /* 适配失败不影响交互 */ }
+  }
+
   function render(xml) {
     var el = document.getElementById('dg');
     el.innerHTML = '';
@@ -40,6 +64,8 @@
     }));
     GraphViewer.createViewerForElement(el, function (v) {
       window.__fcf = { viewer: v, graph: v.graph };
+      fit(v);
+      setTimeout(function () { fit(v); }, 120);
       log('就绪。改完 source 后本页会自动刷新；点击行标题可折叠整行。');
     });
   }
@@ -66,6 +92,10 @@
       })
       .catch(function () { /* 没有 /api/version（例如直接用静态服务）时静默降级 */ });
   }
+
+  window.addEventListener('resize', function () {
+    if (window.__fcf) fit(window.__fcf.viewer);
+  });
 
   load().then(function () { poll(); setInterval(poll, 2000); });
 })();

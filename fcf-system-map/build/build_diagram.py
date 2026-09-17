@@ -55,16 +55,16 @@ NODE_W, NODE_H, STAGE_W = 260, 66, 220
 # lane lays its blocks out horizontally (dx) on that row's own y.
 LANES = {
     "main": {"x": 60,   "w": 250, "anchor": None, "y0": 156, "dy": 165},
-    "r1":   {"x": 350,  "w": 250, "anchor": "R1", "y0": 0, "dx": 275},
-    "r2":   {"x": 350,  "w": 250, "anchor": "R2", "y0": 0, "dx": 275},
-    "r3":   {"x": 900,  "w": 250, "anchor": "R3", "y0": 0, "dx": 275},
-    "r4":   {"x": 900,  "w": 250, "anchor": "R4", "y0": 0, "dx": 275},
-    "r5bar":{"x": 350,  "w": 1100, "anchor": "R5", "y0": 0, "dx": 0, "h": 42},
-    "r5":   {"x": 370,  "w": 250, "anchor": "R5", "y0": 56, "dx": 275},
-    "r6":   {"x": 350,  "w": 480, "anchor": "R6", "y0": 0, "dx": 275},
-    "r7":   {"x": 350,  "w": 480, "anchor": "R7", "y0": 0, "dx": 275},
+    "r1":   {"x": 350,  "w": 250, "anchor": "R1", "y0": 0, "dx": 260, "cap": 4},
+    "r2":   {"x": 350,  "w": 250, "anchor": "R2", "y0": 0, "dx": 260, "cap": 5},
+    "r3":   {"x": 900,  "w": 250, "anchor": "R3", "y0": 0, "dx": 260, "cap": 3},
+    "r4":   {"x": 900,  "w": 250, "anchor": "R4", "y0": 0, "dx": 260, "cap": 3},
+    "r5bar":{"x": 350,  "w": 1330, "anchor": "R5", "y0": 0, "dx": 0, "h": 42},
+    "r5":   {"x": 370,  "w": 250, "anchor": "R5", "y0": 56, "dx": 260, "cap": 5},
+    "r6":   {"x": 350,  "w": 480, "anchor": "R6", "y0": 0, "dx": 260, "cap": 2},
+    "r7":   {"x": 350,  "w": 480, "anchor": "R7", "y0": 0, "dx": 260, "cap": 2},
 }
-PAGE_W, PAGE_H = 1560, 1560
+PAGE_W, PAGE_H = 1700, 1560
 
 GRAY_FILL, GRAY_STROKE, GRAY_FONT = "#f5f5f5", "#a6a6a6", "#8f8f8f"
 
@@ -161,7 +161,22 @@ def layout(nodes, edges):
                 y = pos[spec["anchor"]][1] + spec["y0"] + i * spec["dy"]
             pos[n["id"]] = (x, y, spec["w"], spec.get("h", NODE_H))
             i += 1
+        cap = spec.get("cap")
+        if cap is not None and i > cap:
+            sys.exit("error: 行 %s 已超出其声明容量 %d（当前 %d 个方块）。"
+                     "该行已满 —— 扩容是一次需要重新规划布局的事件，"
+                     "请调整 LANES 里的 cap / 页宽后重新冻结骨架，而不是让方块挤在一起。"
+                     % (lane, cap, i))
         lane_cursor[lane] = i
+
+    # 按「容量」而非「当前用量」校验行宽：预留的位置必须真的在页内
+    for lane, spec in LANES.items():
+        if "dx" not in spec or not spec.get("cap"):
+            continue
+        right = spec["x"] + (spec["cap"] - 1) * spec["dx"] + spec["w"]
+        if right > PAGE_W:
+            sys.exit("error: 行 %s 的容量 %d 需要宽度到 x=%d，超出页宽 %d。"
+                     "要么缩小 dx，要么加宽 PAGE_W。" % (lane, spec["cap"], right, PAGE_W))
 
     for nid, (x, y, w, h) in pos.items():
         if x + w > PAGE_W or y + h > PAGE_H or x < 0 or y < 0:
