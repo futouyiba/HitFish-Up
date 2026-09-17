@@ -549,21 +549,21 @@ SpatialDistributionWeight = BaseOpportunityIntensity × FinalEnvCoeff   # Base �
   <!-- ============ 9. 下一步 ============ -->
   <div class="card">
     <p class="eyebrow">下一步</p>
-    <h2>已做的 / 还差的两件小事</h2>
+    <h2>已做的 / 只剩实现侧</h2>
     <div class="grid2">
       <div class="mini state ok">
         <div class="lbl"><span class="mark" style="color:var(--good-ink)">✓</span> 已做（2026-09-18）</div>
         <ul class="tight" style="margin-top:6px">
           <li>4 条裁决落进参考实现（测试 38 → <strong>39 全绿</strong>）</li>
           <li>Gap Log 标为 RESOLVED 并写明裁决理由</li>
-          <li>文档写回 Notion <strong>两页</strong>：Schema &amp; Validator（key 表 + §3.8 Trace）、条件开关 Working（字段名对齐），逐条回读核对</li>
+          <li>写回 Notion <strong>四页</strong>并逐页回读核对：Schema &amp; Validator（key 表 + §3.8 Trace）、条件开关 Working（字段名对齐 + <strong>页名去掉已删的 GatePolicy</strong>）、<strong>Main Control §33 裁决留痕</strong>、开发需求 §4.1 示例块对齐</li>
         </ul>
       </div>
       <div class="mini state warn">
-        <div class="lbl"><span class="mark warnc">▲</span> 还差</div>
+        <div class="lbl"><span class="mark warnc">▲</span> 只剩实现侧</div>
         <ul class="tight" style="margin-top:6px">
-          <li><strong>裁决留痕</strong>：按本分支惯例，裁决应在 Main Control 记一条窄节。那属于第 <strong>3</strong> 页，超出本会话授权的两页范围，故仍待办。</li>
-          <li><strong>一处残留</strong>：开发需求 §4.1 的内联例子写 <code>time_period_coefficient</code>，而 §4.0 自己的表写 <code>time_period_activity_coefficient</code>。按 GAP-001 裁决以后者为准，改这一处即可——同样属于第三页。</li>
+          <li><strong>W6 代码尚未迁移</strong>：这 4 条裁决要与 §26.4 的 9 条 delta 一起落到 <code>programaticHitFish</code>，落地前代码与这份参考实现必然对不上（已记在 Main Control §33.3）。</li>
+          <li>文档侧<strong>没有遗留项</strong>了。</li>
         </ul>
       </div>
     </div>
