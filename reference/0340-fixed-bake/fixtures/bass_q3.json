@@ -1,0 +1,168 @@
+{
+  "_readme": [
+    "REFERENCE / VALIDATION fixture. Not production data.",
+    "Source: Notion '0.3.4.0-B | Bass NORMAL Fixed Template Vertical Slice' §3 / §6 / §7.",
+    "Golden values CG-01/02/03 reproduced independently from 开发需求 §3.4 + §7.",
+    "TIME_PERIOD is deliberately absent from resolvedComponentProfiles: an IGNORED",
+    "condition must not force the author to fabricate a profile (Bass Slice §3.5)."
+  ],
+  "componentProfiles": {
+    "TEMPERATURE": {
+      "temp_accept_min": 2.0,
+      "temp_fav_min": 24.0,
+      "temp_fav_max": 29.0,
+      "temp_accept_max": 35.0,
+      "falloff_shape": "LINEAR",
+      "temp_threshold": 0.05
+    },
+    "STRUCTURE": {
+      "structure_affinity": {
+        "GRASS_EDGE": 1.0,
+        "COMPLEX_WOOD": 1.0,
+        "DROPOFF": 0.6,
+        "ROCK": 0.6,
+        "OPEN": 0.25,
+        "FEATURELESS_FLAT": 0.25
+      }
+    },
+    "FEEDING_LAYER": {
+      "foraging_surface_affinity": 0.6,
+      "foraging_middle_affinity": 1.0,
+      "foraging_bottom_affinity": 0.6
+    }
+  },
+  "subject": {
+    "type": "ResolvedSpatialOpportunitySubject",
+    "fishQualityRef": { "speciesId": "LARGEMOUTH_BASS", "fishQualityId": "Q3" },
+    "resolvedComponentProfiles": "@componentProfiles",
+    "resolvedSpatialOpportunityBindings": [
+      { "conditionKey": "TEMPERATURE", "aggregationRole": "CORE" },
+      { "conditionKey": "STRUCTURE", "aggregationRole": "CORE" },
+      { "conditionKey": "FEEDING_LAYER", "aggregationRole": "SECONDARY" },
+      { "conditionKey": "TIME_PERIOD", "aggregationRole": null }
+    ],
+    "provenance": "fishEnvAffinityRef=NORMAL"
+  },
+  "seed": {
+    "type": "ResolvedOpportunitySeed",
+    "fishPondRef": "TEST_POND_BASS_SLICE",
+    "fishQualityRef": { "speciesId": "LARGEMOUTH_BASS", "fishQualityId": "Q3" },
+    "baseOpportunityIntensity": 1.0,
+    "isBackgroundFish": false
+  },
+  "cases": [
+    {
+      "id": "CG-01",
+      "note": "preferred grass / middle / 26C -- all preferred",
+      "conditionGroup": {
+        "structureType": "GRASS_EDGE",
+        "waterTemperatureRange": [25, 27],
+        "feedingEcologyLayers": ["MIDDLE"],
+        "timePeriod": "MORNING"
+      },
+      "expect": { "rawEnvCoeff": 1.0, "finalEnvCoeff": 1.0, "weight": 1.0, "gateFailed": false }
+    },
+    {
+      "id": "CG-02",
+      "note": "15C midpoint / dropoff / bottom",
+      "conditionGroup": {
+        "structureType": "DROPOFF",
+        "waterTemperatureRange": [15, 15],
+        "feedingEcologyLayers": ["BOTTOM"],
+        "timePeriod": "MORNING"
+      },
+      "expect": {
+        "rawEnvCoeff": 0.3190909090909091,
+        "finalEnvCoeff": 0.3190909090909091,
+        "weight": 0.3190909090909091,
+        "gateFailed": false
+      }
+    },
+    {
+      "id": "CG-03",
+      "note": "32C midpoint / open / surface",
+      "conditionGroup": {
+        "structureType": "OPEN",
+        "waterTemperatureRange": [32, 32],
+        "feedingEcologyLayers": ["SURFACE"],
+        "timePeriod": "MORNING"
+      },
+      "expect": {
+        "rawEnvCoeff": 0.1125,
+        "finalEnvCoeff": 0.1125,
+        "weight": 0.1125,
+        "gateFailed": false
+      }
+    },
+    {
+      "id": "CG-GATE-NONBG",
+      "note": "36C beyond accept_max (35) -> temperature gate fails; non-background -> 0",
+      "conditionGroup": {
+        "structureType": "OPEN",
+        "waterTemperatureRange": [36, 36],
+        "feedingEcologyLayers": ["SURFACE"],
+        "timePeriod": "MORNING"
+      },
+      "seedOverride": { "isBackgroundFish": false },
+      "expect": { "rawEnvCoeff": null, "finalEnvCoeff": 0.0, "weight": 0.0, "gateFailed": true }
+    },
+    {
+      "id": "CG-GATE-BG",
+      "note": "same gate failure, but background -> forced envCoeffMin",
+      "conditionGroup": {
+        "structureType": "OPEN",
+        "waterTemperatureRange": [36, 36],
+        "feedingEcologyLayers": ["SURFACE"],
+        "timePeriod": "MORNING"
+      },
+      "seedOverride": { "isBackgroundFish": true, "envCoeffMin": 0.1 },
+      "expect": { "rawEnvCoeff": null, "finalEnvCoeff": 0.1, "weight": 0.1, "gateFailed": true }
+    },
+    {
+      "id": "CG-BG-FLOOR",
+      "note": "5C / open / surface, all gates pass -> RawEnvCoeff ~0.03068 raised to floor",
+      "conditionGroup": {
+        "structureType": "OPEN",
+        "waterTemperatureRange": [5, 5],
+        "feedingEcologyLayers": ["SURFACE"],
+        "timePeriod": "MORNING"
+      },
+      "seedOverride": { "isBackgroundFish": true, "envCoeffMin": 0.1 },
+      "expect": {
+        "rawEnvCoeff": 0.03068181818181818,
+        "finalEnvCoeff": 0.1,
+        "weight": 0.1,
+        "gateFailed": false
+      }
+    },
+    {
+      "id": "CG-01-BASE-2.5",
+      "note": "same environment as CG-01, different BaseOpportunityIntensity",
+      "conditionGroup": {
+        "structureType": "GRASS_EDGE",
+        "waterTemperatureRange": [25, 27],
+        "feedingEcologyLayers": ["MIDDLE"],
+        "timePeriod": "MORNING"
+      },
+      "seedOverride": { "baseOpportunityIntensity": 2.5 },
+      "expect": { "rawEnvCoeff": 1.0, "finalEnvCoeff": 1.0, "weight": 2.5, "gateFailed": false }
+    },
+    {
+      "id": "CG-02-BASE-4",
+      "note": "same environment as CG-02, different BaseOpportunityIntensity",
+      "conditionGroup": {
+        "structureType": "DROPOFF",
+        "waterTemperatureRange": [15, 15],
+        "feedingEcologyLayers": ["BOTTOM"],
+        "timePeriod": "MORNING"
+      },
+      "seedOverride": { "baseOpportunityIntensity": 4.0 },
+      "expect": {
+        "rawEnvCoeff": 0.3190909090909091,
+        "finalEnvCoeff": 0.3190909090909091,
+        "weight": 1.2763636363636364,
+        "gateFailed": false
+      }
+    }
+  ]
+}
