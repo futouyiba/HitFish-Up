@@ -31,7 +31,9 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 BUILDER = HERE / "build_diagram.py"
 
-RESERVED_PREFIXES = ("E:", "EX:", "BTN:", "CTRL:", "LEG:", "Layer:")
+RESERVED_PREFIXES = ("E:", "EX:", "BTN:", "CTRL:", "LEG:", "Layer:", "C:")
+# "C:" = 版面容器（layout.json 的包纳树）；它们不是语义节点，所以重命名
+# 检查豁免它们，也无法从 graph.json 派生 label。
 ID_RE = re.compile(r"^[A-Z][A-Z0-9_]*(\.[A-Z0-9_]+)*$")
 EDGE_TYPES = {"DATA_FLOW", "CONTROL_OR_SELECTION", "REFERENCE_OR_CONFIG",
               "RETENTION", "ANCHOR"}
@@ -189,25 +191,65 @@ def main():
         check(ref is None or ref.startswith("https://"),
               "contract %r authorityRef must be https or null" % c["semanticId"])
 
-    # -- page containment: EVERY vertex (nodes AND controls) must fit the page --
+    # -- geometry from the .drawio, in ABSOLUTE page coordinates --------------
+    # 版面改成容器嵌套后，子 cell 的 x/y 是**相对父容器**的。所以必须先按父链把
+    # 偏移累加起来，再做重叠与页面容纳比较 —— 否则不同父容器下局部坐标相同的两个
+    # 子块会被误报重叠，而页面容纳检查会变成空转。
+    # 只统计**初态真的渲染出来**的 cell（自身或祖先带 visible="0" 的不算）：
+    # 这条护栏的本意是「页面上不会有两个方块撞在一起」，没画出来的不在此列。
+    _r = ET.parse(str(ROOT / "generated" / "fcf-system-map.drawio")).getroot()
+    _model = _r.find(".//mxGraphModel")
+    _geo = {}            # id -> [parent, x, y, w, h, visible]
+
+    def _collect(cid, parent, mx):
+        g = mx.find("mxGeometry")
+        if g is None:
+            return
+        try:
+            vals = [int(g.get(k)) for k in ("x", "y", "width", "height")]
+        except (TypeError, ValueError):
+            return
+        _geo[cid] = [parent] + vals + [mx.get("visible") != "0"]
+
+    for _mx in _r.iter("mxCell"):
+        if _mx.get("vertex") == "1" and _mx.get("id") is not None:
+            _collect(_mx.get("id"), _mx.get("parent"), _mx)
+    for _uo in _r.iter("UserObject"):     # 被包裹的 cell：id 在包装层上
+        _inner = _uo.find("mxCell")
+        if _inner is not None:
+            _collect(_uo.get("id"), _inner.get("parent"), _inner)
+
+    def _chain(cid):
+        out, cur, seen = [], cid, set()
+        while cur in _geo and cur not in seen:
+            seen.add(cur)
+            out.append(cur)
+            cur = _geo[cur][0]
+        return out
+
+    def _absolute(cid):
+        x = y = 0
+        for cur in _chain(cid):
+            x += _geo[cur][1]
+            y += _geo[cur][2]
+        return x, y
+
+    def _rendered(cid):
+        return all(_geo[cur][5] for cur in _chain(cid))
+
+    # -- page containment: every RENDERED vertex must fit the page ------------
     # 构建器只对主图节点做越界检查；控件（标题/按钮/图例）是硬编码坐标，
     # 之前漏检过——这里对最终产物做一次全量检查。
-    _root = ET.parse(str(ROOT / "generated" / "fcf-system-map.drawio")).getroot()
-    _model = _root.find(".//mxGraphModel")
     if _model is not None:
         pw, ph = int(_model.get("pageWidth")), int(_model.get("pageHeight"))
-        for mx in _root.iter("mxCell"):
-            geo = mx.find("mxGeometry")
-            if geo is None or mx.get("vertex") != "1":
+        for cid in _geo:
+            if not _rendered(cid):
                 continue
-            try:
-                gx, gy = int(geo.get("x")), int(geo.get("y"))
-                gw, gh = int(geo.get("width")), int(geo.get("height"))
-            except (TypeError, ValueError):
-                continue
+            gx, gy = _absolute(cid)
+            gw, gh = _geo[cid][3], _geo[cid][4]
             if gx + gw > pw or gy + gh > ph or gx < 0 or gy < 0:
                 failures.append("%s overflows the page: (%d,%d)+%dx%d vs page %dx%d"
-                                % (mx.get("id"), gx, gy, gw, gh, pw, ph))
+                                % (cid, gx, gy, gw, gh, pw, ph))
 
     # -- skeleton invariant: the agreed v1 topology must not drift -------------
     # 见 memory: fcf-map-topology-invariant。骨架=行/方块/连接/形状/命名；
@@ -232,60 +274,40 @@ def main():
     except Exception as exc:  # 基线缺失/损坏不应静默通过
         failures.append("skeleton baseline check failed to run: %r" % exc)
 
-    # -- vertex overlaps: no two squares may collide on the page ---------------
+    # -- vertex overlaps: no two RENDERED squares may collide ------------------
     # 这条是「看渲染」那一轮补上的：几何重叠在结构校验里完全看不见。
-    _r = ET.parse(str(ROOT / "generated" / "fcf-system-map.drawio")).getroot()
-    boxes = []
-    slots = {n["id"]: n.get("slot") for n in nodes}
-    # 普通 mxCell
-    for mx in _r.iter("mxCell"):
-        if mx.get("id") is None or mx.get("vertex") != "1":
-            continue          # id 为 None = 被 UserObject 包裹，下面按包装层收
-        geo = mx.find("mxGeometry")
-        if geo is None:
+    # 嵌套之后有两条豁免：**同一个 slot**（互斥可见性）、**真包含**（外框是内层
+    # 在 .drawio 里的祖先）—— 版面容器就是靠后者合法地包住自己的子块。
+    _slot = {n["id"]: n.get("slot") for n in nodes}
+    _boxes = []
+    for cid in _geo:
+        if not _rendered(cid):
             continue
-        try:
-            boxes.append((mx.get("id"), int(geo.get("x")), int(geo.get("y")),
-                          int(geo.get("width")), int(geo.get("height"))))
-        except (TypeError, ValueError):
-            continue
-    # UserObject 包裹的 cell：id 与 label 在包装层上
-    for uo in _r.iter("UserObject"):
-        mx = uo.find("mxCell")
-        geo = mx.find("mxGeometry") if mx is not None else None
-        if geo is None:
-            continue
-        try:
-            boxes.append((uo.get("id"), int(geo.get("x")), int(geo.get("y")),
-                          int(geo.get("width")), int(geo.get("height"))))
-        except (TypeError, ValueError):
-            continue
-    for i in range(len(boxes)):
-        for j in range(i + 1, len(boxes)):
-            _, ax, ay, aw, ah = boxes[i]
-            _, bx, by, bw, bh = boxes[j]
-            if not (ax + aw <= bx or bx + bw <= ax or ay + ah <= by or by + bh <= ay):
-                # 同一 slot = 互斥可见性（如折叠封面块与其内容），重叠是设计
-                if slots.get(boxes[i][0]) is not None and slots.get(boxes[i][0]) == slots.get(boxes[j][0]):
-                    continue
-                # 真包含 = 分组框包住自己的成员（内层节点的祖先链里有外层节点）
-                def contains(o, t):
-                    return (o[1] <= t[1] and o[2] <= t[2]
-                            and o[1] + o[3] >= t[1] + t[3]
-                            and o[2] + o[4] >= t[2] + t[4])
-                hit = boxes[i]
-                for outer, inner in ((boxes[i], boxes[j]), (boxes[j], boxes[i])):
-                    if contains(outer, inner):
-                        anc, cur = set(), inner[0]
-                        while cur is not None:
-                            anc.add(cur)
-                            cur = by_id.get(cur, {}).get("parent")
-                        if outer[0] in anc:
-                            hit = None
-                            break
-                if hit is None:
-                    continue
-                failures.append("vertices overlap: %s and %s" % (boxes[i][0], boxes[j][0]))
+        ax, ay = _absolute(cid)
+        _boxes.append((cid, ax, ay, _geo[cid][3], _geo[cid][4]))
+
+    def _contains(outer, inner):
+        return (outer[1] <= inner[1] and outer[2] <= inner[2]
+                and outer[1] + outer[3] >= inner[1] + inner[3]
+                and outer[2] + outer[4] >= inner[2] + inner[4])
+
+    for i in range(len(_boxes)):
+        for j in range(i + 1, len(_boxes)):
+            _, ax, ay, aw, ah = _boxes[i]
+            _, bx, by, bw, bh = _boxes[j]
+            if ax + aw <= bx or bx + bw <= ax or ay + ah <= by or by + bh <= ay:
+                continue
+            if _slot.get(_boxes[i][0]) is not None and \
+                    _slot.get(_boxes[i][0]) == _slot.get(_boxes[j][0]):
+                continue
+            hit = True
+            for outer, inner in ((_boxes[i], _boxes[j]), (_boxes[j], _boxes[i])):
+                if _contains(outer, inner) and outer[0] in _chain(inner[0]):
+                    hit = False
+                    break
+            if hit:
+                failures.append("vertices overlap: %s and %s"
+                                % (_boxes[i][0], _boxes[j][0]))
 
 
     if not failures:
@@ -307,7 +329,8 @@ def main():
                 # rename every label, rebuild in an isolated temp root, compare
                 tmp_root = Path(td) / "root"
                 tmp_root.mkdir(parents=True)
-                for fname in ("graph.json", "scopes.json", "views.json", "contracts.json"):
+                for fname in ("graph.json", "scopes.json", "views.json", "contracts.json",
+                              "layout.json"):
                     srcj = g2 if fname == "graph.json" else load(fname)
                     (tmp_root / fname).write_text(
                         json.dumps(srcj, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -327,7 +350,7 @@ def main():
                             if cid in ren and base[cid][2] != ren[cid][2]]
                     check(not diff, "rename moved geometry for %s" % diff)
                     semantic_cells = [cid for cid in base if not cid.startswith(
-                        ("E:", "EX:", "BTN:", "CTRL:", "LEG:", "Layer:"))]
+                        RESERVED_PREFIXES)]
                     label_diff = [cid for cid in semantic_cells
                                   if cid in ren and base[cid][0] == ren[cid][0]]
                     check(not label_diff,
