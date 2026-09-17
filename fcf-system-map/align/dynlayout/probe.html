@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>dynlayout probe</title>
+<style>
+ body{font-family:-apple-system,"PingFang SC",sans-serif;margin:8px}
+ #dg{width:100%;height:760px;border:1px solid #ccc}
+ #out{font-size:11px;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<div id="dg" class="mxgraph"></div>
+<pre id="out">loading…</pre>
+<script src="../../../spike/verify/vendor/viewer-static.min.js"></script>
+<script>
+(function(){
+  var log=function(m){document.getElementById('out').textContent=
+    typeof m==='string'?m:JSON.stringify(m);};
+  var G=null, XML=null;
+
+  function build(xml, cb){
+    var el=document.getElementById('dg');
+    el.innerHTML=''; el.removeAttribute('data-mxgraph');
+    el.setAttribute('data-mxgraph', JSON.stringify({
+      xml: xml, toolbar:'zoom', border:10, 'auto-fit':false, resize:true,
+      'max-width':'100%', 'nav':false
+    }));
+    GraphViewer.createViewerForElement(el, function(v){
+      G={viewer:v, graph:v.graph, model:v.graph.model};
+      if(cb) cb();
+    });
+  }
+
+  function R(n){ return Math.round(n*1000)/1000; }
+
+  function snap(){
+    var g=G.graph, m=g.model, o={};
+    (function walk(c){
+      for(var i=0;i<m.getChildCount(c);i++){
+        var ch=m.getChildAt(c,i), e=m.getGeometry(ch), st=g.view.getState(ch);
+        o[ch.getId()]={
+          vis: m.isVisible(ch),
+          col: g.isCellCollapsed(ch),
+          geo: e?[e.x,e.y,e.width,e.height]:null,
+          alt: e&&e.alternateBounds?
+               [e.alternateBounds.x,e.alternateBounds.y,
+                e.alternateBounds.width,e.alternateBounds.height]:null,
+          st: (st&&st.shape)?[R(st.x),R(st.y),R(st.width),R(st.height)]:null
+        };
+        walk(ch);
+      }
+    })(m.getRoot());
+    return o;
+  }
+
+  function only(snapObj, ids){
+    var o={}; ids.forEach(function(k){ if(snapObj[k]!==undefined) o[k]=snapObj[k]; });
+    return o;
+  }
+
+  // ---- programmatic operations ------------------------------------------
+  function layoutAll(){
+    var g=G.graph, r=g.model.getRoot();
+    var via = [];
+    try{ if(typeof g.executeAllChildLayouts==='function'){
+      via.push('executeAllChildLayouts'); g.executeAllChildLayouts(r);
+    }}catch(e){ via.push('executeAllChildLayouts ERR '+e.message); }
+    return via;
+  }
+  function layoutCell(cid, begin){
+    var g=G.graph, c=g.model.getCell(cid);
+    if(!g.layoutManager) return 'no layoutManager';
+    g.layoutManager.executeLayout(c, !!begin);
+    return 'ok';
+  }
+  function fold(cid, collapse){
+    var g=G.graph;
+    g.foldCells(!!collapse, false, [g.model.getCell(cid)]);
+    return 'ok';
+  }
+  function setVisible(cid, vis){
+    var g=G.graph;
+    g.setCellsVisible([g.model.getCell(cid)], !!vis);
+    return 'ok';
+  }
+  function styleOf(cid){
+    var g=G.graph, c=g.model.getCell(cid);
+    return g.getCellStyle(c);
+  }
+
+  // ---- click paths -------------------------------------------------------
+  function centre(node){
+    var b=node.getBoundingClientRect();
+    return [b.left+b.width/2, b.top+b.height/2];
+  }
+  function clickCell(cid){
+    var g=G.graph, c=g.model.getCell(cid), st=g.view.getState(c);
+    if(!st||!st.shape) return {cid:cid,error:'no shape'};
+    var node=st.shape.node, ctr=centre(node);
+    var mk=function(t){return new MouseEvent(t,{bubbles:true,cancelable:true,
+      view:window,clientX:ctr[0],clientY:ctr[1],button:0,buttons:1,
+      detail:1,composed:true});};
+    node.dispatchEvent(mk('mousemove'));
+    node.dispatchEvent(mk('mousedown'));
+    node.dispatchEvent(mk('mouseup'));
+    node.dispatchEvent(mk('click'));
+    return {cid:cid, at:ctr, link:g.getClickableLinkForCell(c)};
+  }
+  function actCell(cid){   // bypass the DOM, run the custom action directly
+    var g=G.graph, c=g.model.getCell(cid);
+    var link=g.getClickableLinkForCell(c);
+    var res=null;
+    if(link&&g.isCustomLink(link)) res=g.customLinkClicked(link);
+    return {cid:cid, link:link, res:res};
+  }
+
+  window.P={
+    ready:false,
+    init:function(url,cb){
+      fetch(url,{cache:'no-store'}).then(function(r){return r.text();})
+        .then(function(t){ XML=t; build(XML,function(){
+          window.P.ready=true;
+          if(cb)cb();
+        });});
+    },
+    reinit:function(cb){ build(XML,cb); },
+    get graph(){ return G.graph; },
+    get model(){ return G.model; },
+    get viewer(){ return G.viewer; },
+    log:log,
+    snap:function(){ return snap(); },
+    snapJSON:function(){ return JSON.stringify(snap()); },
+    only:function(ids){ return only(snap(), ids); },
+    ids:function(){ return Object.keys(snap()); },
+    layoutAll:layoutAll, layoutCell:layoutCell, fold:fold,
+    setVisible:setVisible, styleOf:styleOf,
+    clickCell:clickCell, actCell:actCell,
+    info:function(){
+      var g=G.graph;
+      return {layoutManager: typeof g.layoutManager,
+              executeAllChildLayouts: typeof g.executeAllChildLayouts,
+              foldCells: typeof g.foldCells,
+              gridSize: g.gridSize,
+              useCssTransforms: g.useCssTransforms,
+              scale: g.view.scale,
+              container: [G.viewer.graph.container.clientWidth,
+                          G.viewer.graph.container.clientHeight],
+              rootChildren: (function(){var m=g.model,o=[];
+                for(var i=0;i<m.getChildCount(m.getRoot());i++)
+                  o.push(m.getChildAt(m.getRoot(),i).getId()); return o;})()};
+    }
+  };
+  log('probe harness ready');
+})();
+</script>
+</body>
+</html>
