@@ -122,7 +122,7 @@ def main():
 
     # -- lanes --------------------------------------------------------------
     for n in nodes:
-        check(n.get("lane") in ("main", "r1", "r2", "r3", "r4", "r5bar", "r5", "r6", "r7"),
+        check(n.get("lane") in ("main", "r1a", "r1b", "r2ch", "r2core", "r2cover", "r2gate", "r2io", "r2l2", "r2out", "r2sec", "r2skip", "r2val", "r3cover", "r3l0", "r3l1", "r4cover", "r4l0", "r4l1", "r5bar", "r5cover", "r5t", "r6cover", "r6l0", "r6l1", "r7l0", "r7l1"),
               "%s: unknown lane %r" % (n["id"], n.get("lane")))
     for n in nodes:
         if n.get("collapsible"):
@@ -236,12 +236,27 @@ def main():
     # 这条是「看渲染」那一轮补上的：几何重叠在结构校验里完全看不见。
     _r = ET.parse(str(ROOT / "generated" / "fcf-system-map.drawio")).getroot()
     boxes = []
+    slots = {n["id"]: n.get("slot") for n in nodes}
+    # 普通 mxCell
     for mx in _r.iter("mxCell"):
+        if mx.get("id") is None or mx.get("vertex") != "1":
+            continue          # id 为 None = 被 UserObject 包裹，下面按包装层收
         geo = mx.find("mxGeometry")
-        if geo is None or mx.get("vertex") != "1":
+        if geo is None:
             continue
         try:
             boxes.append((mx.get("id"), int(geo.get("x")), int(geo.get("y")),
+                          int(geo.get("width")), int(geo.get("height"))))
+        except (TypeError, ValueError):
+            continue
+    # UserObject 包裹的 cell：id 与 label 在包装层上
+    for uo in _r.iter("UserObject"):
+        mx = uo.find("mxCell")
+        geo = mx.find("mxGeometry") if mx is not None else None
+        if geo is None:
+            continue
+        try:
+            boxes.append((uo.get("id"), int(geo.get("x")), int(geo.get("y")),
                           int(geo.get("width")), int(geo.get("height"))))
         except (TypeError, ValueError):
             continue
@@ -250,6 +265,9 @@ def main():
             _, ax, ay, aw, ah = boxes[i]
             _, bx, by, bw, bh = boxes[j]
             if not (ax + aw <= bx or bx + bw <= ax or ay + ah <= by or by + bh <= ay):
+                # 同一 slot = 互斥可见性（如折叠封面块与其 L0 内容），重叠是设计
+                if slots.get(boxes[i][0]) is not None and slots.get(boxes[i][0]) == slots.get(boxes[j][0]):
+                    continue
                 failures.append("vertices overlap: %s and %s" % (boxes[i][0], boxes[j][0]))
 
 
