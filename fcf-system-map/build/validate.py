@@ -189,6 +189,26 @@ def main():
         check(ref is None or ref.startswith("https://"),
               "contract %r authorityRef must be https or null" % c["semanticId"])
 
+    # -- page containment: EVERY vertex (nodes AND controls) must fit the page --
+    # 构建器只对主图节点做越界检查；控件（标题/按钮/图例）是硬编码坐标，
+    # 之前漏检过——这里对最终产物做一次全量检查。
+    _root = ET.parse(str(ROOT / "generated" / "fcf-system-map.drawio")).getroot()
+    _model = _root.find(".//mxGraphModel")
+    if _model is not None:
+        pw, ph = int(_model.get("pageWidth")), int(_model.get("pageHeight"))
+        for mx in _root.iter("mxCell"):
+            geo = mx.find("mxGeometry")
+            if geo is None or mx.get("vertex") != "1":
+                continue
+            try:
+                gx, gy = int(geo.get("x")), int(geo.get("y"))
+                gw, gh = int(geo.get("width")), int(geo.get("height"))
+            except (TypeError, ValueError):
+                continue
+            if gx + gw > pw or gy + gh > ph or gx < 0 or gy < 0:
+                failures.append("%s overflows the page: (%d,%d)+%dx%d vs page %dx%d"
+                                % (mx.get("id"), gx, gy, gw, gh, pw, ph))
+
     # -- 5. determinism + freshness of the committed artifact ------------------
     if not failures:
         with tempfile.TemporaryDirectory() as td:
@@ -244,8 +264,10 @@ def main():
         sys.exit(1)
     print("VALIDATION: PASS")
     print("  stable IDs:            %d (unique, syntax-safe)" % stable_count)
-    print("  edges:                 %d semantic + %d structural, endpoints ok"
-          % (len(graph["edges"]), len([n for n in nodes if n.get("parent")])))
+    root_ids = {n["id"] for n in nodes if n.get("parent") is None}
+    drawn_structural = [n for n in nodes if n.get("parent") and n["parent"] not in root_ids]
+    print("  edges:                 %d semantic + %d structural (root->row edges not drawn), endpoints ok"
+          % (len(graph["edges"]), len(drawn_structural)))
     print("  views:                 %s (default %s)"
           % (", ".join(view_ids), views["defaultView"]))
     lensed = [s for s in scopes["scopes"] if s.get("lens")]

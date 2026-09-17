@@ -5,7 +5,7 @@
       "name": "fcf-spike-verify",
       "runtimeExecutable": "python3",
       "runtimeArgs": ["/tmp/fcf-spike-preview/spike/verify/serve.py"],
-      "port": 8799
+      "port": 8798
     }
   ]
 }

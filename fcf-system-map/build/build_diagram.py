@@ -50,20 +50,20 @@ ROOT = HERE.parent
 # anchor node's top-left. Renaming never moves anything; appending to a lane
 # takes the next slot; inserting mid-lane shifts later siblings one slot
 # (documented rule).
-NODE_W, NODE_H, STAGE_W = 260, 50, 220
+NODE_W, NODE_H, STAGE_W = 260, 66, 220
 # 7-row 整体框架 layout: `main` stacks the root + seven row labels; each row
 # lane lays its blocks out horizontally (dx) on that row's own y.
 LANES = {
-    "main": {"x": 80,   "w": 200, "anchor": None, "y0": 60, "dy": 150},
-    "r1":   {"x": 340,  "w": 230, "anchor": "R1", "y0": 0, "dx": 250},
-    "r2":   {"x": 340,  "w": 230, "anchor": "R2", "y0": 0, "dx": 250},
-    "r3":   {"x": 840,  "w": 230, "anchor": "R3", "y0": 0, "dx": 250},
-    "r4":   {"x": 1090, "w": 230, "anchor": "R4", "y0": 0, "dx": 250},
-    "r5":   {"x": 340,  "w": 230, "anchor": "R5", "y0": 0, "dx": 250},
-    "r6":   {"x": 340,  "w": 480, "anchor": "R6", "y0": 0, "dx": 250},
-    "r7":   {"x": 340,  "w": 480, "anchor": "R7", "y0": 0, "dx": 250},
+    "main": {"x": 60,   "w": 250, "anchor": None, "y0": 156, "dy": 165},
+    "r1":   {"x": 350,  "w": 250, "anchor": "R1", "y0": 0, "dx": 275},
+    "r2":   {"x": 350,  "w": 250, "anchor": "R2", "y0": 0, "dx": 275},
+    "r3":   {"x": 900,  "w": 250, "anchor": "R3", "y0": 0, "dx": 275},
+    "r4":   {"x": 900,  "w": 250, "anchor": "R4", "y0": 0, "dx": 275},
+    "r5":   {"x": 350,  "w": 250, "anchor": "R5", "y0": 0, "dx": 275},
+    "r6":   {"x": 350,  "w": 480, "anchor": "R6", "y0": 0, "dx": 275},
+    "r7":   {"x": 350,  "w": 480, "anchor": "R7", "y0": 0, "dx": 275},
 }
-PAGE_W, PAGE_H = 1420, 1250
+PAGE_W, PAGE_H = 1560, 1520
 
 GRAY_FILL, GRAY_STROKE, GRAY_FONT = "#f5f5f5", "#a6a6a6", "#8f8f8f"
 
@@ -176,12 +176,15 @@ def layout(nodes, edges):
             sys.exit("error: node %s lands outside the page canvas: %r" % (nid, pos[nid]))
 
     # structural (hierarchy) edges, deterministic order: node array order
+    root_ids = {n["id"] for n in nodes if n.get("parent") is None}
     structural = []
     for n in nodes:
         p = n.get("parent")
-        if p is not None:
-            structural.append({"from": p, "to": n["id"],
-                               "id": "EX:%s->%s" % (p, n["id"])})
+        if p is None or p in root_ids:
+            # 根节点 -> 行 的包含关系由行的纵向顺序表达，不画线（否则是一条贯穿全图的竖线）
+            continue
+        structural.append({"from": p, "to": n["id"],
+                           "id": "EX:%s->%s" % (p, n["id"])})
     # semantic edges keep source order with stable ids
     semantic = []
     for e in edges:
@@ -377,7 +380,7 @@ def emit(graph, scopes, views, pos, structural, semantic, collapsible_cells, def
     a(text_cell("CTRL:TITLE",
                 "中鱼机制总图｜FCF Canonical System Map",
                 "text;html=1;align=left;verticalAlign=middle;fontSize=16;fontStyle=1;",
-                620, 56, 640, 30))
+                700, 56, 640, 30))
     a(text_cell("CTRL:HINT",
                 "本图停在『整体框架』级别：只表达流向、模块边界与输入输出边界，不表达具体参数如何算出下一层。"
                 "七大层自上而下；点击行标题可折叠整行（行内方块与所连箭头一起隐藏）。",
@@ -406,19 +409,18 @@ def emit(graph, scopes, views, pos, structural, semantic, collapsible_cells, def
         ("LEG:OUT", "OUT｜本版不处理（置灰 + 调暗，不隐藏）", GRAY_FILL, GRAY_STROKE,
          "fontColor=%s;" % GRAY_FONT),
     ]
-    ly = 160
+    ly = PAGE_H - 110
+    lx = 340
     for cid, label, fill, stroke, extra in legend:
         a(vertex(cid, label,
                  "rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=%s;strokeColor=%s;%s"
                  % (fill, stroke, extra),
-                 1150, ly, 250, 30, "Layer:Controls"))
-        ly += 40
+                 lx, ly, 250, 34, "Layer:Controls"))
+        lx += 260
     a(text_cell("LEG:EDGES",
-                "——▶  数据 / 权重流向\n"
-                "– –▶  选择 · 控制\n"
-                "┄┄   层级归属（非因果主张）",
-                "text;html=1;align=left;verticalAlign=top;fontSize=10;fontColor=#666666;spacing=-4;",
-                1150, 292, 260, 80))
+                "——▶  数据 / 权重流向　　– –▶  选择 · 控制　　┄┄  层级归属（非因果主张）",
+                "text;html=1;align=left;verticalAlign=middle;fontSize=10;fontColor=#666666;",
+                lx, ly, 400, 32))
 
     # ---- nodes (single instance each) ------------------------------------
     # Initial visibility is the DEFAULT VIEW applied at build time: every
@@ -444,8 +446,6 @@ def emit(graph, scopes, views, pos, structural, semantic, collapsible_cells, def
                       % n["caption"])
         if n.get("collapsible"):
             link = action_link({"actions": [{"toggle": {"cells": collapsible_cells[nid]}}]})
-            value += ("<br><font style='font-size:9px;color:#888888'>"
-                      "click to expand / collapse</font>")
         a(vertex(nid, value, style, x, yy, w, h, "Layer:Main", link=link,
                  visible=nid not in initially_hidden))
 

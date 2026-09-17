@@ -7,7 +7,11 @@
     "OUT": "总体系统存在，但该版本不处理 —— 置灰 + 调暗，不隐藏"
   },
   "containerRule": "呈现约定（我们的，不是权威声明）：行 / 容器节点的 scope 取子节点中最高活跃度（ACTIVE > BOUNDARY > OUT），下面逐条列出以便审计。",
-  "opacityDefault": {"ACTIVE": 1.0, "BOUNDARY": 0.70, "OUT": 0.28},
+  "opacityDefault": {
+    "ACTIVE": 1.0,
+    "BOUNDARY": 0.7,
+    "OUT": 0.28
+  },
   "opacityNote": "OUT 取 0.28 而非更低：原始规范要求「OUT 节点不要隐藏…仍保持上下文可读」，过暗会违反这条。这是可调参数，不是机制主张。",
   "scopes": [
     {
@@ -22,9 +26,13 @@
       "label": "0.3.4.0-B｜当前版本投影",
       "lens": true,
       "class": "PROJECTION",
-      "opacity": {"ACTIVE": 1.0, "BOUNDARY": 0.70, "OUT": 0.28},
+      "opacity": {
+        "ACTIVE": 1.0,
+        "BOUNDARY": 0.7,
+        "OUT": 0.28
+      },
       "basis": "中鱼0.3.4.0-B｜开发需求 R0 · 固定模板分层烘焙 · Authoring & Resolve Contract R0（2026-09-17 细读）",
-      "basisNote": "本版只闭合『属性编辑器 → 固定模板条件开关 / Resolve → 烘焙』。它交付的是烘焙这一层及其产物「空间分布权重」；不交付响应、圆桌、生成，也不交付鱼侧动态参数（活性 / 进食动机 / 食性偏好全在『不交付』清单里）。故 FISHCOND 记 OUT。",
+      "basisNote": "本版只闭合『属性编辑器 → 固定模板条件开关 / Resolve → 烘焙』。它交付的是烘焙这一层及其产物「空间分布权重」；不交付响应、圆桌、生成，也不交付鱼侧动态参数（活性 / 进食动机 / 食性偏好全在『不交付』清单里）。故 FISHCOND 记 OUT。 条件组（D.COND）属 B 消费的输入，故记 BOUNDARY。",
       "assignment": {
         "ACTIVE": [
           "SYS",
@@ -34,6 +42,7 @@
           "SDW"
         ],
         "BOUNDARY": [
+          "D.COND",
           "R1",
           "D.CONTEXT",
           "D.STOCK",
