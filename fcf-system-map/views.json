@@ -1,28 +1,37 @@
 {
-  "format": 3,
-  "description": "View dimension = 展开粒度 + 可选 scope lens。scopeLens: 'clear' = 恢复中性配色与全不透明，a scope id = 应用该 lens，'keep' = 不动配色。expansion: collapse/expand 列出可折叠行；预设用幂等 hide/show，绝不用 toggle，因此不会与手动折叠状态打架。",
+  "format": 4,
+  "description": "View = 展开粒度 + 可选 scope lens。展开预设用幂等 hide/show，绝不与手动状态打架。",
   "defaultView": "overall",
   "views": [
     {
       "id": "overall",
       "label": "总图",
       "scopeLens": "clear",
-      "expansion": {"expand": ["R1", "R2", "R3", "R4", "R5", "R6"]},
-      "comment": "默认：七大层全部展开、中性配色（R7 范围外不可折叠）。"
+      "expansion": {
+        "expand": [
+          "R2",
+          "R3",
+          "R4",
+          "R5",
+          "R6"
+        ]
+      },
+      "comment": "默认：七大层。行 1 是常显 section（不可折叠）；R2..R6 展开；R7 范围外不折叠。"
     },
     {
       "id": "0340b",
       "label": "0.3.4.0-B",
       "scopeLens": "0.3.4.0-B",
-      "expansion": null,
-      "comment": "只上 scope 配色与透明度：范围外元素调暗但不隐藏、不移位。绝不触碰展开状态（正交性）。"
-    },
-    {
-      "id": "0340b-focus",
-      "label": "0.3.4.0-B 聚焦",
-      "scopeLens": "0.3.4.0-B",
-      "expansion": {"collapse": ["R3", "R4", "R6"]},
-      "comment": "『只看这个版本』：上 lens 并收起本版不触及的行（R7 范围外不可折叠，故保持可见）。这是组合预设，不是正交性示例——纯 lens 用上一个视图。"
+      "expansion": {
+        "collapse": [
+          "R2",
+          "R3",
+          "R4",
+          "R5",
+          "R6"
+        ]
+      },
+      "comment": "只看当前版本：上 lens（范围外调暗）并收起本版不涉及的行，让『烘焙这一层』凸出来。"
     }
   ]
 }

@@ -1,23 +1,24 @@
 {
-  "format": 5,
+  "format": 6,
   "system": "FCF",
-  "description": "FCF Canonical System Map — semantic source of truth. Overall topology restored to the original 大块拓扑草图 v1 (六行 + 范围外), with the middle/lower layers filled in. Seven rows, top-down. Every cell carries a Chinese label; English appears only as a caption. Expresses flow direction, module boundaries and I/O boundaries — NOT which parameters compute which downstream value.",
+  "description": "FCF Canonical System Map — semantic source of truth. Overall topology follows the original 大块拓扑草图 v1; each row is a fixed-height BAND and expansion extends to the RIGHT, never downward, so rows below are never pushed. This map is the current drawing basis, not the final structure — it is expected to iterate.",
   "provenance": {
-    "topology": "总拓扑回到最初的对齐草图 v1（align/align-topology-v1.drawio）：① 数据三块 + 查询边 → ② 烘焙 → 派生环境场(立方体) → ③ 玩家策略与操作数据(偏右) → ④ 响应 → ⑤ 圆桌抽鱼(宽条+四子块) → ⑥ 抽鱼和生成 → 范围外。中下层在此基础上填充细节（Design Owner 2026-09-17）。",
-    "altitude": "Design Owner：本图停在『整体框架』级别——表达大致流向、模块划分边界、输入输出边界，不表达具体参数如何算出下一层参数。",
-    "terminology": "原「环境权重 / EnvironmentWeight」已废弃，现行术语为「空间分布权重 / spatial distribution weight」——当前版本与远期规划同名同概念。",
-    "ownership": "空间分布权重与鱼侧动态参数都属于鱼，不是一部分放空间、一部分放鱼；同一鱼种在不同的空间 / 条件组下，两者都会不一样。",
-    "conditionGroup": "条件组 = 结构类型 × 水温 × 觅食水层 × 时段，同属一大类。水温是计算型；结构 / 觅食水层 / 时段是查表型。它由环境上下文提供，故记在环境上下文的说明里。",
-    "diel": "时段不会被光照度取代：光照带来一部分影响，时段活跃习性带来与之隔离且正交的另一部分影响（进化形成的生理节律）。",
-    "timeAxis": "时段与历史天气序列是同一根时间轴：时段由天气系统与钓场轮转直接定义；历史天气序列由 Input Snapshot Builder 归纳为事件类型（洪水 / 冷锋）× 阶段（到来前 / 进行中 / 刚过去）。",
-    "freeze": "一次中鱼流程（抛竿 → 中鱼 / 抬杆）内，所有由 Input Snapshot 构建的数据不再变化——本图左侧输入在单次流程内是快照常量。",
-    "dielRoute": "时段当前版本直接进入空间分布权重；Response 到位后烘焙进派生环境场，成为派生环境场数据的一部分，供鱼侧动态参数使用。",
-    "responseInputs": "响应模块的两路输入（v1 拓扑）：派生环境场（环境侧产物，含空间分布权重与鱼侧动态参数）与 玩家策略与操作数据 / Cue 吸引元素。不是经「鱼侧动态参数」中转（Design Owner 2026-09-17 纠正）。"
+    "topology": "骨架来自最初对齐草图 v1（七行）。本版在其上加「行带 + 分层展开」：每行是固定高度的行带，展开横向延伸。",
+    "altitude": "本图停在『整体框架』级别：表达流向、模块划分边界、输入输出边界，不表达具体参数如何算出下一层。",
+    "terminology": "原「环境权重 / EnvironmentWeight」已废弃，现行术语为「空间分布权重 / spatial distribution weight」。",
+    "ownership": "空间分布权重与鱼侧动态参数都属于鱼，随条件组变化。",
+    "conditionGroup": "条件组 = 结构类型 × 水温 × 觅食水层 × 时段。水温计算型；其余查表型。",
+    "diel": "时段不会被光照度取代：光照一部分、时段活跃习性（生理节律）另一部分，二者正交。",
+    "timeAxis": "时段与历史天气序列是同一根时间轴，两种处理。",
+    "freeze": "一次中鱼流程内，所有 Input Snapshot 数据不再变化。",
+    "responseInputs": "响应模块两路输入：派生环境场 + 玩家策略与操作数据 / Cue 吸引元素。",
+    "row5Clarified": "圆桌四件已由 Design Owner 确认：品质抽取调整 = 中鱼习性模式带来的品质份额调整；硬保底 = 尾部保护 / 独立控制层；动态权重调整 = 按玩家标签 × 鱼标签强制干预中鱼体验（规则未细化，属 SEMANTIC_OPEN）。",
+    "notFinal": "Design Owner 2026-09-17：本结构可作为当前画图依据，但尚未到最终结构，会在画图过程中迭代。"
   },
   "semantics": {
-    "hierarchy": "parent = 行 / 折叠单位。每一行是一个可折叠单元，折叠时行内全部方块与所连箭头一起隐藏。",
-    "rows": "R1 数据 → R2 烘焙 → R3 玩家策略与操作数据 → R4 响应 → R5 圆桌抽鱼 → R6 抽鱼和生成 → R7 范围外（不可折叠）",
-    "edges": "只表达流向与边界，不表达公式。label 写『流过去的是什么』。",
+    "hierarchy": "parent = 行。每行是一条固定高度的行带（band），行带边界和纵向位置永不变动。",
+    "expansion": "展开 = 横向向右延伸，绝不向下长。因此下面的行永不被推动。折叠态用「封面块」填住行带。",
+    "edges": "只表达流向与边界，不表达公式。",
     "edgeTypes": "DATA_FLOW 实线｜CONTROL_OR_SELECTION 虚线｜REFERENCE_OR_CONFIG 点线"
   },
   "nodes": [
@@ -31,17 +32,17 @@
     {
       "id": "R1",
       "label": "一、数据",
-      "caption": "环境上下文 / 钓场投鱼配置 / 鱼的习性配置",
+      "caption": "不可折叠的 section：数据的三个重要来源常显",
       "parent": "SYS",
       "lane": "main",
-      "collapsible": true
+      "band": 304
     },
     {
       "id": "D.CONTEXT",
       "label": "环境上下文",
-      "caption": "季节 · 天气史 · 地形 · 结构｜含条件组：结构 · 水温(计算型) · 觅食水层 · 时段",
+      "caption": "季节 · 天气史 · 地形 · 结构",
       "parent": "R1",
-      "lane": "r1",
+      "lane": "r1a",
       "kind": "data"
     },
     {
@@ -49,7 +50,7 @@
       "label": "钓场投鱼配置",
       "caption": "鱼种 × 品质 投放项 · 基础机会强度",
       "parent": "R1",
-      "lane": "r1",
+      "lane": "r1a",
       "kind": "data"
     },
     {
@@ -57,47 +58,296 @@
       "label": "鱼的习性配置",
       "caption": "温度 / 水层 / 结构亲和 · 时段习性",
       "parent": "R1",
-      "lane": "r1",
+      "lane": "r1a",
       "kind": "data"
+    },
+    {
+      "id": "R1.L.TIME",
+      "label": "时间轴",
+      "caption": "时段（天气系统与钓场轮转定义）｜历史天气序列（事件 × 阶段）",
+      "parent": "R1",
+      "lane": "r1b",
+      "kind": "l1"
+    },
+    {
+      "id": "R1.L.COND",
+      "label": "条件组",
+      "caption": "结构 · 水温（计算型） · 觅食水层 · 时段（查表型）",
+      "parent": "R1",
+      "lane": "r1b",
+      "kind": "l1"
+    },
+    {
+      "id": "R1.L.STOCK",
+      "label": "投放项与机会强度",
+      "caption": "投放项 / 基础机会强度 / 背景鱼标记与环境系数下限",
+      "parent": "R1",
+      "lane": "r1b",
+      "kind": "l1"
+    },
+    {
+      "id": "R1.L.NATURE",
+      "label": "鱼的静态习性组件",
+      "caption": "温度 · 觅食水层 · 结构亲和 · 时段 · 中鱼习性模式",
+      "parent": "R1",
+      "lane": "r1b",
+      "kind": "l1"
     },
     {
       "id": "R2",
       "label": "二、烘焙",
-      "caption": "习性配置 × 环境上下文 → 派生环境场",
+      "caption": "输入 = 第一行数据；输出 = 派生环境场",
       "parent": "SYS",
       "lane": "main",
+      "band": 334,
       "collapsible": true
+    },
+    {
+      "id": "R2.COVER",
+      "label": "二、烘焙",
+      "caption": "折叠态 · 展开后见五条计算通道",
+      "parent": "R2",
+      "lane": "r2cover",
+      "kind": "cover"
     },
     {
       "id": "BAKE",
       "label": "烘焙",
       "caption": "固定烘焙模板",
       "parent": "R2",
-      "lane": "r2",
+      "lane": "r2io",
       "kind": "process"
     },
     {
       "id": "DEF",
       "label": "派生环境场",
-      "caption": "Derived Environment Field｜承载「此鱼 × 此条件组」的配对",
+      "caption": "输出 · 行 2 与行 4 之间的交接数据",
       "parent": "R2",
-      "lane": "r2",
+      "lane": "r2io",
       "kind": "cube"
     },
     {
-      "id": "SDW",
-      "label": "空间分布权重",
-      "caption": "属鱼 · 随条件组变化",
+      "id": "R2.C1",
+      "label": "1 空间分布权重",
+      "caption": "环境侧",
       "parent": "R2",
-      "lane": "r2",
-      "kind": "data"
+      "lane": "r2ch",
+      "kind": "process"
     },
     {
-      "id": "FISHCOND",
-      "label": "鱼侧动态参数",
-      "caption": "活性 · 进食动机 · 警戒度(后续) · 食性偏好",
+      "id": "R2.C2",
+      "label": "2 活性 Activity",
+      "caption": "鱼侧",
       "parent": "R2",
-      "lane": "r2",
+      "lane": "r2ch",
+      "kind": "process"
+    },
+    {
+      "id": "R2.C3",
+      "label": "3 进食动机",
+      "caption": "鱼侧",
+      "parent": "R2",
+      "lane": "r2ch",
+      "kind": "process"
+    },
+    {
+      "id": "R2.C4",
+      "label": "4 警戒度",
+      "caption": "鱼侧 · 后续版本",
+      "parent": "R2",
+      "lane": "r2ch",
+      "kind": "process"
+    },
+    {
+      "id": "R2.C5",
+      "label": "5 动态进食偏好",
+      "caption": "鱼侧",
+      "parent": "R2",
+      "lane": "r2ch",
+      "kind": "process"
+    },
+    {
+      "id": "R2.C1.K",
+      "label": "核心因子计算",
+      "caption": "",
+      "parent": "R2",
+      "lane": "r2core",
+      "kind": "core"
+    },
+    {
+      "id": "R2.C2.K",
+      "label": "核心因子计算",
+      "caption": "",
+      "parent": "R2",
+      "lane": "r2core",
+      "kind": "core"
+    },
+    {
+      "id": "R2.C3.K",
+      "label": "核心因子计算",
+      "caption": "",
+      "parent": "R2",
+      "lane": "r2core",
+      "kind": "core"
+    },
+    {
+      "id": "R2.C4.K",
+      "label": "核心因子计算",
+      "caption": "",
+      "parent": "R2",
+      "lane": "r2core",
+      "kind": "core"
+    },
+    {
+      "id": "R2.C5.K",
+      "label": "核心因子计算",
+      "caption": "",
+      "parent": "R2",
+      "lane": "r2core",
+      "kind": "core"
+    },
+    {
+      "id": "R2.C1.S",
+      "label": "次要因子计算",
+      "caption": "",
+      "parent": "R2",
+      "lane": "r2sec",
+      "kind": "sec"
+    },
+    {
+      "id": "R2.C2.S",
+      "label": "次要因子计算",
+      "caption": "",
+      "parent": "R2",
+      "lane": "r2sec",
+      "kind": "sec"
+    },
+    {
+      "id": "R2.C3.S",
+      "label": "次要因子计算",
+      "caption": "",
+      "parent": "R2",
+      "lane": "r2sec",
+      "kind": "sec"
+    },
+    {
+      "id": "R2.C4.S",
+      "label": "次要因子计算",
+      "caption": "",
+      "parent": "R2",
+      "lane": "r2sec",
+      "kind": "sec"
+    },
+    {
+      "id": "R2.C5.S",
+      "label": "次要因子计算",
+      "caption": "",
+      "parent": "R2",
+      "lane": "r2sec",
+      "kind": "sec"
+    },
+    {
+      "id": "R2.C1.X",
+      "label": "排除忽略",
+      "caption": "",
+      "parent": "R2",
+      "lane": "r2skip",
+      "kind": "skip"
+    },
+    {
+      "id": "R2.C2.X",
+      "label": "排除忽略",
+      "caption": "",
+      "parent": "R2",
+      "lane": "r2skip",
+      "kind": "skip"
+    },
+    {
+      "id": "R2.C3.X",
+      "label": "排除忽略",
+      "caption": "",
+      "parent": "R2",
+      "lane": "r2skip",
+      "kind": "skip"
+    },
+    {
+      "id": "R2.C4.X",
+      "label": "排除忽略",
+      "caption": "",
+      "parent": "R2",
+      "lane": "r2skip",
+      "kind": "skip"
+    },
+    {
+      "id": "R2.C5.X",
+      "label": "排除忽略",
+      "caption": "",
+      "parent": "R2",
+      "lane": "r2skip",
+      "kind": "skip"
+    },
+    {
+      "id": "R2.F.HAB",
+      "label": "鱼的栖息地动态偏好",
+      "caption": "与其它因子一起参与计算",
+      "parent": "R2",
+      "lane": "r2l2",
+      "kind": "process"
+    },
+    {
+      "id": "R2.F.CORE",
+      "label": "核心因子（例：方块 · 三角）",
+      "caption": "按中鱼习性模式配置",
+      "parent": "R2",
+      "lane": "r2l2",
+      "kind": "core"
+    },
+    {
+      "id": "R2.F.SEC",
+      "label": "次要因子（例：六边形 · 圆）",
+      "caption": "",
+      "parent": "R2",
+      "lane": "r2l2",
+      "kind": "sec"
+    },
+    {
+      "id": "R2.F.SKIP",
+      "label": "不计算（例：六角形）",
+      "caption": "",
+      "parent": "R2",
+      "lane": "r2l2",
+      "kind": "skip"
+    },
+    {
+      "id": "R2.GATE",
+      "label": "门控",
+      "caption": "核心因子先过门控",
+      "parent": "R2",
+      "lane": "r2gate",
+      "kind": "gate"
+    },
+    {
+      "id": "R2.PASS",
+      "label": "满足 → 核心路径结算",
+      "caption": "",
+      "parent": "R2",
+      "lane": "r2out",
+      "kind": "process"
+    },
+    {
+      "id": "R2.FAIL",
+      "label": "不满足 → 失败路径 / 背景鱼下限",
+      "caption": "",
+      "parent": "R2",
+      "lane": "r2out",
+      "kind": "process"
+    },
+    {
+      "id": "R2.VAL",
+      "label": "该通道的值",
+      "caption": "",
+      "parent": "R2",
+      "lane": "r2val",
       "kind": "data"
     },
     {
@@ -106,23 +356,51 @@
       "caption": "钓具 / 钓组 · 姿态",
       "parent": "SYS",
       "lane": "main",
+      "band": 234,
       "collapsible": true
+    },
+    {
+      "id": "R3.COVER",
+      "label": "三、玩家策略与操作数据",
+      "caption": "折叠态",
+      "parent": "R3",
+      "lane": "r3cover",
+      "kind": "cover",
+      "slot": "R3"
     },
     {
       "id": "PLAYER",
       "label": "玩家策略与操作数据",
       "caption": "钓具 / 钓组 · 姿态",
       "parent": "R3",
-      "lane": "r3",
-      "kind": "data"
+      "lane": "r3l0",
+      "kind": "data",
+      "slot": "R3"
     },
     {
       "id": "CUE",
       "label": "Cue 吸引元素",
-      "caption": "速度 · 动作 · 声音 · 震动 · 光 · 轮廓 · 气味",
+      "caption": "",
       "parent": "R3",
-      "lane": "r3",
-      "kind": "data"
+      "lane": "r3l0",
+      "kind": "data",
+      "slot": "R3"
+    },
+    {
+      "id": "R3.A",
+      "label": "钓具 / 钓组 · 姿态颗粒",
+      "caption": "玩家侧的原始输入",
+      "parent": "R3",
+      "lane": "r3l1",
+      "kind": "l1"
+    },
+    {
+      "id": "R3.B",
+      "label": "呈现刺激通道",
+      "caption": "速度 · 轨迹动作 · 声音 · 震动 · 光闪烁 · 轮廓 · 气味",
+      "parent": "R3",
+      "lane": "r3l1",
+      "kind": "l1"
     },
     {
       "id": "R4",
@@ -130,15 +408,50 @@
       "caption": "适配系数",
       "parent": "SYS",
       "lane": "main",
+      "band": 274,
       "collapsible": true
+    },
+    {
+      "id": "R4.COVER",
+      "label": "四、响应",
+      "caption": "折叠态",
+      "parent": "R4",
+      "lane": "r4cover",
+      "kind": "cover",
+      "slot": "R4"
     },
     {
       "id": "RESPONSE",
       "label": "响应模块",
-      "caption": "适配系数｜较复杂逻辑，本图不展开",
+      "caption": "两路输入：派生环境场 + Cue 吸引元素",
       "parent": "R4",
-      "lane": "r4",
-      "kind": "process"
+      "lane": "r4l0",
+      "kind": "process",
+      "slot": "R4"
+    },
+    {
+      "id": "R4.A",
+      "label": "四层分离",
+      "caption": "行为使能 → 模式适用性 → 任务可负担性 → 响应",
+      "parent": "R4",
+      "lane": "r4l1",
+      "kind": "l1"
+    },
+    {
+      "id": "R4.B",
+      "label": "两条完整模式",
+      "caption": "摄食：目标关系 × 动机 × 任务｜防御：护巢 ∧ 在范围内 ∧ 威胁相关",
+      "parent": "R4",
+      "lane": "r4l1",
+      "kind": "l1"
+    },
+    {
+      "id": "R4.C",
+      "label": "跨模式聚合",
+      "caption": "算子由路由关系决定",
+      "parent": "R4",
+      "lane": "r4l1",
+      "kind": "l1"
     },
     {
       "id": "R5",
@@ -146,7 +459,17 @@
       "caption": "",
       "parent": "SYS",
       "lane": "main",
+      "band": 269,
       "collapsible": true
+    },
+    {
+      "id": "R5.COVER",
+      "label": "五、圆桌抽鱼",
+      "caption": "折叠态",
+      "parent": "R5",
+      "lane": "r5cover",
+      "kind": "cover",
+      "slot": "R5"
     },
     {
       "id": "TABLE",
@@ -154,39 +477,44 @@
       "caption": "",
       "parent": "R5",
       "lane": "r5bar",
-      "kind": "process"
+      "kind": "process",
+      "slot": "R5"
     },
     {
       "id": "T1",
       "label": "品质抽取调整",
-      "caption": "中鱼习性模式",
+      "caption": "中鱼习性模式带来的品质份额调整",
       "parent": "R5",
-      "lane": "r5",
-      "kind": "process"
+      "lane": "r5t",
+      "kind": "process",
+      "slot": "R5"
     },
     {
       "id": "T2",
       "label": "圆桌权重表构建",
-      "caption": "组件",
+      "caption": "权重池：空间分布权重 × 适配系数 → 权重行 + NONE",
       "parent": "R5",
-      "lane": "r5",
-      "kind": "process"
+      "lane": "r5t",
+      "kind": "process",
+      "slot": "R5"
     },
     {
       "id": "T3",
       "label": "硬保底",
-      "caption": "",
+      "caption": "尾部保护 · 独立控制层",
       "parent": "R5",
-      "lane": "r5",
-      "kind": "process"
+      "lane": "r5t",
+      "kind": "process",
+      "slot": "R5"
     },
     {
       "id": "T4",
       "label": "动态权重调整",
-      "caption": "",
+      "caption": "按玩家标签 × 鱼标签强制干预中鱼体验（规则未细化）",
       "parent": "R5",
-      "lane": "r5",
-      "kind": "process"
+      "lane": "r5t",
+      "kind": "process",
+      "slot": "R5"
     },
     {
       "id": "R6",
@@ -194,29 +522,57 @@
       "caption": "五的短延伸",
       "parent": "SYS",
       "lane": "main",
+      "band": 204,
       "collapsible": true
+    },
+    {
+      "id": "R6.COVER",
+      "label": "六、抽鱼和生成",
+      "caption": "折叠态",
+      "parent": "R6",
+      "lane": "r6cover",
+      "kind": "cover",
+      "slot": "R6"
     },
     {
       "id": "DRAW",
       "label": "抽鱼和生成",
-      "caption": "鱼种 · 品质 · 大小 · 重量 ｜ 参数透传",
+      "caption": "抽出鱼种 · 品质 · 大小 · 重量",
       "parent": "R6",
-      "lane": "r6",
-      "kind": "process"
+      "lane": "r6l0",
+      "kind": "process",
+      "slot": "R6"
+    },
+    {
+      "id": "R6.L",
+      "label": "鱼侧动态参数透传",
+      "caption": "活性等，按下游真实消费关系决定",
+      "parent": "R6",
+      "lane": "r6l1",
+      "kind": "l1"
     },
     {
       "id": "R7",
       "label": "七、范围外",
       "caption": "超出中鱼范畴 · 不折叠",
       "parent": "SYS",
-      "lane": "main"
+      "lane": "main",
+      "band": 164
     },
     {
       "id": "FISHAI",
       "label": "运行 Fish AI",
       "caption": "刺鱼 / 博鱼",
       "parent": "R7",
-      "lane": "r7",
+      "lane": "r7l0",
+      "kind": "outside"
+    },
+    {
+      "id": "R7.L",
+      "label": "最简略",
+      "caption": "生成后的追击 / 咬口 / 接触属下游",
+      "parent": "R7",
+      "lane": "r7l1",
       "kind": "outside"
     }
   ],
@@ -249,30 +605,70 @@
       "type": "DATA_FLOW"
     },
     {
+      "from": "R2.COVER",
+      "to": "BAKE",
+      "type": "DATA_FLOW",
+      "label": "展开"
+    },
+    {
       "from": "BAKE",
       "to": "DEF",
       "type": "DATA_FLOW"
     },
     {
-      "from": "DEF",
-      "to": "SDW",
-      "type": "DATA_FLOW"
-    },
-    {
-      "from": "DEF",
-      "to": "FISHCOND",
-      "type": "DATA_FLOW"
-    },
-    {
-      "from": "D.STOCK",
-      "to": "SDW",
+      "from": "BAKE",
+      "to": "R2.C1",
       "type": "DATA_FLOW",
-      "label": "基础机会强度"
+      "label": "分通道"
+    },
+    {
+      "from": "DEF",
+      "to": "R2.F.HAB",
+      "type": "DATA_FLOW",
+      "label": "展开通道 1"
+    },
+    {
+      "from": "R2.F.CORE",
+      "to": "R2.GATE",
+      "type": "DATA_FLOW"
+    },
+    {
+      "from": "R2.F.HAB",
+      "to": "R2.GATE",
+      "type": "DATA_FLOW"
+    },
+    {
+      "from": "R2.GATE",
+      "to": "R2.PASS",
+      "type": "CONTROL_OR_SELECTION",
+      "label": "通过"
+    },
+    {
+      "from": "R2.GATE",
+      "to": "R2.FAIL",
+      "type": "CONTROL_OR_SELECTION",
+      "label": "不通过"
+    },
+    {
+      "from": "R2.PASS",
+      "to": "R2.VAL",
+      "type": "DATA_FLOW"
+    },
+    {
+      "from": "R2.FAIL",
+      "to": "R2.VAL",
+      "type": "DATA_FLOW"
     },
     {
       "from": "PLAYER",
       "to": "CUE",
       "type": "DATA_FLOW"
+    },
+    {
+      "from": "R3.COVER",
+      "to": "PLAYER",
+      "type": "DATA_FLOW",
+      "label": "展开"
     },
     {
       "from": "DEF",
@@ -287,7 +683,13 @@
       "label": "Cue 吸引元素"
     },
     {
-      "from": "SDW",
+      "from": "R4.COVER",
+      "to": "RESPONSE",
+      "type": "DATA_FLOW",
+      "label": "展开"
+    },
+    {
+      "from": "R2.C1",
       "to": "R5",
       "type": "DATA_FLOW",
       "label": "空间分布权重"
@@ -299,10 +701,22 @@
       "label": "适配系数"
     },
     {
+      "from": "R5.COVER",
+      "to": "TABLE",
+      "type": "DATA_FLOW",
+      "label": "展开"
+    },
+    {
       "from": "R5",
       "to": "DRAW",
       "type": "DATA_FLOW",
       "label": "权重池 + NONE"
+    },
+    {
+      "from": "R6.COVER",
+      "to": "DRAW",
+      "type": "DATA_FLOW",
+      "label": "展开"
     },
     {
       "from": "DRAW",

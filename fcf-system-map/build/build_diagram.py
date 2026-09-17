@@ -54,17 +54,39 @@ NODE_W, NODE_H, STAGE_W = 260, 66, 220
 # 7-row 整体框架 layout: `main` stacks the root + seven row labels; each row
 # lane lays its blocks out horizontally (dx) on that row's own y.
 LANES = {
-    "main": {"x": 60,   "w": 250, "anchor": None, "y0": 156, "dy": 165},
-    "r1":   {"x": 350,  "w": 250, "anchor": "R1", "y0": 0, "dx": 260, "cap": 4},
-    "r2":   {"x": 350,  "w": 250, "anchor": "R2", "y0": 0, "dx": 260, "cap": 5},
-    "r3":   {"x": 900,  "w": 250, "anchor": "R3", "y0": 0, "dx": 260, "cap": 3},
-    "r4":   {"x": 900,  "w": 250, "anchor": "R4", "y0": 0, "dx": 260, "cap": 3},
-    "r5bar":{"x": 350,  "w": 1330, "anchor": "R5", "y0": 0, "dx": 0, "h": 42},
-    "r5":   {"x": 370,  "w": 250, "anchor": "R5", "y0": 56, "dx": 260, "cap": 5},
-    "r6":   {"x": 350,  "w": 480, "anchor": "R6", "y0": 0, "dx": 260, "cap": 2},
-    "r7":   {"x": 350,  "w": 480, "anchor": "R7", "y0": 0, "dx": 260, "cap": 2},
+    "main": {"x": 70, "w": 300, "anchor": None, "y0": 150, "dy": 0, "bandGap": 26,
+              "tagH": 28},
+    # 行 1（常显，无封面）
+    "r1a":     {"x": 110, "w": 260, "anchor": "R1", "y0": 78,  "dy": 70, "cap": 3},
+    "r1b":     {"x": 560, "w": 470, "anchor": "R1", "y0": 64,  "dy": 46, "h": 42, "cap": 4},
+    # 行 2
+    "r2cover": {"x": 100, "w": 300, "anchor": "R2", "y0": 34,  "dx": 0, "h": 150},
+    "r2io":    {"x": 430, "w": 220, "anchor": "R2", "y0": 44, "dy": 72, "cap": 2},
+    "r2ch":    {"x": 680, "w": 150, "anchor": "R2", "y0": 38,  "dy": 50, "h": 44, "cap": 5},
+    "r2core":  {"x": 840, "w": 104, "anchor": "R2", "y0": 38,  "dy": 50, "h": 44, "cap": 5},
+    "r2sec":   {"x": 952, "w": 104, "anchor": "R2", "y0": 38,  "dy": 50, "h": 44, "cap": 5},
+    "r2skip":  {"x": 1064, "w": 92, "anchor": "R2", "y0": 38,  "dy": 50, "h": 44, "cap": 5},
+    "r2l2":    {"x": 1190, "w": 250, "anchor": "R2", "y0": 40, "dy": 58, "h": 52, "cap": 4},
+    "r2gate":  {"x": 1470, "w": 110, "anchor": "R2", "y0": 98, "dx": 0, "h": 52},
+    "r2out":   {"x": 1610, "w": 220, "anchor": "R2", "y0": 80, "dy": 58, "h": 52, "cap": 2},
+    "r2val":   {"x": 1870, "w": 150, "anchor": "R2", "y0": 108, "dx": 0, "h": 42},
+    # 行 3 / 4 / 5 / 6 / 7
+    "r3cover": {"x": 100, "w": 300, "anchor": "R3", "y0": 34,  "dx": 0, "h": 120},
+    "r3l0":    {"x": 100, "w": 270, "anchor": "R3", "y0": 34,  "dy": 78, "cap": 2},
+    "r3l1":    {"x": 420, "w": 430, "anchor": "R3", "y0": 34,  "dy": 72, "cap": 2},
+    "r4cover": {"x": 100, "w": 300, "anchor": "R4", "y0": 34,  "dx": 0, "h": 120},
+    "r4l0":    {"x": 100, "w": 300, "anchor": "R4", "y0": 34,  "dx": 0, "h": 60},
+    "r4l1":    {"x": 440, "w": 480, "anchor": "R4", "y0": 34,  "dy": 68, "cap": 3},
+    "r5cover": {"x": 100, "w": 300, "anchor": "R5", "y0": 34,  "dx": 0, "h": 120},
+    "r5bar":   {"x": 100, "w": 1300, "anchor": "R5", "y0": 34, "dx": 0, "h": 42},
+    "r5t":     {"x": 120, "w": 310, "anchor": "R5", "y0": 92, "dx": 330, "cap": 4},
+    "r6cover": {"x": 100, "w": 300, "anchor": "R6", "y0": 34,  "dx": 0, "h": 100},
+    "r6l0":    {"x": 100, "w": 300, "anchor": "R6", "y0": 34,  "dx": 0, "h": 60},
+    "r6l1":    {"x": 440, "w": 620, "anchor": "R6", "y0": 34,  "dx": 0, "h": 50},
+    "r7l0":    {"x": 100, "w": 300, "anchor": "R7", "y0": 34,  "dx": 0, "h": 60},
+    "r7l1":    {"x": 440, "w": 400, "anchor": "R7", "y0": 34,  "dx": 0, "h": 50},
 }
-PAGE_W, PAGE_H = 1700, 1560
+PAGE_W, PAGE_H = 2120, 2020
 
 GRAY_FILL, GRAY_STROKE, GRAY_FONT = "#f5f5f5", "#a6a6a6", "#8f8f8f"
 
@@ -77,6 +99,12 @@ KIND_STYLE = {
     "data":    ("shape=parallelogram;perimeter=parallelogramPerimeter;size=18;", "#dae8fc", "#6c8ebf"),
     "cube":    ("shape=cube;size=20;", "#dae8fc", "#6c8ebf"),
     "process": ("rounded=1;", "#ffe6cc", "#d79b00"),
+    "l1":      ("rounded=1;", "#fff7e6", "#d79b00"),
+    "cover":   ("rounded=1;strokeWidth=3;", "#ffe6cc", "#d79b00"),
+    "core":    ("rounded=1;strokeWidth=2;", "#d5e8d4", "#2d6a4f"),
+    "sec":     ("rounded=1;dashed=1;", "#fff2cc", "#d6b656"),
+    "skip":    ("rounded=1;dashed=1;", "#f5f5f5", "#aaaaaa"),
+    "gate":    ("rhombus;whiteSpace=wrap;html=1;", "#f8cecc", "#b85450"),
     "outside": ("rounded=1;dashed=1;", "#f5f5f5", "#a6a6a6"),
 }
 ROW_STYLE = ("rounded=1;strokeWidth=2;", "#ffffff", "#4477aa")   # 行标题
@@ -135,13 +163,23 @@ def load_sources(root):
 def layout(nodes, edges):
     ids = [n["id"] for n in nodes]
     by_id = {n["id"]: n for n in nodes}
-    pos, lane_cursor = {}, {}
+    pos, lane_cursor, row_bands = {}, {}, {}
     # main lane first (row nodes live there), then row lanes in definition order
     for lane in ["main"] + [l for l in LANES if l != "main"]:
         spec = LANES[lane]
         i = 0
+        cursor_y = spec.get("y0", 0) if lane == "main" else 0
         for n in nodes:
             if n.get("lane") != lane:
+                continue
+            if lane == "main" and n.get("parent") is not None:
+                # 行：按累积 band 高度定位；行带边界固定，展开不会推动它。
+                # 行节点自身只有一条窄标签，但它向后推进整个 band 的高度。
+                y = cursor_y
+                cursor_y += n.get("band", 160) + spec.get("bandGap", 26)
+                pos[n["id"]] = (spec["x"], y, spec["w"], spec.get("tagH", 28))
+                row_bands[n["id"]] = (y, n.get("band", 160))
+                i += 1
                 continue
             if "dx" in spec:
                 # horizontal lane: blocks sit side by side on the anchor's row
@@ -152,7 +190,8 @@ def layout(nodes, edges):
                 x = spec["x"] + i * spec["dx"]
                 y = pos[spec["anchor"]][1] + spec["y0"]
             elif spec["anchor"] is None:
-                x, y = spec["x"], spec["y0"] + i * spec["dy"]
+                x, y = spec["x"], cursor_y
+                cursor_y += (54 if n.get("parent") is None else NODE_H) + spec.get("bandGap", 26)
             else:
                 if spec["anchor"] not in pos:
                     sys.exit("error: lane %s anchors on %s which is not laid out yet"
@@ -178,6 +217,12 @@ def layout(nodes, edges):
             sys.exit("error: 行 %s 的容量 %d 需要宽度到 x=%d，超出页宽 %d。"
                      "要么缩小 dx，要么加宽 PAGE_W。" % (lane, spec["cap"], right, PAGE_W))
 
+    # 页高按行带累积结果算（确定性），随后再做越界检查
+    global PAGE_H
+    bottom = max((pos[nid][1] + row_bands[nid][1] if nid in row_bands else y + h)
+                 for nid, (x, y, w, h) in pos.items())
+    PAGE_H = int(bottom + 220)
+
     for nid, (x, y, w, h) in pos.items():
         if x + w > PAGE_W or y + h > PAGE_H or x < 0 or y < 0:
             sys.exit("error: node %s lands outside the page canvas: %r" % (nid, pos[nid]))
@@ -198,7 +243,18 @@ def layout(nodes, edges):
         semantic.append({"from": e["from"], "to": e["to"], "type": e["type"],
                          "exit": e.get("exit"), "entry": e.get("entry"),
                          "id": "E:%s->%s" % (e["from"], e["to"])})
-    return pos, structural, semantic
+    return pos, structural, semantic, row_bands
+
+
+def page_height(pos, row_bands):
+    """页高按内容算（仍确定性）：最后一条行带底部 + 图例区。"""
+    bottom = 0
+    for nid, (x, y, w, h) in pos.items():
+        if nid in row_bands:
+            bottom = max(bottom, y + row_bands[nid][1])
+        else:
+            bottom = max(bottom, y + h)
+    return int(bottom + 220)
 
 
 def descendants(nid, nodes):
@@ -222,6 +278,30 @@ def lens_of(scopes):
     scope_by_id = {s["id"]: s for s in scopes["scopes"]}
     lensed = [s for s in scopes["scopes"] if s.get("lens")]
     return scope_by_id, (lensed[0] if lensed else None)
+
+
+def row_content_cells(nid, nodes, semantic, structural):
+    """行的「内容」= 后代中除封面块以外的全部 cell，加上它们之间的边。
+    封面块是折叠态的对立面，两者互斥，故不算在内容里。"""
+    cover = cover_of(nid, nodes)
+    desc = set(descendants(nid, nodes))
+    if cover:
+        desc.discard(cover)
+    cells = sorted(desc)
+    for e in semantic:
+        if e["from"] in desc or e["to"] in desc:
+            cells.append(e["id"])
+    for e in structural:
+        if e["from"] in desc or e["to"] in desc:
+            cells.append(e["id"])
+    return sorted(set(cells))
+
+
+def cover_of(nid, nodes):
+    for n in nodes:
+        if n.get("parent") == nid and n.get("kind") == "cover":
+            return n["id"]
+    return None
 
 
 def subtree_cells(nid, nodes, semantic, structural):
@@ -437,12 +517,19 @@ def emit(graph, scopes, views, pos, structural, semantic, collapsible_cells, def
     default_spec = next(v for v in views["views"] if v["id"] == default_view)
     default_exp = default_spec.get("expansion") or {}
     initially_hidden = set()
-    for nid in collapsible_cells:
-        initially_hidden.update(collapsible_cells[nid])
-    for nid in default_exp.get("expand", []):
-        initially_hidden.difference_update(collapsible_cells[nid])
-    for nid in default_exp.get("collapse", []):
-        initially_hidden.update(collapsible_cells[nid])
+    for row in [n["id"] for n in graph["nodes"] if n.get("band")]:
+        cover = cover_of(row, graph["nodes"])
+        content = row_content_cells(row, graph["nodes"], semantic, structural)
+        if not cover:
+            continue          # 没有封面 = 这行不可折叠（行1 常显 section、行7 范围外）
+        if row in default_exp.get("expand", []):
+            initially_hidden.add(cover)          # 展开态：封面藏起，内容可见
+        else:
+            initially_hidden.update(content)     # 折叠态：内容藏起，封面可见
+    for row in default_exp.get("collapse", []):
+        cover = cover_of(row, graph["nodes"])
+        if cover:
+            initially_hidden.add(cover)
     for n in graph["nodes"]:
         nid = n["id"]
         x, yy, w, h = pos[nid]
@@ -454,7 +541,14 @@ def emit(graph, scopes, views, pos, structural, semantic, collapsible_cells, def
             value += ("<br><font style='font-size:9px;color:#555555'>%s</font>"
                       % n["caption"])
         if n.get("collapsible"):
-            link = action_link({"actions": [{"toggle": {"cells": collapsible_cells[nid]}}]})
+            # 行标签 = 折叠（显示封面、隐藏内容）
+            link = action_link({"actions": [{"show": {"cells": [cover_of(nid, graph["nodes"])] if cover_of(nid, graph["nodes"]) else []}},
+                                            {"hide": {"cells": row_content_cells(nid, graph["nodes"], semantic, structural)}}]})
+        elif n.get("kind") == "cover":
+            # 封面 = 展开（隐藏封面、显示内容）
+            row = n["parent"]
+            link = action_link({"actions": [{"hide": {"cells": [nid]}},
+                                            {"show": {"cells": row_content_cells(row, graph["nodes"], semantic, structural)}}]})
         a(vertex(nid, value, style, x, yy, w, h, "Layer:Main", link=link,
                  visible=nid not in initially_hidden))
 
@@ -495,7 +589,7 @@ def build(root):
     src = load_sources(root)
     graph, scopes, views = src["graph"], src["scopes"], src["views"]
 
-    pos, structural, semantic = layout(graph["nodes"], graph["edges"])
+    pos, structural, semantic, row_bands = layout(graph["nodes"], graph["edges"])
     collapsible_cells = {
         n["id"]: subtree_cells(n["id"], graph["nodes"], semantic, structural)
         for n in graph["nodes"] if n.get("collapsible")
@@ -526,7 +620,7 @@ def main():
     if args.out:
         src = load_sources(root)
         graph, scopes, views = src["graph"], src["scopes"], src["views"]
-        pos, structural, semantic = layout(graph["nodes"], graph["edges"])
+        pos, structural, semantic, row_bands = layout(graph["nodes"], graph["edges"])
         collapsible_cells = {
             n["id"]: subtree_cells(n["id"], graph["nodes"], semantic, structural)
             for n in graph["nodes"] if n.get("collapsible")

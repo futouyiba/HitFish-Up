@@ -2,16 +2,65 @@
   "format": 3,
   "description": "Diagram node -> external authority links. References only; authority content is never copied into this repo. Editing any authority source (Notion / Feishu) is out of scope for the map pipeline. status: linked = authority read and matched; pending = authority not yet identified/confirmed (an assumption, not a claim).",
   "contracts": [
-    {"semanticId": "SYS", "authorityRef": "https://app.notion.com/p/Overall-System-Model-World-State-Fish-Spawn-Commit-Cross-domain-System-Model-3c7a4137d2368144b8e5e9f520430237", "status": "linked", "note": "中鱼升级｜Overall System Model (v20)：跨域系统结构"},
-    {"semanticId": "R2", "authorityRef": "https://app.notion.com/p/Mechanism-Topology-V2-Spatial-Response-Deep-Design-Mechanism-Companion-3dba4137d23681c0b811f70a450be773", "status": "linked", "note": "中鱼升级｜Mechanism Topology V2 §3：Spatial 内部拓扑"},
-    {"semanticId": "SDW", "authorityRef": null, "status": "pending", "note": "「空间分布权重」为 Design Owner 2026-09-17 确认的现行术语（替代「环境权重」）；其 Current 归属页待登记"},
-    {"semanticId": "FISHCOND", "authorityRef": "https://app.notion.com/p/Fish-Condition-R0-Activity-FeedingMotivation-Evidence-Schema-DSL-3dca4137d23681afbd3dc337b96330de", "status": "linked", "note": "大口黑鲈 Fish Condition 校准 R0：FishConditionSnapshot = Activity + FeedingMotivation + FeedingPreferenceProfile；FunctionalCapacity 已 DROP"},
-    {"semanticId": "RESPONSE", "authorityRef": "https://app.notion.com/p/Behavioral-Regime-Largemouth-Bass-Spatial-Response-Deep-Design-Rationale-3dba4137d23681b088d5d55965329db9", "status": "linked", "note": "中层逻辑样板 v8 §17/§22：Feeding / Defense 两条 Complete Mode 的最小 grammar"},
-    {"semanticId": "D.STOCK", "authorityRef": "https://app.notion.com/p/0-3-4-0-B-R0-3dda4137d23681c68ec3fb1944573af4", "status": "linked", "note": "0.3.4.0-B 开发需求 R0：FishPond × FishQualityRef 的基础机会强度 / 背景鱼标记 / envCoeffMin"},
-    {"semanticId": "D.HABIT", "authorityRef": "https://app.notion.com/p/0-3-4-0-B-Authoring-Resolve-Contract-R0-3dda4137d23681408e4fe0f35ced39d9", "status": "linked", "note": "0.3.4.0-B Authoring & Resolve Contract R0：FishQualityRef → FishEnvAffinityRef 的四个 Component Profile"},
-    {"semanticId": "BAKE", "authorityRef": "https://app.notion.com/p/0-3-4-0-B-Fixed-Template-Bake-3dda4137d236812e89b5cf846c528b6c", "status": "linked", "note": "0.3.4.0-B 固定模板分层烘焙：系统拥有的 Fixed Bake Template Program，作者不编辑执行顺序"},
-    {"semanticId": "T1", "authorityRef": "https://app.notion.com/p/0-3-4-R0-Authoring-Bass-267-FishMode-FishGroup-Bake-Response-Quality--3d6a4137d23681cdb310d73c8907166e", "status": "pending", "note": "圆桌四件（品质抽取调整 / 权重表构建 / 硬保底 / 动态权重调整）的 Current 归属页未读"},
-    {"semanticId": "FISHAI", "authorityRef": "https://app.notion.com/p/Overall-System-Model-World-State-Fish-Spawn-Commit-Cross-domain-System-Model-3c7a4137d2368144b8e5e9f520430237", "status": "linked", "note": "同上 §6：Fish Spawn Commit 之后属 Fish AI / 下游玩法，不在中鱼范畴"},
-    {"semanticId": "D.CONTEXT", "authorityRef": null, "status": "pending", "note": "环境上下文的 Current 归属页待登记"}
+    {
+      "semanticId": "SYS",
+      "authorityRef": "https://app.notion.com/p/Overall-System-Model-World-State-Fish-Spawn-Commit-Cross-domain-System-Model-3c7a4137d2368144b8e5e9f520430237",
+      "status": "linked",
+      "note": "中鱼升级｜Overall System Model (v20)：跨域系统结构"
+    },
+    {
+      "semanticId": "R2",
+      "authorityRef": "https://app.notion.com/p/Mechanism-Topology-V2-Spatial-Response-Deep-Design-Mechanism-Companion-3dba4137d23681c0b811f70a450be773",
+      "status": "linked",
+      "note": "中鱼升级｜Mechanism Topology V2 §3：Spatial 内部拓扑"
+    },
+    {
+      "semanticId": "RESPONSE",
+      "authorityRef": "https://app.notion.com/p/Behavioral-Regime-Largemouth-Bass-Spatial-Response-Deep-Design-Rationale-3dba4137d23681b088d5d55965329db9",
+      "status": "linked",
+      "note": "中层逻辑样板 v8 §17/§22：Feeding / Defense 两条 Complete Mode 的最小 grammar"
+    },
+    {
+      "semanticId": "D.STOCK",
+      "authorityRef": "https://app.notion.com/p/0-3-4-0-B-R0-3dda4137d23681c68ec3fb1944573af4",
+      "status": "linked",
+      "note": "0.3.4.0-B 开发需求 R0：FishPond × FishQualityRef 的基础机会强度 / 背景鱼标记 / envCoeffMin"
+    },
+    {
+      "semanticId": "D.HABIT",
+      "authorityRef": "https://app.notion.com/p/0-3-4-0-B-Authoring-Resolve-Contract-R0-3dda4137d23681408e4fe0f35ced39d9",
+      "status": "linked",
+      "note": "0.3.4.0-B Authoring & Resolve Contract R0：FishQualityRef → FishEnvAffinityRef 的四个 Component Profile"
+    },
+    {
+      "semanticId": "BAKE",
+      "authorityRef": "https://app.notion.com/p/0-3-4-0-B-Fixed-Template-Bake-3dda4137d236812e89b5cf846c528b6c",
+      "status": "linked",
+      "note": "0.3.4.0-B 固定模板分层烘焙：系统拥有的 Fixed Bake Template Program，作者不编辑执行顺序"
+    },
+    {
+      "semanticId": "T1",
+      "authorityRef": "https://app.notion.com/p/0-3-4-R0-Authoring-Bass-267-FishMode-FishGroup-Bake-Response-Quality--3d6a4137d23681cdb310d73c8907166e",
+      "status": "pending",
+      "note": "圆桌四件（品质抽取调整 / 权重表构建 / 硬保底 / 动态权重调整）的 Current 归属页未读"
+    },
+    {
+      "semanticId": "FISHAI",
+      "authorityRef": "https://app.notion.com/p/Overall-System-Model-World-State-Fish-Spawn-Commit-Cross-domain-System-Model-3c7a4137d2368144b8e5e9f520430237",
+      "status": "linked",
+      "note": "同上 §6：Fish Spawn Commit 之后属 Fish AI / 下游玩法，不在中鱼范畴"
+    },
+    {
+      "semanticId": "D.CONTEXT",
+      "authorityRef": null,
+      "status": "pending",
+      "note": "环境上下文的 Current 归属页待登记"
+    },
+    {
+      "semanticId": "R2.C1",
+      "authorityRef": null,
+      "status": "pending",
+      "note": "空间分布权重的 Current 归属页待登记（术语已确认）"
+    }
   ]
 }
