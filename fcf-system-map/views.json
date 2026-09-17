@@ -1,41 +1,28 @@
 {
-  "format": 2,
-  "description": "View dimension = 'how far is the hierarchy currently expanded' plus an optional scope lens. The authority states that its §2 diagrams are five observation faces (语义边界 / 生产执行 / 模块 Contract / Authoring→Runtime / Bass 实例) of ONE system — that idea is what this dimension exists to carry. scopeLens: 'clear' = restore neutral colors, a scope id = apply that lens, 'keep' = do not touch colors. expansion: 'collapse'/'expand' name collapsible nodes; presets use idempotent hide/show sets (never toggle) so they never fight manual expand/collapse state.",
+  "format": 3,
+  "description": "View dimension = 展开粒度 + 可选 scope lens。scopeLens: 'clear' = 恢复中性配色与全不透明，a scope id = 应用该 lens，'keep' = 不动配色。expansion: collapse/expand 列出可折叠行；预设用幂等 hide/show，绝不用 toggle，因此不会与手动折叠状态打架。",
   "defaultView": "overall",
   "views": [
     {
       "id": "overall",
-      "label": "Overall",
+      "label": "总图",
       "scopeLens": "clear",
-      "expansion": {
-        "collapse": ["IO", "WAIST", "WHO", "WHO.SPATIAL", "WHO.INTERACTION", "RESOLVE"]
-      },
-      "comment": "规范复位：只留主干，中性配色。"
+      "expansion": {"expand": ["R1", "R2", "R3", "R4", "R5", "R6"]},
+      "comment": "默认：七大层全部展开、中性配色（R7 范围外不可折叠）。"
     },
     {
       "id": "0340b",
       "label": "0.3.4.0-B",
       "scopeLens": "0.3.4.0-B",
       "expansion": null,
-      "comment": "只上 scope 配色，绝不触碰展开状态（正交性要求）。"
+      "comment": "只上 scope 配色与透明度：范围外元素调暗但不隐藏、不移位。绝不触碰展开状态（正交性）。"
     },
     {
-      "id": "who-detail",
-      "label": "WHO Detail",
-      "scopeLens": "keep",
-      "expansion": {
-        "expand": ["WHO", "WHO.SPATIAL", "WHO.INTERACTION"]
-      },
-      "comment": "只展开 WHO 两个域，绝不触碰 scope 配色，故可与 0.3.4.0-B 配色自由叠加。"
-    },
-    {
-      "id": "resolve-detail",
-      "label": "RESOLVE Detail",
-      "scopeLens": "keep",
-      "expansion": {
-        "expand": ["RESOLVE"]
-      },
-      "comment": "只展开 RESOLVE 域。"
+      "id": "0340b-focus",
+      "label": "0.3.4.0-B 聚焦",
+      "scopeLens": "0.3.4.0-B",
+      "expansion": {"collapse": ["R3", "R4", "R6"]},
+      "comment": "『只看这个版本』：上 lens 并收起本版不触及的行（R7 范围外不可折叠，故保持可见）。这是组合预设，不是正交性示例——纯 lens 用上一个视图。"
     }
   ]
 }
