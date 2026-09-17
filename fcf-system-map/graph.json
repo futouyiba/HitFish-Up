@@ -405,8 +405,7 @@
     },
     {
       "id": "R2.C1.X",
-      "label": "忽略因子",
-      "caption": "不参与计算",
+      "label": "不参与计算",
       "parent": "R2.C1",
       "lane": "r2c1X",
       "kind": "skip"
