@@ -3,12 +3,6 @@
   "description": "Diagram node -> external authority links. References only; authority content is never copied into this repo. Editing any authority source (Notion / Feishu) is out of scope for the map pipeline. status: linked = authority read and matched; pending = authority not yet identified/confirmed (an assumption, not a claim).",
   "contracts": [
     {
-      "semanticId": "SYS",
-      "authorityRef": "https://app.notion.com/p/Overall-System-Model-World-State-Fish-Spawn-Commit-Cross-domain-System-Model-3c7a4137d2368144b8e5e9f520430237",
-      "status": "linked",
-      "note": "中鱼升级｜Overall System Model (v20)：跨域系统结构"
-    },
-    {
       "semanticId": "R2",
       "authorityRef": "https://app.notion.com/p/Mechanism-Topology-V2-Spatial-Response-Deep-Design-Mechanism-Companion-3dba4137d23681c0b811f70a450be773",
       "status": "linked",

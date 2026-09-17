@@ -243,7 +243,6 @@ def resolve_layout(lay, nodes):
         for c in node["children"]:
             if (c["kind"] == "leaf" and not c["spec"].get("skip")
                     and not c["spec"].get("fill")
-                    and c["spec"].get("role") != "title"
                     and not c["spec"].get("pin")):
                 wid = "C:W:" + c["id"]
                 if wid in containers:
@@ -298,9 +297,9 @@ def layout_ctx(lay, graph, views, root):
         """
         node = by_cid.get(cid)
         while node is not None:
-            for c in node.get("children", []):
-                if c["kind"] == "leaf" and c["spec"].get("role") == "title":
-                    return "expanded" if c["id"] in expanded else "collapsed"
+            t = title_leaf_of(node)
+            if t is not None:
+                return "expanded" if t["id"] in expanded else "collapsed"
             node = by_cid.get(node["parent"]) if node["parent"] else None
         return None
 
@@ -320,8 +319,9 @@ def layout_ctx(lay, graph, views, root):
 
     return {
         "border": lay["border"], "spacing": lay["spacing"],
-        "titleH": lay["titleH"], "leafH": lay["leafH"],
+        "titleH": lay["titleH"], "titleW": lay["titleW"], "leafH": lay["leafH"],
         "kinds": {n["id"]: n.get("kind", DEFAULT_KIND) for n in graph["nodes"]},
+        "labels": {n["id"]: n.get("label", "") for n in graph["nodes"]},
         "visible": visible, "state_of": state_of, "expanded": expanded,
     }
 
@@ -339,6 +339,18 @@ def natural_w(node, ctx):
         return (2 * b + node["indent"] + sum(natural_w(c, ctx) for c in laid)
                 + sp * (len(laid) - 1))
     return 2 * b + node["indent"] + max(natural_w(c, ctx) for c in laid)
+
+
+def title_leaf_of(container):
+    """容器的标题叶子。标题也会被套进贴边壳（它不再通栏了），所以要看穿那一层。"""
+    for c in container.get("children", []):
+        if c["kind"] == "leaf" and c["spec"].get("role") == "title":
+            return c
+        if c.get("bare"):
+            for g in c.get("children", []):
+                if g["kind"] == "leaf" and g["spec"].get("role") == "title":
+                    return g
+    return None
 
 
 def when_of(node):
@@ -360,6 +372,13 @@ def measure(node, forced_w, ctx):
     """
     b, sp = border_of(node, ctx), ctx["spacing"]
     if node["kind"] == "leaf":
+        if node["spec"].get("role") == "title":
+            # 标题条只占固定宽度，不再被父容器的 fill 撑成横贯整行的长色框。
+            # **不能用字数推算宽度** —— 那样改一个 label 就会改几何，
+            # 重命名稳定性检查（cell 几何在改名后不得变动）会立刻报错。
+            node["_w"] = ctx["titleW"]
+            node["_h"] = ctx["titleH"]
+            return
         if node.get("icon"):
             node["_w"] = ICON_SIZE
             node["_h"] = ICON_SIZE
@@ -446,11 +465,12 @@ def layout(lay, graph, views):
 
     # 结构边：仍是「父节点 → 子节点」的语义层级（与版面树无关），保持原样
     nodes = graph["nodes"]
-    root_ids = {n["id"] for n in nodes if n.get("parent") is None}
     structural = []
     for n in nodes:
+        # 只跳过"没有父"的节点。原来还跳过"父是根"的那些，用来不画 SYS→行；
+        # 现在 SYS 已删、七行本身成了顶层，那条规则会把行→方块也一起吞掉。
         p = n.get("parent")
-        if p is None or p in root_ids:
+        if p is None:
             continue
         structural.append({"from": p, "to": n["id"],
                            "id": "EX:%s->%s" % (p, n["id"])})
@@ -526,10 +546,7 @@ def container_toggles(plan, structural, semantic):
     for node in plan["by_cid"].values():
         if node["kind"] != "container":
             continue
-        title = None
-        for c in node.get("children", []):
-            if c["kind"] == "leaf" and c["spec"].get("role") == "title":
-                title = c
+        title = title_leaf_of(node)
         if title is None:
             continue
         cells = []

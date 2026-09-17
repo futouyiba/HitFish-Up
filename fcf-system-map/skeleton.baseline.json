@@ -1,5 +1,14 @@
 {
-  "root": "SYS",
+  "roots": [
+    "DEF",
+    "R1",
+    "R2",
+    "R3",
+    "R4",
+    "R5",
+    "R6",
+    "R7"
+  ],
   "rows": [
     {
       "id": "R1",
@@ -125,20 +134,9 @@
     "R7": [
       "FISHAI",
       "R7.L"
-    ],
-    "SYS": [
-      "DEF",
-      "R1",
-      "R2",
-      "R3",
-      "R4",
-      "R5",
-      "R6",
-      "R7"
     ]
   },
   "shapes": {
-    "SYS": "process",
     "R1": "process",
     "D.CONTEXT": "data",
     "D.STOCK": "data",
@@ -211,7 +209,6 @@
     "R2.C5.V": "data"
   },
   "labels": {
-    "SYS": "中鱼机制总图",
     "R1": "数据",
     "D.CONTEXT": "环境上下文",
     "D.STOCK": "钓场投鱼配置",
