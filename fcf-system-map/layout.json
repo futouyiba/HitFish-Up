@@ -357,7 +357,8 @@
         },
         {
           "node": "TABLE",
-          "when": "expanded"
+          "when": "expanded",
+          "fill": true
         },
         {
           "ref": "C:R5/L1",
