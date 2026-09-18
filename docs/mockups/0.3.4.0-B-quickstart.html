@@ -294,7 +294,7 @@ ul.tight li { margin:5px 0; font-size:13.5px; color:var(--text-secondary); }
 SecondaryProduct = Π_SECONDARY fit                 # 次要原始乘积
 SecondaryFactor  = 1 − (1 − SecondaryProduct) / 4  # 差额缩到四分之一
 RawEnvCoeff      = CoreProduct × SecondaryFactor   # 环境权重系数
-FinalEnvCoeff    = 门控失败 ? (背景鱼 ? envCoeffMin : 0) : max(RawEnvCoeff, envCoeffMin)
+FinalEnvCoeff    = 门控失败 ? (背景鱼 ? envCoeffMin : fail_env_coeff) : max(RawEnvCoeff, envCoeffMin)
 SpatialDistributionWeight = BaseOpportunityIntensity × FinalEnvCoeff   # Base 只乘一次</div>
     <p class="muted" style="margin-top:10px">越差的环境 → fit 越小 → 核心乘积越小、次要折减越大 → 环境系数越小。次要整体<strong>最多扣 25%</strong>，不比最弱的核心更狠；这一条链是整机制“因果可解释”的根。</p>
   </div>
@@ -351,8 +351,8 @@ SpatialDistributionWeight = BaseOpportunityIntensity × FinalEnvCoeff   # Base �
       </div>
       <div class="mini state bad">
         <div class="lbl"><span style="color:var(--critical)">✕</span> 非背景鱼</div>
-        <div class="out">FinalEnvCoeff = 0</div>
-        <p class="muted">不存在。玩家唯一的策略是换位置，而不是硬钓。</p>
+        <div class="out">FinalEnvCoeff = fail_env_coeff</div>
+        <p class="muted">默认 0.01：以极低机会存在；若配置为 0，才表示该条件组中不存在。</p>
       </div>
     </div>
     <p class="muted" style="margin-top:10px"><span style="color:var(--good)">✓</span> 门控全通过时，背景鱼才吃 <code>envCoeffMin</code> 这个下限（比较大小取大者）。<code>envCoeffMin</code> 只对背景鱼存在，范围 <code>(0, 0.30]</code>。</p>
