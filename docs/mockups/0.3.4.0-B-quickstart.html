@@ -197,47 +197,84 @@ ul.tight li { margin:5px 0; font-size:13.5px; color:var(--text-secondary); }
 一条鱼 = 4 个固定条件槽位：TEMPERATURE · STRUCTURE · FEEDING_LAYER · TIME_PERIOD</div>
   </div>
 
-  <!-- 1. three layers -->
+
+  <!-- 0.5 requirement map -->
   <div class="card">
-    <p class="eyebrow">全局</p>
-    <h2>三层：编辑器 → 配置表 → 运行时</h2>
-    <p>编辑器可以长得像未来版本；<strong>配置表与运行时不需要假装未来版本已经存在</strong>。</p>
+    <p class="eyebrow">怎么读这套需求</p>
+    <h2>六篇需求文档：一个总入口，五个专项面</h2>
+    <p>先从总开发需求确认 Scope / 公式 / 验收；遇到具体实现问题再下钻对应专项页。专项页不重新定义总 Contract。</p>
+    <div class="grid2">
+      <div class="mini">
+        <h4>总入口</h4>
+        <p><strong>开发需求</strong><br>本期交付范围 · canonical 公式 · 配置字段 · 验收口径</p>
+      </div>
+      <div class="mini">
+        <h4>Runtime 线</h4>
+        <p><strong>烘焙算法</strong> → Runtime spine / 职责边界</p>
+        <p><strong>编辑器条件开关</strong> → CORE / SECONDARY / IGNORED 怎么 author</p>
+        <p><strong>配置表与校验</strong> → Schema / Validator / legacy bridge</p>
+      </div>
+      <div class="mini">
+        <h4>Editor 线</h4>
+        <p><strong>编辑器与 Resolve</strong> → 编辑、Validate、Resolve、Bake Preview 的逻辑契约</p>
+        <p><strong>编辑器界面</strong> → Figma 元素与交互投影</p>
+      </div>
+      <div class="mini">
+        <h4>Supporting contracts</h4>
+        <p>Editor → Persistence 数据契约 · Bass Vertical Slice · Executable Delta Spec</p>
+        <p class="muted">这些页面提供实现桥接 / 例证，不与六篇需求文档竞争 Authority。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1. current data flow -->
+  <div class="card">
+    <p class="eyebrow">Current 数据流</p>
+    <h2>编辑期可以分层；生产表与 Runtime 只吃物化后的最终值</h2>
+    <p>species 底板 + per-mode 逐项 delta 只解决<strong>编辑复杂度</strong>。导出时先物化完整值，再写回生产 Excel；Runtime 不做底板合并，也不新增 EngagementMode identity。</p>
 
     <div style="margin-top:14px">
       <div class="layer">
-        <h4>① Editor / Authoring<span class="pill">作者只在这一层工作</span></h4>
+        <h4>① Editor / Authoring<span class="pill">编辑便利层</span></h4>
         <ul class="tree">
-          <li>Engagement Mode（兼容壳）</li>
-          <li>  ↕ 1:1</li>
-          <li>Fish Env Affinity（中鱼习性）</li>
-          <li>  ← 1..N FishQuality</li>
+          <li><span class="k">Species Base</span>（主要编辑对象）</li>
+          <li>+ per-mode / affinity <span class="k">delta override</span></li>
+          <li>+ 模板选择 · 档位 · 微调 · alias</li>
+          <li>→ Editor Resolve：底板传播到未覆盖项，得到每个档案的完整最终值</li>
         </ul>
       </div>
-      <div class="arrowdown">↓ compile / export（解析后落表）</div>
-      <div class="layer">
-        <h4>② Existing Persistence<span class="pill">表结构本版不动</span></h4>
-        <ul class="tree">
-          <li><span class="k">FishPond</span>（纽带，含场次关键信息）</li>
-          <li>└─ <span class="k">StockRelease[]</span>（权重池）</li>
-          <li>   ├─ FishQuality</li>
-          <li>   ├─ FishEnvAffinity <span style="color:var(--muted)">（品质 ↔ 习性 的关联）</span></li>
-          <li>   └─ <span class="k">FishRelease</span></li>
-          <li>      ├─ Base Opportunity Weight</li>
-          <li>      ├─ 各类 legacy 最小阈值 / 兜底参数</li>
-          <li>      └─ min/max length · min/max weight</li>
-        </ul>
+      <div class="arrowdown">↙ 保存 authoring intent　　　　　　　↘ 导出完整最终值</div>
+      <div class="grid2">
+        <div class="layer">
+          <h4>②A editor-state<span class="pill">不进 Runtime</span></h4>
+          <ul class="tree">
+            <li>模板选择 / 微调 / alias / delta</li>
+            <li>按 id 关联；name 只作显示</li>
+            <li>与生产配置表分目录、分职责</li>
+          </ul>
+        </div>
+        <div class="layer">
+          <h4>②B Product Excel<span class="pill">生产配置源</span></h4>
+          <ul class="tree">
+            <li>FishEnvAffinity 及其子表：完整最终 numeric values</li>
+            <li>Role sidecar：CORE / SECONDARY / IGNORED</li>
+            <li>Opportunity config：Base / is_background_fish / envCoeffMin</li>
+            <li>水温六字段、5 个 Time Period 等本期 schema delta</li>
+          </ul>
+        </div>
       </div>
-      <div class="arrowdown">↓ resolve（运行时求值）</div>
+      <div class="arrowdown">↓ 人工触发卧龙：Excel → JSON（JSON 是产物，不是源）</div>
       <div class="layer">
-        <h4>③ Runtime<span class="pill">固定模板程序</span></h4>
+        <h4>③ Resolve / Runtime Projection<span class="pill">无 editor delta</span></h4>
         <ul class="tree">
-          <li>ResolvedSpatialOpportunitySubject</li>
-          <li>+ runtime opportunity / release projection</li>
+          <li>FishQualityRef → FishEnvAffinityRef → <span class="k">ResolvedSpatialOpportunitySubject</span></li>
+          <li>FishPond × FishQualityRef → <span class="k">ResolvedOpportunitySeed</span></li>
           <li>+ ConditionGroup</li>
-          <li>→ <span class="k">SpatialDistributionWeight</span></li>
+          <li>→ Fixed Bake → <span class="k">SpatialDistributionWeight</span></li>
         </ul>
       </div>
     </div>
+    <p class="muted" style="margin-top:10px">物理表关系不要按“树包含”理解：FishPond 是 workbook；StockRelease / FishRelease 是独立 sheet，二者通过引用关系连接。编辑器改表结构时先在副本目录验证，再由对应工程师合回生产配置。</p>
   </div>
 
   <!-- 2. pipeline -->
@@ -452,33 +489,36 @@ SpatialDistributionWeight = BaseOpportunityIntensity × FinalEnvCoeff   # Base �
   <!-- 8. editor -->
   <div class="card">
     <p class="eyebrow">编辑器</p>
-    <h2>编辑器长什么样：给未来留位置，但不提前实现</h2>
-    <p>本版本<strong>不引入 Engagement Mode 的实际逻辑</strong>，也不做分群逻辑与分群 DSL。但界面上保留未来版本的框架，用“看得见但点不动”的方式表达方向。</p>
-    <div class="grid2">
+    <h2>编辑器的核心：species 底板 + mode / affinity 逐项覆盖</h2>
+    <p>本期为了降低批量 authoring 成本，<strong>species 是主要编辑对象</strong>；每个 Compat Mode / FishEnvAffinity 只保存与底板不同的项。这个 delta 只存在于编辑器持久层，导出时会被物化成完整生产值。</p>
+    <div class="grid3">
       <div class="mini">
-        <h4>看得见（保留框架）</h4>
-        <ul class="tight">
-          <li>一条鱼下面可以有多个 Engagement Mode</li>
-          <li>每个 Engagement Mode 可以占据一到多个品质</li>
-          <li>本版实际只表达<strong>多对一</strong>：几个品质 → 一个 Engagement Group</li>
-        </ul>
+        <h4>Species Base</h4>
+        <p>先编辑这个物种的常规习性：4 个 Component Profile + Spatial Opportunity Role。</p>
+        <p class="muted">底板不是新的生产表，也不是 Runtime identity。</p>
       </div>
       <div class="mini">
-        <h4>点不动（本版关闭）</h4>
-        <ul class="tight">
-          <li><strong>占比 / 比例编辑框：灰化</strong>，不可编辑</li>
-          <li><strong>分群逻辑编辑框：关闭</strong></li>
-          <li>没有按时间 / 天气 / 环境切换分群的逻辑</li>
-        </ul>
+        <h4>Per-mode Delta</h4>
+        <p>某个 FishEnvAffinity / Compat Mode 需要不同习性时，只覆盖变化项。</p>
+        <p class="muted">底板改动会传播到未覆盖项；已覆盖项保持不变。</p>
+      </div>
+      <div class="mini">
+        <h4>Export Materialization</h4>
+        <p>Editor Resolve 把 Base + Delta 合成每个档案的完整 numeric values，再写回生产 Excel。</p>
+        <p class="muted">Runtime 直接读完整值，不做 Base + Delta 合并。</p>
       </div>
     </div>
-    <h3>编辑器改完，数据落到哪</h3>
-    <ul class="tight">
-      <li><strong>StockRelease</strong>：承接 <code>FishQuality ↔ FishEnvAffinity</code> 的关联关系（哪个品质属于哪套习性）。</li>
-      <li><strong>Fish Env Affinity（中鱼习性）表</strong>：大量习性数据按<strong>分组</strong>落进来，不是每个品质各存一份。</li>
-      <li><strong>FishRelease</strong>：基础权重、最小环境阈值、最小响应强度、min/max 长度与重量等字段，本版<strong>不由编辑器编辑</strong>，沿用既有生产数据。</li>
-    </ul>
-    <p class="muted" style="margin-top:8px">后续版本才会改表结构：让不同时间 / 天气 / 环境下的 DSL 逻辑产出不同的分群比例——那时才开放比例与分群编辑框。</p>
+
+    <h3>主工作流</h3>
+    <div class="flow">
+      <div class="step"><div class="n">01</div><div class="t">选鱼 / 档案</div><div class="d">Species Base + 当前 Affinity / Compat Mode</div></div>
+      <div class="step"><div class="n">02</div><div class="t">编辑习性</div><div class="d">水温 · 结构 · 水层 · 时段</div></div>
+      <div class="step"><div class="n">03</div><div class="t">配置 Role</div><div class="d">CORE / SECONDARY / IGNORED</div></div>
+      <div class="step"><div class="n">04</div><div class="t">Validate / Resolve</div><div class="d">显式忽略 ≠ 缺配置；展示 provenance</div></div>
+      <div class="step"><div class="n">05</div><div class="t">Bake Preview</div><div class="d">给一个 ConditionGroup 看完整 Trace</div></div>
+      <div class="step"><div class="n">06</div><div class="t">Export</div><div class="d">物化完整值 → Excel；再由卧龙导 JSON</div></div>
+    </div>
+    <p class="muted" style="margin-top:10px">本期仍没有 Mode Share / condition-based Routing / per-Mode BakeProgramRef；Compat Mode 是编辑器兼容壳，不是 Runtime Engagement Mode。</p>
   </div>
 
   <!-- 9. not delivered -->
@@ -498,7 +538,7 @@ SpatialDistributionWeight = BaseOpportunityIntensity × FinalEnvCoeff   # Base �
       <span class="chip no">时段单独输出 Activity</span>
       <span class="chip no">门控开关 / GatePolicy</span>
     </div>
-    <p class="muted" style="margin-top:12px">完整不交付清单以开发需求 §6 为唯一 canonical。</p>
+    <p class="muted" style="margin-top:12px">完整交付边界以开发需求 §2（本期范围）与 §10（后续版本）为准。</p>
   </div>
 
   <!-- footer -->
@@ -507,13 +547,14 @@ SpatialDistributionWeight = BaseOpportunityIntensity × FinalEnvCoeff   # Base �
     <p class="foot">
       本页是<strong>速览</strong>，与契约页冲突时以契约页为准。数值来自 work tree 的 Bass Q3 垂直切片 golden fixture。<br>
       契约页：[开发需求 R0](https://app.notion.com/p/3dda4137d23681c68ec3fb1944573af4) ·
-      [Authoring & Resolve R0](https://app.notion.com/p/3dda4137d23681408e4fe0f35ced39d9) ·
-      [Schema & Validator R0](https://app.notion.com/p/3dca4137d23681e28c5bc2f29c63dc16) ·
+      [编辑器与 Resolve](https://app.notion.com/p/3dda4137d23681408e4fe0f35ced39d9) ·
+      [配置表与校验](https://app.notion.com/p/3dca4137d23681e28c5bc2f29c63dc16) ·
+      [Editor → Persistence](https://app.notion.com/p/3dea4137d2368176a4bae8aba1e55025) ·
       [Runtime / AFLA Owner](https://app.notion.com/p/3dca4137d236815c88a0e56e15ceaf85) ·
       [Bass 垂直切片](https://app.notion.com/p/3dda4137d236818c9b61e6bc7fc348a7) ·
       [族根](https://app.notion.com/p/3dda4137d236812e89b5cf846c528b6c) ·
       [Main Control Checkpoint](https://app.notion.com/p/3dda4137d2368109aa54ec4f7acbab26)<br>
-      口径基准：2026-09-17 Owner 裁决（三态角色 · 门控随 CORE 自动存在 · 较差档 0.25 · 合成输出名 SpatialDistributionWeight）。<br>
+      口径基准：2026-09-18 Current-aligned 文档线（species 底板 + per-mode delta 仅属于编辑期；导出物化完整值；Excel 为生产配置源；三态角色 · 门控随 CORE 自动存在 · 较差档 0.25 · 合成输出名 SpatialDistributionWeight）。<br>
       文档状态：WORKING ALTERNATIVE / NOT PROMOTED。
     </p>
   </div>
