@@ -287,7 +287,7 @@ ul.tight li { margin:5px 0; font-size:13.5px; color:var(--text-secondary); }
       <div class="step"><div class="n">03</div><div class="t">求适配值</div><div class="d">查表 / 曲线 → 0~1 的 fit</div></div>
       <div class="step"><div class="n">04</div><div class="t">Core 乘积</div><div class="d">各 CORE 的 fit 相乘</div></div>
       <div class="step"><div class="n">05</div><div class="t">Secondary 折减</div><div class="d">差额缩到四分之一，最多扣 25%</div></div>
-      <div class="step"><div class="n">06</div><div class="t">合成环境系数</div><div class="d">RawEnvCoeff = exp(−损失)</div></div>
+      <div class="step"><div class="n">06</div><div class="t">合成环境系数</div><div class="d">RawEnvCoeff = CoreProduct × SecondaryFactor</div></div>
       <div class="step"><div class="n">07</div><div class="t">门控失败 / 保底</div><div class="d">失败分两条路；通过才吃保底</div></div>
     </div>
     <div class="formula">CoreProduct      = Π_CORE fit                      # 核心相乘
