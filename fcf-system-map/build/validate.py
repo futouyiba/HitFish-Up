@@ -271,6 +271,11 @@ def main():
                         % (key,
                            json.dumps(base[key], ensure_ascii=False)[:300],
                            json.dumps(cur[key], ensure_ascii=False)[:300]))
+        else:
+            failures.append(
+                "skeleton baseline missing at %s — 骨架冻结校验必须显式运行，"
+                "基线缺失不得静默通过（确需重冻走 build/freeze_skeleton.py）。"
+                % baseline_path.name)
     except Exception as exc:  # 基线缺失/损坏不应静默通过
         failures.append("skeleton baseline check failed to run: %r" % exc)
 
