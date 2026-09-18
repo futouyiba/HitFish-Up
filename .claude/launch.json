@@ -2,12 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "fcf-spike-verify",
+      "name": "fcf-system-map-preview",
       "runtimeExecutable": "python3",
-      "runtimeArgs": [
-        "/tmp/fcf-spike-preview/spike/verify/serve.py"
-      ],
-      "port": 8798
+      "runtimeArgs": ["fcf-system-map/tools/preview.py"],
+      "port": 8799
     }
   ]
 }
