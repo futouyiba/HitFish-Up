@@ -15,7 +15,7 @@
   </style>
 </defs>
 <rect width="1700" height="1860" fill="#fff"/>
-<text x="850" y="50" text-anchor="middle" class="title">空间机会求值｜先门控，后聚合</text>
+<text x="850" y="50" text-anchor="middle" class="title">空间分布权重求值｜Spatial Distribution Weight Calculation</text>
 <text x="850" y="82" text-anchor="middle" class="sub">每个因子保持一条窄竖列；左 → 右只暗示求值顺序。任一核心因子门控失败都会绕过环境聚合，直接进入统一的背景鱼判断。</text>
 <text x="95" y="132" class="small">执行顺序暗示</text>
 <line x1="220" y1="128" x2="1435" y2="128" stroke="#cbd5e1" stroke-width="2" marker-end="url(#arrowGray)"/>
