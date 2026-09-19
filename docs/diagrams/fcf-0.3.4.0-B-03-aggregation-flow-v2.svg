@@ -52,7 +52,7 @@
 
 <!-- all pass gate -->
 <rect x="245" y="615" width="220" height="42" rx="21" fill="#fff7ed" stroke="#f59e0b" stroke-width="2"/>
-<text x="355" y="641" text-anchor="middle" class="n">全部 CORE Gate = PASS</text>
+<text x="355" y="641" text-anchor="middle" class="n">聚合准入｜全部 CORE Gate = PASS</text>
 
 <!-- secondary -->
 <circle cx="835" cy="274" r="72" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5" filter="url(#sh)"/>
@@ -83,8 +83,9 @@
 
 <!-- unified aggregation box -->
 <rect x="690" y="590" width="650" height="330" rx="24" fill="#f8faff" stroke="#4f46e5" stroke-width="2.7" filter="url(#sh)"/>
-<text x="1015" y="628" text-anchor="middle" class="h">环境聚合｜仅在全部 CORE Gate PASS 后执行</text>
+<text x="1015" y="628" text-anchor="middle" class="h">环境聚合｜仅在聚合准入 PASS 后执行</text>
 <line x1="735" y1="651" x2="1295" y2="651" stroke="#c7d2fe" stroke-width="2"/>
+<text x="1015" y="670" text-anchor="middle" class="s">实线控制流解锁本阶段；虚线只表示已计算好的 Fit 数据</text>
 
 <rect x="735" y="680" width="250" height="92" rx="14" fill="#eef2ff" stroke="#818cf8" stroke-width="2"/>
 <text x="860" y="713" text-anchor="middle" class="n">CORE 部分</text>
@@ -145,17 +146,18 @@
 <text x="58" y="520" class="e">FAIL</text><text x="610" y="520" class="e">FAIL</text>
 
 <!-- pass activation to aggregation -->
-<path d="M465 636L620 636L620 610L690 610" fill="none" stroke="#d97706" stroke-width="2.6" marker-end="url(#ao)"/>
+<path d="M465 636L620 636L620 610L690 610" fill="none" stroke="#d97706" stroke-width="2.8" marker-end="url(#ao)"/>
+<text x="555" y="624" class="e">解锁聚合</text>
 
 <!-- core fits into aggregate only -->
-<path d="M205 443L205 690L735 690" fill="none" stroke="#2563eb" stroke-width="2.2" marker-end="url(#ab)"/>
-<path d="M505 443L505 710L735 710" fill="none" stroke="#2563eb" stroke-width="2.2" marker-end="url(#ab)"/>
+<path d="M205 443L205 690L735 690" fill="none" stroke="#2563eb" stroke-width="1.9" stroke-dasharray="7 6" opacity=".72" marker-end="url(#ab)"/>
+<path d="M505 443L505 710L735 710" fill="none" stroke="#2563eb" stroke-width="1.9" stroke-dasharray="7 6" opacity=".72" marker-end="url(#ab)"/>
 
 <!-- secondary -->
 <path d="M835 346L835 365" fill="none" stroke="#16a34a" stroke-width="2.5" marker-end="url(#ab)"/>
 <path d="M1085 346L1085 365" fill="none" stroke="#16a34a" stroke-width="2.5" marker-end="url(#ab)"/>
-<path d="M835 443L835 660L1050 660L1050 680" fill="none" stroke="#16a34a" stroke-width="2.3" marker-end="url(#ab)"/>
-<path d="M1085 443L1085 680" fill="none" stroke="#16a34a" stroke-width="2.3" marker-end="url(#ab)"/>
+<path d="M835 443L835 660L1050 660L1050 680" fill="none" stroke="#16a34a" stroke-width="1.9" stroke-dasharray="7 6" opacity=".72" marker-end="url(#ab)"/>
+<path d="M1085 443L1085 680" fill="none" stroke="#16a34a" stroke-width="1.9" stroke-dasharray="7 6" opacity=".72" marker-end="url(#ab)"/>
 
 <!-- fail diamond to outcomes -->
 <path d="M280 870L280 900L210 900L210 930" fill="none" stroke="#dc2626" stroke-width="2.5" marker-end="url(#ar)"/>
@@ -184,6 +186,6 @@
 <!-- legend -->
 <rect x="1110" y="1325" width="310" height="108" rx="12" fill="#fff" stroke="#e2e8f0" stroke-width="2"/>
 <text x="1132" y="1352" class="h">图例</text>
-<line x1="1135" y1="1375" x2="1180" y2="1375" stroke="#2563eb" stroke-width="3" marker-end="url(#ab)"/><text x="1192" y="1380" class="s">Fit / 数值流</text>
+<line x1="1135" y1="1375" x2="1180" y2="1375" stroke="#2563eb" stroke-width="2.5" stroke-dasharray="7 6" marker-end="url(#ab)"/><text x="1192" y="1380" class="s">Fit 数据（准入后消费）</text>
 <line x1="1135" y1="1407" x2="1180" y2="1407" stroke="#d97706" stroke-width="3" marker-end="url(#ao)"/><text x="1192" y="1412" class="s">Gate / 控制流</text>
 </svg>
