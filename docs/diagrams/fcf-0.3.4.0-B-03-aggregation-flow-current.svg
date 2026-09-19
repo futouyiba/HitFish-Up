@@ -63,10 +63,10 @@
 <text x="52" y="390" class="edge">失败</text><text x="335" y="390" class="edge">失败</text>
 <text x="58" y="735" class="small">任一核心门控失败：跳过环境聚合</text>
 
-<path d="M190 592L190 720L480 720L480 900" fill="none" stroke="#2563eb" stroke-width="2.2" marker-end="url(#arrowBlue)"/>
-<path d="M480 592L600 592L600 900" fill="none" stroke="#2563eb" stroke-width="2.2" marker-end="url(#arrowBlue)"/>
-<path d="M770 592L970 592L970 900" fill="none" stroke="#16a34a" stroke-width="2.2" marker-end="url(#arrowGreen)"/>
-<path d="M1060 592L1180 592L1180 900" fill="none" stroke="#16a34a" stroke-width="2.2" marker-end="url(#arrowGreen)"/>
+<path d="M190 592L190 742L480 742L480 900" fill="none" stroke="#2563eb" stroke-width="2.2" marker-end="url(#arrowBlue)"/>
+<path d="M480 592L480 742L600 742L600 900" fill="none" stroke="#2563eb" stroke-width="2.2" marker-end="url(#arrowBlue)"/>
+<path d="M770 592L770 742L970 742L970 900" fill="none" stroke="#16a34a" stroke-width="2.2" marker-end="url(#arrowGreen)"/>
+<path d="M1060 592L1060 742L1180 742L1180 900" fill="none" stroke="#16a34a" stroke-width="2.2" marker-end="url(#arrowGreen)"/>
 
 <rect x="280" y="760" width="1140" height="390" rx="26" fill="#f8faff" stroke="#4f46e5" stroke-width="2.7" filter="url(#shadow)"/>
 <text x="850" y="802" text-anchor="middle" class="section">环境聚合｜核心与次要亲和度在同一阶段收束</text>
