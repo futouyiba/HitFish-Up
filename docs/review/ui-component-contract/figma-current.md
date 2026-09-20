@@ -18,7 +18,7 @@
 | `07 Component Template Workspace` | `22:2` | 1680×1080 | 第二工作区 |
 | `08 Fish List · CN / EN / ID` | `22:36` | 1680×1080 | 鱼列表 |
 
-**Structure 的表示**：选中 Structure 后在**右侧 460px 焦点编辑栏**、以**2 列紧凑字段控件**编辑（`108:311`；实测两列 x≈1227/1446、26 格）。
+**Structure 的表示**：选中 Structure 后在**右侧 460px 焦点编辑栏**、以**2 列紧凑字段控件**编辑（`108:311`；`structureList2Col` 实测两列 x≈1227/1446，**12 行双列 ＋ 1 行单列 ＝ 25 个 `FieldValueControl`** —— **末行只有一列，不要按「13 行 × 2」算成 26**）。
 **旧帧 `47:2`（`Component Value Controls · tier & empty state`，形态是 5×5 卡阵）已移出 Current、进归档页**，带 `[FCF-ARCHIVE:v1]` annotation。
 
 **三栏几何**：对象导航 `250` ＋ 上下文总览 `890` ＋ 焦点编辑 `460` ＋ 边距 ＝ `1680`。
