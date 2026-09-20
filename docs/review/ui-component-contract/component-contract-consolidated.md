@@ -17,7 +17,7 @@
 - 物种层操作：`ADD` / `SET`，无操作 ＝ `INHERIT`（无记录）。桶 / 习性档案层操作：patch 缺省（继承物种层）/ `CLEAR` / `ADD` / `SET`。（《编辑器持久层契约》§3.3；《编辑器与 Resolve》§11.1）
 - Source ≠ Operation：换 Source 保留既有操作，改操作保留 Source。（记录页 §172「KEEP」；《编辑器与 Resolve》§11.3）
 - 桶层 `ADD / SET` **替换**物种层操作，不形成第三层叠加。（《编辑器与 Resolve》§11.1 逐字「不是叠第三层 delta」；《编辑器持久层契约》§3.3）
-- Resolve：在这一层没有操作（`INHERIT` / patch 缺省）时直接用来源值；`ADD` ＝ 来源值 ＋ delta；`SET` ＝ 绝对值。（《编辑器与 Resolve》§11.1）
+- Resolve（**按层分两支**；本节自记录页 §270 更正 —— 原写法把两种「缺省」混成了一个）：**物种层**无操作（`INHERIT` ＝ 无记录）⇒ **直接用来源值**；**桶 / 习性档案层** patch `absent` ⇒ **跟随物种层 operation**（物种层也无操作时，才落到来源值）—— **`absent` 不是「用来源值」**；`CLEAR` ⇒ **移除继承的 operation、回到当前 Effective Source 原值**（**与 `absent` 是两个不同动作**）；`ADD` ＝ 该层所挂模板值 ＋ delta；`SET` ＝ 绝对值。（《编辑器与 Resolve》§11.1、§11.2 逐字：「`absent` ＝ 跟随物种层 operation」／「`CLEAR` ＝ 移除继承的 operation、回到当前 Effective Source 原值」／两者「不得合并成一个模糊的『恢复』」）
 - 桶层 `sourceOverride` ＝ 固定 Source Choice，不冻结配置：pin 之后 patch 仍缺省时仍继承物种层操作；`sourceOverride` 不自动 SET 全部字段、不清既有操作；解除 pin ＝ 删除 `sourceOverride`，重新跟随物种层 Source。（《编辑器持久层契约》§3.3）
 - same-source pin 是真实 authoring intent：桶层 `sourceOverride` 与物种层 Source 相同时也不自动移除。（《编辑器持久层契约》§3.3；记录页 §172「KEEP」）
 
@@ -82,7 +82,7 @@
 
 ## 8. Source 选择器 ＋ Rebase Preview
 - 每组件一个前层 Source 选择器；桶（覆盖层）另有「跟随物种」；温度多一项「当前物种生态数据」（存在时）。（《编辑器界面》§1.1；《编辑器与 Resolve》§11.3）
-- 可选来源矩阵：Temperature ＝ `SHARED_TEMPLATE | SPECIES_CONCRETE`；Structure / Feeding Layer / Time Period ＝ 仅 `SHARED_TEMPLATE`。（《编辑器持久层契约》§3.3）
+- 可选来源矩阵（**按层分写**；本节自记录页 §271 更正 —— 原写法**层次无关**，会被读成桶层也列 Concrete）：**前层（物种层）** —— Temperature ＝ `SHARED_TEMPLATE | SPECIES_CONCRETE`，Structure / Feeding Layer / Time Period ＝ 仅 `SHARED_TEMPLATE`；**桶（覆盖层）** —— **所有组件都只有 `SHARED_TEMPLATE` ＋「跟随物种」**，**不列 `SPECIES_CONCRETE`**（**连当前物种的也不列** —— 要引用当前物种的 Concrete，走「跟随物种」）。**任何层都不得 pin 非当前物种的 Concrete。**（《编辑器持久层契约》§3.3；《编辑器与 Resolve》§11.3 逐字「桶层另有「跟随物种」选项，**不把任何物种的 Concrete 当通用可选项**」；冻结卡 `A①-卡1`）
 - `SPECIES_CONCRETE` 属当前物种：identity ＝ `(speciesId, componentType)`，不进模板清单、不可被其它物种引用；不得 pin 另一物种的 Concrete。（《编辑器持久层契约》§3.3；记录页 §172 二）
 - 换 Source 是高影响动作：候选来源 → before / after Resolve → **Rebase Preview** → 显式确认 → 原子提交。禁止为保持旧 Effective Value 自动生成 `SET`。（《编辑器与 Resolve》§11.3；《编辑器界面》§1.1；《编辑器持久层契约》§3.10）
 - Preview 至少区分：最终结果变化、结果未变但被本层 `SET` / 操作遮罩、新增 Error、新增 Warning。**被遮罩 ≠ 无影响。**（《编辑器持久层契约》§3.7「SET-masked 可不变」；冻结卡 `A②-卡10`、`A②-卡11`；记录页 §172 二 APPLY DELTA ⑦）

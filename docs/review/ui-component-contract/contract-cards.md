@@ -1,8 +1,10 @@
 # UI Component Inventory ＋ 第一批 Contract Cards（「编辑器具体设计」席 · A 线）
 
-**状态：已冻结 v1.1（记录页 §165；②后依据已换 Current §）**。据记录页 §164（冻结接口，已回页核实）。铁律遵守：卡片＝执行投影，机制唯一载体仍是 Current 文档，「依据」行不空——引 Current § 或记录页 §。
+**状态（两批各自唯一；改自记录页 §265 裁 `F-07`）**：**批次①（`A①-卡1`…`卡7`）＝ 已冻结 v1.1**（记录页 §165）；**批次②（`A②-卡8`…`卡12`）＝ 已冻结**（记录页 §244，以该节为冻结留痕）。**两批都已冻结；本文件不再有任何「起草稿」状态。** 据记录页 §164（冻结接口，已回页核实）。铁律遵守：卡片＝执行投影，机制唯一载体仍是 Current 文档，「依据」行不空——引 Current § 或记录页 §。
 
 **批次①清单口径**：§164 原列六项；主代理工作令列七项（多出 Field Value Editor）。本稿按七张出——**建议保留分卡**：op 选择（选哪个动作）与值输入（敲什么数）是两个交互面、两条校验链；收口时若判并入 Operation Control 可并，机械合并即可。
+
+**命名口径（记录页 §271 裁 `A-F-09`）**：本文件各卡的 `Component:` 行**是卡片层标识，不是产品／契约命名** —— 允许与页面语汇不同形，但**不得被下游当作稳定标识符**（不得拿它去建代码枚举／schema 字段／选择器／i18n key）。**凡页面上已有名字的物，一律以页面名为准**（如草稿的 `FieldValueRow` ⇒ 页面名 **`FieldValueControl`**）。正文（需求文档）里指向同一个物时，**只用页面已有的串、或纯语义描述**（§19 前置句已定）。
 
 ---
 
@@ -60,7 +62,7 @@ Actions:
   - 换源后既有 ops 原样保留、在新源上重 Resolve；必附 Rebase Preview（before/after）
   - 高影响批量换绑（Replace References）走 prepare→preview→confirm→atomic，且只改直接引用集
 Durable mutation:
-  - SELECT_SOURCE / FOLLOW_PARENT 写持久（source binding / patch）
+  - **换 Source 不是「一选即写盘」**：`SELECT_SOURCE` 先形成 **candidate（不写持久）** → **Rebase Preview（before / after Resolve）** → **显式确认** → **原子提交**（《编辑器与 Resolve》§11.3；汇编 §8）。**`FOLLOW_PARENT`（跟随物种）** 是**解除／切换**那一步才写持久（删 `sourceOverride`）。落盘对象：`source binding` / `patch`。（记录页 §272 裁 `A-F-05`）
   - 换源不生成任何保值的 SET；EXTRACT_TEMPLATE 创建模板资产
 Must show:
   - 闭值按层级显示：水温=物种具体级 token（该组件独有形态，保留作主示意）；模板绑定=类型名；水温双来源带类别记号可区分
@@ -95,8 +97,8 @@ Actions:
   - **档位随 op 走**：`ADD` 不带 Tier、`SET` 才用 Tier（记录页 §199 ⑥①）
   - **时段 Empty ＋ Role 激活不自动生成 Profile**（记录页 §199 ⑥③）：无 profile ＝ 合法 Empty、op 控件不出；**激活 CORE／SECONDARY 也不自动造 profile**（其可见校验态落 `A①-卡6`）
 Durable mutation:
-  - ADD/SET 落一条、跟随/恢复删一条——记录由编辑动作直接写，不经值差合成
-  - 同值 SET 仍留记录（钉住）；INHERIT 不造记录；CLEAR 作为 child-patch 状态持久存在
+  - **`ADD`／`SET`／`CLEAR` 各落一条；只有「跟随」那一支删条**（`INHERIT`／桶层缺省 `absent` ⇒ 不造记录）——记录由编辑动作直接写，不经值差合成。⚠️ **此处不再把「恢复」当操作名**：本族已把「恢复」判为**模糊词**（《编辑器与 Resolve》§11.2），它只能以「**不得合并成一个「恢复」**」的形式出现（见本卡 Must not）。（记录页 §265 裁 `F-03`）
+  - 同值 `SET` 仍留记录（钉住）；`INHERIT` 不造记录；**`CLEAR` 作为 child-patch 状态持久存在** —— 它**尽管 Effective Value 可能等于来源原值，仍是明确的 durable 本层操作、计入本层操作数**（《编辑器持久层契约》§3.3 `op` 行）。（记录页 §265 裁 `F-03`）
   - tier 形状：**§199 ⑥①（`ADD` 无 Tier、`SET` 才用 Tier）已收口该形状问题**（它取代 §174 三「本条不回答形状问题、仍开」那句）；记录仍按 `{op, value, tier}` 携 tier、`ADD` 记录不带 tier。**§148 四.3 的「与 op 正交」为推断**，不作为已裁表述
   - 写记录时机=提交/保存那一刻
 Must show:
@@ -240,7 +242,7 @@ Must not:
 
 ---
 
-## Part 3｜第二批 Contract Cards（五张 · 批次②模板生命周期 · 起草稿；编号 `A②-卡8`…`A②-卡12`）
+## Part 3｜第二批 Contract Cards（五张 · 批次②模板生命周期 · **已冻结**；编号 `A②-卡8`…`A②-卡12`）（记录页 §244 为此批冻结留痕；§265 裁 `F-07` 去掉原「起草稿」）
 
 覆盖 Inventory E2/E3/N2。底稿＝v2 规格，依据引②后 Current §（落页措辞已逐字核）。
 
@@ -296,7 +298,8 @@ Reads:
   - 模板完整值 completeValue；EffectiveConsumerSet（改值的真正影响对象）
 Actions:
   - 编辑草稿 → Impact Preview（before / after Resolve）→ 显式确认 → 原子提交 → re-resolve → 物化受影响 production projections
-  - **档位（Tier）随 op 走：`ADD` 不带 Tier、`SET` 才用 Tier**（记录页 §199 ⑥①）
+  - ⚠️ **本卡不出现 `ADD`／`SET`／`CLEAR` 这类 operation 语义** —— 模板是**完整值资产**，**operation 只存在于物种 Recipe 与桶 patch 上**（《编辑器持久层契约》§3.3／§3.7）。
+  ⇒ 原第 2 条「档位（Tier）随 `op` 走：`ADD` 不带 Tier、`SET` 才用 Tier」**已删**：那条依据的记录页 §199 ⑥① 讲的是**值记录**的 `{op, value, tier}` 形状，**属另一个寄存器**；搬进「模板完整值编辑」是**跨界搬用**（记录页 §265 裁 `F-06`）。
   - **水温曲线：P0 只读、不 drag-author**（记录页 §199 ⑥②）—— 本席读作**仅禁拖拽／Handle 授权，6 个数值参数仍可编辑**（主语是「曲线」而非「温度档案」）。**本读法主代理 2026-09-20 已核、待复核点关闭**：与界面 §1.1「6 参数 ＋ 连续曲线」同口径 ⇒ 曲线作为**编辑面**只读，**参数作为项仍可编辑**。**可翻点**：若翻成「整段不可编辑」，改动面＝本卡 Actions ＋ 界面 §1.1 那句，两处
 Durable mutation:
   - 改 completeValue＝一次全局作者确认；Preview buffer＝短命 UI state，不是 durable Draft Entity
@@ -307,7 +310,7 @@ Must not:
   - **不实现水温曲线 drag-author**（P0）；也**不得把「曲线只读」扩大成「温度档案不可编辑」**
   - 不给全部引用者制造逐项 review debt（正常传播不产生 N 个下游待办；只有真实异常 / Validator 问题单独暴露）
   - 不静默改任何 consumer 绑定
-依据: 《编辑器持久层契约》§3.10（高影响四步；两引用集；**四项数**）＋§3.7（Template edit 下 projection 生命周期：SET-masked 可不变）；《编辑器界面》§1.1 共享影响面行（**四项数**同句）；Tier 随 op＝记录页 §199 ⑥①；水温曲线 P0 只读＝记录页 §199 ⑥②（⚠️ 该条**取代** Checkpoint「直接拖动绝对曲线／Handle 仍应表达为 SET」那句）
+依据: 《编辑器持久层契约》§3.10（高影响四步；两引用集；**四项数**）＋§3.7（Template edit 下 projection 生命周期：SET-masked 可不变）；《编辑器界面》§1.1 共享影响面行（**四项数**同句）；水温曲线 P0 只读＝记录页 §199 ⑥②（⚠️ 该条**取代** Checkpoint「直接拖动绝对曲线／Handle 仍应表达为 SET」那句）
 ```
 
 ### A②-卡11｜Replace References（批量换绑 A→B）
@@ -347,7 +350,7 @@ Must not:
 ```
 
 ## Part 3 收口提示
-1. 卡8「周期表导入」两步读法（导入＝Concrete 更新，模板经提取产生）待你确认措辞；
+1. 卡8「周期表导入」两步读法（导入＝Concrete 更新，模板经提取产生）：**措辞按记录页 §255 ③ 保持不动**，**待实现线逐条对表**，如与实现相抵再报 —— **这是本批唯一的一条挂项，不代表整批「待确认」**（记录页 §265 裁 `F-07`）；
 2. 五卡与批次①卡1 的交界：EXTRACT_TEMPLATE 动作在卡1（发起处）与卡8（工作区入口）各出现一次，是同一动作两个入口，不是两个动作；
 3. 影响面 Preview 的承载（C11 影响面节 vs 独立面板 N2）在卡10/11 都留了「Preview 正文不进抽屉」口径——与 C11 v1.1 一致。
 
@@ -362,7 +365,7 @@ Reads:
   - 当前上下文：物种层（默认）／行级（当前那一生产行）
 Actions:
   - 物种层设置 ⇒ **改"默认"**（各行 INHERIT 它）
-  - 行级（桶／生产行）设置 ⇒ **改"该行的覆盖"**（CLEAR ⇒ 回到继承）
+  - 行级（桶／生产行）设置 ⇒ **改"该行的覆盖"**（`CLEAR` ⇒ **移除继承自物种层的操作、回到物种当前 Policy Template 的 raw 值** —— **不是**「回到继承」；**桶层缺省（`absent`）才是「回到继承」**；两者是**两个不同动作、UI 必须区分**）（《编辑器持久层契约》§3.4；记录页 §265 裁 `F-04`）
 Durable mutation:
   - **Role 的 durable 落点在 Policy**，**不另建卡级 state**
   - 形状（《编辑器持久层契约》§3.4 逐字）：`species_key + component + scope_key(row_key) + role`；**Role 单独一条 record 轨道，不与 §3.3 numeric override 混表**
