@@ -52,7 +52,7 @@
 
 **durable 语义**：
 - CLEAR 留记录、同值 pin 及每格唯一操作按[§3](#component-clear)。
-- **「计入本层操作数」属于 UI 展示项，Current 页面无出处**（§18 未核项 5）；保留 [卡2](contract-cards.md#operation-control) 的既有执行投影，不将其升级为 Current 规则。
+- **「计入本层操作数」的来源核对与扫描范围见[UI取证台账](OPEN-ITEMS.md#ui-evidence)**；保留[卡2](contract-cards.md#operation-control)的既有执行投影，不将未确认的上游依据升级为 Current 规则。
 - 输入控件里的临时字符串（`-`、`0.`、空）不是持久值，不覆盖上一笔 durable 值。（《编辑器界面》§1.2；《编辑器持久层契约》§7.1）
 
 **切操作时的落盘**（本轮裁定 d）：
