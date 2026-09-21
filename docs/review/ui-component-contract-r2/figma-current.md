@@ -2,6 +2,8 @@
 
 **这是一份"图上现在画了什么"的清单**，供你比对契约。**不含文件链接**（按本项目的对外规则，内部链接一律不进仓）。
 
+**CLEAR 相关文字的版本边界**：本文件的 op 标签、画布结构与回读叙述保留自 [PR #7 固定快照](https://github.com/futouyiba/HitFish-Up/blob/1409a13fde46dcb8d10bae039c26f6a0090bf497/docs/review/ui-component-contract-r2/figma-current.md)，本次未重读 live Figma；它们是图面证据，不另定义 CLEAR。组件语义见[汇编 §3](component-contract-consolidated.md#component-clear)，Policy 语义见[§10](component-contract-consolidated.md#policy-clear)。图中 Role 控制条的「CLEAR 回到模板 raw 值」仅在 Policy 域解读。
+
 帧尺寸约定：**宽统一 1680**；**高两档** —— 作者面一族 `1680×1220`，其余 `1680×1080`。
 
 ---

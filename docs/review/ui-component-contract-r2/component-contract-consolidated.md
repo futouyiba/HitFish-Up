@@ -13,20 +13,25 @@
 - 第一条竖切路径：Species → Structure → 共享模板 → Species ADD → Affinity sourceOverride → SET / CLEAR → autosave → Resolve Preview → materialize。选型依据：结构在 allowlist 里只允许共享模板、查表取值无跨字段约束。（记录页 §164）
 - 切片刻画的样例族：Species ＋ 共享模板 ＋ ADD ／ Affinity 沿用物种操作 ／ Affinity 固定另一来源 ＋ 继承物种操作 ／ 同源显式 pin ／ CLEAR ／ 本层 ADD ／ SET ＋ Tier ／ 换源 Rebase Preview ／ Effective < 0 → ERROR ＋ autosave ＋ Publish 阻断 ／ Effective > 1 → WARNING 放行 ／ 断链来源 ／ 已归档来源的既有引用 ／ Publish 阻断清单与定位。各状态的规定见本文对应节。（记录页 §164；各条出处见 §3–§8）
 
+<a id="component-clear"></a>
 ## 3. Source × Operation 正交
-- 物种层操作：`ADD` / `SET`，无操作 ＝ `INHERIT`（无记录）。桶 / 习性档案层操作：patch 缺省（继承物种层）/ `CLEAR` / `ADD` / `SET`。（《编辑器持久层契约》§3.3；《编辑器与 Resolve》§11.1）
+
+**本节是组件字段 CLEAR / 继承语义在本包的完整投影，权威仍是《编辑器持久层契约》v16 §3.3、§3.5。** 本次直接核对其 `Last Updated 2026-09-21 14:34 +08:00` 版本，以及《编辑器与 Resolve》v12 §11.1–11.2；Policy 域另见 [§10](#policy-clear)，不能套用组件来源定义。组件的层 × 字段类型 allowlist 统一见 [§13](#component-operation-allowlist)。
+
+- **按记录解析，不按结果值反推**：物种层 `INHERIT` ＝ 无本层记录；桶层 `absent` ＝ 无该字段 patch，沿用物种层 operation。桶层 `CLEAR` 则保留一条 **op-only** patch，显式移除继承的 operation，回到当前 Effective Source 原值；它是继承控制，不是第三种数值调整。同值 `SET` 仍保留显式 pin，不能因结果相等改成 `absent` 或 `CLEAR`。（《编辑器持久层契约》§3.3、§3.5；记录页 §265 裁 `F-03`）
+- **「恢复为底板」的数据动作是删除该字段覆盖记录**，从而回到 `absent`；不是写 `CLEAR`，也不是写一个恰好相等的 `SET`。这三个意图不得共用模糊的「恢复」操作名。物种层没有 `CLEAR`；其 `INHERIT` 同样用无记录表达。（《编辑器持久层契约》§3.3、§3.5；《编辑器与 Resolve》§11.2）
 - Source ≠ Operation：换 Source 保留既有操作，改操作保留 Source。（记录页 §172「KEEP」；《编辑器与 Resolve》§11.3）
-- 桶层 `ADD / SET` **替换**物种层操作，不形成第三层叠加。（《编辑器与 Resolve》§11.1 逐字「不是叠第三层 delta」；《编辑器持久层契约》§3.3）
-- Resolve（**按层分两支**）：**物种层**无操作（`INHERIT` ＝ 无记录）⇒ **直接用来源值**；**桶 / 习性档案层** patch `absent` ⇒ **跟随物种层 operation**（物种层也无操作时，才落到来源值）—— **`absent` 不是「用来源值」**；`CLEAR` ⇒ **移除继承的 operation、回到当前 Effective Source 原值**（**与 `absent` 是两个不同动作**）；`ADD` ＝ **当前来源值**（**共享模板**时取该模板的当前值；**`SPECIES_CONCRETE`** 时取该 Concrete 的当前值）＋ delta；`SET` ＝ 绝对值 —— **基准是「这一层挂的那个来源的值」，不要求该来源是共享模板**（记录页 §288 据 `CXR-04` 裁：**基准取「当前来源值」** —— 因 §8 明定物种层 Temperature 的来源可以是 `SHARED_TEMPLATE | SPECIES_CONCRETE`，且 Concrete「不进模板清单」）。（《编辑器与 Resolve》§11.1、§11.2 逐字：「`absent` ＝ 跟随物种层 operation」／「`CLEAR` ＝ 移除继承的 operation、回到当前 Effective Source 原值」／两者「不得合并成一个模糊的『恢复』」）
+- `ADD / SET` 按字段 allowlist 各存一个本层最终 operation；桶层的 `ADD / SET` **替换**物种层操作，不形成第三层叠加。（《编辑器与 Resolve》§11.1 逐字「不是叠第三层 delta」；《编辑器持久层契约》§3.3）
+- **来源值与计算**：物种层无操作时直接用来源值；桶层按上面的分支选择 Effective Operation，再作用于该桶的当前 Effective Source。`ADD` ＝ 当前来源值 ＋ delta；`SET` ＝ 绝对值。当前来源可以是共享模板，也可以是该组件合法使用的 `SPECIES_CONCRETE`；不能要求每层都持久化一个显式 Source ref。（《编辑器与 Resolve》§11.1；记录页 §288、§312、§316 对 `CXR-04` 的更正；P0 Source allowlist 见 §8）
 - 桶层 `sourceOverride` ＝ 固定 Source Choice，不冻结配置：pin 之后 patch 仍缺省时仍继承物种层操作；`sourceOverride` 不自动 SET 全部字段、不清既有操作；解除 pin ＝ 删除 `sourceOverride`，重新跟随物种层 Source。（《编辑器持久层契约》§3.3）
 - same-source pin 是真实 authoring intent：桶层 `sourceOverride` 与物种层 Source 相同时也不自动移除。（《编辑器持久层契约》§3.3；记录页 §172「KEEP」）
+- **`CLEAR` 保留 `sourceOverride`**：若来源被钉住，清除继承操作后仍读那条来源；物种以后换 Source 不会解除该 pin。来源自身更新时，该字段读取更新后的 raw 值。操作跟随与来源跟随是两条独立轴；删除字段 patch 与删除组件级 `sourceOverride` 也是不同动作。（《编辑器持久层契约》§3.3「操作与来源是两条可以分开的跟随轴」）
 
+<a id="field-value-control"></a>
 ## 4. 字段控件（`FieldValueControl`）
 **拆成两个交互面**（选哪个动作 / 敲什么数）；卡2（Operation Control）与卡3（Field Value Editor）的拆分不改 —— 它们拆的是控件职责，与「UI 上是否并成一行」是两件事。（本轮裁定 f；冻结卡 `A①-卡2`、`A①-卡3`）
 
-**操作选项 ＝ 层 × 字段类型 两把筛子**（《编辑器持久层契约》§3.3；冻结卡 `A①-卡2`）：
-- 层决定有没有 `CLEAR`：桶 / 习性档案层才有，物种层没有。
-- 字段类型决定有没有 `ADD`：数值项才有；枚举绝对值项没有。
+**操作选项**：组件 allowlist 见 [§13](#component-operation-allowlist)，Policy 见 [§10](#policy-clear)；四格用户选项投影见 [卡2](contract-cards.md#operation-control)。
 
 **用户语言**（裁定 c；初版被 commit 侧证据修正，见 §17.1）：
 - 物种层：**仅使用来源** / **调整** / **设置为**。
@@ -46,8 +51,8 @@
 - 已覆盖但数值与**底板**相同，**仍须读作已覆盖**（界面读记录，不按值差）。（《编辑器持久层契约》§3.5 逐字）
 
 **durable 语义**：
-- `CLEAR` 尽管 Effective Value 可能等于来源原值，**仍是明确的 durable 本层操作** —— 《编辑器持久层契约》§3.3 `op` 行逐字：`INHERIT` ＝ **无记录**、`CLEAR` **不是第三种数值调整** ⇒ **`CLEAR` 有记录**。⚠️ **「计入本层操作数」这一点属 UI 展示项、页面无出处**（§18 未核项 5 已登记；卡片层依据＝冻结卡 `A①-卡2`）。
-- 每层每字段最多一个最终操作；编辑＝替换当前格；同值 `SET` 仍是 pin、仍留记录。（《编辑器持久层契约》§3.3、§3.5）
+- CLEAR 留记录与同值 pin 按 [§3](#component-clear)；每层每字段最多一个最终操作，编辑＝替换当前格。（《编辑器持久层契约》§3.3、§3.5）
+- **「计入本层操作数」属于 UI 展示项，Current 页面无出处**（§18 未核项 5）；保留 [卡2](contract-cards.md#operation-control) 的既有执行投影，不将其升级为 Current 规则。
 - 输入控件里的临时字符串（`-`、`0.`、空）不是持久值，不覆盖上一笔 durable 值。（《编辑器界面》§1.2；《编辑器持久层契约》§7.1）
 
 **切操作时的落盘**（本轮裁定 d）：
@@ -96,6 +101,7 @@
 - 已归档来源：既有 durable 引用继续合法、继续 Resolve / Publish，选择器显示「已归档」，不允许新建引用，普通 picker 隐藏 / 降级，不视为 ERROR。（《编辑器持久层契约》§3.10；《编辑器界面》§1.1）
 - 断链来源：可加载（load tolerant）、显示明确的 Source Missing、ERROR ＋ 阻断 Publish、**禁止任何自动 fallback / 自动切回物种来源 / 自动挑最近似模板**，必须由作者显式选新的合法来源。（《编辑器持久层契约》§3.10；冻结卡 `A①-卡6`）
 
+<a id="policy-profile"></a>
 ## 9. Profile × Spatial Opportunity Policy
 - Profile 回答「这条鱼对这个环境轴是什么习性」；Role 回答「这份习性在聚合里如何被消费」。（《编辑器与 Resolve》§2.2；《编辑器心智模型与 IA》§7）
 - 改 Role **不创建 / 不删除 Profile、不改 Profile 数值**。（《编辑器持久层契约》§3.4；界面 §1.2「Role 三态互斥」）
@@ -107,10 +113,13 @@
 - Editor 没有钓场上下文：不提供 Pond selector，不编辑 `baseOpportunityIntensity / isBackgroundFish / envCoeffMin`；`fail_env_coeff` 是本编辑器可编辑的习性档案字段，不是 `FishRelease` 的 `envCoeffMin`。（《编辑器界面》§6）
 - 诊断归属：字段 → 字段控件；Profile → 组件卡；Policy → 聚合策略区；全局 / Publish → 顶栏 ＋ 校验清单。（冻结卡 `A①-卡6`；《编辑器界面》§1.4）
 
+<a id="policy-clear"></a>
 ## 10. Role 与 Policy 的操作词表
+**本节是 Policy 域 CLEAR 的完整投影**，权威为《编辑器持久层契约》v16 §3.4（同 §3 的核对版本）；裁决依据为记录页 §265 `F-04`。仅负责此域的来源与词表，记录存在性、同值意图区分沿用 [§3](#component-clear)，无值动作的落盘例外见 [§4](#field-value-control)。
 - Role：物种层 `INHERIT / SET`；桶层 `absent / CLEAR / SET`；**永不允许 `ADD`**。（《编辑器持久层契约》§3.4）
 - `fail_env_coeff`：物种层 `INHERIT / ADD / SET`；桶层 `absent / CLEAR / ADD / SET`。（《编辑器持久层契约》§3.4）
 - Policy 侧的 `CLEAR` 语义：移除继承自物种层的操作，**回到物种当前 Policy Template 的 raw 值**。（《编辑器持久层契约》§3.4）
+- 该定义同时覆盖四个 Role 与 `fail_env_coeff`；`CLEAR` 不携值。**Affinity 没有 `policySourceOverride`**，不能把组件级来源 pin 的能力搬入 Policy。（《编辑器持久层契约》§3.4、§3.10）
 - 桶层缺省（继承物种层操作）与 `CLEAR`（回到 Policy Source 原值）是两个不同动作，UI 必须区分。（《编辑器持久层契约》§3.4；《编辑器与 Resolve》§11.2）
 - 不因最终值 / 枚举相等自动推断 inherit、CLEAR 或 SET。（《编辑器持久层契约》§3.5、§3.3）
 
@@ -150,12 +159,13 @@
 - 跨字段非法时禁止 silent repair：不自动排序四个边界、不交换字段身份、不 clamp 到相邻边界、不把作者输入静默改成「合法值」；曲线区不得伪造一条自动修正后的曲线。（《主开发需求》§9；《编辑器持久层契约》§7.1）
 - 生态数据重导只更新 Concrete Source 本身，不落成 tuning 操作、不自动切换当前 Recipe Source；研究事实修正走更新来源，游戏调参保持来源、写物种层操作。（《编辑器持久层契约》§3.3）
 
+<a id="component-operation-allowlist"></a>
 ## 13. 字段能力表
 （页面上只有「数值型项 / 枚举绝对值项」两种说法；草稿另起了三个名，见 §19）
 - 数值型 · 带档位（Structure / Feeding Layer / Time Period）：物种层 `ADD` / `SET`（无操作 ＝ `INHERIT`）；桶层 `absent` / `CLEAR` / `ADD` / `SET`；`SET` 可携带 `affinity_tier`。（《编辑器持久层契约》§3.3）
 - 数值型 · 无档位（Temperature 四边界 ＋ `threshold`）：同上；Temperature 不带 `affinity_tier`。（同上；记录页 §174 二）
 - 枚举绝对值（`falloff_shape`，项名位 `falloff`）：物种层 `SET`（无操作 ＝ `INHERIT`）；桶层 `absent` / `CLEAR` / `SET`；**不得 `ADD`**。（《编辑器持久层契约》§3.3 逐字「枚举绝对值不得 ADD」）
-- 层 × 类型的交集读法见 §4。（冻结卡 `A①-卡2`）
+- 层决定有无 `CLEAR`，字段类型决定有无 `ADD`；不可把桶层选项暴露给物种层。对应四格用户语言见 [卡2](contract-cards.md#operation-control)。（记录页 §312 裁 `XR-F-03`）
 
 ## 14. 模板工作区与模板生命周期
 - 五类 Live Template：Temperature / Structure / Feeding Layer / Time Period / Spatial Opportunity Policy。（《编辑器心智模型与 IA》§4；《编辑器持久层契约》§3.6）
@@ -204,6 +214,8 @@
 
 ## 17. 两份不一致
 逐条给两侧逐字与判断依据；不调和、不静默丢弃。
+
+**CLEAR 相关审计留痕**：本节第 1、4、5、6 项及 §18 第 1–2 项保留 [PR #7 固定版本](https://github.com/futouyiba/HitFish-Up/blob/1409a13fde46dcb8d10bae039c26f6a0090bf497/docs/review/ui-component-contract-r2/component-contract-consolidated.md#17-两份不一致) 的比较与更正原文，不作为另一份持续维护的定义。现行投影请沿 [§3](#component-clear)、[§4](#field-value-control)、[§10](#policy-clear) 阅读；历史探针的命中数只代表原核对时点。
 
 1. **桶层缺省支的显示文案** —— 裁在「两侧各有可取、合成了新形态」
    - paste（`paste-inbox.md` §2）逐字：「Affinity 层有四种：… 沿用物种操作｜patch absent｜当前 Source + Species operation」。
