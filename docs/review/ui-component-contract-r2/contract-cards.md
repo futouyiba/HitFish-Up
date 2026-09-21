@@ -15,7 +15,7 @@
 
 | # | 控件 | 层·面 | 批次 | 状态 |
 |---|---|---|---|---|
-| A1 | 顶栏（对象标题/动作/保存状态/Publish） | 框架 | ①（保存状态）＋④（系统面） | 保存区=卡7；**`Reset`＝丢弃尚未落盘的编辑、回到上次成功持久化的 revision（记录页 §178）——不是「回到出厂/空态」** |
+| A1 | 顶栏（对象标题/动作/保存状态/Publish） | 框架 | ①（保存状态）＋④（系统面） | 保存区=卡7；**该动作的作者可见词 ＝ 「丢弃未保存的改动」**（记录页 §393 裁 **ADJ-10**）；**语义＝丢弃尚未落盘的编辑、回到上次成功持久化的 revision（记录页 §178）——不是「回到出厂/空态」**。⚠️ **`Reset` 不得作作者可见串** |
 | A2 | 面包屑 | 框架 | ④ | 已规格（v2） |
 | A3 | dirtyDot（按层待写盘） | 框架 | ④ | 语义已拍＝记录页 §167 六（随卡7 落地） |
 | A4 | drawer 导航 ×4 变体 | 对象导航 | ④ | 已规格（v2） |
@@ -232,19 +232,19 @@ Reads:
   - durable write 结果；base revision 对比（打开时记录、每次 commit 前校验）
 Actions:
   - 保存失败时：重试／显式 reload-reconcile（外部修改＝BLOCK＋报告，不 auto-merge）
-  - **`Reset` ＝ 丢弃尚未落盘的编辑，回到「上一次成功持久化的 revision」**——autosave 下只在两个窗口有实际效果：**防抖未到点**、**保存失败之后**（此时盘上仍是上次成功版本）
+  - **「丢弃未保存的改动」＝ 丢弃尚未落盘的编辑，回到「上一次成功持久化的 revision」**（**作者可见词**；⚠️ `Reset` 是它的工程词、**不得作作者可见串**）——autosave 下只在两个窗口有实际效果：**防抖未到点**、**保存失败之后**（此时盘上仍是上次成功版本）
   - Publish 按钮：显式、批量、独立——消费 durable revision；持久化失败先修（Publish 不隐式执行不可见 Save）
 Durable mutation:
   - 状态本身不入 durable（UI state）；semantic edit→debounce/coalesce→原子持久
-  - **`Reset` 不改 durable** —— 它只丢弃未落盘的那一笔；盘上仍是上次成功的 revision（故它不产生新记录、也不删任何已持久记录）
+  - **「丢弃未保存的改动」不改 durable** —— 它只丢弃未落盘的那一笔；盘上仍是上次成功的 revision（故它不产生新记录、也不删任何已持久记录）
 Must show:
   - 四态：已保存 / 已保存·有错误 / 保存中… / 保存失败（I/O·revision 冲突）
   - 「有错误」链接到卡6 校验节
 Must not:
   - 不常驻 Save 按钮；不把 Validator ERROR 当保存失败
-  - **`Reset` 不得读作「回到出厂 / 空态」**；它也不是 Publish 的一部分（不因 Reset 触发任何物化 / 发布）
+  - **「丢弃未保存的改动」不得读作「回到出厂 / 空态」**；它也不是 Publish 的一部分（不因它触发任何物化 / 发布）
   - 不 silent last-write-wins；autosave ≠ Publish ≠ Git commit
-依据: 《编辑器界面》§1.1（验证入口：无常驻 Save、四态 已保存/已保存·有错误/保存中/保存失败、Publish 显式批量独立、错误精确定位）＋§1.2（四态口径；ERROR≠保存失败；外部改动⇒阻断覆盖、显式重载/reconcile）＋§9.1（动作按钮 Reset/Publish/导出/Bass 预设；Publish 消费已持久化 revision）；《编辑器持久层契约》§6.3（语义编辑边界；乐观检测、禁 silent last-write-wins；Autosave≠Publish≠Git commit；Publish 不隐式执行不可见 Save）；**`Reset` 语义＝记录页 §178**（Reset＝丢弃尚未落盘的编辑、回到上次成功持久化的 revision；只在防抖未到点／保存失败后有效；不做出厂/空态、不属 Publish）
+依据: 《编辑器界面》§1.1（验证入口：无常驻 Save、四态 已保存/已保存·有错误/保存中/保存失败、Publish 显式批量独立、错误精确定位）＋§1.2（四态口径；ERROR≠保存失败；外部改动⇒阻断覆盖、显式重载/reconcile）＋§9.1（动作按钮 **丢弃未保存的改动**／`Publish`／导出／Bass 预设；Publish 消费已持久化 revision）；《编辑器持久层契约》§6.3（语义编辑边界；乐观检测、禁 silent last-write-wins；Autosave≠Publish≠Git commit；Publish 不隐式执行不可见 Save）；**该动作语义＝记录页 §178**（丢弃尚未落盘的编辑、回到上次成功持久化的 revision；只在防抖未到点／保存失败后有效；不做出厂/空态、不属 Publish）＋★ **作者可见词「丢弃未保存的改动」＝记录页 §393 裁 ADJ-10**（⚠️ **`Reset` 不得作作者可见串**；**《编辑器界面》§9.1 已于 2026-09-21 12:40 改词，本卡按改后写** —— 改前那句逐字是 `` `Reset` / `Publish` / `导出` / `Bass 预设` ``，**引用旧句即引用已不存在的页串**）
 ```
 
 ---
