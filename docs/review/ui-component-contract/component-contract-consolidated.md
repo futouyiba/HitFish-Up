@@ -17,7 +17,7 @@
 - 物种层操作：`ADD` / `SET`，无操作 ＝ `INHERIT`（无记录）。桶 / 习性档案层操作：patch 缺省（继承物种层）/ `CLEAR` / `ADD` / `SET`。（《编辑器持久层契约》§3.3；《编辑器与 Resolve》§11.1）
 - Source ≠ Operation：换 Source 保留既有操作，改操作保留 Source。（记录页 §172「KEEP」；《编辑器与 Resolve》§11.3）
 - 桶层 `ADD / SET` **替换**物种层操作，不形成第三层叠加。（《编辑器与 Resolve》§11.1 逐字「不是叠第三层 delta」；《编辑器持久层契约》§3.3）
-- Resolve（**按层分两支**；本节自记录页 §270 更正 —— 原写法把两种「缺省」混成了一个）：**物种层**无操作（`INHERIT` ＝ 无记录）⇒ **直接用来源值**；**桶 / 习性档案层** patch `absent` ⇒ **跟随物种层 operation**（物种层也无操作时，才落到来源值）—— **`absent` 不是「用来源值」**；`CLEAR` ⇒ **移除继承的 operation、回到当前 Effective Source 原值**（**与 `absent` 是两个不同动作**）；`ADD` ＝ **当前来源值**（**共享模板**时取该模板的当前值；**`SPECIES_CONCRETE`** 时取该 Concrete 的当前值）＋ delta；`SET` ＝ 绝对值 —— **基准是「这一层挂的那个来源的值」，不要求该来源是共享模板**（记录页 §288 据 `CXR-04` 更正：原写「该层所挂模板值」**会把 `SPECIES_CONCRETE` 这个合法来源排除在外**；而 §8 明定物种层 Temperature 的来源可以是 `SHARED_TEMPLATE | SPECIES_CONCRETE`、且 Concrete「不进模板清单」）。（《编辑器与 Resolve》§11.1、§11.2 逐字：「`absent` ＝ 跟随物种层 operation」／「`CLEAR` ＝ 移除继承的 operation、回到当前 Effective Source 原值」／两者「不得合并成一个模糊的『恢复』」）
+- Resolve（**按层分两支**）：**物种层**无操作（`INHERIT` ＝ 无记录）⇒ **直接用来源值**；**桶 / 习性档案层** patch `absent` ⇒ **跟随物种层 operation**（物种层也无操作时，才落到来源值）—— **`absent` 不是「用来源值」**；`CLEAR` ⇒ **移除继承的 operation、回到当前 Effective Source 原值**（**与 `absent` 是两个不同动作**）；`ADD` ＝ **当前来源值**（**共享模板**时取该模板的当前值；**`SPECIES_CONCRETE`** 时取该 Concrete 的当前值）＋ delta；`SET` ＝ 绝对值 —— **基准是「这一层挂的那个来源的值」，不要求该来源是共享模板**（记录页 §288 据 `CXR-04` 裁：**基准取「当前来源值」** —— 因 §8 明定物种层 Temperature 的来源可以是 `SHARED_TEMPLATE | SPECIES_CONCRETE`，且 Concrete「不进模板清单」）。（《编辑器与 Resolve》§11.1、§11.2 逐字：「`absent` ＝ 跟随物种层 operation」／「`CLEAR` ＝ 移除继承的 operation、回到当前 Effective Source 原值」／两者「不得合并成一个模糊的『恢复』」）
 - 桶层 `sourceOverride` ＝ 固定 Source Choice，不冻结配置：pin 之后 patch 仍缺省时仍继承物种层操作；`sourceOverride` 不自动 SET 全部字段、不清既有操作；解除 pin ＝ 删除 `sourceOverride`，重新跟随物种层 Source。（《编辑器持久层契约》§3.3）
 - same-source pin 是真实 authoring intent：桶层 `sourceOverride` 与物种层 Source 相同时也不自动移除。（《编辑器持久层契约》§3.3；记录页 §172「KEEP」）
 
@@ -39,11 +39,11 @@
 - 折叠态只显示：字段名、当前操作摘要、Effective Value、Diagnostic。展开态显示：当前来源、被继承的操作、本层操作、Effective Value、provenance / 算式。（本轮裁定 g；草稿 §4）
 - 显式展示「来源 → 当前层操作 → 当前值」；`ADD` 与 `SET` 视觉可辨；典型三行：来源值 `0.80` · 相对调整 `-0.20` · 当前值 `0.60`。（《编辑器心智模型与 IA》§3；《编辑器界面》§1.2）
 - 被替代的上级操作**只用于解释 provenance，不再参与链式计算**，且视觉降级。（本轮裁定 g；草稿 §4、§6）
-- **不许把「替换」画成「叠加」**（按层分写；本行自记录页 §292 更正 —— 原句是草稿话、其出处撑不住它）：**每层每字段最多一个最终 operation**（**不允许 `ADD+ADD`／`SET+ADD` 之类的链**）；**覆盖是整层替换、不是叠加**：某桶对该项一旦自己表达，**底板那一层对该项整个不生效**。（《编辑器持久层契约》**§3.3** 逐字，L456／L457；另见《编辑器心智模型与 IA》§1 同规则的自行表述）
-- 已覆盖但数值与**底板**相同，**仍须读作已覆盖**（界面读记录，不按值差）。（《编辑器持久层契约》§3.5 逐字；本行自记录页 §292 更正：原写「与来源相同／仍读作」—— **换了物名（底板→来源）＋掉了「须」**）
+- **不许把「替换」画成「叠加」**（按层分写）：**每层每字段最多一个最终 operation**（**不允许 `ADD+ADD`／`SET+ADD` 之类的链**）；**覆盖是整层替换、不是叠加**：某桶对该项一旦自己表达，**底板那一层对该项整个不生效**。（《编辑器持久层契约》**§3.3** 逐字，L456／L457；另见《编辑器心智模型与 IA》§1 同规则的自行表述）
+- 已覆盖但数值与**底板**相同，**仍须读作已覆盖**（界面读记录，不按值差）。（《编辑器持久层契约》§3.5 逐字）
 
 **durable 语义**：
-- `CLEAR` 尽管 Effective Value 可能等于来源原值，**仍是明确的 durable 本层操作** —— 《编辑器持久层契约》§3.3 `op` 行逐字：`INHERIT` ＝ **无记录**、`CLEAR` **不是第三种数值调整** ⇒ **`CLEAR` 有记录**。⚠️ **「计入本层操作数」这一点属 UI 展示项、页面无出处**（§18 未核项 5 已登记；卡片层依据＝冻结卡 `A①-卡2`）。（本行自记录页 §292 更正出处：原引「§3.3 `op` 行」**撑不住后半句**）
+- `CLEAR` 尽管 Effective Value 可能等于来源原值，**仍是明确的 durable 本层操作** —— 《编辑器持久层契约》§3.3 `op` 行逐字：`INHERIT` ＝ **无记录**、`CLEAR` **不是第三种数值调整** ⇒ **`CLEAR` 有记录**。⚠️ **「计入本层操作数」这一点属 UI 展示项、页面无出处**（§18 未核项 5 已登记；卡片层依据＝冻结卡 `A①-卡2`）。
 - 每层每字段最多一个最终操作；编辑＝替换当前格；同值 `SET` 仍是 pin、仍留记录。（《编辑器持久层契约》§3.3、§3.5）
 - 输入控件里的临时字符串（`-`、`0.`、空）不是持久值，不覆盖上一笔 durable 值。（《编辑器界面》§1.2；《编辑器持久层契约》§7.1）
 
@@ -82,7 +82,7 @@
 
 ## 8. Source 选择器 ＋ Rebase Preview
 - 每组件一个前层 Source 选择器；桶（覆盖层）另有「跟随物种」；温度多一项「当前物种生态数据」（存在时）。（《编辑器界面》§1.1；《编辑器与 Resolve》§11.3）
-- 可选来源矩阵（**按层分写**；本节自记录页 §271 更正 —— 原写法**层次无关**，会被读成桶层也列 Concrete）：**前层（物种层）** —— Temperature ＝ `SHARED_TEMPLATE | SPECIES_CONCRETE`，Structure / Feeding Layer / Time Period ＝ 仅 `SHARED_TEMPLATE`；**桶（覆盖层）** —— **所有组件都只有 `SHARED_TEMPLATE` ＋「跟随物种」**，**不列 `SPECIES_CONCRETE`**（**连当前物种的也不列** —— 要引用当前物种的 Concrete，走「跟随物种」）。**任何层都不得 pin 非当前物种的 Concrete。**（《编辑器持久层契约》§3.3；《编辑器与 Resolve》§11.3 逐字「桶层另有「跟随物种」选项，**不把任何物种的 Concrete 当通用可选项**」；冻结卡 `A①-卡1`）
+- 可选来源矩阵（**按层分写**）：**前层（物种层）** —— Temperature ＝ `SHARED_TEMPLATE | SPECIES_CONCRETE`，Structure / Feeding Layer / Time Period ＝ 仅 `SHARED_TEMPLATE`；**桶（覆盖层）** —— **所有组件都只有 `SHARED_TEMPLATE` ＋「跟随物种」**，**不列 `SPECIES_CONCRETE`**（**连当前物种的也不列** —— 要引用当前物种的 Concrete，走「跟随物种」）。**任何层都不得 pin 非当前物种的 Concrete。**（《编辑器持久层契约》§3.3；《编辑器与 Resolve》§11.3 逐字「桶层另有「跟随物种」选项，**不把任何物种的 Concrete 当通用可选项**」；冻结卡 `A①-卡1`）
 - `SPECIES_CONCRETE` 属当前物种：identity ＝ `(speciesId, componentType)`，不进模板清单、不可被其它物种引用；不得 pin 另一物种的 Concrete。（《编辑器持久层契约》§3.3；记录页 §172 二）
 - 换 Source 是高影响动作：候选来源 → before / after Resolve → **Rebase Preview** → 显式确认 → 原子提交。禁止为保持旧 Effective Value 自动生成 `SET`。（《编辑器与 Resolve》§11.3；《编辑器界面》§1.1；《编辑器持久层契约》§3.10）
 - Preview 至少区分：最终结果变化、结果未变但被本层 `SET` / 操作遮罩、新增 Error、新增 Warning。**被遮罩 ≠ 无影响。**（《编辑器持久层契约》§3.7「SET-masked 可不变」；冻结卡 `A②-卡10`、`A②-卡11`；记录页 §172 二 APPLY DELTA ⑦）
@@ -124,7 +124,7 @@
 **Temperature**：
 - 6 参数 ＋ 连续曲线；同图显示 `temp_threshold`；另有「从钓鱼元素周期表导入」入口。（《编辑器界面》§1.1）
 - 字段能力：`acceptMin / favMin / favMax / acceptMax / threshold` ＝ 数值型项（无档位）；`falloff_shape`（项名位 `falloff`）＝ 枚举绝对值项。（《编辑器持久层契约》§3.3；记录页 §175 六.2）
-- **P0 曲线只读、不 drag-author**；6 个数值参数仍按项编辑。（记录页 §199 ⑥②；冻结卡 `A①-卡3`）
+- **P0 曲线只读、不 drag-author**；**6 项参数（5 数值 ＋ `falloff_shape` 枚举）**仍按项编辑。（记录页 §199 ⑥②；冻结卡 `A①-卡3`）
 - 跨字段不变量：`accept ≤ fav`（四边界链）；相等合法；非法组合可 durable 保存但阻断 Publish。（《主开发需求》§7；记录页 §199 ④ GAP-008）
 - `temp_threshold` 不改变曲线形状，只作 CORE 的 Gate 阈值。（记录页 §199 ④ GAP-010 引《配置表与校验》§5；《编辑器界面》§1.1）
 - 跨字段非法时禁止 silent repair：不自动排序四个边界、不交换字段身份、不 clamp 到相邻边界、不把作者输入静默改成「合法值」；曲线区不得伪造一条自动修正后的曲线。（《主开发需求》§9；《编辑器持久层契约》§7.1）
