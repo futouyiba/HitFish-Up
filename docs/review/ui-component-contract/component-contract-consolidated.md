@@ -76,7 +76,7 @@
 ## 7. 组件卡 ＋ 焦点编辑栏
 - 组件卡是**摘要 ＋ 快速编辑入口**，不是只读卡：可就地改 **Source / Template** 与 **Role 三态**；逐字段值仍在右侧 460px 焦点编辑栏完成。（《编辑器界面》§1 导语、§1.1）
 - 卡上展示：组件身份、当前 Source / Template、当前 Role 角标、继承 / 覆盖状态、诊断。（《编辑器界面》§1.1「卡片展示摘要、模板选择器、Role 角标与继承 / 覆盖状态」；冻结卡 `A①-卡1` 的「卡上 `templateName` 与闭值同源同名」「same-source pin 的『已显式固定』记号」）
-- **入口与 Truth 的对应**：**前层 Source Selector（顶部 `templateRow`，每组件一个）与组件卡的 Source 下拉**指向**同一个**组件 Recipe Source binding；**卡的 Role 下拉与 Policy 区 Role 行**指向**同一个** Policy Authoring Truth。⇒ **各自「双入口、单 Truth」，不得改成单入口，也不得增设第三个 mutation 面。** ⚠️ **焦点编辑栏不提供 Source 下拉** —— 它只显示当前 Source 的上下文／来源说明（在那里再放一个 Source 选择器，就成了「Top Row ＋ Card ＋ Focus Editor」三个 mutation surface，**复杂度没有买到新能力**）。（《编辑器持久层契约》§8 首行「每组件一个**前层** Source 选择器」；《编辑器界面》§7；《编辑器心智模型与 IA》§6、§7；记录页 §172 二 KEEP、§331 裁 `R3-FIG-01`）
+- **入口与 Truth 的对应**：**前层 Source Selector（顶部 `templateRow`，每组件一个）与组件卡的 Source / Template 下拉**（**卡上这一个入口同时覆盖 Template 与 Source** —— 换模板就是换 Source 绑定）指向**同一个**组件 Recipe Source binding；**卡的 Role 下拉与 Policy 区 Role 行**指向**同一个** Policy Authoring Truth。⇒ **各自「双入口、单 Truth」，不得改成单入口，也不得增设第三个 mutation 面。** ⚠️ **卡上这两样都是「就地可改」**（Template / Source 与 Role 三态）—— **卡不是只读卡**；卡上改 Source 写的是 **Component Recipe Source binding**、改 Role 写的是 **Policy Authoring Truth**，**两者都不是卡自己存一份副本**。⚠️ **焦点编辑栏不提供 Source 下拉** —— 它只显示当前 Source 的上下文／来源说明（在那里再放一个 Source 选择器，就成了「Top Row ＋ Card ＋ Focus Editor」三个 mutation surface，**复杂度没有买到新能力**）。（《编辑器持久层契约》§8 首行「每组件一个**前层** Source 选择器」；《编辑器界面》§1 导语、§1.1、§7；《编辑器心智模型与 IA》§6、§7、§8；记录页 §172 二 KEEP、§331 裁 `R3-FIG-01`）
 - 卡的 Source / Role 不得另建一套 durable state。（《编辑器界面》§7；《编辑器心智模型与 IA》§8）
 - 字段行**原地展开**，不设二级 drawer。（本轮裁定 g；页面只规定 2 列紧凑控件与折叠栏位）
 
