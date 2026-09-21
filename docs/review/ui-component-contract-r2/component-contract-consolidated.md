@@ -9,6 +9,7 @@
 - 中栏与右栏不得形成两套重复编辑器。（《编辑器界面》§1 导语：逐字段值编辑在焦点编辑栏完成）
 - 控件名用现行页已经落下的 `FieldValueControl`（承载 Field ＋ Effective Value ＋ optional Tier ＋ Local Operation ＋ Diagnostic）。（裁定 f；《编辑器界面》§1。草稿另有叫法，见 §19）
 
+<a id="structure-slice"></a>
 ## 2. Structure 竖切
 - 第一条竖切路径：Species → Structure → 共享模板 → Species ADD → Affinity sourceOverride → SET / CLEAR → autosave → Resolve Preview → materialize。选型依据：结构在 allowlist 里只允许共享模板、查表取值无跨字段约束。（记录页 §164）
 - 切片刻画的样例族：Species ＋ 共享模板 ＋ ADD ／ Affinity 沿用物种操作 ／ Affinity 固定另一来源 ＋ 继承物种操作 ／ 同源显式 pin ／ CLEAR ／ 本层 ADD ／ SET ＋ Tier ／ 换源 Rebase Preview ／ Effective < 0 → ERROR ＋ autosave ＋ Publish 阻断 ／ Effective > 1 → WARNING 放行 ／ 断链来源 ／ 已归档来源的既有引用 ／ Publish 阻断清单与定位。各状态的规定见本文对应节。（记录页 §164；各条出处见 §3–§8）
@@ -89,12 +90,16 @@
 - 卡的 Source / Role 不得另建一套 durable state。（《编辑器界面》§7；《编辑器心智模型与 IA》§8）
 - 字段行**原地展开**，不设二级 drawer。（本轮裁定 g；页面只规定 2 列紧凑控件与折叠栏位）
 
+<a id="source-transaction"></a>
 ## 8. Source 选择器 ＋ Rebase Preview
+
+**本节是 Source mutation、两档 Preview 及确认边界在本包的完整机制投影**；权威为《编辑器持久层契约》§3.10、§6.3 及记录页 §392 的 ADJ-09 裁定。本批回读持久层 v16（`Last Updated 2026-09-21 14:34 +08:00`），未重读记录页；其余历史出处沿用基线。具体动作／字段／验收见[卡1](contract-cards.md#source-selector)，事务分类与 TimePeriod 的独立护栏见[§15](#transaction-model)。
+
 - 每组件一个前层 Source 选择器；桶（覆盖层）另有「跟随物种」；温度多一项「当前物种生态数据」（存在时）。（《编辑器界面》§1.1；《编辑器与 Resolve》§11.3）
 - 可选来源矩阵（**按层分写**）：**前层（物种层）** —— Temperature ＝ `SHARED_TEMPLATE | SPECIES_CONCRETE`，Structure / Feeding Layer / Time Period ＝ 仅 `SHARED_TEMPLATE`；**桶（覆盖层）** —— **所有组件都只有 `SHARED_TEMPLATE` ＋「跟随物种」**，**不列 `SPECIES_CONCRETE`**（**连当前物种的也不列** —— 要引用当前物种的 Concrete，走「跟随物种」）。**任何层都不得 pin 非当前物种的 Concrete。**（《编辑器持久层契约》§3.3；《编辑器与 Resolve》§11.3 逐字「桶层另有「跟随物种」选项，**不把任何物种的 Concrete 当通用可选项**」；冻结卡 `A①-卡1`）
 - `SPECIES_CONCRETE` 属当前物种：identity ＝ `(speciesId, componentType)`，不进模板清单、不可被其它物种引用；不得 pin 另一物种的 Concrete。（《编辑器持久层契约》§3.3；记录页 §172 二）
-- **每一笔 Source mutation 都要 staged confirm**：候选来源 → before / after Resolve → **Rebase Preview** → 显式确认 → 原子提交。禁止为保持旧 Effective Value 自动生成 `SET`。（《编辑器与 Resolve》§11.3；《编辑器界面》§1.1；《编辑器持久层契约》§3.10；记录页 §392 裁 ADJ-09）
-- **Preview 取哪一档由 `fan-out` 决定，不由「点了几个控件」决定**（记录页 §392 裁 ADJ-09）：**Local Rebase Preview** ＝ 只覆盖本次作用域（binding / Effective Source / follow-pin / 字段值 / 诊断 的 before-after；**不要求算整库**，不算两引用集 / 全局 changed count / 新增 Error·Warning）—— **桶组件的 `sourceOverride` 通常属这一档**；**Propagated Impact Preview** ＝ §3.10 原有的四类，**当一次 mutation 会主动扩散到当前 owner 之外的多个 consumer** 时升档（**物种层 Source 变更若只被自己消费仍是 Local**）。
+- **每一笔 Source mutation 都要 staged confirm**：候选保持 ephemeral → before / after Resolve → 对应档位的 **Rebase / Impact Preview** → 显式确认 → 乐观 revision 核验 → 原子 durable 提交。禁止为保持旧 Effective Value 自动生成 `SET`。（《编辑器与 Resolve》§11.3；《编辑器界面》§1.1；《编辑器持久层契约》§3.10；记录页 §392 裁 ADJ-09）
+- **Preview 取哪一档由 `fan-out` 决定，不由「点了几个控件」决定**（记录页 §392 裁 ADJ-09）：**Local Rebase Preview** ＝ 只覆盖本次作用域（binding / Effective Source / follow-pin / 字段值 / 诊断 的 before-after；**不要求算整库**，不算两引用集 / 全局 changed count / 新增 Error·Warning 的全局计数）—— **桶组件的 `sourceOverride` 通常属这一档**；**Propagated Impact Preview** ＝ **当一次 mutation 会主动扩散到当前 owner 之外的多个 consumer** 时升档（**物种层 Source 变更若只被自己消费仍是 Local，传播到多个 follower 才升档**）。改 Shared Template 完整值、Replace References、Concrete reimport、批量换绑继续走完整 Impact Preview；直接引用集与有效消费者的用途见[§14](#template-lifecycle)。
 - ⚠️ **「要不要 staged confirm」与「是不是 full high-impact」是两个正交判据，不是一条轴的两端** —— 影响面大小**只决定 Preview 有多重，不决定能不能先写盘**。（记录页 §392 逐字；本判据＝该节核心不变量）
 - **`FOLLOW_PARENT`（删 `sourceOverride`）不留例外**：它同样改变 Effective Source ⇒ 也是 Source mutation；**即使当前 Effective Source 恰好不变也不是 no-op**（pin 住 `Template_A` 与跟随到 `Template_A` 当前值可相同、**未来行为不同**）⇒ **Preview 不得只展示 value diff**，至少还要 Binding intent／Effective Source／Future propagation。（记录页 §392）
 - Preview 至少区分：最终结果变化、结果未变但被本层 `SET` / 操作遮罩、新增 Error、新增 Warning。**被遮罩 ≠ 无影响。**（《编辑器持久层契约》§3.7「SET-masked 可不变」；冻结卡 `A②-卡10`、`A②-卡11`；记录页 §172 二 APPLY DELTA ⑦）
@@ -123,6 +128,7 @@
 - 桶层缺省（继承物种层操作）与 `CLEAR`（回到 Policy Source 原值）是两个不同动作，UI 必须区分。（《编辑器持久层契约》§3.4；《编辑器与 Resolve》§11.2）
 - 不因最终值 / 枚举相等自动推断 inherit、CLEAR 或 SET。（《编辑器持久层契约》§3.5、§3.3）
 
+<a id="profile-lifecycle"></a>
 ## 11. Profile 生命周期
 - Role ＝ IGNORED 不删除 Profile；本版不提供通用的「删除组件 Profile」动作。（《编辑器持久层契约》§3.3；界面 §1.4）
 - **Profile 缺席的合法性只由 `Role` 决定 —— 四个组件一致，时段不特权**（记录页 §377 裁 **ADJ-02**「统一」）：`Role = IGNORED` ⇒ 缺席合法（自动不消费）；`CORE` / `SECONDARY` 缺必需 Profile ⇒ Resolve / Publish 阻断。
@@ -139,10 +145,11 @@
   - ★ **它与「「无档案」不得被读成一个值」同源**：`namedItemsOfProfiles` 把「无档案」与「档案全 0」压成同形，会让「无档案 ⇒ 全 0 ⇒ 门控失败 ⇒ 静默踢出」。⇒ 本臂逐字「**根本不进入 evaluator**」**正是那条守卫的语义依据**。
   - ★ **落地形态：它不是展开判定的「第四种结果」，而是「在该判定之前被排除」** —— 逐字两次说的是**排除**（「不产生 production projection」／「根本不进入 evaluator」）⇒ **实现应在 caller 按合取条件先筛掉该组件，再对剩下的走上游已有的展开判定；不得为它扩那个判定的取值域。**（★ 通则：**出现一个新结果时先问它是「同一判定的新取值」还是「根本不该进入这个判定」；扩词表永远是最后的选择。**）
 
+<a id="component-specifics"></a>
 ## 12. Feeding Layer / Time Period / Temperature
 **Feeding Layer**：SURFACE / MIDDLE / BOTTOM 三项最终系数，复用数值型项的同一套能力，不新增组件类型。（《编辑器界面》§1.1；《编辑器持久层契约》§3.3）
 
-**Time Period**：
+**Time Period**（覆盖确认的完整规则见 [§15 Batch Overwrite Guard](#timeperiod-batch-guard)，不得套用 Source 事务）：
 - 五段 DAWN / MORNING / AFTERNOON / DUSK / NIGHT；未配置时显示合法空态，不置灰（**它的合法性来自 §11 的统一矩阵，不是时段特权**；且按 §11，空态须由作者**显式**把 `Role` 设成 `IGNORED` 得到）。（《编辑器界面》§1.1；记录页 §377／§383）
 - 三预设（晨暮型 / 昼行型 / 夜行型）是一次性批写五个字段的 `SET`：不是 Source、不是模板 identity、不进长期继承链；应用后不持久化 `presetId`，当前 Source binding 不变；覆盖已有本层操作时须 batch preview ＋ 显式确认；五个 `SET` 各自可带该预设明确的 Tier 语义；**后续单字段修改后不得再宣称仍属某预设**；模板名不进 Runtime。（《编辑器界面》§1.1；记录页 §172 二 APPLY DELTA ④）
 - 预设不负责创建 Source；应用后原 Source binding 仍在（即使五项都被 `SET` 遮罩也不删除 / 弱化）。（《编辑器界面》§1.1）
@@ -167,6 +174,7 @@
 - 枚举绝对值（`falloff_shape`，项名位 `falloff`）：物种层 `SET`（无操作 ＝ `INHERIT`）；桶层 `absent` / `CLEAR` / `SET`；**不得 `ADD`**。（《编辑器持久层契约》§3.3 逐字「枚举绝对值不得 ADD」）
 - 层决定有无 `CLEAR`，字段类型决定有无 `ADD`；不可把桶层选项暴露给物种层。对应四格用户语言见 [卡2](contract-cards.md#operation-control)。（记录页 §312 裁 `XR-F-03`）
 
+<a id="template-lifecycle"></a>
 ## 14. 模板工作区与模板生命周期
 - 五类 Live Template：Temperature / Structure / Feeding Layer / Time Period / Spatial Opportunity Policy。（《编辑器心智模型与 IA》§4；《编辑器持久层契约》§3.6）
 - 模板是**完整值资产**：operation 只存在于物种 Recipe 与桶 patch 上。（《编辑器持久层契约》§3.3、§3.7）
@@ -177,16 +185,26 @@
 - 生命周期 `ACTIVE / ARCHIVED` 两态：归档后既有引用继续 Resolve / Publish，不允许新建引用、不允许直接改完整值，可查看引用 / Replace References / Restore；要改先 Restore。归档模板从普通选择器隐藏 / 降级。（《编辑器持久层契约》§3.10）
 - 硬删除仅当直接引用集为空；`Archive` 不自动改引用 / 不 fallback / 不自动找相似 / 不自动复制 payload；归档 ≠ 可删。（《编辑器持久层契约》§3.10）
 - 改模板完整值是高影响动作：candidate → Impact Preview → 显式确认 → 原子提交 → 重新 Resolve → 物化受影响的生产投影。（《编辑器持久层契约》§3.10）
+- **两引用集的定义与用途**（《编辑器持久层契约》§3.10）：`DirectReferenceSet(A)` 是 durable state 中直接写了 A 的 source ref 的对象（Species Recipe source、Affinity `sourceOverride`、SpeciesPreset binding、Policy source），用于 Replace References 改动目标、hard-delete guard 和直引清单；`EffectiveConsumerSet(A)` 是 Resolve 后当前 Effective Source 为 A 的全部最终 Recipe，含经物种层继承者，用于 Impact Preview／before-after 分析。Hard Delete 须检查这些及其它 durable 直接引用。Policy Template 的 direct refs 为 Species policy source binding 与 SpeciesPreset policy binding；Affinity 没有 `policySourceOverride`，不得虚构该引用。只读展示见[卡12](contract-cards.md#reference-list)。
 - 影响面四项数：直接引用数 / Effective consumer 数 / 最终结果变化数 / 新增 Error·Warning —— **四个可以互不相同的数字**。（《编辑器持久层契约》§3.10；《编辑器界面》§1.1；记录页 §208）
 - Replace References 只改**直接引用集**；禁止给经继承消费的下游自动写 `sourceOverride`；不为保旧值生成 `SET`；现有 `ADD / SET / CLEAR` 全部保留；影响展示用重新 Resolve 后的结果，不是只 diff 两个模板 payload。（《编辑器持久层契约》§3.10；《编辑器与 Resolve》§11.3；冻结卡 `A②-卡11`）
 - 正常传播不给每个消费者制造待复核债；只有真实诊断 / 复核条件才进待复核。（《编辑器心智模型与 IA》§5；《编辑器界面》§1.1）
 - 模板 → 模板的实时继承不支持；clone / save-as 后是独立模板；分类 / 族只用于分类与推荐，不构成继承父节点。（《编辑器持久层契约》§3.6；《编辑器心智模型与 IA》§4）
 
+<a id="cross-layer-guards"></a>
 ## 15. 跨层护栏
 - Editor durable state 存作者意图（Source binding / `sourceOverride` / 物种操作 / 桶 patch / Role 与 Policy / 模板完整值 / identity 与生命周期），**不把 Effective / resolved 值当第二份可编辑真相**；Effective、provenance、诊断、影响结果都是派生。（《编辑器持久层契约》§3.3、§6.5；《编辑器界面》§1.3）
 - 自动保存：一次有效语义编辑 → 内存 typed 状态 → 短 debounce 合并 → 原子持久化；无常驻 Save；预览缓冲是短命 UI 状态，不落成草稿实体。（《编辑器界面》§1.2、§7；《编辑器持久层契约》§3.10）
-- **事务模型只有两层，不新增第三种**（记录页 §392 裁 ADJ-09）：① **普通 semantic edit**（值 / op / Role）＝ debounce autosave，通常无 staged preview；② **staged mutation**（**所有** Source binding mutation ＋ Shared / bulk 传播类）＝ staged candidate → 显式确认 → 原子提交，**Preview 按 `fan-out` 取 Local 或 Propagated**。
-  - ⇒ **「换来源」属第②层，且是无条件 staged 的**（不因为它影响面小就退回 debounce）；**「改模板完整值 / 重导 / Replace References」**同属第②层，其 Preview 为完整 Impact Preview。★ **「时段批量预设」不属第②层** —— 它**不是 Source mutation**：**无覆盖时无强制 staged confirm**；**会覆盖已有 local ops 时**走 **`Batch Overwrite Guard`**（五字段 before/after ＋ 哪些 local ops 被替换 ＋ 新增 Error·Warning ＋ explicit confirm），**随后是一个 atomic semantic edit**。⇒ **事务模型仍只有两层；该护栏不是第三种 durable transaction type、也不是 Source Rebase Preview。**（Owner 2026-09-21 裁）（《编辑器持久层契约》§6.3；记录页 §392）
+
+<a id="transaction-model"></a>
+**事务分类**（《编辑器持久层契约》§6.3；记录页 §392）：只有两层，不新增第三种 durable transaction type。① 普通 semantic edit（值 / op / Role）走上述 debounce autosave，通常无 staged preview；② 所有 Source binding mutation 与 Shared / bulk 传播类，执行 [§8 的 staged 协议与 Preview 分档](#source-transaction)。
+
+<a id="timeperiod-batch-guard"></a>
+**TimePeriod Batch Overwrite Guard**（Owner 2026-09-21 裁，沿用[固定基线 §15](https://github.com/futouyiba/HitFish-Up/blob/807cef92f75e660cae820ccd48996f7e0c922e18/docs/review/ui-component-contract-r2/component-contract-consolidated.md#15-跨层护栏)与[原能力裁定](https://github.com/futouyiba/HitFish-Up/blob/807cef92f75e660cae820ccd48996f7e0c922e18/docs/review/ui-component-contract-r2/OPEN-ITEMS.md#L122-L123)）：Preset 不是 Source mutation，不因 ADJ-09 自动要求 staged confirm；它属于普通 semantic edit。
+- target layer 没有将被覆盖的 local ops：正常 semantic edit／autosave，可展示结果，不强制确认页。
+- 会覆盖已有 local ops：batch preview 列五字段 before/after、哪些 local ops 被替换、新增 Error·Warning，随后 explicit confirm ＋ atomic commit；不做 full-library impact scan。
+- 五个 `SET` 是同 owner／同 layer 的一个 atomic batch；target、Source 不变及不持久化 presetId 等边界见[§12](#component-specifics)。该护栏不是第三种 durable transaction type，也不是 Source Rebase Preview。
+
 - Publish 只读取已成功持久化的 revision；尚未成值的输入不参与 Publish；未确认的高影响候选不得被当成 durable truth。（《编辑器界面》§1.1；《编辑器持久层契约》§6.3）
 - revision 冲突＝乐观检测：commit 只在预期 revision 仍匹配时写入，禁止 last-write-wins、禁止静默 auto-merge，进入重载 / 对比 / 对账路径。（《编辑器界面》§1.2；《编辑器持久层契约》§6.3）
 - 「生产配置外部变化」与「Editor State revision 冲突」是两类不同问题，不得都显示成「保存失败」。（《编辑器持久层契约》§6.4、§6.5；《编辑器界面》§9.2）
@@ -197,6 +215,7 @@
 - ★ **`name` 的射程要分两层写**（原文只写「只是人类可读标签，不作 identity / join / 复用键」—— **过宽**，独立复审于 `fa96900` 报出，2026-09-21 Owner 同向裁定）：**Editor / Materializer 内部定位 → 稳定 id / key**（`name` **不作** Editor identity）；**Production XLSX 跨子表引用 → 仍按现有物理 schema 写 `targetRow.name`**。⇒ **本期不得把 XLSX 引用单元格顺手迁成 id**（那是单独的**配置表 Schema Migration**；`TimePeriod` 连数字 group id 都没有）。因此 **新增／新建的 production row `name` 必须在对应 production lookup domain 内无歧义**，collision ⇒ **BLOCK**（不 silent suffix / fallback）。行名的三级形态＝模板级（作者填，不预填）/ 物种派生级 / 桶派生级（自动生成）。（《编辑器持久层契约》§4.4）
 - 不隐藏耦合：换来源不自动改 Role；改 Role 不自动换来源；Role 置 IGNORED 不自动删 Profile；重导 / 生态数据更新不自动切 Recipe Source；预设应用不产生长期预设 identity；值相等不自动转继承；同源不自动删 `sourceOverride`；payload 相等不自动合并 authoring owner；归档 / 断链来源不自动 fallback。（《编辑器持久层契约》§3.3、§3.5、§3.7、§3.10）
 
+<a id="identity-boundaries"></a>
 ## 16. 负向清单
 不做（画进假图等于把作者引向不存在的能力）：
 - 程序开关；`if / else / return` 之类控制流编写；自定义聚合算子；自由编排 / 任意输入连线；Gate 控件 / `GatePolicy` 字段；模板共享面板的三档分级；不新增顶层空的 `Calculation Surfaces` 导航；不显示 Activity / Feeding Readiness 之类空壳；不新增第二套 Bake Editor、不新增脚本入口。（《编辑器界面》§5）

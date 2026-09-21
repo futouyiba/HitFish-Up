@@ -75,7 +75,7 @@
 
 | ID | 裁定 | `PROJECTED IN` |
 |---|---|---|
-| **ADJ-09** | **C_NARROW** —— **Source mutation 一律 staged、不分类别**；**Local Rebase Preview** 与 **Propagated Impact Preview** 两档按 **fan-out** 分级（不是按「点了几个控件」）。★ **核心不变量：「是否需要 staged confirm」≠「是否属于 full high-impact mutation」** —— 影响面只决定 Preview 有多重，不决定能不能先写盘。事务模型**只有两层**，不新增第三种 | `contract-cards.md` **`A①-卡1` Actions**；`component-contract-consolidated.md` **§8 ＋ §15** |
+| **ADJ-09** | **C_NARROW，已裁并投影**；记录页 §392。原登记将 staged confirm 与 full high-impact 混成一轴的判断已撤回，不重新派单。 | [汇编 §8 完整机制](component-contract-consolidated.md#source-transaction)、[§15 事务分类](component-contract-consolidated.md#transaction-model)、[卡1交互／验收](contract-cards.md#source-selector)；原裁定转录见下方固定历史边界。 |
 | **ADJ-10** | 顶栏该动作的作者可见词 ＝ **「丢弃未保存的改动」**；**`Reset` 不得作作者可见词**（**这是命名裁定，不是页内相抵** —— 见 §6） | —（**作者可见词，落在页与画布；本包不投影**） |
 | **ADJ-11** | **A_NARROW** —— **空底板那一支：**当某组件的 Authoring Profile / Species Base **为空**、**且**该组件的 **Effective Role ＝ `IGNORED`** 时：**不产生该组件的 production projection、不创建显式空 Profile、不因这一点阻断 Publish**；但 **`FishEnvAffinity` 主行与该组件的 `Role = IGNORED` 仍正常写回**，**只是不生成/写回该组件的完整 Profile 子表值**；尚未产生生产 Profile 的对象 **`ProductionRowLedger.refs[component]` 保持空**。★ **「空」＝尚无该组件的 production projection，不是一种新的 Runtime Profile 值** —— **不是**把 `null`/`empty` 发下去，而是**该组件因 `IGNORED` 根本不进入 evaluator**。 | `component-contract-consolidated.md` **§11** |
 | **ADJ-12** | **四组件都必须有 reachable Setup path——P0 可用性缺口，能力已 CLOSED**：`Profile absent → 显式 Setup／配置档案 → 选择合法 Source／建立可 Resolve 的 Profile`。★ **不得自动生成 `1.00` Profile** —— ★ **`Role promotion ≠ Profile creation`**：「提角色」这个动作**本身不造数**；`IGNORED → CORE / SECONDARY` **不自动建 Profile、也不补一份全 `1.00`**。★ **旧「提角色时自动补一份行为中立档案」的规则按 `superseded` 处理**（Owner 2026-09-21）；本行此前写「提角色那条补档案规则**仍在**」与本包 `contract-cards.md` 的 `RoleControl`（`B1a`/`B1b`）**相抵**，已按后者更正（独立复审在 `fa96900` 上报出）。**TimePeriod 保持 Setup 能力；三种预设只是 Setup 后/中的一次性填表便利，不得被定义成 TimePeriod 独有的「Profile 创建语义」**。**UI exact shape 归 Species Role/UI 工作流**（见 §5）。 | `contract-cards.md` **`RoleControl` Reads** |
@@ -119,8 +119,10 @@
 | **Profile Presence** | **CLOSED** | 矩阵已裁（**统一**：缺席合法性只由 `Role` 决定，时段不特权）；**默认值已裁 ＝ `CORE`** |
 | **Species Role UI** | [当前审查项](#species-role-ui) | 操作入口、记录态分别验收；此处不复制动态状态。 |
 | **Follow / Pin 语义** | **CLOSED** | ⚠️ **先前这里写「相抵」，已撤回**：回原页核完，**它是已定的、只是没落到 picker 那一处** —— §3.3 逐字「无 `sourceOverride` ＝ 跟随」＋ §3.5 表「覆盖→不跟随／恢复为底板→跟随」⇒ **跟随 ＝ 没有那条记录**，故「跟随物种」**＝ 删除** `sourceOverride`（**不写同源记录**）。落页已派 |
-| **Source Transaction** | **CLOSED** | 射程已裁（**ADJ-09 ＝ C_NARROW**）：**Source mutation 一律 staged**，Preview 按 **fan-out** 分 **Local / Propagated** 两档。⚠️ **先前这里写「两条耐久规则相抵」，已撤回** —— 实测是**两个正交判据**（「要不要 staged confirm」 vs 「属于哪一档」），不是一条轴的两端 |
-| **TimePeriod Transaction** | **CLOSED** | ★ **2026-09-21 三处都收了**（Owner 裁定；**其中预览那一条推翻了我先前的归类**）：**① 预设的五个 `SET` 落到哪一层** ⇒ **`target = 当前 active Recipe / Patch authoring owner`**（两个合法 durable target：Species context ⇒ Species TimePeriod Recipe；Affinity／bucket context ⇒ 当前 Affinity TimePeriod operationPatches）；**五个 `SET` 一个 atomic batch**；不切换 layer／不默认提升到 Species／**不创建第三个 preset layer**／不改 Source／不持久化 `presetId`／**不得跨两层拆写**。**② 预览边界** ⇒ ★ **`ADJ-09` 是 Source mutation 的事务规则，不得自动推导到 TimePeriod Preset**；**窄规则**：**若 target layer 没有将被覆盖的 local ops ⇒ 不要求 staged confirmation**（正常 semantic edit／autosave，**可展示结果但不强制确认页**）；**若会覆盖已有 local ops ⇒ batch preview**（五字段 before/after ＋ 明确哪些 local ops 被替换 ＋ 新增 Error·Warning）**＋ explicit confirm ＋ atomic commit**。**不做 full-library impact scan。** **③ `预设` 一词有四个指称物** ⇒ **terminology hygiene**（四者分别写、不合并），**不因此把本节整体挂开**。 |
+| **Source Transaction** | **CLOSED** | ADJ-09 射程已裁；机制与交互沿 §2 该行的投影入口。旧“两条耐久规则相抵”判断已撤回，完整原文仅按下方固定历史读取；不以本能力状态代替实现验收。 |
+| **TimePeriod Transaction** | **CLOSED** | 原三项裁定已收：target／同层 atomic batch 见[汇编 §12](component-contract-consolidated.md#component-specifics)，覆盖确认的完整规则见[§15 Batch Overwrite Guard](component-contract-consolidated.md#timeperiod-batch-guard)，不从 ADJ-09 推导。`预设` 的四个指称物须分别写、不合并，属 terminology hygiene，不因此重开本能力项；原裁定转录沿下方固定历史读取。 |
+
+**Source／TimePeriod 事务历史边界**：本表 ADJ-09 与两项能力结论沿用[本批基线的裁定转录](https://github.com/futouyiba/HitFish-Up/blob/807cef92f75e660cae820ccd48996f7e0c922e18/docs/review/ui-component-contract-r2/OPEN-ITEMS.md#5-契约读数与能力裁定沿用固定来源)及其 §2 ADJ-09／记录页 §392 出处。它们保留原处置和取证时点；本次整理不重审实时 Owner 记录、不宣告实现完成。完整规则由上述仓内投影承接，不在台账重复维护。
 
 <a id="other-material-items"></a>
 ## 6. 材料侧登记与固定处置背景

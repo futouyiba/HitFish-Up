@@ -51,7 +51,10 @@
 
 **编号口径（防撞车）**：本席编号＝**A 线批次编号**，标题带前缀（`A①-卡1`…`A①-卡7`、`A②-卡8`…`A②-卡12`）。**GPT 清单另有一套「卡4 ComponentCard／卡5 Impact Preview」，与本席 `A①-卡4`（Effective Value Display）／`A①-卡5`（Provenance Display）不是同一批** —— 引用务必带前缀。
 
+<a id="source-selector"></a>
 ### A①-卡1｜Source Selector（来源选择器；物种层＋覆盖层两变体）
+
+**机制入口**：[汇编 §8](component-contract-consolidated.md#source-transaction) 完整定义 Source staged 协议、fan-out 分档和同值意图边界；[§15](component-contract-consolidated.md#transaction-model) 区分事务类别。本卡保留动作、落盘字段、展示与验收，不另定义分档机制。原长引文和裁定链见[固定基线卡1](https://github.com/futouyiba/HitFish-Up/blob/807cef92f75e660cae820ccd48996f7e0c922e18/docs/review/ui-component-contract-r2/contract-cards.md#L54-L90)。
 
 ```
 Component: Source Selector｜来源选择器（模板行每格；物种层与兼容壳·覆盖层两变体）
@@ -61,19 +64,17 @@ Reads:
   - 模板清单（平铺、作者命名、默认按引用量排序；ARCHIVED 降级不列）
   - 水温额外读「当前物种生态数据存在与否」
 Actions:
-  - SELECT_SOURCE：物种层改 recipe source；覆盖层写 sourceOverride（桶可换模板）
-  - FOLLOW_PARENT：覆盖层删 sourceOverride = 跟随物种（缺省态）—— ⚠️ **它走与 `SELECT_SOURCE` 同一条边界**：**candidate → Rebase Preview → 显式确认 → 原子提交**。**解除 pin 同样改变 Effective Source** ⇒ **不得成为直接写盘的旁路**。（记录页 §312 裁 `XR-F-01`）
-  - EXTRACT_TEMPLATE：从当前组件提取为模板（创建动作，挂组件上下文——提案已交）——**同一动作、两个入口**（此处由组件卡／编辑面发起 ＋ `A②-卡8` 的工作区入口；不是两个动作）
-  - 换源后既有 ops 原样保留、在新源上重 Resolve；必附 Rebase Preview（before/after）
-  - ★ **两档 Preview 由 `fan-out` 决定，不由「点了几个控件」决定**（记录页 §392 裁 ADJ-09）—— **每一笔 Source mutation 都要 staged confirm，这一条无例外；档位只决定 Preview 有多重**：
-    · **Local Rebase Preview**（**桶组件的 `sourceOverride` 通常属这一档**）：只覆盖本次作用域 —— binding / Effective Source / follow-pin / 字段值 / 诊断 的 before-after；**不要求算整库**（不算 `DirectReferenceSet` / `EffectiveConsumerSet` / 全局 changed count / 新增 Error·Warning）；
-    · **Propagated Impact Preview**（＝ §3.10 原有的四类）：**当一次 mutation 会主动扩散到当前 owner 之外的多个 consumer** 时升档。**物种层 Source 变更若只被自己消费，仍是 Local**；**传播到多个 follower 才升**。
-    ⚠️ **不得把「要不要 staged confirm」与「是不是 full high-impact」读成一条轴的两端** —— 它们正交（记录页 §392 逐字）。
-  - ⚠️ **`FOLLOW_PARENT` 在两档上都不留例外**：删 `sourceOverride` 同样改变 Effective Source ⇒ **它也是 Source mutation**；**即使当前 Effective Source 恰好不变，也不是 no-op**（pin 住 `Template_A` 与跟随到 `Template_A` **当前值可以完全相同、未来行为不同**：前者父层改 B 仍是 A，后者跟到 B）。⇒ **Preview 不能只展示 value diff**，至少还要 **Binding intent**（`PINNED → FOLLOW_PARENT`）／**Effective Source**（当前可能相同）／**Future propagation**（固定 → 跟随）。**同理，创建「与当前父层恰好同 Source」的 explicit pin 也是真实 durable change。**（记录页 §392 裁 ADJ-09）
-  - 高影响批量换绑（Replace References）走 prepare→preview→confirm→atomic，且只改直接引用集
+  - SELECT_SOURCE：先选 candidate；确认提交时物种层改 recipe source，覆盖层写 sourceOverride（桶可换模板）。按所引汇编 §8 执行，不一选即写盘。
+  - FOLLOW_PARENT：覆盖层选择「跟随物种」；按同一协议确认提交时删除 sourceOverride，不另开解除即落盘通路。（记录页 §312 XR-F-01；§328 R3-F-01）
+  - EXTRACT_TEMPLATE：从当前组件提取为模板；与 A②-卡8 工作区入口是同一创建动作，不是第二套动作。
+  - 换源后既有 ops 原样保留，在 candidate 上重 Resolve；高影响批量换绑交 A②-卡11，只改直接引用集。
 Durable mutation:
-  - **换 Source 不是「一选即写盘」**：`SELECT_SOURCE` 先形成 **candidate（不写持久）** → **Rebase Preview（before / after Resolve）** → **显式确认** → **原子提交**（《编辑器与 Resolve》§11.3；汇编 §8）。**`FOLLOW_PARENT`（跟随物种）的持久变更＝删除 `sourceOverride`，同样发生在该动作的「原子提交」那一步 —— 它与 `SELECT_SOURCE` 是同一条边界，不得读成「解除即写盘」。** 落盘对象：`source binding` / `patch`。（记录页 §272 裁 `A-F-05`；§328 裁 `R3-F-01` —— 消掉「解除那一步才写持久」留下的第二口径）
-  - 换源不生成任何保值的 SET；EXTRACT_TEMPLATE 创建模板资产
+  - candidate 不写持久；确认并通过 revision 核验后原子写 source binding / patch。FOLLOW_PARENT 在此步删除 sourceOverride。
+  - 换源不生成保值 SET；EXTRACT_TEMPLATE 只创建模板资产。
+Acceptance:
+  - Local 或 Propagated 的选择由所引汇编 §8 判定；两档都先预览确认，不出现先写盘后预览。
+  - pin Template_A → FOLLOW_PARENT（父层当前也是 A）：即使 value diff 为零，也展示 Binding intent（PINNED → FOLLOW_PARENT）、Effective Source（可相同）、Future propagation（固定 → 跟随）；确认前不删记录，确认后父层改 B 应跟到 B。
+  - 反向创建与父层同 Source 的 explicit pin 仍是 durable change；不以当前值相同折成 no-op。（记录页 §392 ADJ-09）
 Must show:
   - 闭值按层级显示：水温=物种具体级 token（该组件独有形态，保留作主示意）；模板绑定=类型名；水温双来源带类别记号可区分
   - same-source pin 的「已显式固定」记号（名字与物种相同也显示）
@@ -265,6 +266,7 @@ Must not:
 
 覆盖 Inventory E2/E3/N2。底稿＝v2 规格，依据引②后 Current §（落页措辞已逐字核）。
 
+<a id="template-list"></a>
 ### A②-卡8｜Template Library List（模板清单与别名）
 
 ```
@@ -354,6 +356,7 @@ Must not:
 依据: 《编辑器持久层契约》§3.10（Replace 只改 DirectReferenceSet 逐字）＋§3.3（换源不自动清除既有调整）
 ```
 
+<a id="reference-list"></a>
 ### A②-卡12｜Reference List（引用者列表；两集两数）
 
 ```
@@ -382,6 +385,7 @@ Must not:
 
 ### 补记｜`RoleControl`（Role 三态 × 两层）—— 主代理 2026-09-20 裁（记录页 §249／§250／§252）
 
+<a id="role-control"></a>
 Policy CLEAR 的来源、词表与无值规则见[汇编 §10](component-contract-consolidated.md#policy-clear)；此处只保留 RoleControl 的记录形状和 UI 职责。
 
 ```
