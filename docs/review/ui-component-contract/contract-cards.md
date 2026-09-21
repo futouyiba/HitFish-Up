@@ -375,8 +375,12 @@ Actions:
   - 行级（桶／生产行）设置 ⇒ **改"该行的覆盖"**（`CLEAR` ⇒ **移除继承自物种层的操作、回到物种当前 Policy Template 的 raw 值** —— **不是**「回到继承」；**桶层缺省（`absent`）才是「回到继承」**；两者是**两个不同动作、UI 必须区分**）（《编辑器持久层契约》§3.4；记录页 §265 裁 `F-04`）
 Durable mutation:
   - **Role 的 durable 落点在 Policy**，**不另建卡级 state**
-  - 形状（《编辑器持久层契约》§3.4 逐字）：`species_key + component + scope_key(row_key) + role`；**Role 单独一条 record 轨道，不与 §3.3 numeric override 混表**
-  - 粒度：**Role 恒为 row-level**（同 id 组合的不同行可以有不同 Role）
+  - **形状：两条记录、按层分开**（记录页 §331 裁 `R3-F-05`）：
+    · **`Species Policy Recipe`** —— key ＝ `species_key`：`policy source binding` ＋ 四个 Role 的 op（`INHERIT` 用 **absence** 表达；物种层**最多一个 local Role op**）＋ `fail_env_coeff` op；
+    · **`Affinity Policy Patch`** —— key ＝ `row_key`（视情形加 `component`）：Role patch ＝ **`CLEAR | SET`**；`fail_env_coeff` patch ＝ **`CLEAR | ADD | SET`**。
+    ⇒ **不设 `layer` 判别字段、不用 `scope_key="*"` 这类哨兵**；**Role 值不得参与唯一键**。
+  - ⚠️ **行级 patch 必须携 `op`**：不携 op 则 **`CLEAR` 与「`SET` 恰好等于模板 raw 值」不可区分** ⇒ **op 不得从值反推**。
+  - 粒度：**Role 恒为 row-level**；**物种层默认与行级覆盖是两条记录，不得塞回同一张 record** —— 物种层默认的**唯一键 ＝ `(species_key, component)`**，**每个「物种 × 组件」恰好一个 Effective Default Role**（同 id 组合的不同行可以有不同 Role）。
 Must show:
   - **必须显式说出「你在改哪一层 / 哪一行」**：物种层 ⇒「默认（各行继承）」；行级 ⇒ 当前那一行（如 `LAKE_A × LARGEMOUTH_BASS/Q3`）
   - **不许**默认改整个 scope 却在 UI 上说成改一行
@@ -385,5 +389,5 @@ Must not:
   - **不许两份 state** —— 不许「持久化一份 + UI 一份」／不许两处各存一份再同步／不许 UI 侧缓存。**判据：改一处之后，另一处不经过任何「同步代码」就变了。**
   - 不给组件卡另建 durable Role state
   - **永不允许 `ADD`**（契约 §3.4）
-依据: 契约 §3.4（Role 词表：物种层 `INHERIT / SET`、桶层 `absent / CLEAR / SET`、**永不 `ADD`**；粒度不变量）＋§3.10（Role 单独按生产行覆盖）＋§7／§9（双入口单 Truth；Policy payload ＝ 四角色 ＋ `fail_env_coeff`）＋记录页 §249／§250（Owner 澄清：**数据只有一份**，持久层与内存态都在 Policy；Policy 视觉须与习性组件明显不同）＋§252（裁 B）
+依据: 契约 §3.4（Role 词表：物种层 `INHERIT / SET`、桶层 `absent / CLEAR / SET`、**永不 `ADD`**；粒度不变量）＋§3.10（Role 单独按生产行覆盖）＋§7／§9（双入口单 Truth；Policy payload ＝ 四角色 ＋ `fail_env_coeff`）＋**记录页 §331 裁 `R3-F-05`（形状拆两条记录：`Species Policy Recipe`（key＝`species_key`）＋ `Affinity Policy Patch`（key＝`row_key`）；不设 `layer`、不用哨兵、Role 值不进键；行级 patch 必携 `op`）** ＋记录页 §249／§250（Owner 澄清：**数据只有一份**，持久层与内存态都在 Policy；Policy 视觉须与习性组件明显不同）＋§252（裁 B）
 ```
