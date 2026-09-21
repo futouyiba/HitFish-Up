@@ -17,7 +17,7 @@
 | 高影响动作边界 | `candidate → Preview → 显式确认 → 原子提交` |
 | **压层**（per-layer 规则被写成层无关的一句） | 最典型：把桶层语言暴露给物种层 |
 | 温度参数的类型与 ADD 可达性 | 5 个数值项 ＋ 1 个枚举项（`falloff_shape`）；枚举不得 ADD |
-| 来源入口拓扑 | 「卡 ＋ 焦点编辑栏」双入口 vs 「顶行 ＋ 卡」—— 已按前者修订契约文本 |
+| 来源入口拓扑 | 「卡 ＋ 焦点编辑栏」双入口 vs 「顶行 ＋ 卡」—— **已按「顶行 ＋ 卡」修订**（前层 Source Selector 在顶部 `templateRow` 每组件一个 ＋ 组件卡的来源 / Source 下拉）；**焦点编辑栏不提供 Source 下拉** —— 那是被否掉的那一侧（再放一个就成了「顶行 ＋ 卡 ＋ 焦点编辑栏」三个 mutation surface，**复杂度没有买到新能力**）。⚠️ **本行先前误写「已按前者」，方向写反了 —— 2026-09-21 更正** |
 | 组件命名 / 稳定标识纪律 | 16 个组件名的命名与页面出处 |
 | 评审包范围与忠实性 | 两份输入的 reviewable snapshot |
 
@@ -35,7 +35,7 @@
 
 ---
 
-## 2. Owner 裁决状态 —— **十一项已裁，零项待裁**
+## 2. Owner 裁决状态 —— **十三项已裁，零项待裁**
 
 **已裁（记终局，不记两侧各半）**：
 
@@ -57,6 +57,8 @@
 | **ADJ-09** | **C_NARROW** —— **Source mutation 一律 staged、不分类别**；**Local Rebase Preview** 与 **Propagated Impact Preview** 两档按 **fan-out** 分级（不是按「点了几个控件」）。★ **核心不变量：「是否需要 staged confirm」≠「是否属于 full high-impact mutation」** —— 影响面只决定 Preview 有多重，不决定能不能先写盘。事务模型**只有两层**，不新增第三种 | `contract-cards.md` **`A①-卡1` Actions**；`component-contract-consolidated.md` **§8 ＋ §15** |
 | **ADJ-10** | 顶栏该动作的作者可见词 ＝ **「丢弃未保存的改动」**；**`Reset` 不得作作者可见词**（**这是命名裁定，不是页内相抵** —— 见 §6） | —（**作者可见词，落在页与画布；本包不投影**） |
 | **ADJ-11** | **A_NARROW** —— **空底板那一支：**当某组件的 Authoring Profile / Species Base **为空**、**且**该组件的 **Effective Role ＝ `IGNORED`** 时：**不产生该组件的 production projection、不创建显式空 Profile、不因这一点阻断 Publish**；但 **`FishEnvAffinity` 主行与该组件的 `Role = IGNORED` 仍正常写回**，**只是不生成/写回该组件的完整 Profile 子表值**；尚未产生生产 Profile 的对象 **`ProductionRowLedger.refs[component]` 保持空**。★ **「空」＝尚无该组件的 production projection，不是一种新的 Runtime Profile 值** —— **不是**把 `null`/`empty` 发下去，而是**该组件因 `IGNORED` 根本不进入 evaluator**。 | `component-contract-consolidated.md` **§11** |
+| **ADJ-12** | **四组件都必须有 reachable Setup path——P0 可用性缺口，能力已 CLOSED**：`Profile absent → 显式 Setup／配置档案 → 选择合法 Source／建立可 Resolve 的 Profile`。★ **不得自动生成 `1.00` Profile** —— 提角色那条补档案规则**仍在**，但**不得反过来变成「所有新对象出生时自动生成默认 Profile」**。**TimePeriod 保持 Setup 能力；三种预设只是 Setup 后/中的一次性填表便利，不得被定义成 TimePeriod 独有的「Profile 创建语义」**。**UI exact shape 归 Species Role/UI 工作流**（见 §5）。 | `contract-cards.md` **`RoleControl` Reads** |
+| **ADJ-13** | **TimePeriod Preset 的 target layer ＝ 作者当前所在的 authoring layer**：`Apply TimePeriod Preset → write five SET operations → target = current authoring layer / owner`。**不切换 authoring layer／不默认提升到 Species／不创建第三个 preset layer／不改 Source／不持久化 `presetId`／五个 `SET` 作为一个 atomic batch**。★ 若某 UI surface 本版只开放 Species authoring ⇒ 在那里自然只写 Species，**那是 surface capability 的后果，不是 Preset 自身拥有 Species 语义**。 | `component-contract-consolidated.md` **§12** |
 
 ★ **`PROJECTED IN` 是一栏检查，不是一个记录** —— **加一条 ADJ 的动作里包含「把这一栏填满」，空栏 ＝ 那条还没落投影。**
 理由（本族实测）：**「登记册」与「执行投影」之间原本没有一致性检查**，所以每加一条裁定就会漏 N 处投影、而由下游逐条抓出来 —— 实测三条：**ADJ-02 落在卡上而汇编里没有**、**ADJ-09 的两档在卡与汇编里都没投**、**ADJ-07 的 `CORE` 默认只在登记册**。⇒ **判据：一条 ADJ 的「已裁」与「已投」是两件事；只有 `PROJECTED IN` 全非空才算落完。**
@@ -94,7 +96,7 @@
 | **Species Policy Recipe** | **CLOSED（读数）** | §3.1 记录里逐字有 `policy_source_binding`；**但它的指称物（第五类 `TemplateKind`）在实现里不存在** ⇒ 那是**实现缺口**，不是形状未定 |
 | **Affinity Source Override** | **CLOSED** | 读数已裁（**组件级独立绑定**）；**owner 已裁** —— 身份是「中鱼习性模式」（`Engagement Mode`），**（物种, 桶）是它在数据迁移期的表达** |
 | **Profile Presence** | **CLOSED** | 矩阵已裁（**统一**：缺席合法性只由 `Role` 决定，时段不特权）；**默认值已裁 ＝ `CORE`** |
-| **Species Role UI** | **OPEN —— 形态待设计** | 裁定已给（`INHERIT` **需要一个与三值可区分的形**；**同值写 `SET`**）；**这个形本身还没被设计出来** —— 所以它开着的不是「待裁」而是「待做」 |
+| **Species Role UI** | **OPEN —— 控件形态待设计** | 裁定已给（`INHERIT` **需要一个与三值可区分的形**；**同值写 `SET`**）；**这个形本身还没被设计出来** —— 所以它开着的不是「待裁」而是「待做」。★ **2026-09-21 消歧**（bot 在 `OPEN-ITEMS.md:97` 上报的「状态相抵」）：**本行说的是这个控件的形**；**§1(b) 说的是「图上两个作用域分组的投影已执行完、待复审」** —— **两件事，不是同一状态**。⇒ **能力侧另有裁定（ADJ-12）：四组件必须有 reachable Setup path，该能力要求已 CLOSED；控件的精确形仍归 Species Role/UI 工作流。** |
 | **Follow / Pin 语义** | **CLOSED** | ⚠️ **先前这里写「相抵」，已撤回**：回原页核完，**它是已定的、只是没落到 picker 那一处** —— §3.3 逐字「无 `sourceOverride` ＝ 跟随」＋ §3.5 表「覆盖→不跟随／恢复为底板→跟随」⇒ **跟随 ＝ 没有那条记录**，故「跟随物种」**＝ 删除** `sourceOverride`（**不写同源记录**）。落页已派 |
 | **Source Transaction** | **CLOSED** | 射程已裁（**ADJ-09 ＝ C_NARROW**）：**Source mutation 一律 staged**，Preview 按 **fan-out** 分 **Local / Propagated** 两档。⚠️ **先前这里写「两条耐久规则相抵」，已撤回** —— 实测是**两个正交判据**（「要不要 staged confirm」 vs 「属于哪一档」），不是一条轴的两端 |
 | **TimePeriod Transaction** | **OPEN** | 三处未定：预设的**五个 `SET` 落到哪一层**；**预览要显示什么**；`预设` 一词在本族有**四个不同指称物**（时段填表预设 ≠ Species Preset ≠ 档位 preset ≠ 动作按钮） |

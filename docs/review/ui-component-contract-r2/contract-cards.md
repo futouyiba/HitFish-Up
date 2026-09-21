@@ -381,6 +381,9 @@ Reads:
   - **Policy 那条 Authoring Truth**（四个角色 + fail_env_coeff）—— 组件卡上的 Role 下拉与 Policy 区 Role 行**读同一份**
   - **raw Role 的默认值 ＝ `CORE`**（记录页 §383 裁 **ADJ-07**）—— **Policy Template 初生时若不显式给 Role，raw Role 就是 `CORE`**（**不是** `IGNORED`）。⇒ **实现不得自选缺省、也不得留未定义**。
     · ⚠️ **这一条与「提角色补档案」是两件事，不得并读**：**「初生即 `CORE`」**说的是**初生状态**；**「从 `IGNORED` 提为 `CORE`／`SECONDARY` 且尚无档案时，编辑器补出的档案取 `1.00`」**说的是**一个动作**（《编辑器条件开关》§2）⇒ **不得读成「新物种自动补一份 `1.00` 的档案」**。（记录页 §383 后果三）
+    · ★★ **2026-09-21 Owner 收口（ADJ-12）**：**不得自动生成 `1.00` Profile** —— **提角色那条补档案规则仍在**（既有），但**不得反过来变成「所有新对象出生时自动生成默认 Profile」**；**也不得在任何一侧自动生成 `1.00`**。
+      ⇒ **四类 Component 都必须有 reachable Setup path（P0 可用性缺口，能力已 CLOSED）**：`Profile absent → 显式 Setup / 配置档案 → 选择合法 Source / 建立可 Resolve 的 Profile`。**Structure / Feeding Layer / Temperature 空态给 `配置档案 / Setup`，进入合法 Shared Template Source 选择**；**Temperature** 若 Species Concrete 来源存在，另可走周期表导入；**TimePeriod 保持 Setup 能力，且三种预设只是 Setup 后/中的一次性填表便利，不得被定义成 TimePeriod 独有的「Profile 创建语义」**。
+      ⚠️ **不要因此新增「空 Profile 对象」**；**UI exact shape 归 Species Role/UI 工作流，不在本卡**。
     · ⚠️ **后果（不是缺陷，是 fail-closed）**：新建物种在尚未配置时处在**阻断态** —— `CORE` ＋ 缺必需 Profile ⇒ Resolve / Publish 阻断。**要合法空态，必须显式把 Role 设成 `IGNORED`** —— 空态不再是「什么都不做」的自然结果，而是一个**显式动作**。（记录页 §383 后果一／二）
   - 当前上下文：物种层（默认）／行级（当前那一生产行）
 Actions:

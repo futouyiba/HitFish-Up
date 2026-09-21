@@ -52,6 +52,7 @@
 
 **切操作时的落盘**（本轮裁定 d）：
 - 选定操作即落盘成立（《编辑器界面》§1.2 逐字把「操作 / 角色 / Source 选定」列为一次有效语义编辑、经短 debounce 原子落盘），**但「选定」须伴随一个合法 typed 值**；未成值不落盘。
+  - ★ **这条 guard 的射程只到 `ADD` / `SET`** —— **只有它们带 typed 值**；**`INHERIT` / `CLEAR` 按定义没有 typed 值**，**不受本条约束**（`INHERIT` ＝ 删记录；`CLEAR` ＝ 落一条 op-only 子 patch —— 下一行那两条才是它们的边界）。
 - 因此不得因为选了「调整」就写 `ADD(0)`、也不得因为选了「设置为」就写同值 `SET(当前值)`；同值 `SET` 是真实 pin，须在用户确认 typed value 后才 durable。
 - local pending 编辑器可以作实现形态，但不得整体改成「必须再确认才落」。
 - `INHERIT` / `CLEAR` 是明确语义动作，不做「自动保持结果」。
@@ -136,6 +137,9 @@
 - 五段 DAWN / MORNING / AFTERNOON / DUSK / NIGHT；未配置时显示合法空态，不置灰（**它的合法性来自 §11 的统一矩阵，不是时段特权**；且按 §11，空态须由作者**显式**把 `Role` 设成 `IGNORED` 得到）。（《编辑器界面》§1.1；记录页 §377／§383）
 - 三预设（晨暮型 / 昼行型 / 夜行型）是一次性批写五个字段的 `SET`：不是 Source、不是模板 identity、不进长期继承链；应用后不持久化 `presetId`，当前 Source binding 不变；覆盖已有本层操作时须 batch preview ＋ 显式确认；五个 `SET` 各自可带该预设明确的 Tier 语义；**后续单字段修改后不得再宣称仍属某预设**；模板名不进 Runtime。（《编辑器界面》§1.1；记录页 §172 二 APPLY DELTA ④）
 - 预设不负责创建 Source；应用后原 Source binding 仍在（即使五项都被 `SET` 遮罩也不删除 / 弱化）。（《编辑器界面》§1.1）
+- ★ **三预设那五个 `SET` 落到哪一层（ADJ-13）**：**`target = 作者当前所在的 authoring layer / owner`** —— **当前编辑 Species ⇒ 写 Species Recipe 的 5 个 `SET`；当前编辑 Affinity／bucket ⇒ 写当前 Affinity operation patches 的 5 个 `SET`**。
+  - **不切换 authoring layer／不默认提升到 Species／不创建第三个 preset layer／不改 Source／不持久化 `presetId`／五个 `SET` 作为一个 atomic batch。**（记录页裁 **ADJ-13**）
+  - ★ **若某 UI surface 本版只开放 Species authoring ⇒ 在那里自然只写 Species** —— **那是 surface capability 的后果，不是 Preset 自身拥有 Species 语义**。（★ 与 ADJ-12 同源：**三种预设是 Setup 后/中的一次性填表便利，不是 TimePeriod 独有的「Profile 创建语义」**）
 
 **Temperature**：
 - 6 参数 ＋ 连续曲线；同图显示 `temp_threshold`；另有「从钓鱼元素周期表导入」入口。（《编辑器界面》§1.1）
