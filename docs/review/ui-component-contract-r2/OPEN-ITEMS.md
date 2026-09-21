@@ -99,9 +99,10 @@
 | **Species Role UI** | **OPEN —— 控件形态待设计** | 裁定已给（`INHERIT` **需要一个与三值可区分的形**；**同值写 `SET`**）；**这个形本身还没被设计出来** —— 所以它开着的不是「待裁」而是「待做」。★ **2026-09-21 消歧**（bot 在 `OPEN-ITEMS.md:97` 上报的「状态相抵」）：**本行说的是这个控件的形**；**§1(b) 说的是「图上两个作用域分组的投影已执行完、待复审」** —— **两件事，不是同一状态**。⇒ **能力侧另有裁定（ADJ-12）：四组件必须有 reachable Setup path，该能力要求已 CLOSED；控件的精确形仍归 Species Role/UI 工作流。** |
 | **Follow / Pin 语义** | **CLOSED** | ⚠️ **先前这里写「相抵」，已撤回**：回原页核完，**它是已定的、只是没落到 picker 那一处** —— §3.3 逐字「无 `sourceOverride` ＝ 跟随」＋ §3.5 表「覆盖→不跟随／恢复为底板→跟随」⇒ **跟随 ＝ 没有那条记录**，故「跟随物种」**＝ 删除** `sourceOverride`（**不写同源记录**）。落页已派 |
 | **Source Transaction** | **CLOSED** | 射程已裁（**ADJ-09 ＝ C_NARROW**）：**Source mutation 一律 staged**，Preview 按 **fan-out** 分 **Local / Propagated** 两档。⚠️ **先前这里写「两条耐久规则相抵」，已撤回** —— 实测是**两个正交判据**（「要不要 staged confirm」 vs 「属于哪一档」），不是一条轴的两端 |
-| **TimePeriod Transaction** | **OPEN** | 三处未定：预设的**五个 `SET` 落到哪一层**；**预览要显示什么**；`预设` 一词在本族有**四个不同指称物**（时段填表预设 ≠ Species Preset ≠ 档位 preset ≠ 动作按钮） |
+| **TimePeriod Transaction** | **CLOSED** | ★ **2026-09-21 三处都收了**：**① 预设的五个 `SET` 落到哪一层** ⇒ **ADJ-13**：`target = active Recipe / Patch authoring owner`，**两个合法 durable target**（Species context ⇒ Species TimePeriod Recipe；Affinity／bucket context ⇒ 当前 Affinity TimePeriod operationPatches）；不切换 layer／不默认提升到 Species／**不创建第三个 preset layer**／不改 Source／不持久化 `presetId`／**不得跨两层拆写**；**五个 `SET` 一个 atomic batch**。**② 预览要显示什么** ⇒ 属 staged mutation 的 **Local 档**（ADJ-09 第②层 ＋ ADJ-13「同 owner／同 layer」）⇒ **预览 ＝ 本次作用域内的 before/after**（五个字段 ＋ 是否覆盖已有本层操作 ＋ 新增 Error·Warning），**不要求算整库**；并按 §7.1「不能解析的显示 Error / N/A，**不伪造 0 / default**」。**③ `预设` 一词有四个指称物** ⇒ **命名问题：四者分别写、不合并**（时段填表预设 ≠ Species Preset ≠ 档位 preset ≠ 动作按钮）。 |
 
-**⇒ 现在仍不能说「Persistence CLOSED」** —— 上表还开着 **两项**：`Species Role UI` 的**形**（唯一「待做」而非「待裁」的那项）、`TimePeriod Transaction`。**这一块只在全部子项 CLOSED 之后才算 CLOSED。**
+**⇒ 上表现在只剩 一项 开着**：`Species Role UI` 的**形** —— 它是唯一「**待做**」而非「待裁」的那项；**能力侧已由 ADJ-12 收口**（四组件 must have reachable Setup path，CLOSED），**形归 Species Role/UI 工作流**（设计任务已在跑）。
+★ **但按本族规矩：`Persistence` 这一块仍只在全部子项 CLOSED 之后才说 CLOSED** —— 那一项是「**待做**」，所以**现在仍不能说整块 CLOSED**。
 
 ## 6. 七处我（材料侧）报出去的、**不要求你判**的
 
