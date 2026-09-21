@@ -35,7 +35,7 @@
 
 ---
 
-## 2. Owner 裁决状态 —— **十三项 Owner adjudication 已裁；另有 1 个 implementation sub-surface 待设计（`ADJ-03` 的形）**
+## 2. Owner 裁决状态 —— **十三项 Owner adjudication 已裁；`ADJ-03` 的形已落地（画布 ＋ readback，见 §5）**
 
 ★ **留痕（一度 X ＋ 收口 Y）**：**一度**「卡8 的 Temperature Concrete Import 缺值策略**三选一未裁** ⇒ 该子情形按**未冻结**读」（登记来源：独立复审在 `fa96900` 上报出「卡8 自称未冻结，而 README／OPEN-ITEMS 说『零项待裁』」这处不一致）→ **收口（Owner 2026-09-21 裁）**：**取「按既定口径推导」，三选一已关闭** ⇒ **该子情形不再是未冻结**；规则逐字见 `contract-cards.md` 卡8（含「**不得保留旧 `accept`**」与其理由）。
 
@@ -45,7 +45,7 @@
 |---|---|---|
 | **ADJ-01** | durable schema 的 canonical 实现 ＝ **TS 编辑器仓**（另一侧的原型不承担本契约） | —（**实现侧事实，本包不投影**） |
 | **ADJ-02** | Profile 缺席矩阵 ＝ **统一**：缺席合法性**只由 `Role` 决定**；**时段不特权** | `contract-cards.md` **`A①-卡2` Reads**；`component-contract-consolidated.md` **§11 ＋ §12** |
-| **ADJ-03** | 物种层 Role：`INHERIT` **需要一个与三值可区分的形**；**选中等于 raw Role 的值一律写 `SET`（钉住）** | `contract-cards.md` **`A①-卡2` Durable mutation**（同值 `SET` 仍留记录）；**「形」仍未设计 ⇒ 见 §5** |
+| **ADJ-03** | 物种层 Role：`INHERIT` **需要一个与三值可区分的形**；**选中等于 raw Role 的值一律写 `SET`（钉住）** | `contract-cards.md` **`A①-卡2` Durable mutation**（同值 `SET` 仍留记录）；**「形」已落地 ⇒ 见 §5** |
 | **ADJ-04** | §3.1 的四个组件字段 **就是** Component Recipes（Source ＋ 逐字段 op） | `contract-cards.md` **`RoleControl` Durable mutation**（`component recipes`） |
 | **ADJ-05** | `sourceOverride` ＝ **组件级独立 durable 绑定**（不是 §3.3 那张逐项记录上的字段） | `contract-cards.md` **`A①-卡1`／`RoleControl`**；`component-contract-consolidated.md` **§3** |
 | **ADJ-06** | owner 粒度 ＝ **（物种, 桶）** | `contract-cards.md` **`RoleControl`**；`component-contract-consolidated.md` **§9** |
@@ -98,13 +98,22 @@
 | **Species Policy Recipe** | **CLOSED（读数）** | §3.1 记录里逐字有 `policy_source_binding`；**但它的指称物（第五类 `TemplateKind`）在实现里不存在** ⇒ 那是**实现缺口**，不是形状未定 |
 | **Affinity Source Override** | **CLOSED** | 读数已裁（**组件级独立绑定**）；★ **两层必须分开**：**authoring 粒度 ＝（物种, 桶）**（ADJ-06）；**物理 durable key ＝ `FishEnvAffinityRef`**（ADJ-08 ＝ `C_SPLIT_REGISTERS`）；**`Engagement Mode` 只是业务概念、不是 durable identity**。 |
 | **Profile Presence** | **CLOSED** | 矩阵已裁（**统一**：缺席合法性只由 `Role` 决定，时段不特权）；**默认值已裁 ＝ `CORE`** |
-| **Species Role UI** | ★ **拆成两个「形」分开列**（治的是**根因**：此前一个「形」字并掉了三个所指）——**`CXR-ROLE-UI-01`（操作入口形）＝ 已落（画布 `[04]`，两枚 chip 照既有形制）—— 待复审**；**`ADJ-03`（记录态「与三值可区分的形」）＝ 未落地 —— 待设计** | 留痕（**一度 X ＋ 收口 Y**）：**一度**「控件形态待设计」→（**误**）「形已落」→ **收口「形未设计，且两个「形」须分开列」**。★ **误判的机理**：`[04]` **拿「状态」换了「操作」** —— `figma-current.md:214` 逐字「物种侧原本只有 `物种层 · 默认（各行继承）` —— 一个**状态**格，**没有 op**」；落法把那格改成 `物种层`＋`仅使用来源`＋`设置为` ⇒ **操作进来、状态出去**。`CXR-ROLE-UI-01` 问「入口能不能表达 operation」⇒ `[04]` 答对了它；而 **`ADJ-03` 问「`INHERIT` 与三值可不可区分」⇒ `[04]` 不答，且它拿走的正是答它所需的那半截**（两枚 chip 在 `INHERIT` 与 `SET(CORE)` 下**渲染完全相同**，可用操作恒为 `{INHERIT, SET}` ⇒ **不承载记录态**）。★ **要补的形**：物种层 Role 的**记录态**在控制条内无处可读 —— 需要一个**标「记录」而不是标「值」**的状态位。★ **能力侧**已由 `ADJ-12` 收口（四组件 must have reachable Setup path，CLOSED）。 |
+| **Species Role UI** | ★ **拆成两个「形」分开列**（治的是**根因**：此前一个「形」字并掉了三个所指）——**`CXR-ROLE-UI-01`（操作入口形）＝ 已落（画布 `[04]`，两枚 chip 照既有形制）—— 待复审**；**`ADJ-03`（记录态「与三值可区分的形」）＝ 已落地（画布 `308:661`）—— 待复审** | 留痕（**一度 X ＋ 收口 Y**）：**一度**「控件形态待设计」→（**误**）「形已落」→ **收口「形未设计，且两个「形」须分开列」**。★ **误判的机理**：`[04]` **拿「状态」换了「操作」** —— `figma-current.md:214` 逐字「物种侧原本只有 `物种层 · 默认（各行继承）` —— 一个**状态**格，**没有 op**」；落法把那格改成 `物种层`＋`仅使用来源`＋`设置为` ⇒ **操作进来、状态出去**。`CXR-ROLE-UI-01` 问「入口能不能表达 operation」⇒ `[04]` 答对了它；而 **`ADJ-03` 问「`INHERIT` 与三值可不可区分」⇒ `[04]` 不答，且它拿走的正是答它所需的那半截**（两枚 chip 在 `INHERIT` 与 `SET(CORE)` 下**渲染完全相同**，可用操作恒为 `{INHERIT, SET}` ⇒ **不承载记录态**）。★ **要补的形**：物种层 Role 的**记录态**在控制条内无处可读 —— 需要一个**标「记录」而不是标「值」**的状态位。★ **能力侧**已由 `ADJ-12` 收口（四组件 must have reachable Setup path，CLOSED）。 |
 | **Follow / Pin 语义** | **CLOSED** | ⚠️ **先前这里写「相抵」，已撤回**：回原页核完，**它是已定的、只是没落到 picker 那一处** —— §3.3 逐字「无 `sourceOverride` ＝ 跟随」＋ §3.5 表「覆盖→不跟随／恢复为底板→跟随」⇒ **跟随 ＝ 没有那条记录**，故「跟随物种」**＝ 删除** `sourceOverride`（**不写同源记录**）。落页已派 |
 | **Source Transaction** | **CLOSED** | 射程已裁（**ADJ-09 ＝ C_NARROW**）：**Source mutation 一律 staged**，Preview 按 **fan-out** 分 **Local / Propagated** 两档。⚠️ **先前这里写「两条耐久规则相抵」，已撤回** —— 实测是**两个正交判据**（「要不要 staged confirm」 vs 「属于哪一档」），不是一条轴的两端 |
 | **TimePeriod Transaction** | **CLOSED** | ★ **2026-09-21 三处都收了**（Owner 裁定；**其中预览那一条推翻了我先前的归类**）：**① 预设的五个 `SET` 落到哪一层** ⇒ **`target = 当前 active Recipe / Patch authoring owner`**（两个合法 durable target：Species context ⇒ Species TimePeriod Recipe；Affinity／bucket context ⇒ 当前 Affinity TimePeriod operationPatches）；**五个 `SET` 一个 atomic batch**；不切换 layer／不默认提升到 Species／**不创建第三个 preset layer**／不改 Source／不持久化 `presetId`／**不得跨两层拆写**。**② 预览边界** ⇒ ★ **`ADJ-09` 是 Source mutation 的事务规则，不得自动推导到 TimePeriod Preset**；**窄规则**：**若 target layer 没有将被覆盖的 local ops ⇒ 不要求 staged confirmation**（正常 semantic edit／autosave，**可展示结果但不强制确认页**）；**若会覆盖已有 local ops ⇒ batch preview**（五字段 before/after ＋ 明确哪些 local ops 被替换 ＋ 新增 Error·Warning）**＋ explicit confirm ＋ atomic commit**。**不做 full-library impact scan。** **③ `预设` 一词有四个指称物** ⇒ **terminology hygiene**（四者分别写、不合并），**不因此把本节整体挂开**。 |
 
-**⇒ 上表的状态**：**`Species Role UI` 拆成两个「形」**（见上表）—— **`CXR-ROLE-UI-01`（操作入口形）已落（画布 `[04]`）**；**`ADJ-03`（记录态「与三值可区分的形」）未落地、待设计**。**能力侧已由 ADJ-12 收口**（四组件 must have reachable Setup path，CLOSED）。
-★ **但按本族规矩：`Persistence` 这一块仍只在全部子项 CLOSED 之后才说 CLOSED** —— 那一项是「**待做**」，所以**现在仍不能说整块 CLOSED**。
+**⇒ 上表的状态**：**`Species Role UI` 拆成两个「形」**（见上表）—— **`CXR-ROLE-UI-01`（操作入口形）已落（画布 `[04]`）**；**`ADJ-03`（记录态「与三值可区分的形」）已落地（画布 `308:661`）**。**能力侧已由 ADJ-12 收口**（四组件 must have reachable Setup path，CLOSED）。
+★ **按本族规矩：`Persistence` 这一块仍只在全部子项 CLOSED 之后才说 CLOSED。** 两个「形」**都已落地** ⇒ 子项面上已无「待做」；但**「已落」仍待复审在本 head 上确认**，故**整块 CLOSED 的宣告放在复审之后**。
+
+### ★ `ADJ-03` 的**可核依据**：这枚标记如何区分 `INHERIT` 与同值 `SET`
+
+（复审要求「给出该标记如何区分 `INHERIT` 与同值 `SET` 的可核依据」；并指出**一个静态 `SET` 态不能代替所有状态及实现行为的验证**。以下四条各自可核，**不靠单帧静态画面**。）
+
+1. **语义来源**：该标记**由 Species Role 的 durable op record 是否存在派生** —— `record` 不存在 ⇒ 该位**不显示**；存在（含 `SET` 到与 `INHERIT` 取值相同的 raw Role）⇒ 显示 **`Role 已钉住`**。★ **不新增第二份 durable UI state**（Owner 已裁方案）。
+2. **契约依据**：`contract-cards.md` **`A①-卡2` Durable mutation** 逐字「**选中等于 raw Role 的值一律写 `SET`（钉住）**」⇒ **同值 `SET` 仍留记录** ⇒ 二者在**记录层**可分。
+3. **实现依据**：**干净基线（实现仓 `6ff7075`）** 的 `84e2221`（Role 的两条耐久 lane ＋ 读写往返）—— `rules` 顶层 lane 承载 `AffinityRolePatch`，`durableRolesOf` / `applyDurableRoles` 是读回路径；`role-durability.test.ts` 含往返断言与反例。★ **这一条把「同一取值、不同记录态」钉在持久层**，不依赖画面。
+4. **画面依据**：两态在控制条内**渲染不同** —— `INHERIT` ⇒ **该位缺席**；`SET(…)` ⇒ 显示 `Role 已钉住`。**两态各需一张图**（`SET` 态已随包；`INHERIT` 态补图中）—— 单帧只能证其一。
 
 ## 6. 七处我（材料侧）报出去的、**不要求你判**的
 
