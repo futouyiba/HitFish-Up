@@ -103,7 +103,9 @@ Actions:
   - 设置为（SET）：绝对值
   - 每次编辑=替换当前格唯一 op（每层每字段至多一个最终 op）；**`SET` 之后下层仍可 `ADD`** —— **下层表达替换上层 operation，`ADD` 仍以下层当前来源值为基准**（记录页 §316 裁 `CXR-04`）
   - **档位随 op 走**：`ADD` 不带 Tier、`SET` 才用 Tier（记录页 §199 ⑥①）
-  - **时段 Empty ＋ Role 激活不自动生成 Profile**（记录页 §199 ⑥③）：无 profile ＝ 合法 Empty、op 控件不出；**激活 CORE／SECONDARY 也不自动造 profile**（其可见校验态落 `A①-卡6`）
+  - **组件的 Profile 缺席是合法状态，其合法性只由 `Role` 决定 —— 四个组件一致，时段不特权**（记录页裁 ADJ-02「统一」）：`Role = IGNORED` ⇒ 缺席合法（自动不消费）；`CORE` / `SECONDARY` 缺必需 Profile ⇒ Resolve / Publish 阻断。
+    - **激活 `CORE` / `SECONDARY` 不自动造 profile** —— 生成是**显式动作**（记录页 §199 ⑥③）；其可见校验态落 `A①-卡6`。
+    - ⚠️ **实现面已知偏窄（不改变本卡口径）**：解析类型目前**只有时段可空**，其余三个不可空 ⇒ 「缺席」对那三个**尚不可表达**。⇒ 那是**实现缺口（`Role` 侧已裁、类型侧未对齐）**，不是本卡的特权条款。
 Durable mutation:
   - **`ADD`／`SET`／`CLEAR` 各落一条；只有「跟随」那一支删条**（`INHERIT`／桶层缺省 `absent` ⇒ 不造记录）——记录由编辑动作直接写，不经值差合成。⚠️ **此处不再把「恢复」当操作名**：本族已把「恢复」判为**模糊词**（《编辑器与 Resolve》§11.2），它只能以「**不得合并成一个「恢复」**」的形式出现（见本卡 Must not）。（记录页 §265 裁 `F-03`）
   - 同值 `SET` 仍留记录（钉住）；`INHERIT` 不造记录；**`CLEAR` 作为 child-patch 状态持久存在** —— 它**尽管 Effective Value 可能等于来源原值，仍是明确的 durable 本层操作、计入本层操作数**（《编辑器持久层契约》§3.3 `op` 行）。（记录页 §265 裁 `F-03`）
@@ -244,7 +246,7 @@ Must not:
 
 ## 收口提示（给主代理）
 1. **卡3 去留**：建议保留分卡（理由见封面）；若并，卡3 的 raw-buffer/越界/档位条款并入卡2/卡6。
-2. **slice C 依赖**：七卡中 1/2/3/4/6/7 全部落在 Structure vertical slice 路径上（Species→Structure→Shared Template→Species ADD→Affinity sourceOverride→SET/CLEAR→autosave→Resolve Preview→materialize）⇒ 这六张冻结前，实现线勿动该路径、Figma 线勿投影该块（§164 护栏已含）。
+2. **slice C 依赖**：七卡中 1/2/3/4/6/7 全部落在 Structure vertical slice 路径上（Species→Structure→Shared Template→Species ADD→Affinity sourceOverride→SET/CLEAR→autosave→Resolve Preview→materialize）⇒ 原文写「**这六张冻结前**，实现线勿动该路径、Figma 线勿投影该块」（§164 护栏已含）。⚠️ **该护栏的条件现已满足**：批次①**七张（含卡 2）均已冻结 v1.1** ⇒ **它不再构成「勿动」**；此处保留作留痕。
 3. **②后的机械替换点**：各卡「依据」行 packet 指针→Current §（预计落点：契约 §3.3/§3.7（§162 已落 op 行/lineage 句）、界面 §1.x、开发需求 §7）；替换时逐卡回报。
 4. 术语按 §102：卡片正文用「兼容壳/习性档案」，标识符原样。
 
