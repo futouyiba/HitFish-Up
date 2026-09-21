@@ -1,6 +1,6 @@
 # 组件契约｜编辑器 UI Component Contract（现行）
 
-本文只写现行规定。出处写作《页名》§N、记录页 §N 或 冻结卡 `A①-卡N` / `A②-卡N`；查不到出处的条目列在末节「未核 · 待裁」，不进正文。标（本轮裁定）的条目＝本轮已定口径，其依据随条给出。
+本文只写现行规定。出处写作《页名》§N、记录页 §N 或 冻结卡 `A①-卡N` / `A②-卡N`；查不到出处的条目列在 §18 的未核边界与 §19 的命名边界，不进正文。标（本轮裁定）的条目＝本轮已定口径，其依据随条给出。
 
 ## 1. 产品拓扑与三栏
 - 三栏＝对象导航 ｜ 上下文总览 ｜ 焦点编辑。几何：250 ＋ 890 ＋ 460 ＋ 边距 ＝ 1680。（《编辑器界面》§9.1；《编辑器心智模型与 IA》§3）
@@ -63,9 +63,13 @@
 - local pending 编辑器可以作实现形态，但不得整体改成「必须再确认才落」。
 - `INHERIT` / `CLEAR` 是明确语义动作，不做「自动保持结果」。
 
+<a id="tier-contract"></a>
 ## 5. Tier
+
+**本节保留 Tier 的完整规则与记录限定**；卡2／卡3按此读取和执行，不再重复定义。适用范围／不可反推直接核《编辑器持久层契约》v16 §3.3，档位表直接核《编辑器界面》v20 §1.1（分别为 `2026-09-21 14:34`／`17:19 +08:00`）。ADD／SET 的 Tier 形状及越档不自动转 Custom 沿既有 Owner 裁定；[固定基线卡2](https://github.com/futouyiba/HitFish-Up/blob/db97e9bb4784a8eaf2421cf88894c6d4e4beef2c/docs/review/ui-component-contract-r2/contract-cards.md#operation-control)保留 §199 ⑥① 取代旧未决形状与 §148 推断不作裁定的来源边界，本批未重读实时记录页。
+
 - Tier 不是第三条计算轴：属 Authoring 表达，不是生产配置表字段、不是 Runtime 输入；编辑器必须在保存 / Resolve 前确定性解析为最终数值。（《编辑器与 Resolve》§2.1；《主开发需求》§6 第 3 条）
-- **`ADD` 不带 `tier` 字段；`CUSTOM` 只作 `SET` 下拉里的一个选项。**（本轮裁定 a；记录页 §199 ⑥①；冻结卡 `A①-卡2`、`A①-卡3`「不得用伪造 `CUSTOM` tier 满足 schema」）
+- **`ADD` 不带 `tier` 字段；`SET` 才可携 Tier，`CUSTOM` 只作 `SET` 下拉里的选项，不是缺失值哨兵。** Tier 是独立的作者元数据，适用的记录按 `{op, value, tier}` 形状携带，不因最终值相同而反推／补写。不得用伪造 `CUSTOM` tier 满足 schema。（既有裁定 a、记录页 §199 ⑥①／§154；持久层 §3.3 的组件适用边界）
 - 适用面：Structure / Feeding Layer / Time Period；**Temperature 不带 `affinity_tier`**。（记录页 §174 二（Owner 直收）、§172 二 APPLY DELTA ③）
 - 四档锚点与可表达范围：PREFERRED 1.00（1.00）／SUBOPTIMAL 0.60（0.50–0.75）／ACCEPTABLE 0.25（0.20–0.30）／REJECT 0.05（0.00–0.10）；Custom 可精确值。（《编辑器界面》§1.1）
 - **不得从裸数值自动反推 Tier**：数字落进某档范围不等于声明该档。（《编辑器持久层契约》§3.3「不得从生产最终值反推」）
@@ -259,57 +263,40 @@
 ---
 
 ## 17. 两份不一致
-逐条给两侧逐字与判断依据；不调和、不静默丢弃。
 
-**CLEAR 相关审计留痕**：本节第 1、4、5、6 项及 §18 第 1–2 项保留 [PR #7 固定版本](https://github.com/futouyiba/HitFish-Up/blob/1409a13fde46dcb8d10bae039c26f6a0090bf497/docs/review/ui-component-contract-r2/component-contract-consolidated.md#17-两份不一致) 的比较与更正原文，不作为另一份持续维护的定义。现行投影请沿 [§3](#component-clear)、[§4](#field-value-control)、[§10](#policy-clear) 阅读；历史探针的命中数只代表原核对时点。
+本节只保留现行落点；旧稿逐字、取舍理由、撤回过程与历史探针完整保存在[固定基线 §17](https://github.com/futouyiba/HitFish-Up/blob/db97e9bb4784a8eaf2421cf88894c6d4e4beef2c/docs/review/ui-component-contract-r2/component-contract-consolidated.md#17-两份不一致)。历史中的失效写法不再作为日常规则；原零命中数只代表当时探针范围。
 
-1. **桶层缺省支的显示文案** —— 裁在「两侧各有可取、合成了新形态」
-   - paste（`paste-inbox.md` §2）逐字：「Affinity 层有四种：… 沿用物种操作｜patch absent｜当前 Source + Species operation」。
-   - commit（`chatgpt-ui-component-contract-phase1.md` §19.5）逐字：「Species 有 ADD：显示"沿用物种调整"；Species 有 SET：显示"沿用物种设置"；Species 无 operation：显示"仅使用来源"，不要显示空洞的"沿用物种操作"」。
-   - 判断：**裁定 c 的初版（取 paste 的单一泛称「沿用物种操作」）被 commit 侧证据修正** —— commit 侧说的是**实际继承到了什么**，可判据更强：泛称在物种层无操作时**没有宾语**，且与物种层的「仅使用来源」并列会撞。⇒ 采用 commit 侧形态（按继承到的那一个操作给串），并把「物种层无操作」那一支接到「仅使用来源」；两者合成为 §4 的五支清单。这同时解掉初版的易混点：Affinity 缺省支不再一律用泛称，而是按实际继承到的操作给串。
-2. **`SET` 值越出档位可表达范围时是否自动改档**
-   - paste §3 逐字：「如果作者输入明显脱离该档位，例如从 SUBOPTIMAL 改到 0.91，我倾向于自动转：tier = CUSTOM op = SET(0.91)」。
-   - commit §21.1 逐字：「Custom 可表达精确值，但不能因为数字落进某 Tier range 就自动声称该 Tier」。
-   - 判断 —— **裁在 commit 侧**。两侧方向相反，裁定 e 取 commit 侧（不自动转 `CUSTOM`）并补可见诊断；两侧的「自动」写法都不进正文（§5）。一句判据：自动改档＝静默改写作者意图，与「Tier 不得从生产最终值反推」同族。
-3. **`ADD` 的 tier metadata**（两侧同向、但都与现行相抵）
-   - paste §3 逐字：「Durable authoring metadata 可以记：tier = CUSTOM op = ADD(-0.20)」；commit §5 逐字：「ADD = relative tuning intent，tier metadata 视为 CUSTOM」。
-   - 判断 —— **裁在现行条款侧（两侧同向、都不得采）**。两侧同属 commit §15 自己写的「`SET` 可携带 `affinityTier`」的反面，也与「冻结卡 `A①-卡2`：`ADD` 记录不带 tier」相抵；裁定 a 覆盖两侧：`ADD` 不带 `tier` 字段。一句判据：哨兵值＝把缺失码伪装成值（本族已在 `min_env_coeff` 的 `0` vs 空上栽过一次）。
-4. **被替代的上级操作用什么措辞**
-   - paste §5 逐字：「物种操作 / 调整 -0.20 已取消」；同一稿 §6 逐字：「调整 -0.20 已由本层替代」，§9 逐字：「物种调整 -0.20 · 已被本层替代」。
-   - commit §4 逐字：「被替代的 parent operation 只用于解释 provenance，不继续参与链式计算」——未给标签。
-   - 判断 —— **裁在「已被本层替代」一侧**。paste 稿内自己就有两个串，正文统一取「已被本层替代」。一句判据：《编辑器持久层契约》§3.3 的用词是「整层替换…底板那一层对该项整个不生效」。可翻转点：若认 `CLEAR` 那一格不是「被替代」而是「不再继承」，该格另取一词（两种读法都无页面逐字）。
-5. **Policy 侧两个动作的措辞**
-   - commit §20.9 逐字：「因此"恢复为物种角色"（patch absent）与"恢复为 Policy Source raw Role"（CLEAR）是两个不同动作，UI 必须区分」。
-   - paste 无对应句（其 §2 只给数值项的四词）。
-   - 判断 —— **裁在 paste 的立场（不给这两支命名为「恢复」）**。commit 用「恢复」给两个动作命名，与现行相抵；正文按 §10 的两分法写（缺省支 vs `CLEAR` 支），不采用「恢复为…」这一对措辞。一句判据：《编辑器与 Resolve》§11.2 逐字把「恢复」判为模糊词、禁止合并使用。
-6. **INHERIT / CLEAR 是否走 pending**
-   - commit §4 逐字：「INHERIT / CLEAR 是明确语义动作，不做自动保持结果」。
-   - paste §8 只规定「选择"调整" / "设置为"」两种情形要进 local pending editor，未涉 INHERIT / CLEAR。
-   - 判断 —— **裁在 commit 侧（射程更明确的一侧）**。两个动作**不参与 pending 机制**。★ **本行先前写「并按裁定 d 补上『须伴随一个合法 typed 值』这一条」—— 该补写是错的，已删**：§4 逐字把那条 guard 的**射程限定在 `ADD` / `SET`**（「只有它们带 typed 值；`INHERIT` / `CLEAR` 按定义没有 typed 值，**不受本条约束**」），而本行把条件**重新附加到 `INHERIT` / `CLEAR`** 上 ⇒ 作者从 `SET` 切到 `INHERIT` 删记录、或选 `CLEAR` 写 op-only patch 时，会**去等一个定义上不存在的 typed 值** ⇒ **两处相抵，且是行为级**（独立复审在 `72a49c25` 上报出 `CXR7-OP-01`）。**现行判断 ＝ 两个动作直接执行，不附加 typed 值。** 一句判据：paste 未涉 = 留白，不是相反主张，取写明射程的一侧不会丢东西。
-7. **commit 自己记录的途中收敛（Card 只读 → 可快速编辑）**
-   - commit §18.1 逐字：「第三次复核后确认：此前把 Card 收窄为只读摘要，是本轮中途产生的错误收敛，**不应进入集成**」；§22.4/§7 同向（「ComponentCard 是摘要 + 快速编辑入口，不是只读卡」）。
-   - paste 不涉及组件卡。
-   - 判断 —— **裁在 commit 侧（可快速编辑）**。这一条是 commit 自己推翻过的东西；正文取「可快速编辑」侧（§7），「只读卡」形态不进正文。一句判据：《编辑器界面》§1 导语（逐字段值编辑在焦点编辑栏完成，卡仍可就地改模板与角色）与 §7「双入口、单 Truth」。
+| 原比较项 | 现行入口 |
+|---|---|
+| 1. 桶层缺省支显示 | [§4](#field-value-control)：操作名字与行内具体显示分层 |
+| 2. SET 越档；3. ADD 的 Tier metadata | [§5](#tier-contract) |
+| 4. 被替代上级操作的标签 | [卡2](contract-cards.md#operation-control)保留“已被本层替代”的显示场景；CLEAR 可否另取“不再继承”仍只是原比较的可翻转点，未在此新增命名裁定 |
+| 5. Policy 两动作 | [§10](#policy-clear) |
+| 6. INHERIT／CLEAR 的无值动作 | [§4](#field-value-control)；不再从旧补写给它们附加 typed 值条件 |
+| 7. 组件卡可快速编辑 | [§7](#7-组件卡--焦点编辑栏) |
 
-## 18. 未核 · 待裁
-1. **物种层缺省支的用户语言「仅使用来源」与现行页面相抵**：现行《编辑器界面》§1.2 与《编辑器心智模型与 IA》§2 逐字都是「跟随（INHERIT）」／「跟随」；本轮裁定 c 取「仅使用来源」。正文按裁定写；落页时须连动改这两页（含冻结卡 `A①-卡2` 的同一句）。 **〔2026-09-21 已落、本项收口〕** 两页回读：旧串「跟随（INHERIT）」「跟随」**均 0 命中**；**「仅使用来源」已在两页在位** ⇒ **本项所述「与现行页面相抵」已不成立**，无需再连动改页。
-2. **Affinity 缺省支与 `CLEAR` 的用户语言未落页**：新形态的四串（「沿用物种调整」「沿用物种设置为」「仅使用当前来源」，以及物种层的「仅使用来源」）在本轮六个页面与记录页 0 命中（探针作用域见末行）；页面现文仍是「跟随物种配置」与「恢复为来源值」（《编辑器界面》§1.2、《编辑器心智模型与 IA》§2、冻结卡 `A①-卡2`）。判据成立（《编辑器与 Resolve》§11.1 逐字「`absent` ＝ 跟随物种层 operation」；§11.2 逐字把「恢复」判为模糊词）。落页归需求页写入者。**〔2026-09-21 已落、本项收口〕两页回读：旧串「跟随物种配置」「恢复为来源值」「跟随（INHERIT）」**均 0 命中**；「仅使用来源」与「仅使用当前来源」**在位**，且**两页各自写明**这一区分 —— 《编辑器界面》§1.2 **逐字**：「桶（覆盖层）须**显式区分**「沿用物种操作」与「仅使用当前来源」两个动作，不合并成一个模糊的「恢复」」；《编辑器心智模型与 IA》§2 **以另一措辞**写明同一区分：「「沿用物种操作」（无记录）与「仅使用当前来源」（CLEAR）是两个动作」。⚠️ **本条 2026-09-21 精确化**：先前这里写「两页均写明」并只给一句引文 —— **只有《编辑器界面》§1.2 是逐字，另一页是同义的另一句**；且**该页那句里的「显式区分」带内联粗体标记**，用不带标记的串去 grep 会**假 0 命中**（探针必须与物同形）。「沿用物种调整」／「沿用物种设置为」**不在页上是合裁定的** —— 按后来的裁定，**泛称「沿用物种操作」才是缺省名，那两个具体串属「行内显示」层**。**冻结卡 `A①-卡2` 的降级前提随之消失（该卡已按记录页 §312 裁 `XR-F-07` 的「落到页后即恢复」恢复）。**〕**
-3. **正文里出现的页面不存在串，已一律清出**：清出的清单与仍需命名的项集中在 §19。
-4. **commit 的 16 个组件名清单**页面上没有对应名，已移入 §19。
-5. **无页面出处的 UI 细则**（正文未收）：卡上「本层操作数 / 诊断数 / profile presence / source health」四个展示项（页面只逐字列了摘要、模板选择器、Role 角标、继承 / 覆盖状态）；结构编辑面的筛选用「全部 / 本层修改 / 问题」；「组件卡不做 mini heatmap / 不展开完整字段 provenance / 不做操作历史时间线」三条负向（页面 §5 负向清单里没有这三条；《编辑器心智模型与 IA》§3 反而要求焦点编辑栏有独立 History）；Time Period Setup 的六步序列（页面只有「未配置是合法空态 ＋ 激活后须当场可见校验态 ＋ 空态指向显式创建 / 选择来源」）；Time Period 预设 batch preview 的四项内容（页面只有「须 batch preview ＋ 显式确认」）；模板 candidate 编辑的「N 项待审查修改 / [撤销] / [审查修改]」形态（页面只有「预览缓冲是短命 UI 状态，不落成草稿实体」）；Species 字段编辑「不弹 Modal、只在行旁给影响摘要」的强度映射（页面无此分级）；`temp_threshold` 在非 CORE 时「仍显示 / 保存但标注当前不消费」的文案（页面只规定「只对 CORE 必需」与「同图显示」）；`same-source pin` 的文案「当前值不变，但继承关系变化」（页面只要求「已显式固定」记号）；P0 每条通道的验收 variants 清单（commit 列 39 条、paste 列 13 条，属测试计划，正文只收成状态族，见 §2）。
-6. **顺带复查到的另一处页面间冲突**（非本两份草稿的内容）：冻结卡 `A①-卡3` 逐字「Effective <0＝ERROR（红）、>1＝WARNING（黄）」，而《编辑器界面》§1.2、§1.4 与《主开发需求》§7 三处逐字都是「`> 1` 的 WARNING ＝ 红标」。本轮裁定 b 取三票侧；卡3 那句待改。 **〔2026-09-21 已收口〕** 冻结卡 `A①-卡3` 现逐字为「Effective<0＝ERROR（**红标**）、>1＝WARNING（**红标，不阻断**）」⇒ 与《编辑器界面》§1.2／§1.4 的**同向**表述一致，「WARNING（黄）」已不存在。
-7. **《编辑器与 Resolve》§11.3 与其余三处对影响面数字的口径不一致**：Resolve §11.3 逐字「「引用数 / Effective consumer 数 / 最终数值变化数」是三个可以不同的数字」，而《编辑器持久层契约》§3.10、《编辑器界面》§1.1 与《编辑器心智模型与 IA》§5 逐字都是**四项**（含「新增 Error·Warning」）。记录页 §208 记的收口是「三数→四项」，Resolve §11.3 那处未随之改。
-8. **「25 个 Structure slot」**（只有 paste 有这一处；commit 全文不出现「25」作字段数）
-   - paste §1 逐字：「25 个 Structure slot 如果每行把 Source / Species / Affinity / Effective 全铺开，右侧 460px 会直接变成 debugger」，收尾逐字：「这样一个 25 格 Structure 编辑器不会变成…」。
-   - commit 只给 Structure 的 Detail Filter 与「Structure → 数值型项」的映射，不给字段数。
-   - 判断 —— **裁在现行页面侧（UI 不固化字段数）**。一句判据：《编辑器界面》§1.1、§1.3 逐字「字段顺序跟随 Source，不在 UI Contract 固化名称清单或固定字段数量」⇒ paste 这处写法不成立。但**不得读成「25 不是 schema 数」**：《编辑器持久层契约》§3.3 `member_key` 逐字「结构 = `0`…`24`」、《主开发需求》§3.1 与 §4.0 逐字「逻辑查表键共有 25 项」「按当前 StructureType 展开，约 25 项」⇒ 25 是 StructureType 查表键数、属数据 / 记录层枚举。错的只是把它当成 UI 的固定字段数。冻结卡 `A①-卡3`「档位适用面：结构 25 槽」是同一处错。 **〔2026-09-21 已收口〕** 冻结卡 `A①-卡3` 现逐字写明「**按当前 Source 动态生成 StructureType 字段控件（不固化字段数量；现行实例 25 是数据/记录层的查表键数，不得反读成 UI 的固定字段数）**」⇒ **「25」不再作为固定 contract**。
-## 19. 待命名 · 需裁定
-正文规定里一律只用页面已有的串、或用纯语义描述。下列串**页面上不存在**：需要新名（或直接弃用草稿名）时在此一次裁定，**不得由下游另发明一套名字** —— 本族标识符按字节精确，正文里用一个文档里不存在的串＝让下游造第二套名字。
-1. **控件名**：草稿叫 `FieldValueRow`；页面上已落的名字是 `FieldValueControl`（承载 Field ＋ Effective Value ＋ optional Tier ＋ Local Operation ＋ Diagnostic）。建议直接弃用草稿名。
-2. **来源选择的三个草稿串**：`BOUND_SOURCE` / `FOLLOW_SPECIES_SOURCE` / `PIN_SOURCE(sourceRef)`。页面已有的对应物是「跟随物种」这一选项与 durable 字段 `sourceOverride`。
-3. **三个字段能力名**：`tieredNumeric` / `numericRelative` / `enumAbsolute`。页面只有「数值型项 / 枚举绝对值项」；正文 §13 已按页面说法写，草稿名未采用。
-4. **组件 / 区域名（commit 的 16 个）**：`ObjectContextHeader` / `ComponentCard` / `SourceSelector` / `FieldOperationControl` / `FieldValueRow` / `ValidationIndicator` / `AutosaveStatus` / `ComponentDetailEditor` / `RoleControl` / `SpatialOpportunityPolicy` / `TemplatePicker` / `TemplateWorkspace` / `ImpactPreview` / `TemperatureProfileEditor` / `TemperatureCurvePreview` / `SpeciesConcreteSourcePanel`。页面用的是「组件卡 / 焦点编辑栏 / 前层 Source 选择器 / 聚合策略区 / 顶栏 / 模板工作区」这类称呼；除 `FieldValueControl` 外都没有页面名。
-5. **其他只在草稿里出现的串**：`profileCanStartAbsent` / `ModeConcreteSource` / `BootstrapSurface` / `DirectReferenceCount` / `localOperationCount`。`completeValue` 在《编辑器持久层契约》§3.7 有用法，正文按页面的「模板完整值」写。
-6. **冻结卡自己的两个控件名**（`A①-卡2` Operation Control / `A①-卡3` Field Value Editor）是卡片层编号名；正文只在 §4 提到「两个交互面的拆分」，未把它们当控件名用。
+<a id="18-未核--待裁"></a>
+## 18. 未核边界与现行入口
 
-本文的 0 命中声明，探针作用域＝本轮新取的六个页面（变更与裁决记录 / 编辑器界面 / 编辑器心智模型与 IA / 编辑器与 Resolve / 编辑器持久层契约 / 主开发需求）＋ `/tmp/edseat/inventory-batch1-cards.md`＋`/private/tmp/hitfish-inbox/paste-inbox.md`＋`/tmp/edseat/chatgpt-ui-component-contract-phase1.md`。
+以下按[固定基线 §18](https://github.com/futouyiba/HitFish-Up/blob/db97e9bb4784a8eaf2421cf88894c6d4e4beef2c/docs/review/ui-component-contract-r2/component-contract-consolidated.md#18-未核--待裁)保留取证边界，不把历史待核项自动判成当前缺陷或已完成；可变处置仍归[问题台账](OPEN-ITEMS.md#active-review-items)。本批未复查下列未核 UI 细则或其它 Current 页面。
+
+1. **物种层缺省用户语言**：原冲突已收口；现行映射见[§4](#field-value-control)。旧稿、落页经过和零命中范围只在固定历史查阅。
+2. **Affinity 缺省支／CLEAR 用户语言**：原落页与卡2降级前提已收口；概念名与行内显示的区别见[§4](#field-value-control)，四格 UI 见[卡2](contract-cards.md#operation-control)。
+3. **正文命名**：按 §19 的边界，不将草稿词升级成产品标识符。
+4. **旧16组件名清单**：按 §19 读取固定清单，不据本次整理新增命名裁定。
+5. **尚未复核的 UI 细则清单**：本层操作数／诊断数／profile presence／source health 四展示项；结构筛选“全部／本层修改／问题”；组件卡不做 mini heatmap／完整字段 provenance／操作历史时间线三条负向（不能把焦点栏的独立 History 一并禁掉）；TimePeriod Setup 六步的具体 UI 序列与旧预设 preview 四项形态；模板 candidate 的“N 项待审查修改／撤销／审查修改”形态；Species 编辑“不弹 Modal、只在行旁给影响摘要”的强度映射；非 CORE 时 `temp_threshold` 的显示／保存及“不消费”文案；same-source pin 的“当前值不变，但继承关系变化”文案；P0 通道 variants 清单。原逐项缺出处说明见固定历史。Setup／Preset **机制**已分别在[§11](#profile-lifecycle)／[§15](#timeperiod-batch-guard)投影，本项不据旧 UI 取证重开机制裁定，也不把上述 UI 形态当成 Current 已核要求。
+6. **校验颜色**：原卡3 WARNING 黄标冲突已收口；现行分级见 §6 与卡3，历史更正不再内嵌。
+7. **影响统计跨页读数**：原记录指《编辑器与 Resolve》§11.3 的“三数”未随其余页面改为四项；本批未重读该页，不声称漂移今天仍在或已经消失。仓内现行候选影响统计与只读列表边界见[§14](#template-reference-sets)，未核处置仍见台账。
+8. **Structure 字段数量**：UI 不固化数量，现行投影见卡3；数据层 `member_key=0…24` 与 UI 固定字段数是不同主张。原比较与已收口过程仅留固定历史。
+
+<a id="19-待命名--需裁定"></a>
+## 19. 命名边界
+
+沿用[固定基线 §19](https://github.com/futouyiba/HitFish-Up/blob/db97e9bb4784a8eaf2421cf88894c6d4e4beef2c/docs/review/ui-component-contract-r2/component-contract-consolidated.md#19-待命名--需裁定)的命名边界；旧“页面不存在／零命中”是当时取证，不作为本批的新全页扫描结论。需要新名时仍须裁定，不能由下游另造产品名、记录或身份。
+
+1. 正文控件使用 `FieldValueControl`；草稿 `FieldValueRow` 不替代它。
+2. `BOUND_SOURCE / FOLLOW_SPECIES_SOURCE / PIN_SOURCE(sourceRef)` 仅是旧草稿串；按现行 Source 交互及 durable `sourceOverride` 字段读取。
+3. `tieredNumeric / numericRelative / enumAbsolute` 是草稿能力名；字段类别按 §13。
+4. 旧16组件／区域名的完整列表保留在固定历史，不将这些草稿名统一晋升为页面规定。
+5. `profileCanStartAbsent / ModeConcreteSource / BootstrapSurface / DirectReferenceCount / localOperationCount` 沿原未核边界；`completeValue` 的现有用法见持久层 §3.7，不因清理改名。
+6. 卡2 `Operation Control`／卡3 `Field Value Editor` 是卡片编号名；§4 的两个交互职责不因此成为两个新产品控件名。

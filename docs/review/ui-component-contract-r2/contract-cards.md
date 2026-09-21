@@ -91,7 +91,7 @@ Must not:
 <a id="operation-control"></a>
 ### A①-卡2｜Operation Control（缺省支·调整·设置为·仅使用当前来源）
 
-**语义入口**：[汇编 §3](component-contract-consolidated.md#component-clear) 定义组件 CLEAR / absent、Source 独立性与同值意图；[§13](component-contract-consolidated.md#component-operation-allowlist) 定义组件 allowlist；[§4](component-contract-consolidated.md#field-value-control) 定义落盘时机与无值动作例外。本卡保留「层 × 类型」四格 UI 和展示职责，不另存一份完整解析定义；Policy 用[§10](component-contract-consolidated.md#policy-clear)。 Profile／Setup 机制另见[§11](component-contract-consolidated.md#profile-lifecycle)；原实现类型缺口只按[固定取证](https://github.com/futouyiba/HitFish-Up/blob/add09fdaa9c197740df6735160af45c1ebb32370/docs/review/ui-component-contract-r2/contract-cards.md#L115)读取。
+**语义入口**：[汇编 §3](component-contract-consolidated.md#component-clear) 定义组件 CLEAR / absent、Source 独立性与同值意图；[§13](component-contract-consolidated.md#component-operation-allowlist) 定义组件 allowlist；[§4](component-contract-consolidated.md#field-value-control) 定义落盘时机与无值动作例外。本卡保留「层 × 类型」四格 UI 和展示职责，不另存一份完整解析定义；Policy 用[§10](component-contract-consolidated.md#policy-clear)。 Tier 的定义与形状见[§5](component-contract-consolidated.md#tier-contract)。Profile／Setup 机制另见[§11](component-contract-consolidated.md#profile-lifecycle)；原实现类型缺口只按[固定取证](https://github.com/futouyiba/HitFish-Up/blob/add09fdaa9c197740df6735160af45c1ebb32370/docs/review/ui-component-contract-r2/contract-cards.md#L115)读取。
 
 ```
 Component: Operation Control｜字段操作控件（INHERIT/ADD/SET/CLEAR 四动作）
@@ -111,13 +111,13 @@ Actions:
   - 调整（ADD）：带符号增量，**相对当前来源值**（**当前来源**可以是共享模板，也可以是合法的 `SPECIES_CONCRETE`）—— ⚠️ **不写成「模板值」**：合法来源里 `SPECIES_CONCRETE` **没有模板绑定**。⚠️ **合法来源里 `SPECIES_CONCRETE` 没有模板绑定**（汇编 §8 明定物种层温度可 Concrete、且 Concrete 不进模板清单）⇒ 写「相对该层所挂模板值」会**把这一类合法来源排除在外**。（记录页 §312 裁 `CXR-04`）
   - 设置为（SET）：绝对值
   - 每次编辑=替换当前格唯一 op（每层每字段至多一个最终 op）；**`SET` 之后下层仍可 `ADD`** —— **下层表达替换上层 operation，`ADD` 仍以下层当前来源值为基准**（记录页 §316 裁 `CXR-04`）
-  - **档位随 op 走**：`ADD` 不带 Tier、`SET` 才用 Tier（记录页 §199 ⑥①）
+  - 档位控件的可用性按汇编 §5 随当前 op 切换。
   - Profile 缺席、Role promotion 与可见校验按汇编 §11 的统一机制；错误显示仍交 A①-卡6，不由本卡另定义空态矩阵。
     - 原取证曾记录解析类型只有时段可空、其余三组件不可空，属于实现缺口而非时段特权；本批未重跑实现，不能用该历史读数判当前实现；固定记录见卡前链接。
 Durable mutation:
   - 按所引汇编 §3 写入／删除字段记录，不经值差合成；typed 值的提交要求和 INHERIT / CLEAR 例外按汇编 §4。
   - UI 计数沿用本卡冻结投影：CLEAR 计入本层操作数。该计数仍属 Current 页面未核的 UI 展示项（汇编 §4、§18.5），不能借 durable 语义把它升级为 Current 规则。
-  - tier 形状：**§199 ⑥①（`ADD` 无 Tier、`SET` 才用 Tier）已收口该形状问题**（它取代 §174 三「本条不回答形状问题、仍开」那句）；记录仍按 `{op, value, tier}` 携 tier、`ADD` 记录不带 tier。**§148 四.3 的「与 op 正交」为推断**，不作为已裁表述
+  - Tier 独立字段的适用形状按汇编 §5 写入；不按当前有效数值补元数据。
   - 写记录时机按所引汇编 §4「切操作时的落盘」。
 Must show:
   - 选项集随「层 × 字段类型」变化（枚举项不出现「调整」；物种层不出现「仅使用当前来源」）——出选项不得靠形状统一
@@ -130,16 +130,19 @@ Must not:
   - 不合并两个「恢复」；不叠第三层 delta / 多 op 链
   - 不从 payload 相等推断继承（同值/同源显式表达必须保留）；SET 同值不得自动删
   - 不静默 clamp/取绝对值/平移/归一（负值交卡6 报 ERROR）
-依据: 语义与层／类型 allowlist 见卡前链接（汇编 §3／§13；Policy §10；提交 §4）。UI 四格：记录页 §312 XR-F-03；用户语言：《编辑器界面》v18 §1.2；被替代 op 只解释 provenance：本卡 Must show。Tier 仍按记录页 §199 ⑥①（ADD 无 Tier／SET 才用 Tier）、§174（Temperature 免）、§154（独立字段形状）。旧 Q3 引文及 CXR-04 更正注保留于卡前固定版本链接，当前来源基准按汇编 §3。
+依据: 语义与层／类型 allowlist 见卡前链接（汇编 §3／§13；Policy §10；提交 §4）。UI 四格：记录页 §312 XR-F-03；用户语言：《编辑器界面》v18 §1.2；被替代 op 只解释 provenance：本卡 Must show。Tier 的完整规则与原裁定边界见汇编 §5。旧 Q3 引文及 CXR-04 更正注保留于卡前固定版本链接，当前来源基准按汇编 §3。
 ```
 
+<a id="field-value-editor"></a>
 ### A①-卡3｜Field Value Editor（数值/档位/曲线输入）
+
+**Tier 入口**：[汇编 §5](component-contract-consolidated.md#tier-contract)维护档位表、op适用形状与诊断边界；本卡保留输入、显示及具体操作。
 
 ```
 Component: Field Value Editor｜值输入控件（数值输入、档位选择、水温曲线）
 Reads:
   - typed 当前值
-  - 档位表：PREFERRED 1.00 / SUBOPTIMAL 0.60 / ACCEPTABLE 0.25 / REJECT 0.05 ＋ Custom 精确值（含各档可表达范围）
+  - 汇编 §5 的档位表与可表达范围，读取当前作者选择的 tier。
   - 档位适用面：**结构＝按当前 Source 动态生成的 StructureType 字段控件（不固化字段数量**；现行实例 25 —— 其 `member_key` `0`…`24` 是**数据/记录层的查表键数**，不得反读成 UI 的固定字段数）／水层 3 行／时段 5 行；水温豁免（连续曲线）
   - 水温曲线参数（六参；`temp_threshold ∈ [0,1]`；**衰减形状＝枚举绝对值项**）
   - **两层名（记录页 §175 六.2，现行）**：**项名位写 `falloff`**（与同列短形族一致：`acceptMin / favMin / favMax / acceptMax / threshold`）；**字段位 / UI 显示标签写 `falloff_shape`**（对应字段族长形 `temp_accept_min / …`）。**两处各按其位、不判谁对谁错、不做统一**
@@ -151,10 +154,9 @@ Actions:
   - 时段三预设一次性填表（应用时覆盖确认；模板名不进 Runtime）
 Durable mutation:
   - 有效 typed 值经卡2 落 op；raw buffer（"-" "0." "abc"）不写 durable typed、不覆盖上一 durable 值（保留 UI local）
-  - tier 独立持久化、不得从生产最终值反推；**随 op 走：`ADD` 无 Tier、`SET` 才用 Tier**（记录页 §199 ⑥①）
+  - Tier 元数据按汇编 §5 的记录形状交给卡2持久化。
 Must show:
-  - **档位（Tier）随 op 走：`ADD` 不带 Tier、`SET` 才用 Tier**（记录页 §199 ⑥①；该条同时关掉 `affinity_tier ↔ op` 的形状问题）
-  - **Temperature 不带 `affinity_tier`**（记录页 §174）；**不得用伪造 `CUSTOM` tier 满足 schema**
+  - 仅在汇编 §5 适用的字段／op 上提供档位选择；越档保留作者选中的标签，并显示诊断供作者显式修改。
   - 每项 继承/已覆盖 状态（读记录）
   - 越界分级反馈：Effective<0＝ERROR（**红标**）、>1＝WARNING（**红标，不阻断**）、两者皆可保存 —— **分级靠文案与阻断性区分，不靠颜色**（三处逐字：《编辑器界面》§1.2／§1.4 ＋《主开发需求》§7）
   - 不可解析＝即时输入错误
@@ -163,7 +165,7 @@ Must not:
   - 不静默 clamp/取绝对值/平移/归一
   - 不把 raw 字符串写 typed state；不把「未配置」编码成 null 必填字段的现存记录
   - 不因 UI 统一强行给枚举绝对值项上 ADD（**射程只落在枚举绝对值项 `falloff_shape`**；`acceptMin / favMin / favMax / acceptMax` **属那 5 个数值项、`ADD` 合法**，不得一并禁掉）
-依据: 《编辑器界面》§1.1（Affinity 四档表；时段未配置合法空态；三预设表）＋§1.2（越界分两侧：>1＝WARNING 放行、<0＝ERROR 阻断 Publish；校验对象＝resolved/Effective 值、负 ADD 使终值非负即合法；临时字符串（-、0.、空）不是持久值；语义编辑经短 debounce 原子落盘）；《开发需求》§3.2/§7/§9；《配置表与校验》§5（Effective Fit 两侧＋不 clamp）；《编辑器持久层契约》§7.1（未解析控件字符串不入 durable）＋§3.3（affinity_tier **按组件适用**——记录页 §174：Temperature 免、只适 Structure／Feeding Layer／Time Period；不能从生产最终值反推；**各字段 operation allowlist：枚举绝对值不得 ADD，`falloff` 属此类**）；衰减形状可项级覆盖＝记录页 §175（**§175 六.1** 定性更正：不是改判、是把实现的 5 项拉回契约已写的 6 项；**§175 六.2** 命名更正＝项名/字段名两层、不统一——本条按六.2 写。⚠️ §175 四「统一用 `falloff`」**已被六.2 撤销**，勿引）；temp_threshold∈[0,1]＝《配置表与校验》§5／《开发需求》§4.3
+依据: 《编辑器界面》§1.1（Affinity 四档表；时段未配置合法空态；三预设表）＋§1.2（越界分两侧：>1＝WARNING 放行、<0＝ERROR 阻断 Publish；校验对象＝resolved/Effective 值、负 ADD 使终值非负即合法；临时字符串（-、0.、空）不是持久值；语义编辑经短 debounce 原子落盘）；《开发需求》§3.2/§7/§9；《配置表与校验》§5（Effective Fit 两侧＋不 clamp）；《编辑器持久层契约》§7.1（未解析控件字符串不入 durable）＋§3.3（Tier 规则归汇编 §5；**各字段 operation allowlist：枚举绝对值不得 ADD，`falloff` 属此类**）；衰减形状可项级覆盖＝记录页 §175（**§175 六.1** 定性更正：不是改判、是把实现的 5 项拉回契约已写的 6 项；**§175 六.2** 命名更正＝项名/字段名两层、不统一——本条按六.2 写。⚠️ §175 四「统一用 `falloff`」**已被六.2 撤销**，勿引）；temp_threshold∈[0,1]＝《配置表与校验》§5／《开发需求》§4.3
 ```
 
 ### A①-卡4｜Effective Value Display（当前值展示）
@@ -294,7 +296,7 @@ Must show:
 Must not:
   - source name 不作键；不提供 stableKey identity rename（错名处置＝新建＋Replace＋归档旧）
   - 不引入分组 / 族折叠（平铺）；不因结构对称给 Quality 预造 Template
-  - **不承诺「导入即得四值」**（值来源待裁）；**不因 Role 激活自动创建模板／Profile**（记录页 §199 ⑥③：创建永远显式）
+  - **不承诺「导入即得四值」**（按本卡 Actions 的已裁缺值规则执行）；**不因 Role 激活自动创建模板／Profile**（记录页 §199 ⑥③：创建永远显式）
 依据: 《编辑器持久层契约》§3.6（模板清单与别名记录表）＋§3.10（identity immutable；displayName 可改）；《编辑器界面》§7（平铺可滚动、按引用量排序、别名可编辑、source name 只读）
 ```
 
@@ -323,6 +325,8 @@ Must not:
 
 ### A②-卡10｜Edit Template Value（模板完整值编辑；高影响）
 
+原误搬 Tier／op 规则的撤回保留于[固定基线卡10](https://github.com/futouyiba/HitFish-Up/blob/db97e9bb4784a8eaf2421cf88894c6d4e4beef2c/docs/review/ui-component-contract-r2/contract-cards.md#L333)。
+
 ```
 Component: Edit Template Complete Value｜模板改值（共享模板完整值编辑）
 Reads:
@@ -330,7 +334,7 @@ Reads:
 Actions:
   - 编辑草稿 → Impact Preview（before / after Resolve）→ 显式确认 → 原子提交 → re-resolve → 物化受影响 production projections
   - ⚠️ **本卡不出现 `ADD`／`SET`／`CLEAR` 这类 operation 语义** —— 模板是**完整值资产**，**operation 只存在于物种 Recipe 与桶 patch 上**（《编辑器持久层契约》§3.3／§3.7）。
-  ⇒ 原第 2 条「档位（Tier）随 `op` 走：`ADD` 不带 Tier、`SET` 才用 Tier」**已删**：那条依据的记录页 §199 ⑥① 讲的是**值记录**的 `{op, value, tier}` 形状，**属另一个寄存器**；搬进「模板完整值编辑」是**跨界搬用**（记录页 §265 裁 `F-06`）。
+  ⇒ Tier／op 形状属于值记录，不属于模板完整值资产；旧误引的撤回见卡前固定历史。
   - **水温曲线：P0 只读、不 drag-author**（记录页 §199 ⑥②）—— 本席读作**仅禁拖拽／Handle 授权，6 项参数（5 数值 ＋ 1 枚举）仍可编辑**（主语是「曲线」而非「温度档案」）。**本读法主代理 2026-09-20 已核、待复核点关闭**：与界面 §1.1「6 参数 ＋ 连续曲线」同口径 ⇒ 曲线作为**编辑面**只读，**参数作为项仍可编辑**。**可翻点**：若翻成「整段不可编辑」，改动面＝本卡 Actions ＋ 界面 §1.1 那句，两处
 Durable mutation:
   - 改 completeValue＝一次全局作者确认；Preview buffer＝短命 UI state，不是 durable Draft Entity
