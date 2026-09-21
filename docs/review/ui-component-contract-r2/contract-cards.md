@@ -232,7 +232,7 @@ Reads:
   - durable write 结果；base revision 对比（打开时记录、每次 commit 前校验）
 Actions:
   - 保存失败时：重试／显式 reload-reconcile（外部修改＝BLOCK＋报告，不 auto-merge）
-  - **「丢弃未保存的改动」＝ 丢弃尚未落盘的编辑，回到「上一次成功持久化的 revision」**（**作者可见词**；⚠️ `Reset` 是它的工程词、**不得作作者可见串**）——autosave 下只在两个窗口有实际效果：**防抖未到点**、**保存失败之后**（此时盘上仍是上次成功版本）
+  - **「丢弃未保存的改动」＝ 丢弃尚未落盘的编辑，回到「上一次成功持久化的 revision」**（**作者可见词**；⚠️ `Reset` 是它的工程词、**不得作作者可见串**）。**它的射程 ＝ 一切未持久本地态**，**不止**「防抖未到点」与「保存失败之后」两个窗口 —— ★ **本行先前写「autosave 下只在两个窗口有实际效果」，与同类语义编辑的 staged candidate 相抵**：Source mutation **一律 staged**（见本节 `SELECT_SOURCE` / `FOLLOW_PARENT`：**candidate 不写持久** → Rebase Preview → 显式确认 → 原子提交）⇒ **停在该 Preview 的候选是「尚未确认的 staged candidate」**，而《编辑器界面》§9.1 逐字把它列入本动作的范围（独立复审在 `72a49c25` 上报出 `CXR7-DISCARD-01`）。⇒ **本动作须覆盖：防抖未到点 ／ 保存失败之后 ／ 未确认的 staged Source candidate ／ 其它未持久 UI 态。** ★ **边界不变：不回退已成功 autosave 的 durable revision**（盘上仍是上次成功的 revision；不产生新记录、也不删任何已持久记录）。
   - Publish 按钮：显式、批量、独立——消费 durable revision；持久化失败先修（Publish 不隐式执行不可见 Save）
 Durable mutation:
   - 状态本身不入 durable（UI state）；semantic edit→debounce/coalesce→原子持久
