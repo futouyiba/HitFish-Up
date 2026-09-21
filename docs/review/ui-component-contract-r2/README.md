@@ -14,7 +14,7 @@
 |---|---|
 | `README.md` | 本文件。范围、权威、基线、怎么读 |
 | `REVIEW-PROMPT.md` | **先读这个** —— 审什么、怎么输出、四条纪律 |
-| `OPEN-ITEMS.md` | **当前开着的项**（**十三项 Owner adjudication 已裁**；★ **另有一处子情形显式标为「未冻结」** —— 卡8 的 Temperature Concrete Import 缺值策略，三选一未裁；★ **`Species Role UI` 拆成两个「形」**：`CXR-ROLE-UI-01`（操作入口形）**已落（画布 `[04]`）**、`ADJ-03`（记录态「与三值可区分的形」）**未落地**）—— **审之前先看它，免得把已裁的当缺口报** |
+| `OPEN-ITEMS.md` | **当前开着的项**（**十三项 Owner adjudication 已裁**；★ **卡8 的缺值策略已裁** —— 取「按既定口径推导」，**不再是未冻结**；★ **`Species Role UI` 拆成两个「形」**：`CXR-ROLE-UI-01`（操作入口形）**已落（画布 `[04]`）**、`ADJ-03`（记录态「与三值可区分的形」）**未落地**）—— **审之前先看它，免得把已裁的当缺口报** |
 | `component-contract-consolidated.md` | 《组件契约（现行）》—— 两套并列材料对拍合并后的**汇编**（逐条带出处） |
 | `contract-cards.md` | **冻结卡**（执行投影）—— 实现按这个做 |
 | `figma-current.md` | Figma 侧现状（帧、投影组、记号约定、图与画布的对应） |
