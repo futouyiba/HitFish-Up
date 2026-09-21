@@ -35,7 +35,7 @@
 
 ---
 
-## 2. Owner 裁决状态 —— **十三项已裁；另有一处子情形显式标为「未冻结」（见本节末），零项待裁**
+## 2. Owner 裁决状态 —— **十三项 Owner adjudication 已裁；另有 1 个 implementation subcase 待裁 / 未冻结**（见本节末）
 
 ★ **一处显式「未冻结」的子情形** —— 它**不影响「十三项已裁」这个计数**，但**影响「零项待裁」这个读数**，所以必须登记在这里、不能只留在卡里：
 **卡8 的 Temperature Concrete Import 遇缺值时的处置** —— **拒绝不完整导入 ／ 保留旧 `accept` ／ 按既定口径推导**，**三选一未裁**；★ **该子情形按「未冻结」读**：实现**不得默认它已冻结，也不得静默选一种**。
@@ -101,12 +101,12 @@
 | **Species Policy Recipe** | **CLOSED（读数）** | §3.1 记录里逐字有 `policy_source_binding`；**但它的指称物（第五类 `TemplateKind`）在实现里不存在** ⇒ 那是**实现缺口**，不是形状未定 |
 | **Affinity Source Override** | **CLOSED** | 读数已裁（**组件级独立绑定**）；★ **两层必须分开**：**authoring 粒度 ＝（物种, 桶）**（ADJ-06）；**物理 durable key ＝ `FishEnvAffinityRef`**（ADJ-08 ＝ `C_SPLIT_REGISTERS`）；**`Engagement Mode` 只是业务概念、不是 durable identity**。 |
 | **Profile Presence** | **CLOSED** | 矩阵已裁（**统一**：缺席合法性只由 `Role` 决定，时段不特权）；**默认值已裁 ＝ `CORE`** |
-| **Species Role UI** | **形已落（画布 `[04]`）—— 待复审／待实现** | 裁定已给（`INHERIT` **需要一个与三值可区分的形**；**同值写 `SET`**），**且这个形已经落在画布上**：`[04]` 在物种组补上了 **`仅使用来源` ／ `设置为`** 两枚 chip（**形制照本行侧既有 chip，未发明新记号**）⇒ **当初那条「需先定记号形制」的前置不再需要**（`figma-current.md` 逐字；回读见其 §十）。★ **本行 2026-09-21 更正**：此前写「**控件形态待设计**」与 `figma-current.md` **相抵**（独立复审在 `fa96900` 上报出）—— **形已定在画布上**，本行按事实改为「**待复审／待实现**」。★ **另一处消歧**（bot 早先上报的「状态相抵」）：**本行说的是这个控件的形**；**§1(b) 说的是「图上两个作用域分组的投影已执行完、待复审」** —— **两件事，不是同一状态**。⇒ **能力侧另有裁定（ADJ-12）：四组件必须有 reachable Setup path，该能力要求已 CLOSED。** |
+| **Species Role UI** | ★ **拆成两个「形」分开列**（治的是**根因**：此前一个「形」字并掉了三个所指）——**`CXR-ROLE-UI-01`（操作入口形）＝ 已落（画布 `[04]`，两枚 chip 照既有形制）—— 待复审**；**`ADJ-03`（记录态「与三值可区分的形」）＝ 未落地 —— 待设计** | 留痕（**一度 X ＋ 收口 Y**）：**一度**「控件形态待设计」→（**误**）「形已落」→ **收口「形未设计，且两个「形」须分开列」**。★ **误判的机理**：`[04]` **拿「状态」换了「操作」** —— `figma-current.md:214` 逐字「物种侧原本只有 `物种层 · 默认（各行继承）` —— 一个**状态**格，**没有 op**」；落法把那格改成 `物种层`＋`仅使用来源`＋`设置为` ⇒ **操作进来、状态出去**。`CXR-ROLE-UI-01` 问「入口能不能表达 operation」⇒ `[04]` 答对了它；而 **`ADJ-03` 问「`INHERIT` 与三值可不可区分」⇒ `[04]` 不答，且它拿走的正是答它所需的那半截**（两枚 chip 在 `INHERIT` 与 `SET(CORE)` 下**渲染完全相同**，可用操作恒为 `{INHERIT, SET}` ⇒ **不承载记录态**）。★ **要补的形**：物种层 Role 的**记录态**在控制条内无处可读 —— 需要一个**标「记录」而不是标「值」**的状态位。★ **能力侧**已由 `ADJ-12` 收口（四组件 must have reachable Setup path，CLOSED）。 |
 | **Follow / Pin 语义** | **CLOSED** | ⚠️ **先前这里写「相抵」，已撤回**：回原页核完，**它是已定的、只是没落到 picker 那一处** —— §3.3 逐字「无 `sourceOverride` ＝ 跟随」＋ §3.5 表「覆盖→不跟随／恢复为底板→跟随」⇒ **跟随 ＝ 没有那条记录**，故「跟随物种」**＝ 删除** `sourceOverride`（**不写同源记录**）。落页已派 |
 | **Source Transaction** | **CLOSED** | 射程已裁（**ADJ-09 ＝ C_NARROW**）：**Source mutation 一律 staged**，Preview 按 **fan-out** 分 **Local / Propagated** 两档。⚠️ **先前这里写「两条耐久规则相抵」，已撤回** —— 实测是**两个正交判据**（「要不要 staged confirm」 vs 「属于哪一档」），不是一条轴的两端 |
 | **TimePeriod Transaction** | **CLOSED** | ★ **2026-09-21 三处都收了**（Owner 裁定；**其中预览那一条推翻了我先前的归类**）：**① 预设的五个 `SET` 落到哪一层** ⇒ **`target = 当前 active Recipe / Patch authoring owner`**（两个合法 durable target：Species context ⇒ Species TimePeriod Recipe；Affinity／bucket context ⇒ 当前 Affinity TimePeriod operationPatches）；**五个 `SET` 一个 atomic batch**；不切换 layer／不默认提升到 Species／**不创建第三个 preset layer**／不改 Source／不持久化 `presetId`／**不得跨两层拆写**。**② 预览边界** ⇒ ★ **`ADJ-09` 是 Source mutation 的事务规则，不得自动推导到 TimePeriod Preset**；**窄规则**：**若 target layer 没有将被覆盖的 local ops ⇒ 不要求 staged confirmation**（正常 semantic edit／autosave，**可展示结果但不强制确认页**）；**若会覆盖已有 local ops ⇒ batch preview**（五字段 before/after ＋ 明确哪些 local ops 被替换 ＋ 新增 Error·Warning）**＋ explicit confirm ＋ atomic commit**。**不做 full-library impact scan。** **③ `预设` 一词有四个指称物** ⇒ **terminology hygiene**（四者分别写、不合并），**不因此把本节整体挂开**。 |
 
-**⇒ 上表的状态**：`Species Role UI` 的**形已落（画布 `[04]`，两枚 chip 照既有形制）** —— **不再是「形态待设计」**，而是「**待复审／待实现**」；**能力侧已由 ADJ-12 收口**（四组件 must have reachable Setup path，CLOSED）。
+**⇒ 上表的状态**：**`Species Role UI` 拆成两个「形」**（见上表）—— **`CXR-ROLE-UI-01`（操作入口形）已落（画布 `[04]`）**；**`ADJ-03`（记录态「与三值可区分的形」）未落地、待设计**。**能力侧已由 ADJ-12 收口**（四组件 must have reachable Setup path，CLOSED）。
 ★ **但按本族规矩：`Persistence` 这一块仍只在全部子项 CLOSED 之后才说 CLOSED** —— 那一项是「**待做**」，所以**现在仍不能说整块 CLOSED**。
 
 ## 6. 七处我（材料侧）报出去的、**不要求你判**的
