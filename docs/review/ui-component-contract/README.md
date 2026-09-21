@@ -1,6 +1,6 @@
 # 编辑器 UI Component Contract｜Review 材料包（2026-09-20 快照）
 
-**这份材料是给一次外部审阅用的快照**，十六份文件 ＋ 一个图像目录：
+**这份材料是给一次外部审阅用的快照**，十七份文件 ＋ 一个图像目录：
 
 | 文件 | 是什么 |
 |---|---|
@@ -20,7 +20,8 @@
 | `REVISION-9.md` | 契约正文落地（`R4-F-01`）＋图侧 `R4-FIG-02` 两作用域分开；保留物种层 Role op 的已知表征缺口 |
 | `REVISION-10.md` | cross-layer closure revision（§七 镜像改成 Current／卡 2 解降／Source＝前层＋Card、Role＝Card＋Policy「双入口单 Truth」／annotation 去审阅留痕／保留物种层 Role op 的纯 UI 表征缺口）。**⚠️ 该文件 §六 的「Persistence Contract: CLOSED / READBACK PASSED」已被推翻** —— `Species Component Recipe` 与 `AffinityAuthoringPatch.sourceOverride` 的**物理 schema 仍未闭**（见 `REVISION-12.md`）；在它真闭之前，**不得再写未加限定的「Persistence CLOSED」** |
 | `REVISION-11.md` | `FIG-PACKET-01` —— **随包图已按现画布重导**（只换 `108:311` 一张；另两张逐字节未变） |
-| `REVISION-12.md` | **现行**：packet 侧五处文本修正（**撤回 `REVISION-10` §六 过早的 `Persistence CLOSED`**／`Role 恒为 row-level` 收窄／两寄存器句／§六 字节数／README 去重）—— **不动图、不动 Notion** |
+| `REVISION-12.md` | packet 侧五处文本修正（**撤回 `REVISION-10` §六 过早的 `Persistence CLOSED`**／`Role 恒为 row-level` 收窄／两寄存器句／§六 字节数／README 去重）—— **不动图、不动 Notion** |
+| `REVISION-13.md` | **现行**：关闭 `§18` 里三条**已不再成立**的旧项（`18.1`／`18.2`／`18.6`／`18.8`，保留旧记录并标清被哪次更新替代）—— **回应「包内状态矛盾」** |
 | `img/` | **随包图像**（2026-09-21 导出；`scale=1`、整帧、不含 annotation）—— 型号与指纹见 `figma-current.md` §六 |
 | `README.md` | 本文件（索引与边界） |
 
