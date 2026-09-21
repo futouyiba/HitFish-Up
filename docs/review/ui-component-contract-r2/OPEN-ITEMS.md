@@ -109,7 +109,11 @@
 - **`§3.7` 的展开算法少一支** ⇒ **★ 已闭（ADJ-11 ＝ A_NARROW）**：它原来只分「有数值覆盖 → 取覆盖值」／「否则 → 取底板值」，**没有「底板该组件为空」那一支**。⇒ **现在补上**：`底板为空` **且** `Effective Role ＝ IGNORED` ⇒ **不产生该组件的 production projection、不创建显式空 Profile、不因这一点阻断 Publish**（主行与该组件的 `Role = IGNORED` 仍正常写回；`ProductionRowLedger.refs[component]` 保持空）。**投影落在汇编 §11。**
   - ★ **保留这条作留痕**（它一度是一个缺口）；**不移除**。
 - **链接图指向副本而非 owner**：《主开发需求》§3.0 把作者分层诸事实链到《编辑器与 Resolve》§11 与《Editor → Persistence》，而它们的 canonical owner 是《编辑器持久层契约》§3.3。
-- **超过 60 处跨页重复定义**：已盘出（按页计数最高的是《编辑器与 Resolve》与《编辑器界面》），**其中至少三组明确不许合并**（物种 `INHERIT` vs 桶层 `absent`；物种层 Role 默认 vs `AffinityRolePatch`；「同值」vs「同意图」）。清理按「已裁动作」执行，**不做语义等价判断**。
+- ★ **跨页重复定义 —— 「超过 60 处／已盘出」这句已撤回（2026-09-21）**：**我无法证实那个数**（**没有清单、没有出处**；全族只在我写的那一句里出现过），而写入者用**两个独立探测器**复现：**句级恒等**命中 10 条（其中 7 条是噪声：`<table header-row="true">`、`**Last Updated:**` 行、单 `<td>`、mermaid 边）／**字符 30-gram 重合**（扩到 8 页、剥掉 URL 与块标记）**真内容只有 3 条** ⇒ ★ **机械口径下全族只有 3 处**。
+  ⇒ ★ **判据**：**一个不可证实的数不该驱动一项机械工作**；而且**这一句「已盘出」正是本族禁的那类断言 —— 它让下游放弃追查**。（本族同族条：[[corrections-need-evidence]]、[[intent-claims-need-authority]]。）
+  - **收口（机械口径的 3 处）**：**D1**「激活后未生成期间须呈现可见校验态」—— **定义处唯一在《编辑器界面》§1.4**，另两处是**指回** ⇒ **合判据，保留**｜**D2**「三种时段预设只是一次性填表便利」—— **两处各由一条已裁动作明令在位** ⇒ **保留两处 ＋ 各加一句互指**｜**D3**「Role 三态切换显示 change notice；无额外 Gate 状态需同步」—— **真重复**，**归属裁为《编辑器条件开关》**（RS §2.3 **自述**「Gate 的业务判据和失败分支不在本页重复定义」⇒ 它不是该类的 owner）⇒ **RS §2.3 改指回**。
+  - ★ **判据仍是 `competing normative owner = 0`**（每个事实**恰好一个定义处**），**不是「某字符串 occurrence = 0」**。
+  - ★ **那三组「明确不许合并」仍然有效**（物种层 `INHERIT` vs 桶层 `absent`／物种层 Role 默认 vs `AffinityRolePatch`／「同值」vs「同意图」）—— 它们**不在上面 3 处里**，是**另一层（不许合并）的护栏**，**独立于本条生效**。
 - ★ **ADJ-08 已由 Owner 收口为 `C_SPLIT_REGISTERS`（本轮落页）** —— 曾经的问题是**「owner」这个词同时被用来指「业务语义归属」和「物理 durable identity」**，于是同一页上既出现「patch owner ＝ `Engagement Mode`」又出现「durable owner ＝ `FishEnvAffinityRef`」。
   - ★ **现在消灭的是那个模糊的中间词**：**物理 durable key ＝ `FishEnvAffinityRef`**；`Engagement Mode` 只是**正式业务概念**；`FishEngagementModeCompat` 是**对 Affinity 的兼容壳／投影**；Runtime 仍**无独立 `EngagementMode` identity**。
   - ⚠️ **UI §5 ／ RS §7 ／ IA §8 不动** —— 它们写的是 **Runtime 域**那句，**与本次收口相容**。
