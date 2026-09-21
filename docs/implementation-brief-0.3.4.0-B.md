@@ -1,150 +1,60 @@
-# 0.3.4.0-B 开发 brief —— 可开工面 / 阻塞面
+# 0.3.4.0-B 开发 brief —— 实现入口与边界
 
-**原 brief 对齐时点**：2026-09-21 第二轮，来源 [PR #10 固定版本](https://github.com/futouyiba/HitFish-Up/blob/1edef11e8a9353ae6e66855b2e83c3f7a3725770/docs/implementation-brief-0.3.4.0-B.md)。PR #14 只重新核对 CLEAR 及其必要边界：持久层 v16、Resolve v12、界面 v18（均标 `Last Updated 2026-09-21 14:34 +08:00`），以及裁决记录 §265／§312／§316；其余【画布】、【待核】、【裁定·未落页】都是该固定版本的取证标签，不是持续更新的进展报告。本批仅整理状态引用，未重验产品规则。
+本 brief 是实现导航和依赖清单，不另定义产品契约。权威仍是本项目 Current 文档与 Owner 裁定；[审阅包](review/ui-component-contract-r2/README.md)是仓内投影。落码前回读对应 Current 小节；原取证的权威顺序为记录页 > 设计页；遇真实冲突先按来源报告，不自行调和。
 
-**审查状态入口**：[OPEN-ITEMS 当前审查项](review/ui-component-contract-r2/OPEN-ITEMS.md#active-review-items)是唯一问题台账；Species Role UI 查[对应条目](review/ui-component-contract-r2/OPEN-ITEMS.md#species-role-ui)，实际画面查[图像登记](review/ui-component-contract-r2/figma-current.md#image-evidence)。本 brief 不维护已落／未落／待复审摘要；产品依据、特定版本的图像与 exact-head 审查结论分别判读。
+**来源边界**：本次回读《编辑器持久层契约》v16（`Last Updated 2026-09-21 14:34 +08:00`），核对下列持久层入口与 Source 事务；没有重新核实其它 Current、实时 Figma 或实现代码。原 brief 的逐字取证、【画布】、【待核】及【裁定·未落页】标签见[固定基线全文](https://github.com/futouyiba/HitFish-Up/blob/807cef92f75e660cae820ccd48996f7e0c922e18/docs/implementation-brief-0.3.4.0-B.md)（更早来源为其引用的 PR #10）。标签只说明当时取证，不代表今天仍未落页，也不自动成为当前已核结论。
 
-**★ 基准指针**（本 brief 是**辅助件**，不是权威）：
+**审查状态入口**：[OPEN-ITEMS 当前审查项](review/ui-component-contract-r2/OPEN-ITEMS.md#active-review-items)是唯一问题台账；Species Role UI 查[对应条目](review/ui-component-contract-r2/OPEN-ITEMS.md#species-role-ui)，实际画面查[图像登记](review/ui-component-contract-r2/figma-current.md#image-evidence)。本 brief 不复制动态完成状态；图像、产品依据与独立审核分别判读。
 
-| 载体 | 地位 | 说明 |
+## 一、实现范围、顺序与依赖
+
+1. **先落记录与 schema**：按《编辑器持久层契约》§3.1–3.4、§3.6、§3.8 和 §5 实现物种记录、生产行台账、各自独立的 patch 与模板清单；本文件第二节保留尚无完整仓内替代的细节。序列化格式归实现线，不改变字段／类型／必填／键。
+2. **打通 Structure 竖切**：按[汇编 §2](review/ui-component-contract-r2/component-contract-consolidated.md#structure-slice)与[执行卡](review/ui-component-contract-r2/contract-cards.md)实现 Species → 共享模板 → Species ADD → Affinity sourceOverride → SET／CLEAR → autosave → Resolve Preview → materialize。卡片的冻结依据和依赖在卡片文件维护，不在此复制阶段状态。
+3. **接 Source 与模板传播**：Source 选择器用[汇编 §8](review/ui-component-contract-r2/component-contract-consolidated.md#source-transaction)和[卡1](review/ui-component-contract-r2/contract-cards.md#source-selector)；模板生命周期／换绑用[汇编 §14](review/ui-component-contract-r2/component-contract-consolidated.md#template-lifecycle)与卡8–12。先具备 candidate、Resolve 及 revision 检测，再连接确认提交；不得把候选当已落盘数据。
+4. **按域补齐 Policy 与其它组件**：Policy 用[§9](review/ui-component-contract-r2/component-contract-consolidated.md#policy-profile)、[§10](review/ui-component-contract-r2/component-contract-consolidated.md#policy-clear)及[RoleControl](review/ui-component-contract-r2/contract-cards.md#role-control)；组件特有能力用[§12](review/ui-component-contract-r2/component-contract-consolidated.md#component-specifics)。TimePeriod Preset 的覆盖确认走[Batch Overwrite Guard](review/ui-component-contract-r2/component-contract-consolidated.md#timeperiod-batch-guard)，不能套用 Source 事务。
+5. **最后验保存、物化与往返**：按[汇编 §15](review/ui-component-contract-r2/component-contract-consolidated.md#cross-layer-guards)及《编辑器持久层契约》§3.7、§6.3–6.5 验证。Production → Bootstrap → Editor → 不编辑 → Publish → Production 的逐位往返是本版验收入口；Publish 只读已成功持久化 revision。实现／图证据尚未核的部分按台账区分，不借设计包批准宣称运行通过。
+
+## 二、记录与实现护栏
+
+以下细节在原 brief 有明确来源，但现有仓内投影尚未逐项完整覆盖，因此保留；完整 schema 仍以所引 Current 小节为准，不能把这份摘要当字段全集。
+
+### 1. 记录入口与保留字段
+
+| 对象 | 完整定义／现有投影 | 本 brief 保留的实现限定 |
 |---|---|---|
-| [本提交的审阅包](review/ui-component-contract-r2/README.md) | **主基准的仓内投影** | 来源 #7 @ `1409a13fde46dcb8d10bae039c26f6a0090bf497`；本次引用随同一提交交付，不用移动的 PR head 代替固定证据 |
-| 本项目内的 Current 文档（记录页 > 设计页） | **权威** | 两者冲突时以 Current 为准 |
-| **本文件** | **辅助** | 可开工面／阻塞面的**摘要**；**不替 Current 措辞**。**落码前回到 Current 再读对应小节。** |
+| Species Base Record | 《编辑器持久层契约》§3.1；整条 aggregate 与两条子结构的区分见 [RoleControl](review/ui-component-contract-r2/contract-cards.md#role-control) | `schema_version`；键 `species_key` 为物种 id，不是 name；`name_cache` 仅作比对基线、不作键、不导出。四组件字段 `temperature / structure / feeding_layer / time_period` 是各自的 Component Recipe（Source＋逐字段 op），不是另一条更小记录；`policy_source_binding` 与 `roles` 必填，`fail_env_coeff` 为 op。组件值可空，表示该物种尚未配置。 |
+| 生产行台账 | 《编辑器持久层契约》§3.2 | 每个既有 `FishEnvAffinity` 行一条、不折叠，常驻编辑器耐久层。`row_key` 为键：既有行用其行 id，新造未写回行用编辑器稳定键；`row_id` 空表示尚未写回；`species_key` 为属性，另有 `bucket`、四组件子表行标识 `refs`。 |
+| 两条 row-level patch | 《编辑器持久层契约》§3.4；[RoleControl 的 Durable mutation](review/ui-component-contract-r2/contract-cards.md#role-control) | 唯一键、op／payload、`species_key` 不参与键及同值 SET 意图全部按该投影；与 numeric 的 `AffinityAuthoringPatch` 并列，不合并记录。 |
+| Numeric patch 与 Source binding | 《编辑器持久层契约》§3.3；[汇编 §3](review/ui-component-contract-r2/component-contract-consolidated.md#component-clear)、[身份边界 §16](review/ui-component-contract-r2/component-contract-consolidated.md#identity-boundaries) | numeric 的 `scope_kind` 恒为 literal `bucket`，带 `scope_kind=row` 必须由 Validator 按不合 Current Schema 报错，不静默接受。组件级 `sourceOverride` 的物理键与 authoring 粒度按 §16 分开，不把它当逐字段 patch 字段。 |
+| 模板清单与别名 | 《编辑器持久层契约》§3.6；[卡8](review/ui-component-contract-r2/contract-cards.md#template-list) | `kind = TemplateKind = TEMPERATURE / STRUCTURE / FEEDING_LAYER / TIME_PERIOD / SPATIAL_OPPORTUNITY_POLICY`。`template_key` 为生产子表行标识（时段为组名；空表示尚未物化），空时必有 `editor_key`；唯一约束分别为 `kind + template_key` 或 `kind + editor_key`。`name_zh / name_en` 不是生产行 name，`extracted_from` 只作追溯、不作关联依据。 |
 
-**每条的出处状态**（下游必须能分辨裁定与口误）：
+底板不进生产表，Species Base Record 不含任何子表行引用。其初值导入时取配置表中该物种最频繁画像的代表行，不能初始为空；这是一次性种子，此后以编辑器为准，不是持续 Production → Editor 覆盖（《编辑器持久层契约》§3.1）。它与作者随后将某组件配置为空是两件事。
 
-| 标签 | 含义 |
-|---|---|
-| **【契约】** | 《编辑器持久层契约》**当天逐字直读** |
-| **【画布】** | Figma 画布节点 / annotation **当天直读** |
-| **【裁定·未落页】** | 当日裁定**逐字来自裁定方**，但**尚未落进 Current 页**；**按裁定执行，落页后以页为准** |
-| **【待核】** | 我没逐字核 —— **别当裁定用** |
+第五类模板使用 Policy payload；不扩 ComponentType／Runtime 四条件槽，不新增生产 Policy 子表，仍物化到 `FishEnvAffinity` 角色列及 `fail_env_coeff`。完整机制见[汇编 §9](review/ui-component-contract-r2/component-contract-consolidated.md#policy-profile)；identity／生命周期规则对五类一并适用（《编辑器持久层契约》§3.6、§3.10）。
 
+### 2. 操作、引用与物化入口
 
----
+- **字段操作与 CLEAR**：组件按[汇编 §3](review/ui-component-contract-r2/component-contract-consolidated.md#component-clear)、[层 × 字段 allowlist §13](review/ui-component-contract-r2/component-contract-consolidated.md#component-operation-allowlist)；Policy 按[§10](review/ui-component-contract-r2/component-contract-consolidated.md#policy-clear)；无值动作落盘例外按[§4](review/ui-component-contract-r2/component-contract-consolidated.md#field-value-control)。操作名字与行内作者显示串是两个层次，按 §4 映射，不合并；不以最终值差推断记录意图。
+- **Source identity／生命周期／引用集**：完整定义在《编辑器持久层契约》§3.10；仓内动作投影为[汇编 §14](review/ui-component-contract-r2/component-contract-consolidated.md#template-lifecycle)，只读两集展示为[卡12](review/ui-component-contract-r2/contract-cards.md#reference-list)。两集定义、用途、Hard Delete 清点范围及 Policy direct refs 均在该 §14 完整投影，不在 brief 另列一份。Broken source ref 的精确诊断码为 `BROKEN_SOURCE_REF`；加载宽容、Publish 严格的机制见[§8](review/ui-component-contract-r2/component-contract-consolidated.md#source-transaction)。
+- **生产投影复用**：完整算法在《编辑器持久层契约》§3.7，lineage／同值 SET 与纯 source pin 的仓内判定见[汇编 §15](review/ui-component-contract-r2/component-contract-consolidated.md#cross-layer-guards)，空底板且 IGNORED 的合取分支见[§11](review/ui-component-contract-r2/component-contract-consolidated.md#profile-lifecycle)。**仍须保留的算法限定**：对每条生产行、每组件、每项，有 numeric override 取 override，否则取底板；无可复用的上游 Profile 才新增一行并写回引用；Role 有行级 override 取它，否则取物种默认。零覆盖生产行也落完整值。`SPECIES_CONCRETE` 即使无 op 也属物种自有 projection。编辑器使用／导出按 lineage 复用，**数据迁移另走按完整最终值复用同值行**；两套路径分开，不把迁移规则套到作者意图上。
 
-## 一、持久化实现依据（原取证时点）
+### 3. Schema、版本与载体
 
-### 1. 三个 durable 记录：`Species Base Record` / 生产行台账 / 两条 patch 轨道 【契约】
+《编辑器持久层契约》§3.8、§5 的实现检查项：
+- 版本字段逐记录携带；不符报错，不猜、不静默升级。升级是显式的一次性迁移，旧文件由 Git 保留。
+- 空文件／结构由 schema 生成；生成器拒绝覆盖已有作者数据，不提供单旗标绕过；清空必须显式双旗标。schema 与生成件有 parity 测试，未同步重生成即报错。
+- 序列化格式由实现线选择；必须逐条可 diff、可人工比对与 merge、由 schema 生成且有 parity 测试。**不得将嵌套结构塞进单个单元格或单个标量字段**。这不放松字段／类型／必填／键的契约。
 
-- **`Species Base Record`（每物种一条，§3.1）** ＝ 物种层的 durable aggregate，内含两条子结构：**`Component Recipes`（四组件的 Source ＋ field operations，＝ `Species Recipe`）** 与 **`Species Policy Recipe`（Policy Source ＋ 四个 Role op ＋ `fail_env_coeff` op）**。**它是整条记录的名字，不等于其中任一条子结构。**
-  - 字段：`schema_version` / `species_key`（**键 = 物种 id，不是 name**）/ `name_cache`（**仅作比对基线**，不作键、不导出）/ `temperature`·`structure`·`feeding_layer`·`time_period`（组件值或空）/ `policy_source_binding`（模板标识，必填）/ `roles`（四组件 Role op，必填）/ `fail_env_coeff`（op）。
-  - **组件值 = 该组件的字段集；空 = 该组件在这个物种上尚未配置，是合法状态。**
-  - **底板没有生产侧标识**：它不进生产表 ⇒ **本记录不含任何子表行引用**。初值**导入时从配置表推出**（取该物种最频繁那份画像的代表行），此后**以编辑器为准**（是种子，不是持续的 Production → Editor 覆盖）。**不能初始为空** —— 否则「还没配」与「配成空」无从区分。
-- **生产行台账（§3.2）** ＝ **每个既有 `FishEnvAffinity` 行一条，不折叠**。`row_key`（**键**：生产侧既有行用其行 id；编辑器新造、未写回的行用**编辑器侧稳定键**）/ `row_id`（**空 = 编辑器侧新造、尚未写回**）/ `species_key`（属性，不是键）/ `bucket` / `refs`（四组件的子表行标识）。**它是编辑器自有的关联台账，常驻耐久层**（生产侧没有「哪一行属于哪个物种的哪个桶」这个信息）。
-- **两条 row-level patch 轨道（§3.4）**，与 §3.3 的 `AffinityAuthoringPatch` **并列、不改名、不合并**：
-  - **`AffinityRolePatch`**：`row_key` ＋ `species_key`（**属性，不参与唯一键**）＋ `component` ＋ `op` ＝ **`CLEAR | SET`** ＋ `role`（`SET` 时携 `CORE|SECONDARY|IGNORED`）。**唯一约束 `(row_key, component)`。**
-  - **`AffinityFailEnvCoeffPatch`**：`row_key` ＋ `op` ＝ **`CLEAR | ADD | SET`** ＋ `value`（`ADD`/`SET` 时携）。**唯一约束 `row_key`（整 row 一份）。**
-  - **不携 `op` 则 `CLEAR` 与「`SET` 恰好等于模板 raw 值」不可区分；`op` 不得从值反推。**
+### 4. 原裁定中尚需独立保留的限定
 
-### 2. op 词表与 allowlist 【契约 ＋ 画布】
+下列沿用[固定基线第一节第10项](https://github.com/futouyiba/HitFish-Up/blob/807cef92f75e660cae820ccd48996f7e0c922e18/docs/implementation-brief-0.3.4.0-B.md#L100-L115)的 ED-15／ED-13／ED-20，属于当时 Owner 裁定的转录。本次未重读裁定记录，不声称全部已经落 Current，也不撤销已裁内容；落码前核对应 Current。
 
-- **组件 numeric / 枚举**：层 × 字段类型词表见[汇编 §13](review/ui-component-contract-r2/component-contract-consolidated.md#component-operation-allowlist)；CLEAR 的完整解析、记录形状与 Source 边界见[汇编 §3](review/ui-component-contract-r2/component-contract-consolidated.md#component-clear)。
-- **Policy（四 Role ＋ `fail_env_coeff`）**：词表与 CLEAR 的域内定义见[汇编 §10](review/ui-component-contract-r2/component-contract-consolidated.md#policy-clear)。**组件的 Effective Source 与 Policy Template 不可混为同一来源。**
-- `fail_env_coeff` 的值域与越界处理仍按《编辑器持久层契约》§3.4（仓内投影：[汇编 §9](review/ui-component-contract-r2/component-contract-consolidated.md#policy-profile)）。
-- **【画布】** 上述 op 集在 Figma 卡2 已画出可目视对照的形态：态1／态6／态7 把 `absent`／`CLEAR`／「缺省支」并排画开；态9 画「层 × 字段类型 ⇒ 选项集」；态10 画「原地展开（不设二级 drawer）」。
+- **ED-15**：Species Base 为主要 Authoring Truth；young／mature 是稀疏 exception scope，大部分不产生 bucket patch，不是每桶完整 Profile。不加钓场维；mature 内 quality 差异本期接受压平，不新增 quality override 或第三／第四 bucket；Bootstrap／Migration 必须报告 lossy collapse，它是 migration diagnostic，不是新 authoring dimension。
+- **ED-13**：内部稳定寻址、XLSX 仍写 `targetRow.name`、重名 BLOCK 不 silent suffix 等完整边界见[汇编 §15](review/ui-component-contract-r2/component-contract-consolidated.md#cross-layer-guards)。保留该处未逐字列出的命名形态：`<Kind>_<Template>`／`<Kind>_<Species>`／`<Kind>_<Species>_<Bucket>`，沿用主前缀 `Cover_ / FeedLayer_ / Temp_ / period_`；已有模板 production row 直接复用；不把完整 inheritance／provenance 链塞进 name。
+- **ED-20**：Role 的物种默认／行级覆盖与 setRole 不补 Profile，按[RoleControl](review/ui-component-contract-r2/contract-cards.md#role-control)及[Profile 生命周期](review/ui-component-contract-r2/component-contract-consolidated.md#profile-lifecycle)。独立保留 `composeEntry` 护栏：各 lane 独立 compose／resolve，最后统一 validation；numeric base 缺失不能连带丢 Role patch、fail_env_coeff 或其它独立 durable patch。`§117` 自动补全 1.00 Profile 已被取代；Role durable autosave 后可进入 `CORE + absent` 的 publish-invalid 中间态，须显示 required-Profile ERROR／Publish Block 并聚焦 Setup，由作者显式选择／建立 Source；不得丢 Role 回默认来掩盖非法态。
 
-### 3. `sourceOverride` 的落点 【契约】
+## 三、验收与证据使用
 
-- **桶层的 patch ＝ `AffinityAuthoringPatch`（owner ＝ `FishEnvAffinityRef`）**：**每组件可选 `sourceOverride`（换 Source —— 承载「桶可以换模板」）** ＋ 逐字段 `operationPatches`（`CLEAR | ADD | SET`）。
-- **同源 pin 与 CLEAR 的来源行为**：按[汇编 §3](review/ui-component-contract-r2/component-contract-consolidated.md#component-clear)；换操作与换 Source 分开，不能由当前 payload 是否相等推断 intent。
-- **两条 intent 不可混淆**：`SET 0.8`（模板值也是 0.8）**会阻断未来模板改值** ⇒ 自有 projection；`sourceOverride ＝ A ＋ 零 op` 表示未来继续跟随 A ⇒ **可安全复用 A 的行**。
-- **硬删除护栏（§3.10）**：Hard Delete **仅允许 DirectReferenceSet 为空**，须检查 Species Recipe source、Affinity `sourceOverride`、SpeciesPreset 及其它 durable 引用。**ARCHIVED ≠ 可删。**
-
-### 4. 两个引用集必须分开（§3.10）【契约】
-
-- **DirectReferenceSet(A)** ＝ durable state 里**直接写了 A 的 source ref** 的对象（Species Recipe source、Affinity `sourceOverride`、SpeciesPreset binding、Policy source）⇒ 用于 **Replace References 的改动目标 / hard-delete guard / 直引清单**。
-- **EffectiveConsumerSet(A)** ＝ Resolve 后**当前 Effective Source ＝ A** 的全部最终 Recipe（**含经物种层继承者**）⇒ 用于 **Impact Preview / before-after 分析**。
-- ⇒ **「直接引用数 / Effective consumer 数 / 最终结果变化数 / 新增 Error·Warning」是四个可以互不相同的数字。**
-- **Replace References（A → B）只改 DirectReferenceSet**：保留既有 operations / patches、重 Resolve 全图、before/after Impact Preview、**原子提交**。**禁止**给所有 EffectiveConsumer 自动写 `sourceOverride = B` —— 那会把经继承消费的 child 变成**显式 pin**，静默改变 authoring 拓扑。
-- **`Affinity` 没有 `policySourceOverride`** ⇒ **不得虚构这类 direct ref**。Policy Template 的 direct refs ＝ Species policy source binding ＋ SpeciesPreset policy binding。
-
-### 5. `absent` / `CLEAR` 与「恢复为底板」的记录语义（§3.3–§3.5）【契约】
-
-完整记录语义统一见[汇编 §3](review/ui-component-contract-r2/component-contract-consolidated.md#component-clear)，Policy 的 raw 来源按[§10](review/ui-component-contract-r2/component-contract-consolidated.md#policy-clear)；实现落盘时同时遵守[§4 的无值动作例外](review/ui-component-contract-r2/component-contract-consolidated.md#field-value-control)。UI 状态读记录，不能用最终值差代替作者意图。
-
-### 6. Source 与分类的硬约束 【契约】
-
-- **`templateId / stableKey` 创建后 immutable**；`displayName` 可改（**display rename ≠ identity rename**）。stableKey 有误 ⇒ 新建模板 → Replace References → 归档旧模板，**不提供 identity rename**。
-- **Component Source 分两类**：`SHARED_TEMPLATE`（可共享模板资产）与 `SPECIES_CONCRETE`（物种自有生态数据，**不是**可共享资产）。
-- **Broken source ref**：Editor 允许加载（便于修复）并报精确 `BROKEN_SOURCE_REF`；Resolve / Publish **不得**当 inherit / default / fallback；**Publish hard block**。判据：**load tolerant, publish strict**。
-- **高影响 Source 变更**（改完整值 / Replace References / Concrete reimport / 批量换绑）一律 `prepare → before/after Impact Preview → 显式确认 → 原子 durable 提交`。**Preview buffer 是短命 UI state，不是 durable Draft Entity**（**不建** SpeciesDraft / ModeDraft / TemplateDraft / per-panel draft）。
-- **numeric override 的 `scope_kind` 恒为 literal `bucket`**（**不允许 row-level**）；带 `scope_kind=row` ⇒ Validator 按与 Current Schema 不一致处理，**不得静默接受**。
-
-### 7. 模板清单与别名（§3.6）【契约】
-
-- **`kind` ＝ `TemplateKind` ＝ `TEMPERATURE | STRUCTURE | FEEDING_LAYER | TIME_PERIOD | SPATIAL_OPPORTUNITY_POLICY`** —— **第五类用 Policy payload，不是第五个 Component**。
-- 字段：`template_key`（生产子表行标识；**时段 ＝ 组名**；**空 ＝ 提取出来但尚未物化**）/ `editor_key`（`template_key` 为空时必填）/ `name_zh` / `name_en`（**不是生产行 name**）/ `lifecycle`（`ACTIVE | ARCHIVED`）/ `extracted_from`（**只作追溯，不是关联依据**）。
-- **唯一约束**：`template_key` 非空时按 `kind + template_key`；为空时按 `kind + editor_key`。
-- **第五类的边界**：只进**模板分类** —— **不扩 `ComponentType`、不改 Runtime 四条件槽位、不新增 Production Policy 子表**；payload ＝ 四个聚合角色 ＋ `fail_env_coeff`；**生产侧仍只物化到 `FishEnvAffinity` 的角色列 ＋ `fail_env_coeff`**。模板 identity（`templateId / stableKey` immutable）、`ACTIVE / ARCHIVED`、Replace References、Hard Delete 生命周期**对五类一并适用**。
-
-### 8. 编辑器层 → 生产层的对应（§3.7）【契约】
-
-**展开规则（写回时逐行执行）**：对每条生产行 R（物种 S、桶 B），对每个组件 C 的每个项 k —— **有 numeric override 取 override 值，否则取底板值** ⇒ 得到 R 在 C 上的完整值 ⇒ **沿 Authoring lineage 复用上游已存在的 Profile；跨无关 lineage 不得仅凭完整值相等自动合并；两者皆无才新增一行** ⇒ 把该子表行引用写回 R。Role 同理：**有 row 级 override 取 override，否则取物种默认** ⇒ 写回该 `FishEnvAffinity` 行。
-
-- **★ 展开的第三条臂（组件级）**：**底板为空** ∧ **该组件 `Effective Role = IGNORED`** ⇒ 该组件**不产生 Component Profile 的 production projection**、**不创建显式空 Profile**、**不因这一点阻断 Publish**；而 **`FishEnvAffinity` 主行与该组件的 `Role = IGNORED` 仍正常写回**，只是**不生成／不写回该组件的完整 Profile 子表值**；`ProductionRowLedger.refs[component]` **保持空**。**「空」＝「尚无该组件的 production projection」，不是一种新的 Runtime Profile 值**（该组件**因 `IGNORED` 根本不进入 evaluator**）。
-  - **本臂的两条是合取，作用域不得放宽**：**`Effective Role = CORE / SECONDARY` 且缺必需 Profile ⇒ 仍按既有规则阻断 Publish** —— 本臂**不覆盖、也不弱化**它。
-- **粒度不变量**：**四个 numeric 组件全部按 bucket**（`(species, bucket, component, member)`，**TimePeriod 不按规格／row**）；**Role 单独按生产行覆盖**（**同 id 组合的不同行可以有不同 Role**，Validator **不得**因「同组合、Role 不同」报错）。⇒ **numeric 与 role 故意使用不同粒度，不要把二者塞进同一条 record shape。**
-- **四件必须写明的事**：① **底板不进生产表**；② **零覆盖的生产行也落完整值**；③ **恢复为底板与同值覆盖的记录判据见[汇编 §3](review/ui-component-contract-r2/component-contract-consolidated.md#component-clear)**；④ **生产子表按 Authoring lineage 复用**，**跨无关 lineage 不得仅凭完整值相等自动合并**（「碰巧同值 ≠ 有意共享」）—— 本条范围 ＝ **编辑器的使用／导出保存路径**；**数据迁移另走「按完整最终值复用同值行」**，**两套规则明写分开**。**Runtime 只读最终全量，不做 base + delta 合并。**
-- **复用判定按结构 lineage，不按 payload 相等**：物种层 Source ＝ 共享模板且无任何 Effective Operation ⇒ **直接复用该模板的 production profile**；`SPECIES_CONCRETE` **即使无 op 也属物种自有 projection**。桶层先 Resolve 出 Effective Source 与逐字段 Effective Operation —— **完全继承物种 Recipe（无 `sourceOverride`、无字段 patch）⇒ 复用物种 projection**；**有显式 `sourceOverride` 但最终 Recipe 恰为「纯共享模板 ＋ 零 op」⇒ 复用该模板的 production profile**（**显式 pin 只分叉继承关系，不强制复制行**）；**最终仍含任何 Effective Operation ⇒ 该桶自有 projection**。★ **`equal-value SET` 与纯 source pin 必须区分**：`SET 0.8`（模板值也是 0.8）**会阻断未来模板改值** ⇒ 自有 projection；`sourceOverride = A ＋ 零 op` ＝ 未来继续跟随 A ⇒ **可安全复用 A 的行**。
-
-### 9. 版本与升级规则（§3.8）【契约】
-
-- 版本字段**逐记录携带** —— 任何一条记录被单独摘出来比对时都能自证版本。
-- 版本不符：**报错，不猜、不静默升级**。
-- 升级**不自动发生**：一次性迁移脚本 → 迁移后旧文件**由 Git 保留**（Git 就是备份）→ **迁移是显式动作**。
-- 空文件与结构**由 schema 生成**；生成器**拒绝覆盖已有作者数据的文件**，**不提供单旗标绕过**；真要清空须走**显式双旗标**。
-- **schema 与生成件之间有 parity 测试**：schema 改了而生成件没重生成即报错。
-
-### 10. 当日新裁（`ED-15` / `ED-13` / `ED-20`，含 `§117` supersede）【裁定·未落页】
-
-> **固定版本的取证说明**：这三条在原 brief 中标为【裁定·未落页】；本节保留当时的裁定内容，不声称今天仍未落页。落码前回读 Current。
-
-- **`ED-15` 物种级粒度**：**`Species Base` 是主要 Authoring Truth；`young` / `mature` 只是稀疏 exception scope** —— **绝大多数相同的鱼根本不产生 bucket patch**。正确结构是 `Species Base` ＋ 逐桶的**稀疏** patch（**大部分为空**），**不是每桶一份完整 Profile**。
-  - **不加钓场维**（legacy 数据按钓场重复多，**推不出「鱼习性该有钓场维度」**）。
-  - **`mature` 内部的 quality 差异本期接受压平**（如 Bass 的 `Unique / Apex → period_crepuscular` 若与成年冲突会损失）—— **不得为此新增 quality override 或第三／第四 bucket**；★ 但 **Bootstrap／Migration 必须报告这种 lossy collapse**（migration diagnostic，**不是新的 authoring dimension**）。
-- **`ED-13` 三级命名 ＋ 寻址分层**：命名按「**最小业务归属**」分三级 —— **共享 Template 级 `<Kind>_<Template>`**（**已有对应 production row ⇒ 直接复用、不新增行**）／**Species 派生级 `<Kind>_<Species>`**／**Bucket·Affinity 派生级 `<Kind>_<Species>_<Bucket>`**。前缀**沿用现有表主前缀**（`Cover_` / `FeedLayer_` / `Temp_` / `period_`）。**`name` 不作 Editor identity；不要把完整 inheritance/provenance 链塞进 `name`。**
-  - ★ **寻址是分层的，不是二选一**：**内部定位 → stable id / stable key / ledger identity**；**Production XLSX 跨子表引用列 → 仍按现有物理 schema 写 `name`**。⇒ 该改的是「**用 name 猜要改哪条 row**」那段实现（`stable identity → target row → targetRow.name → 写 XLSX reference cell`）；**不得本期把 XLSX reference cell 从 `name` 改成 `id`** —— 那是单独的**配置表 Schema Migration**；**`TimePeriod` 连数字 group id 都没有**。
-  - **`name` 在对应 lookup domain 内必须无歧义**：**重名约束不是 semantic identity 约束，而是 materialization hard invariant** ⇒ **collision ⇒ BLOCK**，**不 silent suffix / fallback**（不要 `_x2` / `_new` / `_01`）。
-- **`ED-20` Role 的 durable 落点 ＋ `setRole` 不补 Profile**：
-  - **物种默认 Role → `Species Policy Recipe`**（§3.1 记录内的 Policy 子结构）；**行级 Role override → `AffinityRolePatch`（`(row_key, component)`）**。★ **Role 是「习性档案 / `FishEnvAffinity` 行」的属性，不是 `groups[k]` 的 bucket 属性** —— **不得写成 `groups["young"].role`**（否则一条 bucket 对应多个 row 时没地方表达）。
-  - **`composeEntry` 各 lane 独立 compose/resolve，最后统一 validation**：**不得**因为 numeric base 当前缺失，就把 Role patch／`fail_env_coeff`／其它独立 durable patch 一起丢掉。
-  - ★ **`§117`（提 Role 时自动补一份行为中立、全 `1.00` 的档案）按 `superseded` 处理** ⇒ **`setRole` 只改 Role：不创建 Profile、不选择默认 Source、不写 `1.00`。**
-  - ⇒ `Profile missing + Role=CORE` 是**正常 UI 可达**的 **durable-but-publish-invalid 中间态**。合法流程：`IGNORED + absent` → 用户改 Role → **Role durable autosave** → `CORE + absent` → **visible required-Profile ERROR / Publish Block** → **UI 聚焦 Setup** → 作者显式选择／establish Source → Profile 成立。
-  - **不得靠「丢 Role 回默认」来修复非法状态。**
-
----
-
-## 二、**别按我说的做** —— 我还没逐字核 / 页上未展开的
-
-1. **组件值的「内部形态」（原 brief 的 2026-09-21 取证）**：§3.1 逐字「**组件值即该组件的 Component Recipe** —— 一个组件的「组件值」由两部分组成：**该组件的 Source 绑定**（两类 Source，§3.3）与**该组件的逐字段 operation**」，并明说 §1.1 的「Component Recipes（四个组件的 Source ＋ field operations）」「**指的就是上面这四个字段本身，不是另有一条更小的记录**」。
-   ⇒ **仍未定的只有「序列化格式」**，而那**归实现线**（§5）：格式不影响字段／类型／必填／键，只看三条判据（逐条可 diff / 可人工比对与 merge / 结构由 schema 生成 ＋ parity 测试）与一条禁令 —— **不得把嵌套结构塞进单个单元格或单个标量字段**。
-2. **`AggregationRole` 的三个值与次要聚合的现行数值**：**【待核】**，按现行页复核。
-3. **`fail_env_coeff` 的 GAP-013/014 现状**：**【待核】**（打开条件我记的是「列＋值都就位」；空列会把 264 行判非法）。
-4. 上面第一节各条的**逐字**我核过，但**页会动**：落码前回到该页**再读一次对应小节**。
-
----
-
-## 三、给实现方：怎么读这些依据
-
-1. **权威顺序：记录页 > 设计页**。需求文档/契约是「现在是什么」；**画布是「目标态投影，不代表已实现」**。
-2. **Figma annotation 读得到，但有坑**：REST `GET /v1/files/{key}/nodes?ids=…` **读得到**（本会话已验）；**`get_metadata` 读不到**（**别据它判「没有说明」**）；`get_design_context` 能，表现为 `data-annotations`。
-3. **判「动没动」用等值（字节 / sha256）**；**`version` 连"动没动"都判不了**（受控实测）。
-4. **`lastModified` 是分钟粒度、单向可信**：前进 ⇒ 一定写过；**没前进 ⇒ 不能反推没写**。证"没写过"只能**内容对拍**。
-5. **图与图之间比字节，先同源**：不同导出管线（插件 `exportAsync` vs REST `scale=1`）出的是**不同产物**，差约 1%。**先用一个未动节点标定管线**（未动节点的重导应与基线逐字节相同）。
-6. **两个寄存器别混**：`INHERIT` 这类**名字**与行内**显示给作者的具体串**是两回事，两者不矛盾、也不得合并。
-
----
-
-## 附：本 brief 依据的取数（可复核）
-
-| 取数 | 值 | 怎么取的 |
-|---|---|---|
-| 《编辑器持久层契约》§3.1／§3.2／§3.3／§3.4／§3.5／§3.10 | 逐字 | 当天直读该页 |
-| 《编辑器持久层契约》**§3.6／§3.7／§3.8** | 逐字 | **第二轮**当天直读该页（页 `Version 16` / `Last Updated 2026-09-21 14:34`） |
-| **§3.7 的第三条展开臂** | 逐字 | 同上（`ADJ-11 ＝ A_NARROW` 的落点） |
-| **当日新裁 `ED-15` / `ED-13` / `ED-20`（含 `§117` supersede）** | 裁定方逐字 | **【裁定·未落页】** —— 落页后以页为准 |
-| 《编辑器持久层契约》§3.4 节标题 | 「Affinity Role Patch 与 AffinityFailEnvCoeffPatch｜两条 row-level 轨道」 | 当天直读 |
-| Figma `108:335` annotation | 526 字 · sha12 `970742371cfd` | REST 直读 |
-| Figma `108:364` annotation | 546 字 · sha12 `013d7004b126` · `&`＝0 | REST 直读 |
+- **实现验收**：第一节的竖切、保存冲突、Resolve／物化及无编辑往返；CLEAR／同值意图按各域入口，Source 的同值 FOLLOW_PARENT 按卡1验收；Preset 按 Batch Overwrite Guard 核无覆盖／有覆盖两个分支。测试结果与设计裁定分别登记。
+- **尚未完成本次核对的原 brief 项**：AggregationRole 的现行数值／次要聚合规则，以及 fail_env_coeff 的 GAP-013/014 现状，仍需回 Current 复核。原稿“列＋值都就位／空列会判 264 行非法”只是[原待核记录](https://github.com/futouyiba/HitFish-Up/blob/807cef92f75e660cae820ccd48996f7e0c922e18/docs/implementation-brief-0.3.4.0-B.md#L119-L125)，不得作为现行数值或验收判据。
+- **Figma 核验方法**：统一引用[项目 figma-mockup-write 技能](../.claude/skills/figma-mockup-write/SKILL.md)的回读判据及 §5 分层对拍；本文件不维护第二份 API／时间戳／导出教程。原 annotation 字数、sha12 与画面取证在[固定基线附录](https://github.com/futouyiba/HitFish-Up/blob/807cef92f75e660cae820ccd48996f7e0c922e18/docs/implementation-brief-0.3.4.0-B.md#L140-L150)保留，仅证明当时该通路所读内容，不代替新取证；画布是目标态投影，不代表已实现。
