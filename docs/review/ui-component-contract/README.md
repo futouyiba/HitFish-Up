@@ -1,6 +1,6 @@
 # 编辑器 UI Component Contract｜Review 材料包（2026-09-20 快照）
 
-**这份材料是给一次外部审阅用的快照**，十四份文件 ＋ 一个图像目录：
+**这份材料是给一次外部审阅用的快照**，十五份文件 ＋ 一个图像目录：
 
 | 文件 | 是什么 |
 |---|---|
@@ -18,6 +18,8 @@
 | `REVISION-7.md` | `R3-FIG-01`（**契约文本陈旧**，图不重画）与 `R3-F-05`（**缺口成立、但你们给的修法被否**）两条的裁定处置；**该版自标「落了一半」**（卡侧已改、契约正文待落）—— 其中卡侧那一半**已被 REVISION 8 更正** |
 | `REVISION-8.md` | `R4-F-01` 的落笔形状已裁 —— **并更正我们在 REVISION 7 里写进冻结卡的形状（那一版有一半是被否掉的）**；含裁决后的完整 record 形状树，及一处**跨结果字面不一致**的取舍声明 |
 | `REVISION-9.md` | 契约正文落地（`R4-F-01`）＋图侧 `R4-FIG-02` 两作用域分开；保留物种层 Role op 的已知表征缺口 |
+| `REVISION-10.md` | cross-layer closure revision（含 §七 镜像改成 Current、卡 2 解降） |
+| `REVISION-11.md` | **现行**：`FIG-PACKET-01` —— **随包图已按现画布重导**（只换 `108:311` 一张；另两张逐字节未变） |
 | `REVISION-10.md` | **现行 closure**：Persistence readback 完成；Source＝前层＋Card、Role＝Card＋Policy 双入口单 Truth；Card2 恢复冻结；Figma annotation 去审阅留痕；仅余物种层 Role `INHERIT/SET` 的纯 UI 表征问题 |
 | `img/` | **随包图像**（2026-09-21 导出；`scale=1`、整帧、不含 annotation）—— 型号与指纹见 `figma-current.md` §六 |
 | `README.md` | 本文件（索引与边界） |
