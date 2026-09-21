@@ -134,7 +134,7 @@ Must not:
 <a id="field-value-editor"></a>
 ### A①-卡3｜Field Value Editor（数值/档位/曲线输入）
 
-**机制入口**：[Tier §5](component-contract-consolidated.md#tier-contract)、[校验 §6](component-contract-consolidated.md#validation-autosave)、[水温 §12](component-contract-consolidated.md#temperature-behavior)、[Profile／Setup §11](component-contract-consolidated.md#profile-lifecycle)。本卡保留输入、显示及具体操作。
+**机制入口**：[Tier §5](component-contract-consolidated.md#tier-contract)、[校验 §6](component-contract-consolidated.md#validation-autosave)、[水温 §12](component-contract-consolidated.md#temperature-behavior)、[Profile／Setup §11](component-contract-consolidated.md#profile-lifecycle)、[TimePeriod Batch Overwrite Guard §15](component-contract-consolidated.md#timeperiod-batch-guard)。本卡保留输入、显示及具体操作。
 
 ```
 Component: Field Value Editor｜值输入控件（数值输入、档位选择、水温曲线）
@@ -149,7 +149,7 @@ Actions:
   - 档位选择（tier）；Custom 精确值
   - **`falloff_shape` 那格（项名 `falloff`）是枚举 `<select>`（`LINEAR` / `SMOOTHSTEP`）——不给 `ADD` 入口**（口径与卡2 一致：枚举项三支）
   - 水温曲线按汇编 §12 展示；参数继续通过各项输入控件编辑，数值项的相对调整交卡2。曲线只读不能扩大成整段温度档案不可编辑。
-  - 时段三预设一次性填表（应用时覆盖确认；模板名不进 Runtime）
+  - 时段三预设一次性填表（覆盖确认按卡前所引汇编 §15 Batch Overwrite Guard；模板名不进 Runtime）
 Durable mutation:
   - 有效 typed 值经卡2 落 op；raw buffer（"-" "0." "abc"）不写 durable typed、不覆盖上一 durable 值（保留 UI local）
   - Tier 元数据按汇编 §5 的记录形状交给卡2持久化。
