@@ -1,5 +1,6 @@
 # UI Component Inventory ＋ 第一批 Contract Cards（「编辑器具体设计」席 · A 线）
 
+<a id="batch-freeze-status"></a>
 **状态（两批各自唯一；改自记录页 §265 裁 `F-07`）**：**批次① ＝ 七张全部「已冻结 v1.1」**（`A①-卡1`／`卡2`／`卡3`／`卡4`／`卡5`／`卡6`／`卡7`）；**批次②（`A②-卡8`…`卡12`）＝ 已冻结**（记录页 §244，以该节为冻结留痕）。**本文件不再有任何「起草稿」状态。** 据记录页 §164（冻结接口，已回页核实）。铁律遵守：卡片＝执行投影，机制唯一载体仍是 Current 文档，「依据」行不空——引 Current § 或记录页 §。
 
 **阅读边界**：各卡保留消费者操作、显示、记录和验收场景；所引汇编维护共用机制，卡片摘要不另增规则。卡2恢复执行依据的原核对与修订过程见[固定基线](https://github.com/futouyiba/HitFish-Up/blob/ceceb630ec338f23a11170f9e047fbabd101eaf0/docs/review/ui-component-contract-r2/contract-cards.md#L3-L10)，不作为新一轮来源扫描。操作选择与值输入分卡的职责按[汇编 §4](component-contract-consolidated.md#field-value-control)。
@@ -10,22 +11,22 @@
 
 ## Part 1｜UI Component Inventory v1（控件总清单）
 
-| # | 控件 | 层·面 | 批次 | 状态 |
+| # | 控件 | 层·面 | 批次 | 状态／入口 |
 |---|---|---|---|---|
 | A1 | 顶栏（对象标题/动作/保存状态/Publish） | 框架 | ①（保存状态）＋④（系统面） | 保存区及「丢弃未保存的改动」动作按[卡7](#autosave-status)；本行仅作入口索引 |
 | A2 | 面包屑 | 框架 | ④ | 已规格（v2） |
 | A3 | dirtyDot（按层待写盘） | 框架 | ④ | 语义已拍＝记录页 §167 六（随卡7 落地） |
 | A4 | drawer 导航 ×4 变体 | 对象导航 | ④ | 已规格（v2） |
-| C1 | Source Selector·物种层 | 上下文总览 | **①卡1** | 本批 |
-| C2b | Source Selector·覆盖层变体 | 上下文总览 | **①卡1** | 本批 |
+| C1 | Source Selector·物种层 | 上下文总览 | **①卡1** | [卡1](#source-selector) |
+| C2b | Source Selector·覆盖层变体 | 上下文总览 | **①卡1** | [卡1](#source-selector) |
 | N1 | 卡上 templateName 显示 | 上下文总览 | ①（随卡1） | 通则=同源同名 |
 | C3 | 组件卡 ×4（摘要/角标/覆盖计数） | 上下文总览 | ②/③ 分批 | 已规格（v2） |
 | C4 | roleBadge＋Role 三态 | 上下文总览 | ③（Policy） | 已规格（v2） |
 | C5 | 档案级字段块（fail_env_coeff） | 上下文总览 | ③（Policy ADD/SET 化） | 已规格（v2） |
 | C6 | 分群/占比块 | 上下文总览 | ③/④ | 已规格（v2＋缺口已转 Figma） |
 | C7 | Authoring boundary 块 | 上下文总览 | ④ | 已规格（v2） |
-| C8 | Operation Control（四动作） | 上下文总览/焦点编辑 | **①卡2** | 本批 |
-| C9 | 档位控件（四档＋Custom） | 焦点编辑 | **①卡3 内含** | 本批 |
+| C8 | Operation Control（四动作） | 上下文总览/焦点编辑 | **①卡2** | [卡2](#operation-control) |
+| C9 | 档位控件（四档＋Custom） | 焦点编辑 | **①卡3 内含** | [卡3](#field-value-editor) |
 | C10 | 列底状态行 | 上下文总览 | 下一期（reconcile 实现） | 维持 §125 四 现状；机制契约落《契约》§6.5/§9.4 且按记录页 §167 一.3 **移 Deferred**：界面 §9.2 不把「重新导入/采纳配置表值」当当前控件，只读诊断（drift/orphan）可留；实现出期＝§163 |
 | C11 | 统一抽屉（本期四节） | 上下文总览 | ①（校验节=卡6）＋④（整抽屉） | v1.1 已收 |
 | D1 | 编辑栏空态 | 焦点编辑 | ④ | 已规格（v2） |
@@ -42,7 +43,9 @@
 
 ---
 
-## Part 2｜第一批 Contract Cards（**七张已冻结 v1.1 ＝ 记录页 §165 ＋ 2026-09-21 恢复 `A①-卡2`，依据见文件头固定基线**）
+## Part 2｜第一批 Contract Cards（A①-卡1…卡7）
+
+批次状态见[文件头](#batch-freeze-status)。原冻结依据为记录页 §165；`A①-卡2` 2026-09-21 恢复的依据见文件头固定基线。
 
 **编号口径（防撞车）**：本席编号＝**A 线批次编号**，标题带前缀（`A①-卡1`…`A①-卡7`、`A②-卡8`…`A②-卡12`）。**GPT 清单另有一套「卡4 ComponentCard／卡5 Impact Preview」，与本席 `A①-卡4`（Effective Value Display）／`A①-卡5`（Provenance Display）不是同一批** —— 引用务必带前缀。
 
@@ -261,7 +264,9 @@ Structure 竖切的实现依赖见[汇编 §2](component-contract-consolidated.m
 
 ---
 
-## Part 3｜第二批 Contract Cards（五张 · 批次②模板生命周期 · **已冻结**；编号 `A②-卡8`…`A②-卡12`）（记录页 §244 为此批冻结留痕；§265 裁 `F-07` 去掉原「起草稿」）
+## Part 3｜第二批 Contract Cards（A②-卡8…卡12 · 模板生命周期）
+
+批次状态与冻结依据见[文件头](#batch-freeze-status)。
 
 覆盖 Inventory E2/E3/N2。底稿＝v2 规格，依据引②后 Current §（落页措辞已逐字核）。
 
