@@ -35,7 +35,7 @@
 
 ---
 
-## 2. Owner 裁决状态 —— **九项已裁，零项待裁**
+## 2. Owner 裁决状态 —— **十一项已裁，零项待裁**
 
 **已裁（记终局，不记两侧各半）**：
 
@@ -55,11 +55,13 @@
 | ID | 裁定 | `PROJECTED IN` |
 |---|---|---|
 | **ADJ-09** | **C_NARROW** —— **Source mutation 一律 staged、不分类别**；**Local Rebase Preview** 与 **Propagated Impact Preview** 两档按 **fan-out** 分级（不是按「点了几个控件」）。★ **核心不变量：「是否需要 staged confirm」≠「是否属于 full high-impact mutation」** —— 影响面只决定 Preview 有多重，不决定能不能先写盘。事务模型**只有两层**，不新增第三种 | `contract-cards.md` **`A①-卡1` Actions**；`component-contract-consolidated.md` **§8 ＋ §15** |
+| **ADJ-10** | 顶栏该动作的作者可见词 ＝ **「丢弃未保存的改动」**；**`Reset` 不得作作者可见词**（**这是命名裁定，不是页内相抵** —— 见 §6） | —（**作者可见词，落在页与画布；本包不投影**） |
+| **ADJ-11** | **A_NARROW** —— **空底板那一支：**当某组件的 Authoring Profile / Species Base **为空**、**且**该组件的 **Effective Role ＝ `IGNORED`** 时：**不产生该组件的 production projection、不创建显式空 Profile、不因这一点阻断 Publish**；但 **`FishEnvAffinity` 主行与该组件的 `Role = IGNORED` 仍正常写回**，**只是不生成/写回该组件的完整 Profile 子表值**；尚未产生生产 Profile 的对象 **`ProductionRowLedger.refs[component]` 保持空**。★ **「空」＝尚无该组件的 production projection，不是一种新的 Runtime Profile 值** —— **不是**把 `null`/`empty` 发下去，而是**该组件因 `IGNORED` 根本不进入 evaluator**。 | `component-contract-consolidated.md` **§11** |
 
 ★ **`PROJECTED IN` 是一栏检查，不是一个记录** —— **加一条 ADJ 的动作里包含「把这一栏填满」，空栏 ＝ 那条还没落投影。**
 理由（本族实测）：**「登记册」与「执行投影」之间原本没有一致性检查**，所以每加一条裁定就会漏 N 处投影、而由下游逐条抓出来 —— 实测三条：**ADJ-02 落在卡上而汇编里没有**、**ADJ-09 的两档在卡与汇编里都没投**、**ADJ-07 的 `CORE` 默认只在登记册**。⇒ **判据：一条 ADJ 的「已裁」与「已投」是两件事；只有 `PROJECTED IN` 全非空才算落完。**
 
-**九项的裁决留痕（都在《变更与裁决记录》，按节号可回原文核）**：ADJ-01～05 ＝ §374／§377；**ADJ-06／ADJ-07 ＝ §383**（ADJ-07 的后果一/二/三也在此节）；**ADJ-08 ＝ §385**；**ADJ-09 ＝ §392**。★ 这三节是它们的**唯一可引用落点** —— 本表的 ID 只是索引。
+**十一项的裁决留痕**：ADJ-01～05 ＝ §374／§377；**ADJ-06／ADJ-07 ＝ §383**（ADJ-07 的后果一/二/三也在此节）；**ADJ-08 ＝ §385**；**ADJ-09 ＝ §392**；**ADJ-10 ＝ §393**（★ 该节把它写成「页内相抵」，**定性已作废**，收口见 `deltas`）；**ADJ-11 ＝ 尚未落页**（Owner 逐字已成文，**按 2026-09-21 工作令先落 delta、等放行**）。★ 这些节是它们的**唯一可引用落点** —— 本表的 ID 只是索引。
 
 ## 3. 仍开 —— **登记在册的「未核 / 无页面出处」**（你可以给意见，但**不必**当缺口报）
 
@@ -101,7 +103,8 @@
 
 ## 6. 六处我（材料侧）报出去的、**不要求你判**的
 
-- **`§3.7` 的展开算法少一支**：它只分「有数值覆盖 → 取覆盖值」／「否则 → 取底板值」，**没有「底板该组件为空」那一支**，而契约别处明确承认那个状态存在。
+- **`§3.7` 的展开算法少一支** ⇒ **★ 已闭（ADJ-11 ＝ A_NARROW）**：它原来只分「有数值覆盖 → 取覆盖值」／「否则 → 取底板值」，**没有「底板该组件为空」那一支**。⇒ **现在补上**：`底板为空` **且** `Effective Role ＝ IGNORED` ⇒ **不产生该组件的 production projection、不创建显式空 Profile、不因这一点阻断 Publish**（主行与该组件的 `Role = IGNORED` 仍正常写回；`ProductionRowLedger.refs[component]` 保持空）。**投影落在汇编 §11。**
+  - ★ **保留这条作留痕**（它一度是一个缺口）；**不移除**。
 - **链接图指向副本而非 owner**：《主开发需求》§3.0 把作者分层诸事实链到《编辑器与 Resolve》§11 与《Editor → Persistence》，而它们的 canonical owner 是《编辑器持久层契约》§3.3。
 - **超过 60 处跨页重复定义**：已盘出（按页计数最高的是《编辑器与 Resolve》与《编辑器界面》），**其中至少三组明确不许合并**（物种 `INHERIT` vs 桶层 `absent`；物种层 Role 默认 vs `AffinityRolePatch`；「同值」vs「同意图」）。清理按「已裁动作」执行，**不做语义等价判断**。
 - ★ **ADJ-08 对齐 —— 真正要对齐的只有两处：CT §3.3 与 RS §11.1**（**已 CLOSED、未写**）。两处都带着「**不新增 EngagementMode durable identity**」这个**读起来像整体否定**的引子，而 **CT §3.3 的正面句已在同节前两段**（逐字「**这条 patch 的 owner 是「中鱼习性模式」（`Engagement Mode`）**…**数据迁移期以桶为行单位表达**」）。⇒ **实现者会据那个引子认为「不存在 durable 的 Mode 身份」、从而把 owner 键在行单位（桶）上。**

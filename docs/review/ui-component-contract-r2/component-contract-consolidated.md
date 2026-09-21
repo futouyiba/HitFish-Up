@@ -121,6 +121,12 @@
 - ⚠️ **合法空态要显式做**：`Role` 的 raw 默认值是 **`CORE`**（记录页 §383 裁 **ADJ-07**）⇒ 空态**不再**是「什么都不做」的自然结果，**必须显式把 `Role` 设成 `IGNORED`** —— 而**新建物种在尚未配置时因此处在阻断态**，那是 **fail-closed、不是缺陷**。（记录页 §383 后果一／二）
 - 激活 CORE / SECONDARY 而未生成所需 Profile 时，**必须当场呈现为可见校验态**，不得让作者停在无提示的非法态；判级仍按上游（CORE / SECONDARY 缺必需 Profile ＝ 阻断）。（《编辑器界面》§1.4；记录页 §199 ⑥③）
 - 不得创建 required Source / identity 为 null 的半成品记录。（《编辑器持久层契约》§3.7 四件之 1）
+- ★ **空底板那一支 ＝ 展开算法的第三条臂 —— `A_NARROW`**（记录页裁 **ADJ-11**）：当某组件的 **Authoring Profile / Species Base 为空**、**且**该组件的 **Effective Role ＝ `IGNORED`** 时 ⇒ **该组件不产生 Component Profile 的 production projection、不创建显式空 Profile、不因这一点阻断 Publish**。
+  - **而哪一半照旧**：**`FishEnvAffinity` 主行与该组件的 `Role = IGNORED` 仍正常写回**；**只是不生成/写回该组件的完整 Profile 子表值**；尚未产生生产 Profile 的对象 **`ProductionRowLedger.refs[component]` 保持空**。
+  - ★ **「空」＝ 尚无该组件的 production projection，不是一种新的 Runtime Profile 值** —— **不是**把 `null`／`empty` 发下去当 Profile 消费，而是**该组件因 `IGNORED` 根本不进入 evaluator**。
+  - ⚠️ **作用域是合取、不得放宽**：两条**同时**成立才走这条臂。`Effective Role = CORE / SECONDARY` 且缺必需 Profile ⇒ **仍按既有规则阻断 Publish**，本臂**不覆盖、也不弱化**它。
+  - ⚠️ **`ProductionRowLedger` 与 `refs[component]` 按 Owner 逐字写** —— 落页前先核这两个名字是否为既有载体名；**本包逐字照录，不代它改名**（本族标识符按字节精确）。
+  - ★ **它与「「无档案」不得被读成一个值」同源**：`namedItemsOfProfiles` 把「无档案」与「档案全 0」压成同形，会让「无档案 ⇒ 全 0 ⇒ 门控失败 ⇒ 静默踢出」。⇒ 本臂逐字「**根本不进入 evaluator**」**正是那条守卫的语义依据**。
 
 ## 12. Feeding Layer / Time Period / Temperature
 **Feeding Layer**：SURFACE / MIDDLE / BOTTOM 三项最终系数，复用数值型项的同一套能力，不新增组件类型。（《编辑器界面》§1.1；《编辑器持久层契约》§3.3）
