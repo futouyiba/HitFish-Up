@@ -17,7 +17,7 @@
 - 物种层操作：`ADD` / `SET`，无操作 ＝ `INHERIT`（无记录）。桶 / 习性档案层操作：patch 缺省（继承物种层）/ `CLEAR` / `ADD` / `SET`。（《编辑器持久层契约》§3.3；《编辑器与 Resolve》§11.1）
 - Source ≠ Operation：换 Source 保留既有操作，改操作保留 Source。（记录页 §172「KEEP」；《编辑器与 Resolve》§11.3）
 - 桶层 `ADD / SET` **替换**物种层操作，不形成第三层叠加。（《编辑器与 Resolve》§11.1 逐字「不是叠第三层 delta」；《编辑器持久层契约》§3.3）
-- Resolve（**按层分两支**；本节自记录页 §270 更正 —— 原写法把两种「缺省」混成了一个）：**物种层**无操作（`INHERIT` ＝ 无记录）⇒ **直接用来源值**；**桶 / 习性档案层** patch `absent` ⇒ **跟随物种层 operation**（物种层也无操作时，才落到来源值）—— **`absent` 不是「用来源值」**；`CLEAR` ⇒ **移除继承的 operation、回到当前 Effective Source 原值**（**与 `absent` 是两个不同动作**）；`ADD` ＝ **该层的有效来源值**（**`SHARED_TEMPLATE` 的模板值** 或 **`SPECIES_CONCRETE` 的值**）＋ delta；`SET` ＝ 绝对值 —— **基准是「这一层挂的那个来源的值」，不要求该来源是共享模板**（记录页 §288 据 `CXR-04` 更正：原写「该层所挂模板值」**会把 `SPECIES_CONCRETE` 这个合法来源排除在外**；而 §8 明定物种层 Temperature 的来源可以是 `SHARED_TEMPLATE | SPECIES_CONCRETE`、且 Concrete「不进模板清单」）。（《编辑器与 Resolve》§11.1、§11.2 逐字：「`absent` ＝ 跟随物种层 operation」／「`CLEAR` ＝ 移除继承的 operation、回到当前 Effective Source 原值」／两者「不得合并成一个模糊的『恢复』」）
+- Resolve（**按层分两支**；本节自记录页 §270 更正 —— 原写法把两种「缺省」混成了一个）：**物种层**无操作（`INHERIT` ＝ 无记录）⇒ **直接用来源值**；**桶 / 习性档案层** patch `absent` ⇒ **跟随物种层 operation**（物种层也无操作时，才落到来源值）—— **`absent` 不是「用来源值」**；`CLEAR` ⇒ **移除继承的 operation、回到当前 Effective Source 原值**（**与 `absent` 是两个不同动作**）；`ADD` ＝ **当前来源值**（**共享模板**时取该模板的当前值；**`SPECIES_CONCRETE`** 时取该 Concrete 的当前值）＋ delta；`SET` ＝ 绝对值 —— **基准是「这一层挂的那个来源的值」，不要求该来源是共享模板**（记录页 §288 据 `CXR-04` 更正：原写「该层所挂模板值」**会把 `SPECIES_CONCRETE` 这个合法来源排除在外**；而 §8 明定物种层 Temperature 的来源可以是 `SHARED_TEMPLATE | SPECIES_CONCRETE`、且 Concrete「不进模板清单」）。（《编辑器与 Resolve》§11.1、§11.2 逐字：「`absent` ＝ 跟随物种层 operation」／「`CLEAR` ＝ 移除继承的 operation、回到当前 Effective Source 原值」／两者「不得合并成一个模糊的『恢复』」）
 - 桶层 `sourceOverride` ＝ 固定 Source Choice，不冻结配置：pin 之后 patch 仍缺省时仍继承物种层操作；`sourceOverride` 不自动 SET 全部字段、不清既有操作；解除 pin ＝ 删除 `sourceOverride`，重新跟随物种层 Source。（《编辑器持久层契约》§3.3）
 - same-source pin 是真实 authoring intent：桶层 `sourceOverride` 与物种层 Source 相同时也不自动移除。（《编辑器持久层契约》§3.3；记录页 §172「KEEP」）
 
@@ -228,4 +228,4 @@
 5. **其他只在草稿里出现的串**：`profileCanStartAbsent` / `ModeConcreteSource` / `BootstrapSurface` / `DirectReferenceCount` / `localOperationCount`。`completeValue` 在《编辑器持久层契约》§3.7 有用法，正文按页面的「模板完整值」写。
 6. **冻结卡自己的两个控件名**（`A①-卡2` Operation Control / `A①-卡3` Field Value Editor）是卡片层编号名；正文只在 §4 提到「两个交互面的拆分」，未把它们当控件名用。
 
-本文的 0 命中声明，探针作用域＝本轮新取的六个页面（变更与裁决记录 / 编辑器界面 / 编辑器心智模型与 IA / 编辑器与 Resolve / 编辑器持久层契约 / 主开发需求）＋ **本目录内的** `contract-cards.md`（冻结卡）。
+本文的 0 命中声明，探针作用域＝本轮新取的六个页面（变更与裁决记录 / 编辑器界面 / 编辑器心智模型与 IA / 编辑器与 Resolve / 编辑器持久层契约 / 主开发需求）＋ `/tmp/edseat/inventory-batch1-cards.md`＋`/private/tmp/hitfish-inbox/paste-inbox.md`＋`/tmp/edseat/chatgpt-ui-component-contract-phase1.md`。
