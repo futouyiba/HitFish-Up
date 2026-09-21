@@ -28,7 +28,7 @@
 | C8 | Operation Control（四动作） | 上下文总览/焦点编辑 | **①卡2** | [卡2](#operation-control) |
 | C9 | 档位控件（四档＋Custom） | 焦点编辑 | **①卡3 内含** | [卡3](#field-value-editor) |
 | C10 | 列底状态行 | 上下文总览 | 下一期（reconcile 实现） | 维持 §125 四 现状；机制契约落《契约》§6.5/§9.4 且按记录页 §167 一.3 **移 Deferred**：界面 §9.2 不把「重新导入/采纳配置表值」当当前控件，只读诊断（drift/orphan）可留；实现出期＝§163 |
-| C11 | 统一抽屉（本期四节） | 上下文总览 | ①（校验节=卡6）＋④（整抽屉） | v1.1 已收 |
+| C11 | 统一抽屉（本期四节） | 上下文总览 | ①（校验节=卡6）＋④（整抽屉） | v1.1 已收；本次候选变更的承载分工见[共享N2](#rebase-impact-preview) |
 | D1 | 编辑栏空态 | 焦点编辑 | ④ | 已规格（v2） |
 | D2 | 编辑栏分档（可编/置灰只读） | 焦点编辑 | 通则 | 已规格（v2） |
 | D3 | 水温编辑面（6 参＋曲线＋导入） | 焦点编辑 | ③（Temperature） | 已规格（v2）；**6 参中衰减形状为枚举项（项名 `falloff`／显示标签 `falloff_shape`）⇒ 无「调整」入口**（记录页 §175、六.2） |
@@ -39,7 +39,7 @@
 | E3 | 引用者列表（两集两数） | 独立面 | ② | 已规格（v2） |
 | E4 | Resolve Preview | 独立面 | ④（slice C 含一角） | 已规格（v2） |
 | E5 | Bake Preview | 独立面 | ④ | 已规格（v2） |
-| N2 | Rebase／Impact Preview 面板 | 编辑/工作区 | ②/④ | 约束已规格（v2 C2b/C11） |
+| N2 | Rebase／Impact Preview 面板 | 编辑/工作区 | ②/④ | [共用交互与验收](#rebase-impact-preview)；事务机制按汇编 |
 
 ---
 
@@ -52,7 +52,7 @@
 <a id="source-selector"></a>
 ### A①-卡1｜Source Selector（来源选择器；物种层＋覆盖层两变体）
 
-**机制入口**：[汇编 §8](component-contract-consolidated.md#source-transaction) 完整定义 Source staged 协议、fan-out 分档和同值意图边界；[§15](component-contract-consolidated.md#transaction-model) 区分事务类别。本卡保留动作、落盘字段、展示与验收，不另定义分档机制。原长引文和裁定链见[固定基线卡1](https://github.com/futouyiba/HitFish-Up/blob/807cef92f75e660cae820ccd48996f7e0c922e18/docs/review/ui-component-contract-r2/contract-cards.md#L54-L90)。
+**机制入口**：[汇编 §8](component-contract-consolidated.md#source-transaction) 完整定义 Source staged 协议、fan-out 分档和同值意图边界；[§15](component-contract-consolidated.md#transaction-model) 区分事务类别。本卡保留动作、落盘字段、展示与验收，不另定义分档机制；候选预览的共用交互见[共享N2](#rebase-impact-preview)。原长引文和裁定链见[固定基线卡1](https://github.com/futouyiba/HitFish-Up/blob/807cef92f75e660cae820ccd48996f7e0c922e18/docs/review/ui-component-contract-r2/contract-cards.md#L54-L90)。
 
 ```
 Component: Source Selector｜来源选择器（模板行每格；物种层与兼容壳·覆盖层两变体）
@@ -136,6 +136,11 @@ Must not:
 
 **机制入口**：[Tier §5](component-contract-consolidated.md#tier-contract)、[校验 §6](component-contract-consolidated.md#validation-autosave)、[水温 §12](component-contract-consolidated.md#temperature-behavior)、[Profile／Setup §11](component-contract-consolidated.md#profile-lifecycle)、[TimePeriod Batch Overwrite Guard §15](component-contract-consolidated.md#timeperiod-batch-guard)。本卡保留输入、显示及具体操作。
 
+<a id="temperature-threshold-ui"></a>
+**本批水温阈值用途投影**：保留卡3现有阈值呈现、已有值与合法编辑入口；这是当前投影，不是跨界面永久禁止折叠或只读的规则。用途说明按明确的 species／bucket Effective Role：非 CORE 时可显示“仅 CORE 用于门控；当前上下文不使用此阈值”。共享模板没有唯一当前 Role，只说明“供 CORE 消费者门控使用”，不套用单一角色文案。Role 切换不据该说明清空或补值；校验仍消费《配置表与校验》v5 §5／§5.2／§6及[汇编 §6](component-contract-consolidated.md#validation-autosave)，用途标签不表示免校验。
+
+验收：非 CORE 缺阈值不因这一缺值报 required；已有越界值仍显示既有诊断，不能因“不使用”清空、clamp或报全部合法。结构可表达错误的保存／Publish区别沿既有规则；共享模板面能辨识其对CORE消费者的用途，合法参数编辑仍可达。本段不复制值域或新增必填规则。设计来源与回退见[本批提案](../../proposals/0.3.4.0-B-n2-ui-projection.md)。
+
 ```
 Component: Field Value Editor｜值输入控件（数值输入、档位选择、水温曲线）
 Reads:
@@ -148,7 +153,7 @@ Actions:
   - 数值输入：Enter/blur 形成有效 typed 值＝一笔 semantic edit
   - 档位选择（tier）；Custom 精确值
   - **`falloff_shape` 那格（项名 `falloff`）是枚举 `<select>`（`LINEAR` / `SMOOTHSTEP`）——不给 `ADD` 入口**（口径与卡2 一致：枚举项三支）
-  - 水温曲线按汇编 §12 展示；参数继续通过各项输入控件编辑，数值项的相对调整交卡2。曲线只读不能扩大成整段温度档案不可编辑。
+  - 水温曲线按汇编 §12 展示；参数继续通过各项输入控件编辑，数值项的相对调整交卡2。曲线只读不能扩大成整段温度档案不可编辑。 阈值的上下文用途显示与验收按卡前投影。
   - 时段三预设一次性填表（覆盖确认按卡前所引汇编 §15 Batch Overwrite Guard；模板名不进 Runtime）
 Durable mutation:
   - 有效 typed 值经卡2 落 op；raw buffer（"-" "0." "abc"）不写 durable typed、不覆盖上一 durable 值（保留 UI local）
@@ -327,16 +332,38 @@ Must not:
 依据: 《编辑器持久层契约》v16 §3.6／§3.10；完整机制与来源版本见卡前入口。
 ```
 
+<a id="rebase-impact-preview"></a>
+### 共用N2｜Rebase／Impact Preview 交互
+
+本段是卡1／10／11共用的 **UI交互 Owner**；N2沿用 Inventory 标识，不是新增schema或产品身份。事务与分档完整定义仍归[汇编 §8](component-contract-consolidated.md#source-transaction)，两引用集和候选统计归[§14](component-contract-consolidated.md#template-reference-sets)，普通编辑及TimePeriod独立护栏归[§15](component-contract-consolidated.md#transaction-model)，丢弃未durable状态归[卡7](#autosave-status)。本轮承载选择是可逆目标投影，不冒称Current逐字规定；候选、反方与来源范围见[设计提案](../../proposals/0.3.4.0-B-n2-ui-projection.md)。
+
+**承载与入口**：本次高影响 staged candidate 的完整正文及提交确认放在N2独立面板；C11影响节保留该候选的摘要和“查看影响”入口。这个限定只针对本次候选正文与确认，不限制C11日常影响、校验列表或待复核内容。Local Rebase可复用N2，不强制全屏或Modal；一个交互Owner不等于只能有一个面板实例。Resolve Preview／Bake Preview仍是各自的只读产品面，不能拿它们替代候选确认面。
+
+**共用显示与动作**：
+- 标题明确对象、作用域和动作类型，标明“候选变更（未确认）”；“查看影响”进入该候选的预览正文。
+- “取消候选”只丢弃本次未确认候选，不进行durable写入，也不回滚已成功保存的普通编辑；“确认变更”按所引§8提交协议执行。确认不是Publish，不新增durable草稿实体。
+- Local正文按§8只展示本次作用域和意图；不为视觉整齐补伪零全局统计，不要求全库扫描。Propagated正文按§8／§14完整呈现候选影响及分类，四项统计分列，影响对象可滚动且不截断。
+- Replace候选将“直接改绑对象”与“有效影响对象”分区标识；模板改值保留其完整值编辑语义。字段/写集及其它独有动作仍由卡10／11定义，不在本段重定义。
+- after-state 的错误诊断醒目，并与Publish阻断关联；不可把诊断文字呈现成保存I/O失败，也不可暗示所有ERROR都禁止确认保存。具体可保存性与诊断判级仍按原Owner。
+
+**代表验收**：
+1. 零value diff的同源pin／FOLLOW_PARENT候选仍能看见意图与未来传播区别；Local画面没有伪造的全局四统计，取消与确认入口可辨。
+2. 模板改值的传播预览能看见结果变化、受操作遮罩未变与新增诊断的区别；结构可表达的after ERROR可确认保存，Publish仍阻断，不能把确认按钮画成Publish。
+3. Replace的继承child显示为有效影响对象，不能标成新增直接写入目标；已有operations保留的验收仍按卡11。
+4. C11日常校验/待复核仍可使用，普通值/Role没有因新增面板而变成staged；TimePeriod预设仍只消费自己的条件护栏。
+
+目标设计的未实现状态与示例数据须在annotation／图像登记中明确标 `⚑UNIMPL`（缺GAP编号时标明待补）／示例，不混入作者控件文案；静态画面只证明该画面，不证明列表真实滚动、原子提交或保存重载已经实现。实时取证与写前快照仍按项目Figma技能，不能用本段免除。
+
 ### A②-卡10｜Edit Template Value（模板完整值编辑；高影响）
 
-**机制入口**：[模板完整值与影响统计 §14](component-contract-consolidated.md#template-reference-sets)、[确认及改值边界](component-contract-consolidated.md#template-replace-boundary)、[水温曲线 §12](component-contract-consolidated.md#temperature-behavior)、[Publish边界 §15](component-contract-consolidated.md#cross-layer-guards)与[卡7](#autosave-status)；本卡保留模板编辑流程及显示。
+**机制入口**：[模板完整值与影响统计 §14](component-contract-consolidated.md#template-reference-sets)、[确认及改值边界](component-contract-consolidated.md#template-replace-boundary)、[水温曲线 §12](component-contract-consolidated.md#temperature-behavior)、[Publish边界 §15](component-contract-consolidated.md#cross-layer-guards)与[卡7](#autosave-status)；共用候选交互见[N2](#rebase-impact-preview)，水温用途说明见[卡3局部投影](#temperature-threshold-ui)。本卡保留模板编辑流程及显示。
 
 ```
 Component: Edit Template Complete Value｜模板改值（共享模板完整值编辑）
 Reads:
   - 模板完整值 completeValue；EffectiveConsumerSet（改值的真正影响对象）
 Actions:
-  - 编辑草稿 → Impact Preview（before / after Resolve）→ 显式确认 → 原子 durable 提交 → re-resolve 并刷新受影响投影的预览
+  - 编辑模板完整值候选 → 按共享N2完成预览／确认；按既有机制原子 durable 提交后，re-resolve 并刷新受影响投影的预览。
   - 生产物化／写回由独立的显式 Publish 按卡前所引汇编 §15 与卡7触发，不由本次模板保存确认自动执行。
   - ⚠️ **本卡不出现 `ADD`／`SET`／`CLEAR` 这类 operation 语义** —— 模板是**完整值资产**，**operation 只存在于物种 Recipe 与桶 patch 上**（《编辑器持久层契约》§3.3／§3.7）。
   ⇒ 具体记录规则按汇编 §14；本卡不把模板值编辑呈现为字段 operation 编辑。
@@ -344,7 +371,7 @@ Actions:
 Durable mutation:
   - 改 completeValue＝一次全局作者确认；Preview buffer＝短命 UI state，不是 durable Draft Entity
 Must show:
-  - 候选变更的四项影响统计按汇编 §14 分列，不把直接引用与最终结果变化混作一个数。
+  - 候选影响的共用显示按N2，统计定义按汇编 §14；本卡只提供模板完整值编辑对象。
   - after-state 出现 publish-blocking ERROR 时醒目标出（仍可确认保存；Publish 阻断到修复——错误进卡6）
 Must not:
   - **不实现水温曲线 drag-author**（P0）；也**不得把「曲线只读」扩大成「温度档案不可编辑」**
@@ -356,18 +383,18 @@ Must not:
 <a id="replace-references"></a>
 ### A②-卡11｜Replace References（批量换绑 A→B）
 
-**机制入口**：[汇编 §14 两引用集](component-contract-consolidated.md#template-reference-sets)与[Replace 边界](component-contract-consolidated.md#template-replace-boundary)；staged 协议按[§8](component-contract-consolidated.md#source-transaction)。
+**机制入口**：[汇编 §14 两引用集](component-contract-consolidated.md#template-reference-sets)与[Replace 边界](component-contract-consolidated.md#template-replace-boundary)；staged 协议按[§8](component-contract-consolidated.md#source-transaction)，共用候选交互见[N2](#rebase-impact-preview)。
 
 ```
 Component: Replace References｜批量换绑（模板 A → 模板 B）
 Reads:
   - DirectReferenceSet(A)（改绑目标）；候选 B；全图 before／after Resolve 结果
 Actions:
-  - 选 A → 选 B → 展示直接改绑对象与 Impact Preview → 显式确认 → 原子 rebind
+  - 选 A → 选 B → 将本次换绑候选交共享N2预览／确认，提交只执行下述直接绑定 mutation。
 Durable mutation:
   - 只写直接 source bindings；operations／patches 按所引边界保留
 Must show:
-  - 哪些对象将被改绑；四项影响统计按汇编 §14 分列；Preview 中 ERROR 醒目
+  - 改绑对象与有效影响对象的区分按N2展示；引用集与四项统计定义按汇编 §14。
 Acceptance:
   - Species 直接引用 A、child 继承它时，换绑只写 Species binding；child 经 Resolve 消费 B，仍无新增 sourceOverride。
   - 已有 ADD／SET／CLEAR 保留；不为维持旧值制造 SET；after 统计来自全图 Resolve，不能只 diff 模板 payload。
@@ -403,7 +430,7 @@ Must not:
 ## Part 3 收口提示
 1. 卡8「周期表导入」的两步读法、目标物种与缺值护栏按[卡8](#template-list)；实现线逐项对表任务及原冻结批次状态的证据范围见[问题台账](OPEN-ITEMS.md#template-import-implementation-evidence)。
 2. 五卡与批次①卡1 的交界：EXTRACT_TEMPLATE 动作在卡1（发起处）与卡8（工作区入口）各出现一次，是同一动作两个入口，不是两个动作；
-3. 影响面 Preview 的承载（C11 影响面节 vs 独立面板 N2）在卡10/11 都留了「Preview 正文不进抽屉」口径——与 C11 v1.1 一致。
+3. 本次候选正文／确认、C11与N2的承载分工及共用验收统一见[共享N2](#rebase-impact-preview)；卡10／11保留各自独有编辑对象与写集。
 
 ---
 

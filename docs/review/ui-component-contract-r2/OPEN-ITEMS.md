@@ -73,11 +73,14 @@ ADJ-01…13 的关闭裁定、原出处与投影定位见[固定裁决索引](ht
 | Structure“全部／本层修改／问题”筛选 | UI §1.1 已核动态字段、Source顺序与两列焦点栏；现行入口[卡3](contract-cards.md#field-value-editor)。 | 三标签及必设筛选未检出；保留已有投影，不把固定字段数或新筛选要求加入本批。 |
 | 卡片不做 mini heatmap／完整字段 provenance／操作历史时间线 | UI §1 与 IA §3 支持卡片摘要、焦点编辑职责；IA §3 明确焦点栏 History。 | 三条逐字负向未检出；不得据卡片范围禁掉焦点 History。需要新增负向约束时交 #51，职责仍按[§7](component-contract-consolidated.md#7-组件卡--焦点编辑栏)。 |
 | TimePeriod Setup六步／预设preview四项形态 | UI §1.2、CT §3.3、SW §2 已核 Setup 可达；UI §1.1 已核预设覆盖条件。机制继续归[§11](component-contract-consolidated.md#profile-lifecycle)及[§15](component-contract-consolidated.md#timeperiod-batch-guard)。 | 六步固定序列、旧四项固定形态未检出；不据此重开机制裁定，也不删现行 Guard。具体承载交 #51。 |
-| template candidate“N项待审查修改／撤销／审查修改” | CT §3.10 的候选/确认机制及 UI §9.1 的未durable丢弃范围已核；入口[§8](component-contract-consolidated.md#source-transaction)、[卡7](contract-cards.md#autosave-status)。 | 精确字串和三按钮形态未检出；文案与承载交 #51，本批不指定替代按钮。 |
-| Species“不弹Modal、只在行旁影响摘要” | CT §6.3／§3.10 可核普通编辑与 Source staged 的区别，传播分档仍归[§8](component-contract-consolidated.md#source-transaction)。 | 未检出绝对不弹 Modal；具体强度映射交 #51，不能将旧UI概括替代确认契约。 |
-| 非CORE时temp_threshold显示／保存／不消费文案 | MR §3.2、SC §5／§6 已核 threshold消费/required范围；UI §1.1 有六参和同图展示，SW §2、CT §3.5／§3.10约束Role切换不隐式改数据。 | 隐藏/禁用/可编辑形态及精确串仍未确认，交 #51；本片不作新选择或改参数输入契约。 |
+| template candidate“N项待审查修改／撤销／审查修改” | CT §3.10 的候选/确认机制及 UI §9.1 的未durable丢弃范围已核；入口[§8](component-contract-consolidated.md#source-transaction)、[卡7](contract-cards.md#autosave-status)。 | 精确字串和三按钮形态未检出；本轮可逆文案／承载投影见[共享N2](contract-cards.md#rebase-impact-preview)，不是上游逐字串。 |
+| Species“不弹Modal、只在行旁影响摘要” | CT §6.3／§3.10 可核普通编辑与 Source staged 的区别，传播分档仍归[§8](component-contract-consolidated.md#source-transaction)。 | 未检出绝对不弹 Modal；本轮候选承载见[共享N2](contract-cards.md#rebase-impact-preview)，未设全局Modal禁令，不以旧UI概括替代确认契约。 |
+| 非CORE时temp_threshold显示／保存／不消费文案 | MR §3.2、SC §5／§6 已核 threshold消费/required范围；UI §1.1 有六参和同图展示，SW §2、CT §3.5／§3.10约束Role切换不隐式改数据。 | 本轮当前呈现、合法编辑可达及上下文用途说明见[卡3局部投影](contract-cards.md#temperature-threshold-ui)；不扩成永久跨界面限制，不把用途标签当免校验。 |
 | same-source pin“当前值不变，但继承关系变化” | **机制来源疑点已消除**：CT §3.3／§3.10确认同值意图及预览边界；完整机制归[§8](component-contract-consolidated.md#source-transaction)。 | 精确中文串仍为可逆执行投影，由[卡1](contract-cards.md#source-selector)消费机制，不冒称 Current 逐字引文；实现/Figma另验。 |
 | P0通道variants清单 | UI §0／§1.4及SC §5／§6已核主要界面与诊断/required类别；具体卡片验收不变。 | 八页未检出统一全局变体清单；所需视觉代表态交 #51，不凭缺图新增产品门禁。 |
+
+<a id="ui-projection-decision"></a>
+**#51 本轮UI选择与关闭边界**：[decision log](https://github.com/futouyiba/HitFish-Up/issues/51#issuecomment-5764424219)经独立反方收窄后，承接为[共享N2](contract-cards.md#rebase-impact-preview)与[卡3阈值局部投影](contract-cards.md#temperature-threshold-ui)，具体方案及回退见[Semantic提案](../../proposals/0.3.4.0-B-n2-ui-projection.md)。本条只登记该设计选择的承接，不替代最终exact-head DESIGN／REVIEW；Figma写入与验收仍待实时证据。其余UI取证仍按上表范围，已有摘要、筛选、Setup与卡片验收不变，本批不新增计数算法、固定向导或全局variants门槛。
 
 ## 4. 易误报项的阅读入口
 
@@ -95,7 +98,7 @@ ADJ-01…13 的关闭裁定、原出处与投影定位见[固定裁决索引](ht
 ## 6. 其它材料与实现取证边界
 
 - **上游链接归属**：本轮 MR §3.0 → RS §11／EP，以及 RS §11.4 → CT 的现行链路已核；未见旧“作者分层链到副本”的问题，所核链路的来源疑点消除。不将此扩大为全库链接体检；其它旧副本路径未经逐一重建，不能推断全部已修。
-- **卡10／卡11视觉投影**：CT §3.10、UI §1.1／§7 已核核心事务；八页未检出“等实现后才可设计”门禁。旧登记的等待顺序由本轮用户授权（[#43](https://github.com/futouyiba/HitFish-Up/issues/43)）更新为 **可开展标明 UNIMPL 的目标设计**，不要求先证明运行实现完成。未确认的承载/形态交 [#51](https://github.com/futouyiba/HitFish-Up/issues/51)独立设计，不在此采纳。写入仍须实时 intake、写前快照、已审契约和独立 Figma 审核；本批无 live 读数，物证仍见[图像登记](figma-current.md#image-evidence)。
+- **卡10／卡11视觉投影**：CT §3.10、UI §1.1／§7 已核核心事务；八页未检出“等实现后才可设计”门禁。旧登记的等待顺序由本轮用户授权（[#43](https://github.com/futouyiba/HitFish-Up/issues/43)）更新为 **可开展标明 UNIMPL 的目标设计**，不要求先证明运行实现完成。本轮候选承载与局部形态的决策承接见[UI选择记录](#ui-projection-decision)，其余未确认项仍按来源范围处理。写入仍须实时 intake、写前快照、已审契约和独立 Figma 审核；本批无 live 读数，物证仍见[图像登记](figma-current.md#image-evidence)。
 - **契约名／实现名映射**：`ProductionRowLedger` 对应实现名的旧定位、类型与行号见[固定取证](https://github.com/futouyiba/HitFish-Up/blob/efa727e944d3dc6b9fdd18e934f0e1cdbde0013d/docs/review/ui-component-contract-r2/OPEN-ITEMS.md#other-material-items)；只用于定位，不是新身份，原裁定不为外观一致改名。本批未重核实现，使用前须在目标实现 head 确认。
 
 <a id="source-drift-implementation-evidence"></a>
