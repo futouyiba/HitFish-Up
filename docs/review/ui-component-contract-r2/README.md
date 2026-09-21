@@ -19,7 +19,7 @@
 | `contract-cards.md` | **冻结卡**（执行投影）—— 实现按这个做 |
 | `figma-current.md` | Figma 侧现状（帧、投影组、记号约定、图与画布的对应） |
 | `img/` | **随包图像**（`scale=1`、整帧、不含 annotation；型号与指纹见 `figma-current.md` §六） |
-| `archive-snapshot/` | ★ **归档消费者的像素级历史外观**（`FROZENSNAPSHOT-pre-*.png`，冻结版本 `2401504721345405021`）＋ **当前对照**（`CURRENT-*.png`）＋ **未变对照组**（`CONTROL-94-334-*.png`）＋ `MANIFEST.sha256`。**活体归档帧不再负责「非证据性 chrome」的逐像素一致 —— 那份责任由它承担**（裁定 `ADJ-FIG-ARCHIVE-01`，见 `figma-current.md` §十一）。 |
+| `archive-snapshot/` | ★ **归档消费者的像素级历史外观**（`FROZENSNAPSHOT-pre-*.png`，冻结版本 `2401504721345405021`）＋ **当前对照**（`CURRENT-*.png`）＋ **未变对照组**（`CONTROL-94-334-*.png`）＋ `MANIFEST.sha256`。**活体归档帧不再负责「非证据性 chrome」的逐像素一致 —— 那份责任由它承担**（**`OWNER-DECIDED`**：裁定 `ADJ-FIG-ARCHIVE-01`，见 `figma-current.md` §十一）。 |
 
 ## ★ 图证据的**射程**（读之前先知道你能核到什么）
 
