@@ -112,8 +112,9 @@
 
 1. **语义来源**：该标记**由 Species Role 的 durable op record 是否存在派生** —— `record` 不存在 ⇒ 该位**不显示**；存在（含 `SET` 到与 `INHERIT` 取值相同的 raw Role）⇒ 显示 **`Role 已钉住`**。★ **不新增第二份 durable UI state**（Owner 已裁方案）。
 2. **契约依据**：`contract-cards.md` **`A①-卡2` Durable mutation** 逐字「**选中等于 raw Role 的值一律写 `SET`（钉住）**」⇒ **同值 `SET` 仍留记录** ⇒ 二者在**记录层**可分。
-3. **实现依据**：**干净基线（实现仓 `6ff7075`）** 的 `84e2221`（Role 的两条耐久 lane ＋ 读写往返）—— `rules` 顶层 lane 承载 `AffinityRolePatch`，`durableRolesOf` / `applyDurableRoles` 是读回路径；`role-durability.test.ts` 含往返断言与反例。★ **这一条把「同一取值、不同记录态」钉在持久层**，不依赖画面。
-4. **画面依据**：两态在控制条内**渲染不同** —— `INHERIT` ⇒ **该位缺席**；`SET(…)` ⇒ 显示 `Role 已钉住`。**两态各需一张图**（`SET` 态已随包；`INHERIT` 态补图中）—— 单帧只能证其一。
+3. **实现依据（已收窄 —— 原文写宽了）**：**干净基线（实现仓 `6ff7075`）** 的 `84e2221`（Role 的两条耐久 lane ＋ 读写往返）—— `rules` 顶层 lane 承载 `AffinityRolePatch`（键 `(row_key, component)`），`durableRolesOf` / `applyDurableRoles` 是**行级**读回路径；`role-durability.test.ts` 含往返断言与反例。★ **它把「同一取值、不同记录态」钉在持久层 —— 但只覆盖行级那一条 lane。**
+⚠️ **物种层不在该路径上**：物种默认 Role 落 `species[].policyRecipe`（`Species Policy Recipe`，`stateSchema.ts` 逐字），而 `durableRolesOf` **只读顶层 `rules`** ⇒ **本 head 上「物种层 `INHERIT` vs 同原值 `SET`」的可核实现路径尚未实测** —— 而 `ADJ-03` 的对象**恰是物种层那一位**。⇒ **闭合它的最小一步**：对 `species[].policyRecipe.roles` 做一次读写往返实测（**本条现在缺的就是这一步**）。
+4. **画面依据**：两态在控制条内**渲染不同** —— `INHERIT` ⇒ **该位缺席**；`SET(…)` ⇒ 显示 `Role 已钉住`。**两态各一张图、都已随包**：`SET` 态 ＝ `img/0.3.4.0-B-policy-block-108-364.png`；`INHERIT` 态 ＝ `img/0.3.4.0-B-policy-block-108-364-INHERIT.png`（**与 SET 同轮导出**）。★ **`INHERIT` 那张按「无预留槽位」渲** ⇒ **不得读成「两态位置一致」**（实测整排左收 66px）。
 
 ## 6. 七处我（材料侧）报出去的、**不要求你判**的
 
