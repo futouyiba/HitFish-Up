@@ -113,7 +113,10 @@
 
 ## 11. Profile 生命周期
 - Role ＝ IGNORED 不删除 Profile；本版不提供通用的「删除组件 Profile」动作。（《编辑器持久层契约》§3.3；界面 §1.4）
-- Time Period 支持合法空态（Role ＝ IGNORED ＋ Profile 缺省）；**激活 CORE / SECONDARY 不自动生成 Profile**，生成是显式动作。（《编辑器界面》§1.2；记录页 §199 ⑥③）
+- **Profile 缺席的合法性只由 `Role` 决定 —— 四个组件一致，时段不特权**（记录页 §377 裁 **ADJ-02**「统一」）：`Role = IGNORED` ⇒ 缺席合法（自动不消费）；`CORE` / `SECONDARY` 缺必需 Profile ⇒ Resolve / Publish 阻断。
+  - ⚠️ **上面这一条是矩阵、不是时段规则**：写「Time Period 支持合法空态」**不是错**，但**只有它一条会被读成时段特权**（那正是被裁掉的那一侧）。§12 的 Time Period 空态只是**这个矩阵在时段上的实例**。
+- **激活 `CORE` / `SECONDARY` 不自动生成 Profile**，生成是显式动作（《编辑器界面》§1.2；记录页 §199 ⑥③）。
+- ⚠️ **合法空态要显式做**：`Role` 的 raw 默认值是 **`CORE`**（记录页 §383 裁 **ADJ-07**）⇒ 空态**不再**是「什么都不做」的自然结果，**必须显式把 `Role` 设成 `IGNORED`** —— 而**新建物种在尚未配置时因此处在阻断态**，那是 **fail-closed、不是缺陷**。（记录页 §383 后果一／二）
 - 激活 CORE / SECONDARY 而未生成所需 Profile 时，**必须当场呈现为可见校验态**，不得让作者停在无提示的非法态；判级仍按上游（CORE / SECONDARY 缺必需 Profile ＝ 阻断）。（《编辑器界面》§1.4；记录页 §199 ⑥③）
 - 不得创建 required Source / identity 为 null 的半成品记录。（《编辑器持久层契约》§3.7 四件之 1）
 
@@ -121,7 +124,7 @@
 **Feeding Layer**：SURFACE / MIDDLE / BOTTOM 三项最终系数，复用数值型项的同一套能力，不新增组件类型。（《编辑器界面》§1.1；《编辑器持久层契约》§3.3）
 
 **Time Period**：
-- 五段 DAWN / MORNING / AFTERNOON / DUSK / NIGHT；未配置时显示合法空态，不置灰。（《编辑器界面》§1.1）
+- 五段 DAWN / MORNING / AFTERNOON / DUSK / NIGHT；未配置时显示合法空态，不置灰（**它的合法性来自 §11 的统一矩阵，不是时段特权**；且按 §11，空态须由作者**显式**把 `Role` 设成 `IGNORED` 得到）。（《编辑器界面》§1.1；记录页 §377／§383）
 - 三预设（晨暮型 / 昼行型 / 夜行型）是一次性批写五个字段的 `SET`：不是 Source、不是模板 identity、不进长期继承链；应用后不持久化 `presetId`，当前 Source binding 不变；覆盖已有本层操作时须 batch preview ＋ 显式确认；五个 `SET` 各自可带该预设明确的 Tier 语义；**后续单字段修改后不得再宣称仍属某预设**；模板名不进 Runtime。（《编辑器界面》§1.1；记录页 §172 二 APPLY DELTA ④）
 - 预设不负责创建 Source；应用后原 Source binding 仍在（即使五项都被 `SET` 遮罩也不删除 / 弱化）。（《编辑器界面》§1.1）
 
