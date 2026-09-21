@@ -137,7 +137,7 @@
 - 五段 DAWN / MORNING / AFTERNOON / DUSK / NIGHT；未配置时显示合法空态，不置灰（**它的合法性来自 §11 的统一矩阵，不是时段特权**；且按 §11，空态须由作者**显式**把 `Role` 设成 `IGNORED` 得到）。（《编辑器界面》§1.1；记录页 §377／§383）
 - 三预设（晨暮型 / 昼行型 / 夜行型）是一次性批写五个字段的 `SET`：不是 Source、不是模板 identity、不进长期继承链；应用后不持久化 `presetId`，当前 Source binding 不变；覆盖已有本层操作时须 batch preview ＋ 显式确认；五个 `SET` 各自可带该预设明确的 Tier 语义；**后续单字段修改后不得再宣称仍属某预设**；模板名不进 Runtime。（《编辑器界面》§1.1；记录页 §172 二 APPLY DELTA ④）
 - 预设不负责创建 Source；应用后原 Source binding 仍在（即使五项都被 `SET` 遮罩也不删除 / 弱化）。（《编辑器界面》§1.1）
-- ★ **三预设那五个 `SET` 落到哪一层（ADJ-13）**：**`target = 作者当前所在的 authoring layer / owner`** —— **当前编辑 Species ⇒ 写 Species Recipe 的 5 个 `SET`；当前编辑 Affinity／bucket ⇒ 写当前 Affinity operation patches 的 5 个 `SET`**。
+- ★ **三预设那五个 `SET` 落到哪一层（ADJ-13，refine 后）**：**`target = active Recipe / Patch authoring owner`** —— **Species context ⇒ 写 Species TimePeriod Recipe 的 5 个 `SET`；Affinity / bucket context ⇒ 写当前 Affinity TimePeriod operationPatches 的 5 个 `SET`**；**五个 `SET` 同 owner、同 layer、一个 atomic batch**。
   - **不切换 authoring layer／不默认提升到 Species／不创建第三个 preset layer／不改 Source／不持久化 `presetId`／五个 `SET` 作为一个 atomic batch。**（记录页裁 **ADJ-13**）
   - ★ **若某 UI surface 本版只开放 Species authoring ⇒ 在那里自然只写 Species** —— **那是 surface capability 的后果，不是 Preset 自身拥有 Species 语义**。（★ 与 ADJ-12 同源：**三种预设是 Setup 后/中的一次性填表便利，不是 TimePeriod 独有的「Profile 创建语义」**）
 
@@ -192,8 +192,11 @@
 - 程序开关；`if / else / return` 之类控制流编写；自定义聚合算子；自由编排 / 任意输入连线；Gate 控件 / `GatePolicy` 字段；模板共享面板的三档分级；不新增顶层空的 `Calculation Surfaces` 导航；不显示 Activity / Feeding Readiness 之类空壳；不新增第二套 Bake Editor、不新增脚本入口。（《编辑器界面》§5）
 - 占比 / 比例 与 分群逻辑两处只以禁用占位行呈现（字段位在、控件不在），不提供编辑控件；不得据此宣称本版已实现 Mode Share / Routing。（《编辑器界面》§5、§1.2）
 - 桶不是真正的 Engagement Mode；Runtime 无 EngagementMode identity，不得据 UI 名称另建 durable 的 Engagement Mode 身份 / 注册表 / 模式级 Concrete 来源。（《编辑器界面》§5；《编辑器与 Resolve》§11.1；记录页 §172 二 KEEP）
-  - ⚠️ **上面那条的射程 ＝ 「不得据 UI 名称另建身份 / 第二套注册表 / 模式级 Concrete 来源」，不是「owner 不叫模式」**。**owner 的 canonical 名是「中鱼习性模式」（`Engagement Mode`）**，它与「习性档案」（`FishEnvAffinityRef`）**1:1**（《编辑器与 Resolve》§7 逐字 `one Compat Mode ↔ exactly one FishEnvAffinityRef`），**桶只是它在数据迁移期的行单位表达** ⇒ **不得读成「根本没有 durable 的 Mode 身份」、进而把 owner 键在建在行单位上**。（记录页 §385 裁 **ADJ-08**；《编辑器持久层契约》§3.3 已按此写：逐字「这条 patch 的 owner 是「中鱼习性模式」（`Engagement Mode`）」）
-  - ⚠️ **页侧滞后，本行按滞后页照录（已派改）**：《编辑器界面》§5、《编辑器与 Resolve》§7、《编辑器心智模型与 IA》§8 仍写着「「中鱼习性模式 / 兼容壳」**只是**换皮展示、**不新增 EngagementMode durable identity**」这一形（**写于 ADJ-08 之前**）；而 canonical owner《编辑器持久层契约》§3.3 **已改成**「只是**同一 authoring 层**的业务抽象 / 换皮展示，与该 patch 是**抽象 / 物理投影关系**」。⇒ **页改后本行随之重渲染**；在此之前，**以 §3.3 那句为准**。
+  - ⚠️ ★ **2026-09-21 Owner 收口为 `C_SPLIT_REGISTERS`（取代本节先前那条「owner 的 canonical 名是「中鱼习性模式」」的读法）**：**要消灭的是「owner」这个同时指「业务语义归属」与「物理 durable identity」的模糊中间词。**
+    ⇒ **业务语义概念** ＝ `Engagement Mode`／中鱼习性模式（**Simplified V0 的正式业务概念**，**B P0 不实现 Mode Share / Routing**）；**物理 durable key ＝ `FishEnvAffinityRef`**；`FishEngagementModeCompat` 是**对 Affinity 的 mode-like authoring projection ／ 兼容壳**；**Runtime / production 无独立 `EngagementMode` identity。**
+    ⇒ ★ **上面那条禁令（不得据 UI 名称另建身份 / 第二套注册表 / 模式级 Concrete 来源）依然成立** —— 它禁的是**据 UI 名称造身份**，与本次收口**同向**。
+    ⇒ ★ **`sourceOverride` 一律写作 `(fishEnvAffinityRef, component)`**（**若 schema 字段名为 `owner_ref`，则 `owner_ref := FishEnvAffinityRef`**）—— **不要留一个抽象的 `owner` 让实现者猜是哪套 identity。**（记录页裁 **ADJ-08 ＝ `C_SPLIT_REGISTERS`**）
+  - ⚠️ ★ **页侧本轮已收口（2026-09-21）**：**CT §1.1 ／ CT §3.3 ／ RS §11.1 三处已按 `C_SPLIT_REGISTERS` 改写**；**《编辑器界面》§5 不动** —— 它写的是 **Runtime 域**那句（「Runtime 无 `EngagementMode` identity」／「durable owner ＝ `FishEnvAffinityRef`」），**与本次收口相容**；RS §7 ／ IA §8 同理。⇒ **不再有「按滞后页照录」这件事。**
 - 品质页本版不开放（入口置灰、不展示品质字段）；不新建品质模板库、不把品质当作第五个习性组件。（《编辑器界面》§0、§2）
 - 组件卡不承担逐字段 `ADD / SET / CLEAR` 编辑（逐字段值在焦点编辑栏完成）；不给组件卡 Source / Role 另建 durable state；不把 Effective Value 当编辑真相存储；不为视觉一致强迫所有字段支持 `ADD`；不为结构对称给品质造模板；不按「当前数值相同」跨无关谱系合并生产行。（《编辑器界面》§1 导语、§7；《编辑器心智模型与 IA》§8）
 

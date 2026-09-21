@@ -48,7 +48,7 @@
 | **ADJ-05** | `sourceOverride` ＝ **组件级独立 durable 绑定**（不是 §3.3 那张逐项记录上的字段） | `contract-cards.md` **`A①-卡1`／`RoleControl`**；`component-contract-consolidated.md` **§3** |
 | **ADJ-06** | owner 粒度 ＝ **（物种, 桶）** | `contract-cards.md` **`RoleControl`**；`component-contract-consolidated.md` **§9** |
 | **ADJ-07** | Policy Template 的 raw Role 默认值 ＝ **`CORE`** | `contract-cards.md` **`RoleControl` Reads**；`component-contract-consolidated.md` **§11** |
-| **ADJ-08** | owner 身份 ＝ **「中鱼习性模式」（`Engagement Mode`）**；**桶是数据迁移期的行单位表达** | `component-contract-consolidated.md` **§16（含射程说明）**；**页侧 CT §3.3 已落／RS §11.1 待**（见 §6） |
+| **ADJ-08** | ★ **`C_SPLIT_REGISTERS`：Semantic Concept ≠ Durable Identity**（Owner 2026-09-21 refine；**取代**先前那个「owner ＝ `Engagement Mode`」的读法）—— `Engagement Mode`／中鱼习性模式 是 **Simplified V0 的正式业务概念**；**B P0 不物化独立的 `EngagementMode` durable／runtime identity**，也不实现 Mode Share／Routing；**物理 durable key ＝ `FishEnvAffinityRef`**，`FishEngagementModeCompat` 是**对它的 mode-like authoring projection／兼容壳**；**桶是数据迁移期的行单位表达**。★ **要消灭的是「owner」这个模糊中间词**：`sourceOverride` 写作 **`(fishEnvAffinityRef, component)`**（若 schema 字段名为 `owner_ref`，则 **`owner_ref := FishEnvAffinityRef`**）。 | `component-contract-consolidated.md` **§16（含射程说明）**；**页侧：CT §1.1 ／ CT §3.3 ／ RS §11.1（本轮落）** |
 
 **已裁（续）**：
 
@@ -110,9 +110,10 @@
   - ★ **保留这条作留痕**（它一度是一个缺口）；**不移除**。
 - **链接图指向副本而非 owner**：《主开发需求》§3.0 把作者分层诸事实链到《编辑器与 Resolve》§11 与《Editor → Persistence》，而它们的 canonical owner 是《编辑器持久层契约》§3.3。
 - **超过 60 处跨页重复定义**：已盘出（按页计数最高的是《编辑器与 Resolve》与《编辑器界面》），**其中至少三组明确不许合并**（物种 `INHERIT` vs 桶层 `absent`；物种层 Role 默认 vs `AffinityRolePatch`；「同值」vs「同意图」）。清理按「已裁动作」执行，**不做语义等价判断**。
-- ★ **ADJ-08 对齐 —— 真正要对齐的只有两处：CT §3.3 与 RS §11.1**（**已 CLOSED、未写**）。两处都带着「**不新增 EngagementMode durable identity**」这个**读起来像整体否定**的引子，而 **CT §3.3 的正面句已在同节前两段**（逐字「**这条 patch 的 owner 是「中鱼习性模式」（`Engagement Mode`）**…**数据迁移期以桶为行单位表达**」）。⇒ **实现者会据那个引子认为「不存在 durable 的 Mode 身份」、从而把 owner 键在行单位（桶）上。**
-  - ⚠️ **UI §5 / RS §7 / IA §8 不需要改** —— 它们写的是 **Runtime 域**那句（「Runtime 无 EngagementMode identity」），**与 ADJ-08 相容**；补正面句反而会把两个寄存器混起来。
-  - ⚠️ **本包 `component-contract-consolidated.md` §16 只作射程说明与标注，不改写原句。** 页侧精确 delta 见**仓外/本地工作件**（**不在本包**）—— 按 Owner 2026-09-21 工作令，**Notion 写入暂停**，先落 delta、再由单一写入者落页。
+- ★ **ADJ-08 已由 Owner 收口为 `C_SPLIT_REGISTERS`（本轮落页）** —— 曾经的问题是**「owner」这个词同时被用来指「业务语义归属」和「物理 durable identity」**，于是同一页上既出现「patch owner ＝ `Engagement Mode`」又出现「durable owner ＝ `FishEnvAffinityRef`」。
+  - ★ **现在消灭的是那个模糊的中间词**：**物理 durable key ＝ `FishEnvAffinityRef`**；`Engagement Mode` 只是**正式业务概念**；`FishEngagementModeCompat` 是**对 Affinity 的兼容壳／投影**；Runtime 仍**无独立 `EngagementMode` identity**。
+  - ⚠️ **UI §5 ／ RS §7 ／ IA §8 不动** —— 它们写的是 **Runtime 域**那句，**与本次收口相容**。
+  - ⚠️ **本包 §16 只作射程说明与标注**；页侧本轮 delta 的逐字见**仓外/本地工作件**（**不在本包**）。
 - ★ **顶栏动作名 `Reset` ＝ 一条命名裁定，不是「页内相抵」**（**已落页**，UI §9.1 ⇒「丢弃未保存的改动」，Version 12→13）：★ **《编辑器界面》§1.2 并没有禁 `Reset` 的句子** —— 回读实测（**2026-09-21 12:40 之后**）**该页全页 `Reset` = 0、`Override` = 0、「不向作者暴露」= 0、「工程词」= 0**；§1.2 给的是**操作 → 用户语言的映射**（`CLEAR` ⇒「仅使用当前来源」）。⇒ **「不能叫 `Reset`」的依据在裁定侧、不在页上**；**替换词＝「丢弃未保存的改动」**（判据见 `component-contract-consolidated.md` §4 的出处校正）。**不必再报。**
   - ⚠️ ★ **那个「全页 = 0」必须带时点锚**：它是 **12:40 那笔落页之后**的读数，**不是「页上从来没有过」** —— 该页 §9.1 在此之前**逐字就是** `` `Reset` / `Publish` / `导出` / `Bass 预设` ``，**画布上那个 `Reset` 不是凭空来的**。⇒ **状态断言不带时点/版本锚，会被读成「从来没存在过」。**（这条是画布侧提出、我采的。）
 - ★ **画布侧：bot 报的四处里，只有三处要改**（分拣依据＝`figma-current.md` §四 的「作者面 vs 投影面」分工，**读图前先读那条**）：
