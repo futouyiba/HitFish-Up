@@ -19,7 +19,7 @@
 
 - **产品裁定**沿用 §2 ADJ-03 的出处：由 Species Role durable op record 是否存在派生状态位；无记录不显示、有记录（包括同 raw 值 SET）显示“Role 已钉住”，不增加第二份 durable UI state。卡2 是记录意图的执行投影，**不把裁定原句冒称卡2 的逐字引文**。
 - **实现旁证**仅转述[前轮独立 REVIEW](https://github.com/futouyiba/HitFish-Up/pull/7#issuecomment-5757933398)对实现仓 `84e2221` 的亲读：物种 `policyRecipe` 与行级 `rules` 是两条 lane，`isRoleExpressed` 检查物种角色键存在性；`durableRolesOf` 输出角色值，测试里的 clear／absent 同值对照针对**行级 patch**。这些不能独自替代 Species INHERIT 与同 raw 值 SET 的记录态／显示证据。作者登记 `species[].policyRecipe.roles` 的读写往返尚未实测；本批及该轮 reviewer 均未运行下游实现。实现验证另归实现侧，不把实现仓整体完成设为本设计投影的前置。
-- **图片证据**只按实际文件判读；上述 REVIEW 已亲核两态图片与语义映射，但未将其当成实现运行结果。后续新增或替换 Role 图只更新[图像登记](figma-current.md#image-evidence)及本条处置／剩余工作；README 与 brief 不复制状态。
+- **图片证据**只按实际文件判读；上述 #7 REVIEW 已亲核两态图片与语义映射，但未将其当成实现运行结果。后续 INHERIT 1×替换由 [#17 REVIEW](https://github.com/futouyiba/HitFish-Up/pull/17#issuecomment-5758641670) @ `8d4523c0372c12cbf1aad14ec652159c2782e5ad` 独立批准，现已进入 main；实际版本与指纹只在图像登记维护。本分支与新 main 的兼容提交仍须独立复审，不继承 #17 或本分支旧 head 的批准。后续新增或替换 Role 图只更新[图像登记](figma-current.md#image-evidence)及本条处置／剩余工作；README 与 brief 不复制状态。
 
 <a id="source-sync"></a>
 ### `CXR7-SOURCE-SYNC-01`：CLOSED（来源状态投影）

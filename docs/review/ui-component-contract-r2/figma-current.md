@@ -1,6 +1,6 @@
 # Figma 画面与图像证据登记
 
-**范围与版本**：节点、annotation 和几何记录的历史部分继承自 [#7 固定版本](https://github.com/futouyiba/HitFish-Up/blob/1409a13fde46dcb8d10bae039c26f6a0090bf497/docs/review/ui-component-contract-r2/figma-current.md)，包含多轮历史回读；最新图片与作者导出更正继承自 [#7 证据版本](https://github.com/futouyiba/HitFish-Up/blob/ca17a2306b3c567e6fe7bc2eedcc6ed43ed3a2e5/docs/review/ui-component-contract-r2/figma-current.md)。本批只亲查仓内 PNG 和元数据，未重读实时 Figma。较早回读不代表较晚图片仍如此。**本文件登记实物与证明范围；处置、剩余工作及关闭证据统一见[问题台账](OPEN-ITEMS.md#active-review-items)。**
+**范围与版本**：节点、annotation 和几何记录的历史部分继承自 [#7 固定版本](https://github.com/futouyiba/HitFish-Up/blob/1409a13fde46dcb8d10bae039c26f6a0090bf497/docs/review/ui-component-contract-r2/figma-current.md)，包含多轮历史回读；#7 的图片与导出更正见[固定证据版本](https://github.com/futouyiba/HitFish-Up/blob/ca17a2306b3c567e6fe7bc2eedcc6ed43ed3a2e5/docs/review/ui-component-contract-r2/figma-current.md)；后续 INHERIT 1×图与对应记录继承自 [#17 固定版本](https://github.com/futouyiba/HitFish-Up/blob/8d4523c0372c12cbf1aad14ec652159c2782e5ad/docs/review/ui-component-contract-r2/figma-current.md)。本批只亲查仓内 PNG 和元数据，未重读实时 Figma。较早回读不代表较晚图片仍如此。**本文件登记实物与证明范围；处置、剩余工作及关闭证据统一见[问题台账](OPEN-ITEMS.md#active-review-items)。**
 
 **这是一份按取证版本记录画面的清单**，供你比对契约。**不含文件链接**（按本项目的对外规则，内部链接一律不进仓）。
 
@@ -114,7 +114,7 @@
 <a id="image-evidence"></a>
 ## 六、随包图像：逐资产版本与证明范围
 
-资产基线为 #7 @ `ca17a2306b3c567e6fe7bc2eedcc6ed43ed3a2e5`，本批不改图片。各图的内容版本与比例分别登记；导出参数相同不能推出同批，整帧与局部的取证时点也不能相互替代。
+资产基线为 main @ `fde61e3d3da68f1f2181c4fd37d1e76c348a098f`（已纳入 #17），本批不改图片。各图的内容版本与比例分别登记；导出参数相同不能推出同批，整帧与局部的取证时点也不能相互替代。
 
 | 文件 | node | 像素／字节／作者登记比例 | SHA256 | 版本与可证明范围 |
 |---|---|---|---|---|
@@ -122,11 +122,13 @@
 | [0.3.4.0-B-card2-state10-230-673.png](img/0.3.4.0-B-card2-state10-230-673.png) | `230:673` | 890×150／24410／1× | `96aac32ea7ccbad882697b14a7be54e0b222bdd9a250535d6770b266e9c3ae58` | 态10 投影图，后续补图未改；不承担 Species Role 记录态对照。 |
 | [0.3.4.0-B-policy-176-283.png](img/0.3.4.0-B-policy-176-283.png) | `176:283` | 820×92／13485／1× | `39bff36334e63e93cb70244e6be42b6d18e65e339789db314229bcca8050312c` | Policy 母件图，后续补图未改；不是作者面控制条。 |
 | [0.3.4.0-B-policy-block-108-364.png](img/0.3.4.0-B-policy-block-108-364.png) | `108:364` | 854×122／22574／1× | `e174d1e798ab724746d7d4888ba72459bc75a1095e1b4538aa6c8c2e76985cac` | 局部 SET 图，`e8d5c647…` 重导为 1×，可见 Role badge；替代 21871 字节旧画面及 51787 字节的 2×中间版本。 |
-| [0.3.4.0-B-policy-block-108-364-INHERIT.png](img/0.3.4.0-B-policy-block-108-364-INHERIT.png) | `108:364` | **854×122／21871／1×** | `b1c0d2a55f89bd0aa27fd3143724bfb0da1349193d01f04b1b7130abd6be9dc1` | 局部 INHERIT 图，**1× 版由 `720af35d…` 重导**（原 2.5×／66070／`afe41f542601…` 版已替换）；无 Role badge、整排收拢，无预留槽位。★★ **它与包内原 `108-364`（`ADJ-03` 之前的旧图）逐字节相同** ⇒ 这**独立复核了 `ADJ-03` 只动了「badge ＋ 那一行的位移」两件事**。不能单凭图证明 durable 读写。 |
+| [0.3.4.0-B-policy-block-108-364-INHERIT.png](img/0.3.4.0-B-policy-block-108-364-INHERIT.png) | `108:364` | 854×122／21871／1× | `b1c0d2a55f89bd0aa27fd3143724bfb0da1349193d01f04b1b7130abd6be9dc1` | 局部 INHERIT 图，#17 @ `8d4523c…` 换为 1×；无 Role badge、整排收拢，无预留槽位。作者登记与 SET 同为 REST／scale=1；同管线同参数不等于同轮导出，不能单凭图证明 durable 读写。 |
 
-两态图按作者登记分别对应 SET 与 INHERIT；其实际画面已亲看。
-★ **比例一致性**：随包五张图**全为 `1×`**（两张局部图与整帧同参数），可由上表「像素／字节／比例」列逐行核。
-记录态对应关系与审查处置见[Species Role UI](OPEN-ITEMS.md#species-role-ui)。图片增加或替换时更新本登记的实际文件、版本、指纹与证明范围。
+**旧版边界**：2135×305／66070 字节／2.5×的 INHERIT 图（SHA256 `afe41f54260139a1f5e8bedd0a6767dbe5d56c369d40a9fa649945699175ff3e`）仅是 [#7 固定历史资产](https://github.com/futouyiba/HitFish-Up/blob/ca17a2306b3c567e6fe7bc2eedcc6ed43ed3a2e5/docs/review/ui-component-contract-r2/img/0.3.4.0-B-policy-block-108-364-INHERIT.png)，不属于上表当前图片。
+
+**1× 图的对照范围**：当前 INHERIT 与 `1409a13fde46dcb8d10bae039c26f6a0090bf497` 的旧局部 `0.3.4.0-B-policy-block-108-364.png` 逐字节相同，本批已亲核。新资产的 INHERIT 身份按 #17 的交付记录登记，不能反过来把原先未经记录态标定的旧图称为当时已经交付的 INHERIT 证据。[#17 独立 REVIEW](https://github.com/futouyiba/HitFish-Up/pull/17#issuecomment-5758641670) 亲核当前两张局部图 RGB 差异为 6217 像素、bbox `(201,107,832,121)`；这一证据只覆盖两张局部图的像素范围，不证明整份 Figma 的节点、annotation、隐藏内容或持久化行为。
+
+两态图按作者登记分别对应 SET 与 INHERIT；其实际画面已亲看。记录态对应关系与审查处置见[Species Role UI](OPEN-ITEMS.md#species-role-ui)。图片增加或替换时更新本登记的实际文件、版本、指纹与证明范围。
 
 **原作者的形态说明**：`INHERIT` 按“无预留槽位”渲染；补图提交援引 Owner“以后再考虑固定槽位、现在不为这件小事延长设计”的裁定，登记整排左收 66px。保留这份来源记录，不把两态说成位置一致；本批未重测几何或重验该裁定。
 
@@ -161,7 +163,7 @@
 
 **旧版为何是旧的（同一条纪律的另一面）**：上一版的图导出于 `00:40:28Z`，而画布末次写入在 `01:20:36Z` ⇒ **图早于画布 40 分钟** ⇒ **随包物证必须与声称的改动同批取**。
 
-**本批元数据核验**：上表 PNG 的 `pHYs` 均为 `2835/2835 unit=1`，`tEXt Software=Figma`、color type 6、bit depth 8，尺寸与登记一致。作者登记的导出比例见上表，包含 1×、2.5×；这些元数据本身不能证明导出通路、图片同批、实时画布一致或记录态。
+**本批元数据核验**：上表 PNG 的 `pHYs` 均为 `2835/2835 unit=1`，`tEXt Software=Figma`、color type 6、bit depth 8，尺寸与登记一致。作者登记的导出比例见上表，当前均为 1×；这些元数据本身不能证明导出通路、图片同批、实时画布一致或记录态。
 
 **两条通路事实**（供核图的人判可信度，不是缺陷）：
 
