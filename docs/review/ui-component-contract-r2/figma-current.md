@@ -56,7 +56,9 @@
 
 ## 三、2026-09-20 的历史回读
 
-旧用户语言替换、态9／10新增及颜色修正过程见[固定历史 §三](https://github.com/futouyiba/HitFish-Up/blob/db97e9bb4784a8eaf2421cf88894c6d4e4beef2c/docs/review/ui-component-contract-r2/figma-current.md#L55)。现行字段交互见[卡2／卡3](contract-cards.md#operation-control)，实际图像按 §六的版本与证明范围读取；历史示意值不是产品规定。
+旧用户语言、态9／10与颜色修正见[固定 §三](https://github.com/futouyiba/HitFish-Up/blob/e26af091bf90a049ed2f83ebe6642af240aa5c82/docs/review/ui-component-contract-r2/figma-current.md#三2026-09-20-的历史回读)；早于 `[04]` 的几何／分隔线与未补操作见[原 §九](https://github.com/futouyiba/HitFish-Up/blob/e26af091bf90a049ed2f83ebe6642af240aa5c82/docs/review/ui-component-contract-r2/figma-current.md#九r4-fig-02-的历史回读早于-04)；早于 Role badge 与作者词修正的 `[04]` 中间形态、annotation 校验与导出过程见[原 §十](https://github.com/futouyiba/HitFish-Up/blob/e26af091bf90a049ed2f83ebe6642af240aa5c82/docs/review/ui-component-contract-r2/figma-current.md#十04-的操作入口回读早于-role-badge-与作者词汇修正)。这些旧快照不承担当前缺口判断，也不把历史示意值当产品规定；现行交互见[卡2／卡3](contract-cards.md#operation-control)，实际资产按[§六](#image-evidence)读取。
+
+导出试验、RGBA 比较失效、MCP／REST 管线差异、母件与作者面混拍、未随包 `141:283` 和高倍导出过程见[固定导出记录](https://github.com/futouyiba/HitFish-Up/blob/db97e9bb4784a8eaf2421cf88894c6d4e4beef2c/docs/review/ui-component-contract-r2/figma-current.md#L140)。**旧 REST 缓存归因已撤回**；原实验本轮未复现，不扩为通用机制结论。
 
 ---
 
@@ -98,12 +100,7 @@
 | [0.3.4.0-B-policy-block-108-364.png](img/0.3.4.0-B-policy-block-108-364.png) | `108:364` | 854×122／22574／1× | `e174d1e798ab724746d7d4888ba72459bc75a1095e1b4538aa6c8c2e76985cac` | 局部 SET 图，`386ad383…` 重导为 1×，可见 Role badge；替代 21871 字节旧画面及 51787 字节的 2×中间版本。 |
 | [0.3.4.0-B-policy-block-108-364-INHERIT.png](img/0.3.4.0-B-policy-block-108-364-INHERIT.png) | `108:364` | 854×122／21871／1× | `b1c0d2a55f89bd0aa27fd3143724bfb0da1349193d01f04b1b7130abd6be9dc1` | 局部 INHERIT 图，#17 @ `8d4523c…` 换为 1×；无 Role badge、整排收拢，无预留槽位。作者登记与 SET 同为 REST／scale=1；同管线同参数不等于同轮导出，不能单凭图证明 durable 读写。 |
 
-**旧版边界**：2135×305／66070 字节／2.5×的 INHERIT 图（SHA256 `afe41f54260139a1f5e8bedd0a6767dbe5d56c369d40a9fa649945699175ff3e`）仅是 [#7 固定历史资产](https://github.com/futouyiba/HitFish-Up/blob/ca17a2306b3c567e6fe7bc2eedcc6ed43ed3a2e5/docs/review/ui-component-contract-r2/img/0.3.4.0-B-policy-block-108-364-INHERIT.png)，不属于上表当前图片。
-
-★ **锚的形态说明（引本包 SHA 之前先读这条）**：本包的锚有两类，**不要互换** ——
-- **落地形**：`ef2a0c0c…`（整帧重导）／`386ad383…`（SET 局部换 1×）—— 是那些提交在 `main` 上的形状，可直接解析。
-- **固定版本形**：`1409a13…`／`ca17a230…`／`8d4523c…`／`1edef11e…`／`842f1302…` —— **故意**引「**被审的那个快照**」，它们**不在 main 上**（rebase-merge 之前的 PR head），靠**各自那一条 blob URL** 解析；**不要把它们「修」成 main 上的形状** —— 那会把「哪个快照被审过」这件事改掉。
-
+**旧版与引用边界**：旧 2.5× INHERIT 的指纹、尺寸和重导经过见[固定登记](https://github.com/futouyiba/HitFish-Up/blob/e26af091bf90a049ed2f83ebe6642af240aa5c82/docs/review/ui-component-contract-r2/figma-current.md#image-evidence)，不属于上表当前资产。整帧／SET 的落地提交与固定被审 PR head 是两种锚：历史 blob URL 指定的是被审快照，不能为了与 main 对齐而换成 merge SHA。
 
 **1× 图的对照范围**：当前 INHERIT 与 `1409a13fde46dcb8d10bae039c26f6a0090bf497` 的旧局部 `0.3.4.0-B-policy-block-108-364.png` 逐字节相同，本次已核字节相同。新资产的 INHERIT 身份按 #17 的交付记录登记，不能反过来把原先未经记录态标定的旧图称为当时已经交付的 INHERIT 证据。[#17 独立 REVIEW](https://github.com/futouyiba/HitFish-Up/pull/17#issuecomment-5758641670) 亲核当前两张局部图 RGB 差异为 6217 像素、bbox `(201,107,832,121)`；这一证据只覆盖两张局部图的像素范围，不证明整份 Figma 的节点、annotation、隐藏内容或持久化行为。
 
@@ -111,7 +108,7 @@
 
 **原作者的形态说明**：`INHERIT` 按“无预留槽位”渲染；补图提交援引 Owner“以后再考虑固定槽位、现在不为这件小事延长设计”的裁定，登记整排左收 66px。保留这份来源记录，不把两态说成位置一致；本批未重测几何或重验该裁定。
 
-**核图方式与历史边界**：指纹可核版本，不单独证明内容、同批导出或实时画布一致；对拍要核差异像素，并用确知不同的样本验证比较方法。旧 REST 缓存归因已撤回，不能继续引用为机制；RGBA比较失效、MCP／REST管线差异、母件与作者面混拍、未随包 `141:283` 和高倍导出实验均见[固定导出记录](https://github.com/futouyiba/HitFish-Up/blob/db97e9bb4784a8eaf2421cf88894c6d4e4beef2c/docs/review/ui-component-contract-r2/figma-current.md#L140)。这些原实验未在本轮复现，不扩成通用结论。
+**核图方式与历史边界**：指纹可核版本，不单独证明内容、同批导出或实时画布一致；对拍要核差异像素，并用确知不同的样本验证比较方法。旧导出试验及已撤回解释见[历史入口](#三2026-09-20-的历史回读)，不作为本轮测量。
 
 **本次元数据核验**：五张 PNG 的 `pHYs=2835/2835 unit=1`、`tEXt Software=Figma`、color type 6、bit depth 8；尺寸与登记一致。作者登记比例均1×；这些元数据本身不能证明导出通路、图片同批、实时画布一致或记录态。
 
@@ -129,18 +126,6 @@ annotation 不在 PNG 内。原组总则与 chip 逐字见[固定历史 §七](h
 ## 八、原快照的卡上 Role 角标 —— 为什么它是"三态下拉"，以及为什么它**不做成白场**
 
 原快照的 Role 角标是带矢量 `roleCaret` 的三态下拉，不是纯状态徽标；保留角色色而非统一改成白场。原命名／颜色裁定为记录页 §104 四：CORE蓝／SECONDARY琥珀／IGNORED灰。尺寸、色值、与Source选择器的对照及“advance vs 墨宽”的推导见[固定历史 §八](https://github.com/futouyiba/HitFish-Up/blob/db97e9bb4784a8eaf2421cf88894c6d4e4beef2c/docs/review/ui-component-contract-r2/figma-current.md#L192)；本轮未重新测量，不把排版推导当实测。
-
----
-
-## 九、`R4-FIG-02` 的历史回读（早于 `[04]`）
-
-该轮几何、分隔线、节点表和未补物种操作的经过见[固定历史 §九](https://github.com/futouyiba/HitFish-Up/blob/db97e9bb4784a8eaf2421cf88894c6d4e4beef2c/docs/review/ui-component-contract-r2/figma-current.md#L219)。这是早于 `[04]` 的快照，不承担当前缺口判断；后续图片证据从 §六读取。
-
----
-
-## 十、`[04]` 的操作入口回读（早于 Role badge 与作者词汇修正）
-
-`[04]` 的三个中间形态、超宽估算修正、两枚独立chip、annotation校验和整帧导出过程见[固定历史 §十](https://github.com/futouyiba/HitFish-Up/blob/db97e9bb4784a8eaf2421cf88894c6d4e4beef2c/docs/review/ui-component-contract-r2/figma-current.md#L251)。其中旧“模板”串及工程词早于较晚图片，不能据此重报当前缺陷；操作入口处置从[台账](OPEN-ITEMS.md#species-role-ui)读取。
 
 ---
 
