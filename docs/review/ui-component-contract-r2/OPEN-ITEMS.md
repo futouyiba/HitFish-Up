@@ -84,4 +84,18 @@ ADJ-01…13 的关闭裁定、原出处与投影定位见[固定裁决索引](ht
 - **卡10／卡11视觉投影**：旧登记为等实现后再投；本批未核实现或live Figma，实际物证仍从[图像登记](figma-current.md#image-evidence)取得，不因文档清理视为完成。
 - **契约名／实现名映射**：`ProductionRowLedger` 对应实现名的旧定位、类型与行号见[固定取证](https://github.com/futouyiba/HitFish-Up/blob/efa727e944d3dc6b9fdd18e934f0e1cdbde0013d/docs/review/ui-component-contract-r2/OPEN-ITEMS.md#other-material-items)；只用于定位，不是新身份，原裁定不为外观一致改名。本批未重核实现，使用前须在目标实现 head 确认。
 
+<a id="source-drift-implementation-evidence"></a>
+### 静态来源漂移：历史观察与当前实现取证
+
+- **历史证据**：[固定基线卡4](https://github.com/futouyiba/HitFish-Up/blob/042f3a9df2ee7521e8ef32d77b6d78407e10946c/docs/review/ui-component-contract-r2/contract-cards.md#L182)转录编辑器仓 `GAP-ED-26`，称当时耐久记录不带来源快照，不能检测来源漂移；原观察未登记被核实现 head。固定 SHA 只锚文档，不补造实现版本，也不判断今日缺口仍复现或已关闭。
+- **现行展示边界**：按[卡4](contract-cards.md#effective-value-display)读取静态当前态与候选 before/after 的区别；卡2只是该显示规则的消费者。旧文“增加来源快照”仅为当时的候选方案，不是本轮指定的唯一实现路径或新的 durable schema 要求。
+- **下一步**：若核验实现或提出来源变化显示能力，先绑定新的实现 head，分别取证当前记录态与跨时点/候选变化；若需改变展示契约或记录形状，另走设计提案。当前未重跑实现，不以本次状态迁移判通过。
+
+<a id="template-import-implementation-evidence"></a>
+### 卡8 Concrete Import：实现逐项对表
+
+卡8两步导入语义、缺值推导和显式目标物种护栏仍归[卡8](contract-cards.md#template-list)。**实现线逐项对表仍待新实现 head 取证**；本次未验证导入或重导行为，不宣布与契约对齐。
+
+原 Part3 的唯一挂项描述属于当时冻结批次的交付记录，范围见[固定收口提示](https://github.com/futouyiba/HitFish-Up/blob/042f3a9df2ee7521e8ef32d77b6d78407e10946c/docs/review/ui-component-contract-r2/contract-cards.md#L394)，不能作为今天全包的挂项数量。下一步按目标实现逐条检查卡8，再记录结果与验证范围；卡片正文不再维护动态任务状态。
+
 需要核对先前原文时使用 Git 历史；它不取代现行规则与新的实证。
