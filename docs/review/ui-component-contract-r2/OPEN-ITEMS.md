@@ -1,6 +1,6 @@
 # OPEN-ITEMS — 审之前先读这个
 
-**用途**：免得把**已经裁过的**当缺口重报（旧容器里这占了大量返工）。**四节：已关／待裁／登记在册／看着像缺陷但其实是有意的。**
+**用途**：免得把**已经裁过的**当缺口重报（旧容器里这占了大量返工）。**六节：已关 ／ 待 Owner 裁 ／ 登记在册 ／ 有意如此 ／ 细粒度结项表 ／ 材料侧已报出但不要你判的。**
 
 ---
 
@@ -35,13 +35,17 @@
 
 ---
 
-## 2. 仍开 —— **待 Owner 裁决**（3 项，**不要替我们裁**，但欢迎就取舍给意见）
+## 2. 仍开 —— **待 Owner 裁决**（**5 项**，**不要替我们裁**，但欢迎就取舍给意见）
+
+⚠️ 其中 **ADJ-04／ADJ-05 已裁**（读数已定，见 §5 的结项表）；下表保留它们是为了记录**当时两侧都说得通**的样子 —— **不要按旧的两侧各半来读现状**。
 
 | ID | 问题 | 两侧都说得通的读法 |
 |---|---|---|
 | **ADJ-01** | 同一契约下**两套实现**（一个 TypeScript 编辑器仓／一个 Python 原型仓带未跟踪的 `fcf_v1_0_3_4_0.schema.json`）—— **durable schema 的 canonical 实现是哪一侧？** | ① 以 TS 编辑器仓为唯一实现，Python 侧是另一条线；② 两侧都在做同一契约 ⇒ 须指定权威、另一侧改为投影/验证 |
 | **ADJ-02** | **Profile 缺席矩阵**：四个组件（水温/结构/觅食水层/时段）**统一**（缺席合法 ⇔ `Role = IGNORED`），还是 **时段特权**？ | ① 统一：缺席合法性只由 `Role` 决定；② 时段特权：只有时段有无条件「合法空态」措辞。**配套缺口：Policy Template 的 raw Role 默认值在任何 Current 页面上都没有** —— 没有它，「没人碰过的组件长期缺席」无判据 |
 | **ADJ-03** | **物种层 Role 的 op 语义**：唯一写明的宿主控件是**三值下拉**（`CORE/SECONDARY/IGNORED`），而 durable 侧是**两个 op**（`INHERIT` ≡ **无记录** / `SET` ＝ 钉住）。**`INHERIT` 用什么形表达？** 且**选中一个等于 Policy Template raw Role 的值 ⇒ 写 `SET`（钉住）还是留 `INHERIT`？** | 旁证：同类旋钮（数值项）**已裁**「**同值 SET 仍是显式 pin**」；Role 这一处**未裁** |
+| **ADJ-06** | **`sourceOverride` 的 `owner` 是哪一级粒度**：`FishEnvAffinityRef` **那一行**，还是 **（物种, 桶）**？并桶迁移窗口里一个（物种, 桶）映射 N 行 ⇒ 同一桶的多行能否带**不同** `sourceOverride`？ | ① 按行：与契约现文 `owner ＝ FishEnvAffinityRef` 字面一致；② 按（物种, 桶）：物化是 bucket-keyed，按行会让**结果静默取决于最后物化哪一行**。⚠️ **这一问咬住的不是新句，是契约里已有的那一行** |
+| **ADJ-07** | **Policy Template 的 raw Role 默认值 ＝ 什么？**（ADJ-02 判「统一」后，它是矩阵唯一的空缺） | ① `IGNORED`（只有它能让「缺席合法」在未配置时自洽；默认取 `CORE` 会让每个新物种一开就处在阻断态）；② 别的值。**实现侧 `gaps.md` 记的是 `IGNORED`，但权威页上核不到** |
 
 ---
 
@@ -61,3 +65,32 @@
 4. **卡侧只显示物种层**：桶层的三个操作只在 Policy 控制条里作选项。
 5. **Role 角标保留角色色**（不做成白场）：已裁——**角色色是「非常重要信息」**。
 6. **图上标「示意 / 空态」不是缺陷**：那是**不声称它存在**的记号；`类型名（示意）` 是占位。
+
+---
+
+## 5. **细粒度结项表**（状态**逐项**给，**不给整块的 `Persistence CLOSED`**）
+
+理由：本族出现过「一整块写着 CLOSED、而其中两个子项其实还开着」。⇒ **只有所有子项都 CLOSED，才允许说那一块 CLOSED。**
+
+| 子项 | 状态 | 依据 / 剩什么 |
+|---|---|---|
+| **Component Recipe Shape** | **CLOSED** | 读数已裁（§3.1 的四个组件字段**就是** Component Recipes：Source ＋ 逐字段 op）；逐字已交写入者 |
+| **Affinity Role Patch** | **CLOSED** | §3.4 逐字齐：`(row_key, component)`、op `CLEAR|SET`、`SET` 携 `role`、`INHERIT` ＝ 无记录 |
+| **Affinity Fail Env Coeff Patch** | **CLOSED** | §3.4 逐字齐：`row_key`、op `CLEAR|ADD|SET`、越界报错不 clamp |
+| **Species Policy Recipe** | **CLOSED（读数）** | §3.1 记录里逐字有 `policy_source_binding`；**但它的指称物（第五类 `TemplateKind`）在实现里不存在** ⇒ 那是**实现缺口**，不是形状未定 |
+| **Affinity Source Override** | **读数 CLOSED ／ owner 粒度 OPEN** | 读数已裁（**组件级独立绑定**，非 §3.3 逐项记录上的字段）；**owner 的粒度未裁**（`FishEnvAffinityRef` 行 vs（物种, 桶）） |
+| **Profile Presence** | **矩阵 CLOSED ／ 默认值 OPEN** | 矩阵已裁（**统一**：缺席合法性只由 `Role` 决定，时段不特权）；**Policy Template 的 raw Role 默认值未定** |
+| **Species Role UI** | **OPEN** | `INHERIT` 的**可操作形**未裁（不能只靠一个三值下拉承载两个 op） |
+| **Follow / Pin 语义** | **OPEN** | 「跟随物种」作为 Source picker 选项，与「任何显式 `sourceOverride` 都是 pin（同源也是）」**相抵** —— 无处规定它必须**不写记录** |
+| **Source Transaction** | **OPEN** | 同一动作两条耐久规则相抵：§6.3 把「Source 选定」列为**短 debounce 后原子落盘**；§3.10 把高影响 Source 变更列为 **prepare → Preview → 确认 → 原子提交** |
+| **TimePeriod Transaction** | **OPEN** | 三处未定：预设的**五个 `SET` 落到哪一层**；**预览要显示什么**；`预设` 一词在本族有**四个不同指称物**（时段填表预设 ≠ Species Preset ≠ 档位 preset ≠ 动作按钮） |
+
+**⇒ 所以现在不能说「Persistence CLOSED」** —— 上表里 `Affinity Source Override` 的 owner 粒度、`Profile Presence` 的默认值、以及四项 transaction/UI 仍未闭。**这一块只在全部子项 CLOSED 之后才算 CLOSED。**
+
+## 6. 三处我（材料侧）报出去的、**不要求你判**的
+
+- **`§3.7` 的展开算法少一支**：它只分「有数值覆盖 → 取覆盖值」／「否则 → 取底板值」，**没有「底板该组件为空」那一支**，而契约别处明确承认那个状态存在。
+- **链接图指向副本而非 owner**：《主开发需求》§3.0 把作者分层诸事实链到《编辑器与 Resolve》§11 与《Editor → Persistence》，而它们的 canonical owner 是《编辑器持久层契约》§3.3。
+- **超过 60 处跨页重复定义**：已盘出（按页计数最高的是《编辑器与 Resolve》与《编辑器界面》），**其中至少三组明确不许合并**（物种 `INHERIT` vs 桶层 `absent`；物种层 Role 默认 vs `AffinityRolePatch`；「同值」vs「同意图」）。清理按「已裁动作」执行，**不做语义等价判断**。
+
+---
