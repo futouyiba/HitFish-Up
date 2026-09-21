@@ -118,13 +118,18 @@
 
 | 文件 | node | 像素／字节／作者登记比例 | SHA256 | 版本与可证明范围 |
 |---|---|---|---|---|
-| [0.3.4.0-B-editor-structure-108-311.png](img/0.3.4.0-B-editor-structure-108-311.png) | `108:311` | 1680×1220／182906／1× | `3221057b4b0a12f04e13b15e372d66ded643bbdfa57cee3d387ca755953b472f` | 整帧：`55bb1b5…` 重导，时段两处来源均为“未选”，摘要“未配（空态）”；Role badge 可见。本批亲看，仅证明所拍画面。 |
+| [0.3.4.0-B-editor-structure-108-311.png](img/0.3.4.0-B-editor-structure-108-311.png) | `108:311` | 1680×1220／182906／1× | `3221057b4b0a12f04e13b15e372d66ded643bbdfa57cee3d387ca755953b472f` | 整帧：`ef2a0c0c…` 重导，时段两处来源均为“未选”，摘要“未配（空态）”；Role badge 可见。本批亲看，仅证明所拍画面。 |
 | [0.3.4.0-B-card2-state10-230-673.png](img/0.3.4.0-B-card2-state10-230-673.png) | `230:673` | 890×150／24410／1× | `96aac32ea7ccbad882697b14a7be54e0b222bdd9a250535d6770b266e9c3ae58` | 态10 投影图，后续补图未改；不承担 Species Role 记录态对照。 |
 | [0.3.4.0-B-policy-176-283.png](img/0.3.4.0-B-policy-176-283.png) | `176:283` | 820×92／13485／1× | `39bff36334e63e93cb70244e6be42b6d18e65e339789db314229bcca8050312c` | Policy 母件图，后续补图未改；不是作者面控制条。 |
-| [0.3.4.0-B-policy-block-108-364.png](img/0.3.4.0-B-policy-block-108-364.png) | `108:364` | 854×122／22574／1× | `e174d1e798ab724746d7d4888ba72459bc75a1095e1b4538aa6c8c2e76985cac` | 局部 SET 图，`e8d5c647…` 重导为 1×，可见 Role badge；替代 21871 字节旧画面及 51787 字节的 2×中间版本。 |
+| [0.3.4.0-B-policy-block-108-364.png](img/0.3.4.0-B-policy-block-108-364.png) | `108:364` | 854×122／22574／1× | `e174d1e798ab724746d7d4888ba72459bc75a1095e1b4538aa6c8c2e76985cac` | 局部 SET 图，`386ad383…` 重导为 1×，可见 Role badge；替代 21871 字节旧画面及 51787 字节的 2×中间版本。 |
 | [0.3.4.0-B-policy-block-108-364-INHERIT.png](img/0.3.4.0-B-policy-block-108-364-INHERIT.png) | `108:364` | 854×122／21871／1× | `b1c0d2a55f89bd0aa27fd3143724bfb0da1349193d01f04b1b7130abd6be9dc1` | 局部 INHERIT 图，#17 @ `8d4523c…` 换为 1×；无 Role badge、整排收拢，无预留槽位。作者登记与 SET 同为 REST／scale=1；同管线同参数不等于同轮导出，不能单凭图证明 durable 读写。 |
 
 **旧版边界**：2135×305／66070 字节／2.5×的 INHERIT 图（SHA256 `afe41f54260139a1f5e8bedd0a6767dbe5d56c369d40a9fa649945699175ff3e`）仅是 [#7 固定历史资产](https://github.com/futouyiba/HitFish-Up/blob/ca17a2306b3c567e6fe7bc2eedcc6ed43ed3a2e5/docs/review/ui-component-contract-r2/img/0.3.4.0-B-policy-block-108-364-INHERIT.png)，不属于上表当前图片。
+
+★ **锚的形态说明（引本包 SHA 之前先读这条）**：本包的锚有两类，**不要互换** ——
+- **落地形**：`ef2a0c0c…`（整帧重导）／`386ad383…`（SET 局部换 1×）—— 是那些提交在 `main` 上的形状，可直接解析。
+- **固定版本形**：`1409a13…`／`ca17a230…`／`8d4523c…`／`1edef11e…`／`842f1302…` —— **故意**引「**被审的那个快照**」，它们**不在 main 上**（rebase-merge 之前的 PR head），靠**各自那一条 blob URL** 解析；**不要把它们「修」成 main 上的形状** —— 那会把「哪个快照被审过」这件事改掉。
+
 
 **1× 图的对照范围**：当前 INHERIT 与 `1409a13fde46dcb8d10bae039c26f6a0090bf497` 的旧局部 `0.3.4.0-B-policy-block-108-364.png` 逐字节相同，本批已亲核。新资产的 INHERIT 身份按 #17 的交付记录登记，不能反过来把原先未经记录态标定的旧图称为当时已经交付的 INHERIT 证据。[#17 独立 REVIEW](https://github.com/futouyiba/HitFish-Up/pull/17#issuecomment-5758641670) 亲核当前两张局部图 RGB 差异为 6217 像素、bbox `(201,107,832,121)`；这一证据只覆盖两张局部图的像素范围，不证明整份 Figma 的节点、annotation、隐藏内容或持久化行为。
 

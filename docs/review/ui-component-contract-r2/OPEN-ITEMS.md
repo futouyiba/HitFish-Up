@@ -24,7 +24,7 @@
 <a id="source-sync"></a>
 ### `CXR7-SOURCE-SYNC-01`：CLOSED（来源状态投影）
 
-旧审查在 `1409a13…` 指出顶部时段来源“未选”、卡内 `period_Largemouth_Bass` 与“未配（空态）”并存。作者提交 `55bb1b5…` 将卡内来源改为“未选”并重导；新整帧两入口均为“未选”，摘要“未配（空态）”。**关闭依据**：[#7 REVIEW](https://github.com/futouyiba/HitFish-Up/pull/7#issuecomment-5758470596) @ `ca17a2306b3c567e6fe7bc2eedcc6ed43ed3a2e5` 亲核 live Figma、随包图与 RGB 像素差，确认该项关闭。本批只亲看图片、登记该裁决，未重测实时交互。产品规则仍见[汇编 §7](component-contract-consolidated.md#7-组件卡--焦点编辑栏)及[画布摘要 §七](figma-current.md#source-entry-evidence)。
+旧审查在 `1409a13…` 指出顶部时段来源“未选”、卡内 `period_Largemouth_Bass` 与“未配（空态）”并存。作者提交 `ef2a0c0c…` 将卡内来源改为“未选”并重导；新整帧两入口均为“未选”，摘要“未配（空态）”。**关闭依据**：[#7 REVIEW](https://github.com/futouyiba/HitFish-Up/pull/7#issuecomment-5758470596) @ `ca17a2306b3c567e6fe7bc2eedcc6ed43ed3a2e5` 亲核 live Figma、随包图与 RGB 像素差，确认该项关闭。本批只亲看图片、登记该裁决，未重测实时交互。产品规则仍见[汇编 §7](component-contract-consolidated.md#7-组件卡--焦点编辑栏)及[画布摘要 §七](figma-current.md#source-entry-evidence)。
 
 <a id="packet-consistency"></a>
 ### 包内自洽／物证卫生
