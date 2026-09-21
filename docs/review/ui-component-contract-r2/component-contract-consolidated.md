@@ -193,7 +193,7 @@
 - 占比 / 比例 与 分群逻辑两处只以禁用占位行呈现（字段位在、控件不在），不提供编辑控件；不得据此宣称本版已实现 Mode Share / Routing。（《编辑器界面》§5、§1.2）
 - 桶不是真正的 Engagement Mode；Runtime 无 EngagementMode identity，不得据 UI 名称另建 durable 的 Engagement Mode 身份 / 注册表 / 模式级 Concrete 来源。（《编辑器界面》§5；《编辑器与 Resolve》§11.1；记录页 §172 二 KEEP）
   - ⚠️ ★ **2026-09-21 Owner 收口为 `C_SPLIT_REGISTERS`（取代本节先前那条「owner 的 canonical 名是「中鱼习性模式」」的读法）**：**要消灭的是「owner」这个同时指「业务语义归属」与「物理 durable identity」的模糊中间词。**
-    ⇒ **业务语义概念** ＝ `Engagement Mode`／中鱼习性模式（**Simplified V0 的正式业务概念**，**B P0 不实现 Mode Share / Routing**）；**物理 durable key ＝ `FishEnvAffinityRef`**；`FishEngagementModeCompat` 是**对 Affinity 的 mode-like authoring projection ／ 兼容壳**；**Runtime / production 无独立 `EngagementMode` identity。**
+    ⇒ **业务语义概念** ＝ `Engagement Mode`／中鱼习性模式（**Simplified Production V0 的正式业务概念**，**B P0 不实现 Mode Share / Routing**）；**物理 durable key ＝ `FishEnvAffinityRef`**；`FishEngagementModeCompat` 是**对 Affinity 的 mode-like authoring projection ／ 兼容壳**；**Runtime / production 无独立 `EngagementMode` identity。**
     ⇒ ★ **上面那条禁令（不得据 UI 名称另建身份 / 第二套注册表 / 模式级 Concrete 来源）依然成立** —— 它禁的是**据 UI 名称造身份**，与本次收口**同向**。
     ⇒ ★ **`sourceOverride` 一律写作 `(fishEnvAffinityRef, component)`**（**若 schema 字段名为 `owner_ref`，则 `owner_ref := FishEnvAffinityRef`**）—— **不要留一个抽象的 `owner` 让实现者猜是哪套 identity。**（记录页裁 **ADJ-08 ＝ `C_SPLIT_REGISTERS`**）
   - ⚠️ ★ **页侧本轮已收口（2026-09-21）**：**CT §1.1 ／ CT §3.3 ／ RS §11.1 三处已按 `C_SPLIT_REGISTERS` 改写**；**《编辑器界面》§5 不动** —— 它写的是 **Runtime 域**那句（「Runtime 无 `EngagementMode` identity」／「durable owner ＝ `FishEnvAffinityRef`」），**与本次收口相容**；RS §7 ／ IA §8 同理。⇒ **不再有「按滞后页照录」这件事。**
