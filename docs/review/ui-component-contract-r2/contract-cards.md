@@ -190,6 +190,8 @@ Must not:
 
 ### A①-卡5｜Provenance Display（来源与过程展示）
 
+水温导入的推导、缺值与目标物种规则统一见[卡8](#template-list)；本卡只区分字段的来源性质，不复制推导公式。
+
 ```
 Component: Provenance Display｜provenance 展示（编辑器侧）
 Reads:
@@ -200,10 +202,10 @@ Durable mutation:
   - 无（纯展示；provenance 数据随 op 记录/Concrete Source 携带）
 Must show:
   - 「这个值为什么是这样」：来源→操作→当前值 的链
-  - 周期表导入的字段级 provenance 差异（前四项=生态数据；temp_threshold/falloff_shape=游戏参数）
+  - 周期表导入的字段级 provenance 分别显示：favMin / favMax 的输入来源及口径、acceptMin / acceptMax 的设计推导来源（规则按卡前卡8）、temp_threshold / falloff_shape 的游戏参数来源；不把来源输入笼统标成实测。
 Must not:
   - provenance 不进 Resolver/Runtime payload；不塞进 production name；不作为关联/复用判据
-依据: 《编辑器持久层契约》§3.3（周期表重新导入更新 Concrete Source 本身、不落 tuning operation；研究事实修正走更新 Source、游戏调参保持 Source 写 Species operation；SPECIES_CONCRETE identity＝(speciesId, componentType)）；《编辑器与 Resolve》§3（Resolve Preview provenance 区）＋§11.3（Template/档位/delta 不进 Runtime）；《编辑器界面》§1.3（别名与微调 provenance 留 editor-state）；fav/accept 取值口径＝记录页 §103
+依据: 《编辑器持久层契约》§3.3（周期表重新导入更新 Concrete Source 本身、不落 tuning operation；研究事实修正走更新 Source、游戏调参保持 Source 写 Species operation；SPECIES_CONCRETE identity＝(speciesId, componentType)）；《编辑器与 Resolve》§3（Resolve Preview provenance 区）＋§11.3（Template/档位/delta 不进 Runtime）；《编辑器界面》§1.3（别名与微调 provenance 留 editor-state）；fav/accept 的来源性质与推导规则见卡前卡8入口
 ```
 
 ### A①-卡6｜Validation·Diagnostic（校验诊断；＝C11 抽屉校验节）
@@ -327,14 +329,15 @@ Must not:
 
 ### A②-卡10｜Edit Template Value（模板完整值编辑；高影响）
 
-**机制入口**：[模板完整值与影响统计 §14](component-contract-consolidated.md#template-reference-sets)、[确认及改值边界](component-contract-consolidated.md#template-replace-boundary)、[水温曲线 §12](component-contract-consolidated.md#temperature-behavior)；本卡保留模板编辑流程及显示。
+**机制入口**：[模板完整值与影响统计 §14](component-contract-consolidated.md#template-reference-sets)、[确认及改值边界](component-contract-consolidated.md#template-replace-boundary)、[水温曲线 §12](component-contract-consolidated.md#temperature-behavior)、[Publish边界 §15](component-contract-consolidated.md#cross-layer-guards)与[卡7](#autosave-status)；本卡保留模板编辑流程及显示。
 
 ```
 Component: Edit Template Complete Value｜模板改值（共享模板完整值编辑）
 Reads:
   - 模板完整值 completeValue；EffectiveConsumerSet（改值的真正影响对象）
 Actions:
-  - 编辑草稿 → Impact Preview（before / after Resolve）→ 显式确认 → 原子提交 → re-resolve → 物化受影响 production projections
+  - 编辑草稿 → Impact Preview（before / after Resolve）→ 显式确认 → 原子 durable 提交 → re-resolve 并刷新受影响投影的预览
+  - 生产物化／写回由独立的显式 Publish 按卡前所引汇编 §15 与卡7触发，不由本次模板保存确认自动执行。
   - ⚠️ **本卡不出现 `ADD`／`SET`／`CLEAR` 这类 operation 语义** —— 模板是**完整值资产**，**operation 只存在于物种 Recipe 与桶 patch 上**（《编辑器持久层契约》§3.3／§3.7）。
   ⇒ 具体记录规则按汇编 §14；本卡不把模板值编辑呈现为字段 operation 编辑。
   - 水温曲线按汇编 §12 只读展示；作者仍通过参数项编辑模板完整值，不提供曲线拖拽／Handle。
@@ -376,10 +379,12 @@ Acceptance:
 
 **机制入口**：[汇编 §14 两引用集与统计上下文](component-contract-consolidated.md#template-reference-sets)；原 CXR-03 修正出处在该节保留，本卡不另维护一份定义。
 
+原“四组件分组／约4.5行”为[固定历史实现观察](https://github.com/futouyiba/HitFish-Up/blob/042f3a9df2ee7521e8ef32d77b6d78407e10946c/docs/review/ui-component-contract-r2/contract-cards.md#L391)，不限定本卡目标范围；本批未重跑实现。
+
 ```
 Component: Reference List｜「这一行还被谁用」引用者列表
 Reads:
-  - DirectReferenceSet 与 EffectiveConsumerSet；按四组件分组
+  - DirectReferenceSet 与 EffectiveConsumerSet；覆盖当前五类 TemplateKind，按模板类别与引用关系组织，集合及 Policy 引用边界按卡前汇编 §14；不扩展 ComponentType 或 Runtime 四条件槽。
 Actions:
   - 只读浏览（可滚动、不截断）；Replace 面板（卡11）另列 Direct 集
 Durable mutation:
@@ -389,9 +394,10 @@ Must show:
   - 直接引用数／Effective consumer 数并列；共 N 条鱼／M 个鱼种
 Acceptance:
   - 一个直接绑定有多个继承消费者时，两集两数分别展示；没有候选变更的列表不显示最终结果变化数／新增 Error·Warning，也不制造候选机制。
+  - Policy 模板被 Species／SpeciesPreset 直接绑定时，可完整列出其直接引用与 Effective consumers；按汇编 §14 区分两集，不虚构 Affinity policySourceOverride。
 Must not:
   - 不截断（只做滚动）；不把物理行共享展示成 Authoring 继承意图（碰巧同值 ≠ 有意共享）
-依据: 《编辑器持久层契约》v16 §3.10（两集）、§3.7（lineage复用）；《编辑器界面》v20 §7（列表滚动不截断）。其余沿既有取证：界面 §5 不做三档分级；原实现形态为可滚动约4.5行、按四组件分组，本批未重跑实现。
+依据: 《编辑器持久层契约》v16 §3.10（两集）、§3.7（lineage复用）；《编辑器界面》v20 §7（列表滚动不截断）。其余沿既有取证：界面 §5 不做三档分级；原实现形态的版本边界见卡前固定链接。
 ```
 
 ## Part 3 收口提示
