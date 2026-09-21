@@ -1,6 +1,8 @@
 # 0.3.4.0-B 开发 brief —— 可开工面 / 阻塞面
 
-**原 brief 对齐时点**：2026-09-21 第二轮，来源 [PR #10 固定版本](https://github.com/futouyiba/HitFish-Up/blob/1edef11e8a9353ae6e66855b2e83c3f7a3725770/docs/implementation-brief-0.3.4.0-B.md)。本次只重新核对 CLEAR 及其必要边界：持久层 v16、Resolve v12、界面 v18（均标 `Last Updated 2026-09-21 14:34 +08:00`），以及裁决记录 §265／§312／§316；其余【画布】、【待核】、【裁定·未落页】保留原取证时点与状态，不表示本次重验。
+**原 brief 对齐时点**：2026-09-21 第二轮，来源 [PR #10 固定版本](https://github.com/futouyiba/HitFish-Up/blob/1edef11e8a9353ae6e66855b2e83c3f7a3725770/docs/implementation-brief-0.3.4.0-B.md)。PR #14 只重新核对 CLEAR 及其必要边界：持久层 v16、Resolve v12、界面 v18（均标 `Last Updated 2026-09-21 14:34 +08:00`），以及裁决记录 §265／§312／§316；其余【画布】、【待核】、【裁定·未落页】都是该固定版本的取证标签，不是持续更新的进展报告。本批仅整理状态引用，未重验产品规则。
+
+**审查状态入口**：[OPEN-ITEMS 当前审查项](review/ui-component-contract-r2/OPEN-ITEMS.md#active-review-items)是唯一问题台账；Species Role UI 查[对应条目](review/ui-component-contract-r2/OPEN-ITEMS.md#species-role-ui)，实际画面查[图像登记](review/ui-component-contract-r2/figma-current.md#image-evidence)。本 brief 不维护已落／未落／待复审摘要；产品依据、特定版本的图像与 exact-head 审查结论分别判读。
 
 **★ 基准指针**（本 brief 是**辅助件**，不是权威）：
 
@@ -22,7 +24,7 @@
 
 ---
 
-## 一、可以开工 —— 持久化 schema 已闭
+## 一、持久化实现依据（原取证时点）
 
 ### 1. 三个 durable 记录：`Species Base Record` / 生产行台账 / 两条 patch 轨道 【契约】
 
@@ -97,7 +99,7 @@
 
 ### 10. 当日新裁（`ED-15` / `ED-13` / `ED-20`，含 `§117` supersede）【裁定·未落页】
 
-> **落页状态**：这三条**已裁、可直接实现**；**尚未落进 Current 页**。**落页后以页为准。**
+> **固定版本的取证说明**：这三条在原 brief 中标为【裁定·未落页】；本节保留当时的裁定内容，不声称今天仍未落页。落码前回读 Current。
 
 - **`ED-15` 物种级粒度**：**`Species Base` 是主要 Authoring Truth；`young` / `mature` 只是稀疏 exception scope** —— **绝大多数相同的鱼根本不产生 bucket patch**。正确结构是 `Species Base` ＋ 逐桶的**稀疏** patch（**大部分为空**），**不是每桶一份完整 Profile**。
   - **不加钓场维**（legacy 数据按钓场重复多，**推不出「鱼习性该有钓场维度」**）。
@@ -116,7 +118,7 @@
 
 ## 二、**别按我说的做** —— 我还没逐字核 / 页上未展开的
 
-1. **组件值的「内部形态」—— ★ 本条已由 Current 回答，不再是【待核】（2026-09-21 更正）**：§3.1 逐字「**组件值即该组件的 Component Recipe** —— 一个组件的「组件值」由两部分组成：**该组件的 Source 绑定**（两类 Source，§3.3）与**该组件的逐字段 operation**」，并明说 §1.1 的「Component Recipes（四个组件的 Source ＋ field operations）」「**指的就是上面这四个字段本身，不是另有一条更小的记录**」。
+1. **组件值的「内部形态」（原 brief 的 2026-09-21 取证）**：§3.1 逐字「**组件值即该组件的 Component Recipe** —— 一个组件的「组件值」由两部分组成：**该组件的 Source 绑定**（两类 Source，§3.3）与**该组件的逐字段 operation**」，并明说 §1.1 的「Component Recipes（四个组件的 Source ＋ field operations）」「**指的就是上面这四个字段本身，不是另有一条更小的记录**」。
    ⇒ **仍未定的只有「序列化格式」**，而那**归实现线**（§5）：格式不影响字段／类型／必填／键，只看三条判据（逐条可 diff / 可人工比对与 merge / 结构由 schema 生成 ＋ parity 测试）与一条禁令 —— **不得把嵌套结构塞进单个单元格或单个标量字段**。
 2. **`AggregationRole` 的三个值与次要聚合的现行数值**：**【待核】**，按现行页复核。
 3. **`fail_env_coeff` 的 GAP-013/014 现状**：**【待核】**（打开条件我记的是「列＋值都就位」；空列会把 264 行判非法）。

@@ -1,14 +1,43 @@
 # OPEN-ITEMS — 审之前先读这个
 
-**用途**：免得把**已经裁过的**当缺口重报（旧容器里这占了大量返工）。**六节：已关 ／ 待 Owner 裁 ／ 登记在册 ／ 有意如此 ／ 细粒度结项表 ／ 材料侧已报出但不要你判的。**
+**用途**：本审阅包唯一的可变问题台账：记录处置、剩余工作与关闭依据。README／开发 brief 只导航；[图像登记](figma-current.md#image-evidence)负责画面事实、版本与指纹。**产品真相来自 Notion Current／Owner 裁定；图像只能证明所拍状态；审查关闭必须引用对应 exact head 的独立 REVIEW。** 本台账不新增产品权威，也不以“已裁／已投影”替代复审结论。
 
----
+<a id="active-review-items"></a>
+## 1. 当前审查项与证据
 
-## 1. 已裁 / 已关 —— **请不要重报**
+本表按 [#7 最新有效 REVIEW](https://github.com/futouyiba/HitFish-Up/pull/7#issuecomment-5758470596)（**`ca17a2306b3c567e6fe7bc2eedcc6ed43ed3a2e5`，`APPROVE`**）登记：该 head 的设计／契约投影审查通过，ADJ-03 与 CXR7-SOURCE-SYNC-01 两项关闭。此前 `1409a13…` 的 `REQUEST_CHANGES` 由该轮完整增量复审更新。**此批准不等于下游实现通过，也不自动批准本分支的状态去重新改动。**
 
-上游那轮复审共提出 **11 个语义簇**。**现在没有一个仍以「缺陷」形态开着**，但**两类状态要分清**：
+<a id="species-role-ui"></a>
+### Species Role UI：操作入口与记录态分别验收
 
-### (a) 复审已明确关闭（**8 簇**，每一轮都确认过）
+| 项 | 处置及可核证据 | 剩余工作／关闭依据 |
+|---|---|---|
+| `CXR-ROLE-UI-01` 操作入口 | 作者的 `[04]` 记录描述物种侧两枚独立操作 chip；随包整帧也能看到。它回答“能否选择 operation”，不单独证明记录态。 | [#7 REVIEW](https://github.com/futouyiba/HitFish-Up/pull/7#issuecomment-5757267260) @ `7438477536aa695955b966de1040b11aa8a11ab1` 已确认 `[04]` 解决操作入口问题；保留该确认，不重开入口修复，也不能借它关闭下一行的记录态问题。 |
+| **`ADJ-03`：CLOSED（设计形态／语义映射／随包证据）** | SET 与 INHERIT 局部图水温 Role 同为 CORE，但前者有“Role 已钉住”、后者无；新版 SET 局部与整帧一致。版本／指纹见[图像登记](figma-current.md#image-evidence)。 | 关闭依据：[#7 REVIEW](https://github.com/futouyiba/HitFish-Up/pull/7#issuecomment-5758470596) @ `ca17a2306b3c567e6fe7bc2eedcc6ed43ed3a2e5`。物种层持久化读写往返仍未实测，属实现侧验证，不作为重新挂开设计包的额外门禁。 |
+
+**ADJ-03 的依据与射程**：
+
+- **产品裁定**沿用 §2 ADJ-03 的出处：由 Species Role durable op record 是否存在派生状态位；无记录不显示、有记录（包括同 raw 值 SET）显示“Role 已钉住”，不增加第二份 durable UI state。卡2 是记录意图的执行投影，**不把裁定原句冒称卡2 的逐字引文**。
+- **实现旁证**仅转述[前轮独立 REVIEW](https://github.com/futouyiba/HitFish-Up/pull/7#issuecomment-5757933398)对实现仓 `84e2221` 的亲读：物种 `policyRecipe` 与行级 `rules` 是两条 lane，`isRoleExpressed` 检查物种角色键存在性；`durableRolesOf` 输出角色值，测试里的 clear／absent 同值对照针对**行级 patch**。这些不能独自替代 Species INHERIT 与同 raw 值 SET 的记录态／显示证据。作者登记 `species[].policyRecipe.roles` 的读写往返尚未实测；本批及该轮 reviewer 均未运行下游实现。实现验证另归实现侧，不把实现仓整体完成设为本设计投影的前置。
+- **图片证据**只按实际文件判读；上述 #7 REVIEW 已亲核两态图片与语义映射，但未将其当成实现运行结果。后续 INHERIT 1×替换由 [#17 REVIEW](https://github.com/futouyiba/HitFish-Up/pull/17#issuecomment-5758641670) @ `8d4523c0372c12cbf1aad14ec652159c2782e5ad` 独立批准，现已进入 main；实际版本与指纹只在图像登记维护。本次与新 main 的兼容提交按 Owner 于 2026-09-21 的明确决定跳过增量复审并直接合并；这不构成独立审核通过，也不继承 #17 或本分支旧 head 的批准。后续新增或替换 Role 图只更新[图像登记](figma-current.md#image-evidence)及本条处置／剩余工作；README 与 brief 不复制状态。
+
+<a id="source-sync"></a>
+### `CXR7-SOURCE-SYNC-01`：CLOSED（来源状态投影）
+
+旧审查在 `1409a13…` 指出顶部时段来源“未选”、卡内 `period_Largemouth_Bass` 与“未配（空态）”并存。作者提交 `55bb1b5…` 将卡内来源改为“未选”并重导；新整帧两入口均为“未选”，摘要“未配（空态）”。**关闭依据**：[#7 REVIEW](https://github.com/futouyiba/HitFish-Up/pull/7#issuecomment-5758470596) @ `ca17a2306b3c567e6fe7bc2eedcc6ed43ed3a2e5` 亲核 live Figma、随包图与 RGB 像素差，确认该项关闭。本批只亲看图片、登记该裁决，未重测实时交互。产品规则仍见[汇编 §7](component-contract-consolidated.md#7-组件卡--焦点编辑栏)及[画布摘要 §七](figma-current.md#source-entry-evidence)。
+
+<a id="packet-consistency"></a>
+### 包内自洽／物证卫生
+
+上述 #7 REVIEW 已按设计／契约投影范围批准 `ca17a230…`；README 的旧“未落地／四张”摘要被明确列为**非阻塞的状态去重余项**，由本批处理。**本批处置**：删除重复摘要，保留真实图证据及实现未核边界；本分支新 head 仍须独立复审，不继承 #7 的 APPROVE。后续记录关闭依据时须写受审完整 SHA 与 REVIEW 链接。
+
+[PR #14 的 APPROVE](https://github.com/futouyiba/HitFish-Up/pull/14#issuecomment-5758212127) 仅适用 `842f13029b1adb03eab6cfe52f5cfda2b8250702` 的 CLEAR 引用净改动，不关闭 #7 全包或 #10 原 head 的 findings。
+
+### 历史语义处置（固定来源）
+
+以下八簇是 [#7 固定版本的原登记](https://github.com/futouyiba/HitFish-Up/blob/1409a13fde46dcb8d10bae039c26f6a0090bf497/docs/review/ui-component-contract-r2/OPEN-ITEMS.md)，保留其语义与处置背景；未补造当时的独立 REVIEW 链接，不能把这份历史登记扩写成本分支的批准。
+
+#### 原登记的八个语义簇
 
 | 簇 | 内容 |
 |---|---|
@@ -21,21 +50,11 @@
 | 组件命名 / 稳定标识纪律 | 16 个组件名的命名与页面出处 |
 | 评审包范围与忠实性 | 两份输入的 reviewable snapshot |
 
-（**另有三簇** —— **Role**、**包内自洽**、**包的物证卫生** —— 见 (b)。⇒ 8 ＋ 3 ＝ **11**，与本节开头的「11 个语义簇」对得上。）
-
-### (b) 处置已在树上，但**本 head 上还没有复审裁决**（**作者方执行，不等于复审已关**）
-
-| 簇 | 处置 | 状态 |
-|---|---|---|
-| **Role：物种默认 vs 行覆盖、op 词表、durable 形状、其投影** | 图上把两个作用域分成两组＋两条分隔线；物种组补上它自己的两个可用操作 | **执行完毕，待复审** |
-| **包内自洽**（执行状态 / 未决台账 / 修订残留） | 卡 2 依既有裁定「落到页后即恢复」**恢复为已冻结**；批次①读作七张 | **执行完毕，待复审** |
-| **包的物证卫生**（图 / 字节 / 现状摘要漂移） | 现状摘要四处陈旧已 sweep；新增一节把控制条现状作为唯一现行表述 | **执行完毕，待复审** |
-
-⇒ **请把这三行当「待你确认」而不是「已解决」**：它们**在树上**，但**没有人在本 head 上判过**。
-
 ---
 
-## 2. Owner 裁决状态 —— **十三项 Owner adjudication 已裁；`ADJ-03` 的形已落地（画布 ＋ readback，见 §5）**
+## 2. Owner 裁决索引（产品依据，不代表审查关闭）
+
+本节保留固定来源中的十三项裁决及投影定位。`PROJECTED IN` 是出处检查，不能证明图片齐全、实现完成或独立复审通过；Species Role UI 的处置统一见[当前审查项](#species-role-ui)。
 
 ★ **留痕（一度 X ＋ 收口 Y）**：**一度**「卡8 的 Temperature Concrete Import 缺值策略**三选一未裁** ⇒ 该子情形按**未冻结**读」（登记来源：独立复审在 `fa96900` 上报出「卡8 自称未冻结，而 README／OPEN-ITEMS 说『零项待裁』」这处不一致）→ **收口（Owner 2026-09-21 裁）**：**取「按既定口径推导」，三选一已关闭** ⇒ **该子情形不再是未冻结**；规则逐字见 `contract-cards.md` 卡8（含「**不得保留旧 `accept`**」与其理由）。
 
@@ -45,7 +64,7 @@
 |---|---|---|
 | **ADJ-01** | durable schema 的 canonical 实现 ＝ **TS 编辑器仓**（另一侧的原型不承担本契约） | —（**实现侧事实，本包不投影**） |
 | **ADJ-02** | Profile 缺席矩阵 ＝ **统一**：缺席合法性**只由 `Role` 决定**；**时段不特权** | `contract-cards.md` **`A①-卡2` Reads**；`component-contract-consolidated.md` **§11 ＋ §12** |
-| **ADJ-03** | 物种层 Role：`INHERIT` **需要一个与三值可区分的形**；**选中等于 raw Role 的值一律写 `SET`（钉住）** | `contract-cards.md` **`A①-卡2` Durable mutation**（同值 `SET` 仍留记录）；**「形」已落地 ⇒ 见 §5** |
+| **ADJ-03** | 物种层 Role：`INHERIT` **需要一个与三值可区分的形**；**选中等于 raw Role 的值一律写 `SET`（钉住）** | `contract-cards.md` **`A①-卡2` Durable mutation**（同值 `SET` 仍留记录）；[记录态证据与剩余工作](#species-role-ui) |
 | **ADJ-04** | §3.1 的四个组件字段 **就是** Component Recipes（Source ＋ 逐字段 op） | `contract-cards.md` **`RoleControl` Durable mutation**（`component recipes`） |
 | **ADJ-05** | `sourceOverride` ＝ **组件级独立 durable 绑定**（不是 §3.3 那张逐项记录上的字段） | `contract-cards.md` **`A①-卡1`／`RoleControl`**；`component-contract-consolidated.md` **§3** |
 | **ADJ-06** | owner 粒度 ＝ **（物种, 桶）** | `contract-cards.md` **`RoleControl`**；`component-contract-consolidated.md` **§9** |
@@ -67,7 +86,7 @@
 
 **十三项的裁决留痕**：ADJ-01～05 ＝ §374／§377；**ADJ-06／ADJ-07 ＝ §383**（ADJ-07 的后果一/二/三也在此节）；**ADJ-08 ＝ §385**；**ADJ-09 ＝ §392**；**ADJ-10 ＝ §393**（★ 该节把它写成「页内相抵」，**定性已作废**，收口见 `deltas`）；**ADJ-11 ＝ 已落 Current** —— 《编辑器持久层契约》**§3.7「展开的第三条臂（组件级）」** 逐字存在（页 Version **16** / `Last Updated 2026-09-21 14:34`），**该节是它的 canonical owner**（2026-09-21 回读）；**ADJ-12 ＝ 本包 `contract-cards.md` 的 `RoleControl`**；**ADJ-13 ＝ 本包 `component-contract-consolidated.md` §12**。★ **前十一项**的这些节是它们在**记录页**的**唯一可引用落点**；**ADJ-12／ADJ-13 的落点在本包（如上），记录页节号未在此登记** —— 本表的 ID 只是索引。
 
-## 3. 仍开 —— **登记在册的「未核 / 无页面出处」**（你可以给意见，但**不必**当缺口报）
+## 3. 其他登记项（保留原取证边界）
 
 - **无页面出处的 UI 细则**：卡上「本层操作数 / 诊断数 / profile presence / source health」四个展示项；结构编辑面的筛选；「组件卡不做 mini heatmap / 不展开完整字段 provenance / 不做操作历史时间线」三条负向。—— 页面上只列了摘要、模板选择器、Role 角标、继承/覆盖状态。
 - **两处口径不一致**：影响面数字「三项 vs 四项」（**四项那一侧有页面依据**）；「25 个 Structure slot」只在一处出现（**UI 不固化字段数**）。
@@ -86,9 +105,9 @@
 
 ---
 
-## 5. **细粒度结项表**（状态**逐项**给，**不给整块的 `Persistence CLOSED`**）
+## 5. 契约读数与能力裁定（沿用固定来源）
 
-理由：本族出现过「一整块写着 CLOSED、而其中两个子项其实还开着」。⇒ **只有所有子项都 CLOSED，才允许说那一块 CLOSED。**
+下表的 `CLOSED` 仅表示原登记的契约读数／能力裁定已回答，不代表实现、图证据或本分支审查已关。不得据此宣告整个 Persistence 完成。
 
 | 子项 | 状态 | 依据 / 剩什么 |
 |---|---|---|
@@ -98,25 +117,13 @@
 | **Species Policy Recipe** | **CLOSED（读数）** | §3.1 记录里逐字有 `policy_source_binding`；**但它的指称物（第五类 `TemplateKind`）在实现里不存在** ⇒ 那是**实现缺口**，不是形状未定 |
 | **Affinity Source Override** | **CLOSED** | 读数已裁（**组件级独立绑定**）；★ **两层必须分开**：**authoring 粒度 ＝（物种, 桶）**（ADJ-06）；**物理 durable key ＝ `FishEnvAffinityRef`**（ADJ-08 ＝ `C_SPLIT_REGISTERS`）；**`Engagement Mode` 只是业务概念、不是 durable identity**。 |
 | **Profile Presence** | **CLOSED** | 矩阵已裁（**统一**：缺席合法性只由 `Role` 决定，时段不特权）；**默认值已裁 ＝ `CORE`** |
-| **Species Role UI** | ★ **拆成两个「形」分开列**（治的是**根因**：此前一个「形」字并掉了三个所指）——**`CXR-ROLE-UI-01`（操作入口形）＝ 已落（画布 `[04]`，两枚 chip 照既有形制）—— 待复审**；**`ADJ-03`（记录态「与三值可区分的形」）＝ 已落地（画布 `308:661`）—— 待复审** | 留痕（**一度 X ＋ 收口 Y**）：**一度**「控件形态待设计」→（**误**）「形已落」→ **收口「形未设计，且两个「形」须分开列」**。★ **误判的机理**：`[04]` **拿「状态」换了「操作」** —— `figma-current.md:214` 逐字「物种侧原本只有 `物种层 · 默认（各行继承）` —— 一个**状态**格，**没有 op**」；落法把那格改成 `物种层`＋`仅使用来源`＋`设置为` ⇒ **操作进来、状态出去**。`CXR-ROLE-UI-01` 问「入口能不能表达 operation」⇒ `[04]` 答对了它；而 **`ADJ-03` 问「`INHERIT` 与三值可不可区分」⇒ `[04]` 不答，且它拿走的正是答它所需的那半截**（两枚 chip 在 `INHERIT` 与 `SET(CORE)` 下**渲染完全相同**，可用操作恒为 `{INHERIT, SET}` ⇒ **不承载记录态**）。★ **要补的形**：物种层 Role 的**记录态**在控制条内无处可读 —— 需要一个**标「记录」而不是标「值」**的状态位。★ **能力侧**已由 `ADJ-12` 收口（四组件 must have reachable Setup path，CLOSED）。 |
+| **Species Role UI** | [当前审查项](#species-role-ui) | 操作入口、记录态分别验收；此处不复制动态状态。 |
 | **Follow / Pin 语义** | **CLOSED** | ⚠️ **先前这里写「相抵」，已撤回**：回原页核完，**它是已定的、只是没落到 picker 那一处** —— §3.3 逐字「无 `sourceOverride` ＝ 跟随」＋ §3.5 表「覆盖→不跟随／恢复为底板→跟随」⇒ **跟随 ＝ 没有那条记录**，故「跟随物种」**＝ 删除** `sourceOverride`（**不写同源记录**）。落页已派 |
 | **Source Transaction** | **CLOSED** | 射程已裁（**ADJ-09 ＝ C_NARROW**）：**Source mutation 一律 staged**，Preview 按 **fan-out** 分 **Local / Propagated** 两档。⚠️ **先前这里写「两条耐久规则相抵」，已撤回** —— 实测是**两个正交判据**（「要不要 staged confirm」 vs 「属于哪一档」），不是一条轴的两端 |
 | **TimePeriod Transaction** | **CLOSED** | ★ **2026-09-21 三处都收了**（Owner 裁定；**其中预览那一条推翻了我先前的归类**）：**① 预设的五个 `SET` 落到哪一层** ⇒ **`target = 当前 active Recipe / Patch authoring owner`**（两个合法 durable target：Species context ⇒ Species TimePeriod Recipe；Affinity／bucket context ⇒ 当前 Affinity TimePeriod operationPatches）；**五个 `SET` 一个 atomic batch**；不切换 layer／不默认提升到 Species／**不创建第三个 preset layer**／不改 Source／不持久化 `presetId`／**不得跨两层拆写**。**② 预览边界** ⇒ ★ **`ADJ-09` 是 Source mutation 的事务规则，不得自动推导到 TimePeriod Preset**；**窄规则**：**若 target layer 没有将被覆盖的 local ops ⇒ 不要求 staged confirmation**（正常 semantic edit／autosave，**可展示结果但不强制确认页**）；**若会覆盖已有 local ops ⇒ batch preview**（五字段 before/after ＋ 明确哪些 local ops 被替换 ＋ 新增 Error·Warning）**＋ explicit confirm ＋ atomic commit**。**不做 full-library impact scan。** **③ `预设` 一词有四个指称物** ⇒ **terminology hygiene**（四者分别写、不合并），**不因此把本节整体挂开**。 |
 
-**⇒ 上表的状态**：**`Species Role UI` 拆成两个「形」**（见上表）—— **`CXR-ROLE-UI-01`（操作入口形）已落（画布 `[04]`）**；**`ADJ-03`（记录态「与三值可区分的形」）已落地（画布 `308:661`）**。**能力侧已由 ADJ-12 收口**（四组件 must have reachable Setup path，CLOSED）。
-★ **按本族规矩：`Persistence` 这一块仍只在全部子项 CLOSED 之后才说 CLOSED。** 两个「形」**都已落地** ⇒ 子项面上已无「待做」；但**「已落」仍待复审在本 head 上确认**，故**整块 CLOSED 的宣告放在复审之后**。
-
-### ★ `ADJ-03` 的**可核依据**：这枚标记如何区分 `INHERIT` 与同值 `SET`
-
-（复审要求「给出该标记如何区分 `INHERIT` 与同值 `SET` 的可核依据」；并指出**一个静态 `SET` 态不能代替所有状态及实现行为的验证**。以下四条各自可核，**不靠单帧静态画面**。）
-
-1. **语义来源**：该标记**由 Species Role 的 durable op record 是否存在派生** —— `record` 不存在 ⇒ 该位**不显示**；存在（含 `SET` 到与 `INHERIT` 取值相同的 raw Role）⇒ 显示 **`Role 已钉住`**。★ **不新增第二份 durable UI state**（Owner 已裁方案）。
-2. **契约依据**：`contract-cards.md` **`A①-卡2` Durable mutation** 逐字「**选中等于 raw Role 的值一律写 `SET`（钉住）**」⇒ **同值 `SET` 仍留记录** ⇒ 二者在**记录层**可分。
-3. **实现依据（已收窄 —— 原文写宽了）**：**干净基线（实现仓 `6ff7075`）** 的 `84e2221`（Role 的两条耐久 lane ＋ 读写往返）—— `rules` 顶层 lane 承载 `AffinityRolePatch`（键 `(row_key, component)`），`durableRolesOf` / `applyDurableRoles` 是**行级**读回路径；`role-durability.test.ts` 含往返断言与反例。★ **它把「同一取值、不同记录态」钉在持久层 —— 但只覆盖行级那一条 lane。**
-⚠️ **物种层不在该路径上**：物种默认 Role 落 `species[].policyRecipe`（`Species Policy Recipe`，`stateSchema.ts` 逐字），而 `durableRolesOf` **只读顶层 `rules`** ⇒ **本 head 上「物种层 `INHERIT` vs 同原值 `SET`」的可核实现路径尚未实测** —— 而 `ADJ-03` 的对象**恰是物种层那一位**。⇒ **闭合它的最小一步**：对 `species[].policyRecipe.roles` 做一次读写往返实测（**本条现在缺的就是这一步**）。
-4. **画面依据**：两态在控制条内**渲染不同** —— `INHERIT` ⇒ **该位缺席**；`SET(…)` ⇒ 显示 `Role 已钉住`。**两态各一张图、都已随包**：`SET` 态 ＝ `img/0.3.4.0-B-policy-block-108-364.png`；`INHERIT` 态 ＝ `img/0.3.4.0-B-policy-block-108-364-INHERIT.png`（**同管线同参数：`scale=1`／REST**）。★ **`INHERIT` 那张按「无预留槽位」渲** ⇒ **不得读成「两态位置一致」**（实测整排左收 66px）。
-
-## 6. 七处我（材料侧）报出去的、**不要求你判**的
+<a id="other-material-items"></a>
+## 6. 材料侧登记与固定处置背景
 
 - **`§3.7` 的展开算法少一支** ⇒ **★ 已闭（ADJ-11 ＝ A_NARROW）**：它原来只分「有数值覆盖 → 取覆盖值」／「否则 → 取底板值」，**没有「底板该组件为空」那一支**。⇒ **现在补上**：`底板为空` **且** `Effective Role ＝ IGNORED` ⇒ **不产生该组件的 production projection、不创建显式空 Profile、不因这一点阻断 Publish**（主行与该组件的 `Role = IGNORED` 仍正常写回；`ProductionRowLedger.refs[component]` 保持空）。**投影落在汇编 §11。**
   - ★ **保留这条作留痕**（它一度是一个缺口）；**不移除**。
@@ -132,10 +139,8 @@
   - ⚠️ **本包 §16 只作射程说明与标注**；页侧本轮 delta 的逐字见**仓外/本地工作件**（**不在本包**）。
 - ★ **顶栏动作名 `Reset` ＝ 一条命名裁定，不是「页内相抵」**（**已落页**，UI §9.1 ⇒「丢弃未保存的改动」，Version 12→13）：★ **《编辑器界面》§1.2 并没有禁 `Reset` 的句子** —— 回读实测（**2026-09-21 12:40 之后**）**该页全页 `Reset` = 0、`Override` = 0、「不向作者暴露」= 0、「工程词」= 0**；§1.2 给的是**操作 → 用户语言的映射**（`CLEAR` ⇒「仅使用当前来源」）。⇒ **「不能叫 `Reset`」的依据在裁定侧、不在页上**；**替换词＝「丢弃未保存的改动」**（判据见 `component-contract-consolidated.md` §4 的出处校正）。**不必再报。**
   - ⚠️ ★ **那个「全页 = 0」必须带时点锚**：它是 **12:40 那笔落页之后**的读数，**不是「页上从来没有过」** —— 该页 §9.1 在此之前**逐字就是** `` `Reset` / `Publish` / `导出` / `Bass 预设` ``，**画布上那个 `Reset` 不是凭空来的**。⇒ **状态断言不带时点/版本锚，会被读成「从来没存在过」。**（这条是画布侧提出、我采的。）
-- ★ **画布侧：bot 报的四处里，只有三处要改**（分拣依据＝`figma-current.md` §四 的「作者面 vs 投影面」分工，**读图前先读那条**）：
-  - **要改（作者面）**：**`108:315` 顶行** `模板` ⇒ `来源 / Source` ｜ **`108:687` 的 25 个 `LocalOp`** `INHERIT` ⇒ `仅使用来源` ｜ **Policy 控制条 `242:676`／`678`／`680`** 三枚**选项 chip** ⇒ `沿用物种操作`／`仅使用当前来源`／`设置为`（★ 取**概念层名**；`沿用物种调整`／`沿用物种设置为` 那两个具体串属**状态显示位**，本帧未给继承来源，**不该出现在选项标签里**）｜ **顶栏 `Reset`** ⇒ `丢弃未保存的改动`（需加宽按钮 ＋ 改母件 `93:54`，已授权并带前置）。**已派，一次改完、我一次重导。**
-  - ★ **不改（投影帧记号）**：**态10（`230:673`）里的 `仅使用当前来源 (CLEAR)` 与 provenance 那行 `（本层 CLEAR 移除继承的 op）`** —— 那是**投影帧把作者词钉到操作令牌上的绑定括注**，**正是投影面该有的东西**；且后者是上一轮 `FIG-03` 定下的措辞、其 annotation 亦按此记。
-    ⇒ **bot 在 `figma-current.md:56` 那条（「态10 暴露被禁术语」）判为「不是缺陷」** —— **不必再报**。★ 判错的机理：**把「作者面」的规则套到了「投影面」上**；`108:*`（1220 高）是作者面，`230:*`／`232:*`（1080 高）是投影区。
+- **作者词汇的旧派单记录**：[原版本](https://github.com/futouyiba/HitFish-Up/blob/1409a13fde46dcb8d10bae039c26f6a0090bf497/docs/review/ui-component-contract-r2/OPEN-ITEMS.md) 曾要求顶行、LocalOp、Policy chip 和 Reset 的作者可见串修正。随包整帧可见“来源 / Source”“仅使用来源”“丢弃未保存的改动”等修正，旧“已派、一次重导”不再作为当前工作清单。最新 #7 REVIEW 保持原 IMPORT／OP／DISCARD 修复关闭；Source **值**修复与复核进展见[当前项](#source-sync)。作者面／投影面的词汇分工见 `figma-current.md` §四，态10 的契约令牌括注不因本次整理变为缺陷。
+- **卡10／卡11 投影**：原登记为等实现后再投，本批未核实现或实时画布；后续补充时登记真实版本与物证，不因文字清理视为完成。
 - ★ **契约名 ↔ 实现名 的对照（已核两侧逐字，**不是**竞争权威）**：
   | 契约侧（《编辑器持久层契约》） | 实现侧（编辑器仓） | 判定 |
   |---|---|---|
