@@ -51,7 +51,7 @@
 
 - **ED-15**：Species Base 为主要 Authoring Truth；young／mature 是稀疏 exception scope，大部分不产生 bucket patch，不是每桶完整 Profile。不加钓场维；mature 内 quality 差异本期接受压平，不新增 quality override 或第三／第四 bucket；Bootstrap／Migration 必须报告 lossy collapse，它是 migration diagnostic，不是新 authoring dimension。
 - **ED-13**：内部稳定寻址、XLSX 仍写 `targetRow.name`、重名 BLOCK 不 silent suffix 等完整边界见[汇编 §15](review/ui-component-contract-r2/component-contract-consolidated.md#cross-layer-guards)。保留该处未逐字列出的命名形态：`<Kind>_<Template>`／`<Kind>_<Species>`／`<Kind>_<Species>_<Bucket>`，沿用主前缀 `Cover_ / FeedLayer_ / Temp_ / period_`；已有模板 production row 直接复用；不把完整 inheritance／provenance 链塞进 name。
-- **ED-20**：Role 的物种默认／行级覆盖与 setRole 不补 Profile，按[RoleControl](review/ui-component-contract-r2/contract-cards.md#role-control)及[Profile 生命周期](review/ui-component-contract-r2/component-contract-consolidated.md#profile-lifecycle)。独立保留 `composeEntry` 护栏：各 lane 独立 compose／resolve，最后统一 validation；numeric base 缺失不能连带丢 Role patch、fail_env_coeff 或其它独立 durable patch。`§117` 自动补全 1.00 Profile 已被取代；Role durable autosave 后可进入 `CORE + absent` 的 publish-invalid 中间态，须显示 required-Profile ERROR／Publish Block 并聚焦 Setup，由作者显式选择／建立 Source；不得丢 Role 回默认来掩盖非法态。
+- **ED-20**：Role／缺 Profile 中间态／Setup 的完整机制按[Profile 生命周期](review/ui-component-contract-r2/component-contract-consolidated.md#profile-lifecycle)，记录与交互按[RoleControl](review/ui-component-contract-r2/contract-cards.md#role-control)。独立保留 `composeEntry` 护栏：各 lane 独立 compose／resolve，最后统一 validation；numeric base 缺失不能连带丢 Role patch、fail_env_coeff 或其它独立 durable patch。旧自动补全规则的撤回与执行顺序沿本节固定历史，不在 brief 另维护一份。
 
 ## 三、验收与证据使用
 
