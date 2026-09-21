@@ -22,7 +22,7 @@
 
 | 对象 | 完整定义／现有投影 | 本 brief 保留的实现限定 |
 |---|---|---|
-| Species Base Record | 《编辑器持久层契约》§3.1；整条 aggregate 与两条子结构的区分见 [RoleControl](review/ui-component-contract-r2/contract-cards.md#role-control) | `schema_version`；键 `species_key` 为物种 id，不是 name；`name_cache` 仅作比对基线、不作键、不导出。四组件字段 `temperature / structure / feeding_layer / time_period` 是各自的 Component Recipe（Source＋逐字段 op），不是另一条更小记录；`policy_source_binding` 与 `roles` 必填，`fail_env_coeff` 为 op。组件值可空，表示该物种尚未配置。 |
+| Species Base Record | 《编辑器持久层契约》§3.1；整条 aggregate 与两条子结构的区分见 [RoleControl](review/ui-component-contract-r2/contract-cards.md#role-control) | `schema_version`；键 `species_key` 为物种 id，不是 name；`name_cache` 仅作比对基线、不作键、不导出。四组件子结构与整条 aggregate 的区分按所引 RoleControl；`policy_source_binding` 与 `roles` 必填，`fail_env_coeff` 为 op。组件值可空，表示该物种尚未配置。 |
 | 生产行台账 | 《编辑器持久层契约》§3.2 | 每个既有 `FishEnvAffinity` 行一条、不折叠，常驻编辑器耐久层。`row_key` 为键：既有行用其行 id，新造未写回行用编辑器稳定键；`row_id` 空表示尚未写回；`species_key` 为属性，另有 `bucket`、四组件子表行标识 `refs`。 |
 | 两条 row-level patch | 《编辑器持久层契约》§3.4；[RoleControl 的 Durable mutation](review/ui-component-contract-r2/contract-cards.md#role-control) | 唯一键、op／payload、`species_key` 不参与键及同值 SET 意图全部按该投影；与 numeric 的 `AffinityAuthoringPatch` 并列，不合并记录。 |
 | Numeric patch 与 Source binding | 《编辑器持久层契约》§3.3；[汇编 §3](review/ui-component-contract-r2/component-contract-consolidated.md#component-clear)、[身份边界 §16](review/ui-component-contract-r2/component-contract-consolidated.md#identity-boundaries) | numeric 的 `scope_kind` 恒为 literal `bucket`，带 `scope_kind=row` 必须由 Validator 按不合 Current Schema 报错，不静默接受。组件级 `sourceOverride` 的物理键与 authoring 粒度按 §16 分开，不把它当逐字段 patch 字段。 |
@@ -30,12 +30,12 @@
 
 底板不进生产表，Species Base Record 不含任何子表行引用。其初值导入时取配置表中该物种最频繁画像的代表行，不能初始为空；这是一次性种子，此后以编辑器为准，不是持续 Production → Editor 覆盖（《编辑器持久层契约》§3.1）。它与作者随后将某组件配置为空是两件事。
 
-第五类模板使用 Policy payload；不扩 ComponentType／Runtime 四条件槽，不新增生产 Policy 子表，仍物化到 `FishEnvAffinity` 角色列及 `fail_env_coeff`。完整机制见[汇编 §9](review/ui-component-contract-r2/component-contract-consolidated.md#policy-profile)；identity／生命周期规则对五类一并适用（《编辑器持久层契约》§3.6、§3.10）。
+第五类模板的边界按所引定义；实现落点仍为 `FishEnvAffinity` 角色列及 `fail_env_coeff`。完整机制见[汇编 §9](review/ui-component-contract-r2/component-contract-consolidated.md#policy-profile)；identity／生命周期规则对五类一并适用（《编辑器持久层契约》§3.6、§3.10）。
 
 ### 2. 操作、引用与物化入口
 
 - **字段操作与 CLEAR**：组件按[汇编 §3](review/ui-component-contract-r2/component-contract-consolidated.md#component-clear)、[层 × 字段 allowlist §13](review/ui-component-contract-r2/component-contract-consolidated.md#component-operation-allowlist)；Policy 按[§10](review/ui-component-contract-r2/component-contract-consolidated.md#policy-clear)；无值动作落盘例外按[§4](review/ui-component-contract-r2/component-contract-consolidated.md#field-value-control)。操作名字与行内作者显示串是两个层次，按 §4 映射，不合并；不以最终值差推断记录意图。
-- **Source identity／生命周期／引用集**：完整定义在《编辑器持久层契约》§3.10；仓内动作投影为[汇编 §14](review/ui-component-contract-r2/component-contract-consolidated.md#template-lifecycle)，只读两集展示为[卡12](review/ui-component-contract-r2/contract-cards.md#reference-list)。两集定义、用途、Hard Delete 清点范围及 Policy direct refs 均在该 §14 完整投影，不在 brief 另列一份。Broken source ref 的精确诊断码为 `BROKEN_SOURCE_REF`；加载宽容、Publish 严格的机制见[§8](review/ui-component-contract-r2/component-contract-consolidated.md#source-transaction)。
+- **Source identity／生命周期／引用集**：完整定义在《编辑器持久层契约》§3.10；仓内动作投影为[汇编 §14](review/ui-component-contract-r2/component-contract-consolidated.md#template-lifecycle)，只读两集展示为[卡12](review/ui-component-contract-r2/contract-cards.md#reference-list)。两集定义、用途、Hard Delete 清点范围及 Policy direct refs 均在该 §14 完整投影，不在 brief 另列一份。断链来源的诊断码、加载／Publish 规则完整见[§8](review/ui-component-contract-r2/component-contract-consolidated.md#source-transaction)。
 - **生产投影复用**：完整算法在《编辑器持久层契约》§3.7，lineage／同值 SET 与纯 source pin 的仓内判定见[汇编 §15](review/ui-component-contract-r2/component-contract-consolidated.md#cross-layer-guards)，空底板且 IGNORED 的合取分支见[§11](review/ui-component-contract-r2/component-contract-consolidated.md#profile-lifecycle)。**仍须保留的算法限定**：对每条生产行、每组件、每项，有 numeric override 取 override，否则取底板；无可复用的上游 Profile 才新增一行并写回引用；Role 有行级 override 取它，否则取物种默认。零覆盖生产行也落完整值。`SPECIES_CONCRETE` 即使无 op 也属物种自有 projection。编辑器使用／导出按 lineage 复用，**数据迁移另走按完整最终值复用同值行**；两套路径分开，不把迁移规则套到作者意图上。
 
 ### 3. Schema、版本与载体
