@@ -1,6 +1,6 @@
 # UI Component Inventory ＋ 第一批 Contract Cards（「编辑器具体设计」席 · A 线）
 
-**状态（两批各自唯一）**：**批次①：`A①-卡1`…`A①-卡7` 七张均已冻结 v1.1，可作为当前执行投影**；其中 `A①-卡2` 先前因用户语言 / CXR-04 的 Current 落页未闭合而暂降级，现相关 Current 已落并回读，阻塞条件已解除。**批次②（`A②-卡8`…`卡12`）＝ 已冻结**（记录页 §244，以该节为冻结留痕）。**本文件不再有任何「起草稿」或「卡2 暂停执行」状态。** 卡片＝执行投影，机制唯一载体仍是 Current 文档；发生冲突时以 Current 为准。
+**状态（两批各自唯一；改自记录页 §265 裁 `F-07`）**：**批次①：`A①-卡1`／`卡3`／`卡4`／`卡5`／`卡6`／`卡7` ＝ 已冻结 v1.1**（记录页 §165）；⚠️ **`A①-卡2` ＝ 已裁、但暂不作为无条件执行依据** —— 它所需的用户语言**尚未落入 Current 页面**、且 Current 仍保留相抵旧串（汇编 §18.1–2）⇒ **落到页后即恢复**。（记录页 §312 裁 `XR-F-07`）；**批次②（`A②-卡8`…`卡12`）＝ 已冻结**（记录页 §244，以该节为冻结留痕）。**⚠️ 凡「批次」级状态一律排除 `A①-卡2`**（**即：批次①可作无条件执行依据的是六张**）；**本文件不再有任何「起草稿」状态。** 据记录页 §164（冻结接口，已回页核实）。铁律遵守：卡片＝执行投影，机制唯一载体仍是 Current 文档，「依据」行不空——引 Current § 或记录页 §。
 
 **批次①清单口径**：§164 原列六项；主代理工作令列七项（多出 Field Value Editor）。本稿按七张出——**建议保留分卡**：op 选择（选哪个动作）与值输入（敲什么数）是两个交互面、两条校验链；收口时若判并入 Operation Control 可并，机械合并即可。
 
@@ -42,7 +42,7 @@
 
 ---
 
-## Part 2｜第一批 Contract Cards（**七张均已冻结 v1.1，可作为当前执行投影**）
+## Part 2｜第一批 Contract Cards（**六张已冻结 v1.1 ＝ 记录页 §165；`A①-卡2` 见文件头，暂不作为无条件执行依据**）
 
 **编号口径（防撞车）**：本席编号＝**A 线批次编号**，标题带前缀（`A①-卡1`…`A①-卡7`、`A②-卡8`…`A②-卡12`）。**GPT 清单另有一套「卡4 ComponentCard／卡5 Impact Preview」，与本席 `A①-卡4`（Effective Value Display）／`A①-卡5`（Provenance Display）不是同一批** —— 引用务必带前缀。
 
@@ -382,7 +382,7 @@ Durable mutation:
     ⇒ **没有 `layer`、没有 `"*"` 哨兵、没有 nullable scope、没有 `track` 判别列**；**Role 值不得参与唯一键**。
   - ⚠️ **行级 patch 必须携 `op`**：不携 op 则 **`CLEAR` 与「`SET` 恰好等于模板 raw 值」不可区分** ⇒ **op 不得从值反推**。
   - ⚠️ **`scope_key` 正式改名 `row_key`（不是简称）**：该记录**永远只有 row scope** —— 留一个泛化的 `scope_key` 没买到能力、**反而暗示还有别的 scope**。`species_key` **降为属性**（组织／查询／reconcile／诊断），**不参与 identity**；**唯一键 ＝ `(row_key, component)`**。
-  - 粒度：**Role 恒为 row-level**；**物种层默认与行级覆盖分属不同记录，不得塞回同一张** —— 物种层默认的**唯一键 ＝ `(species_key, component)`**，**每个「物种 × 组件」恰好一个 Effective Default Role**（同 id 组合的不同行可以有不同 Role）。
+  - 粒度：**两条 patch 轨道（`AffinityRolePatch` / `AffinityFailEnvCoeffPatch`）恒为 row-level**；**物种层的 Role op（`INHERIT` / `SET`）不是 override，而是决定该物种的 `Effective Default Role`**，住在 §3.1 的 `Species Base Record`／`Species Policy Recipe` —— **与本节两条 patch 轨道并存；不得为「统一粒度」把它删掉**。**物种层默认与行级覆盖分属不同记录，不得塞回同一张** —— 物种层默认的**唯一键 ＝ `(species_key, component)`**，**每个「物种 × 组件」恰好一个 Effective Default Role**（同 id 组合的不同行可以有不同 Role）。
 Must show:
   - **必须显式说出「你在改哪一层 / 哪一行」**：物种层 ⇒「默认（各行继承）」；行级 ⇒ 当前那一行（如 `LAKE_A × LARGEMOUTH_BASS/Q3`）
   - **不许**默认改整个 scope 却在 UI 上说成改一行
