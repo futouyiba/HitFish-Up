@@ -39,22 +39,25 @@
 
 **已裁（记终局，不记两侧各半）**：
 
-| ID | 裁定 |
-|---|---|
-| **ADJ-01** | durable schema 的 canonical 实现 ＝ **TS 编辑器仓**（另一侧的原型不承担本契约） |
-| **ADJ-02** | Profile 缺席矩阵 ＝ **统一**：缺席合法性**只由 `Role` 决定**；**时段不特权** |
-| **ADJ-03** | 物种层 Role：`INHERIT` **需要一个与三值可区分的形**；**选中等于 raw Role 的值一律写 `SET`（钉住）** |
-| **ADJ-04** | §3.1 的四个组件字段 **就是** Component Recipes（Source ＋ 逐字段 op） |
-| **ADJ-05** | `sourceOverride` ＝ **组件级独立 durable 绑定**（不是 §3.3 那张逐项记录上的字段） |
-| **ADJ-06** | owner 粒度 ＝ **（物种, 桶）** |
-| **ADJ-07** | Policy Template 的 raw Role 默认值 ＝ **`CORE`** |
-| **ADJ-08** | owner 身份 ＝ **「中鱼习性模式」（`Engagement Mode`）**；**桶是数据迁移期的行单位表达** |
+| ID | 裁定 | `PROJECTED IN`（**执行投影落在哪**） |
+|---|---|---|
+| **ADJ-01** | durable schema 的 canonical 实现 ＝ **TS 编辑器仓**（另一侧的原型不承担本契约） | —（**实现侧事实，本包不投影**） |
+| **ADJ-02** | Profile 缺席矩阵 ＝ **统一**：缺席合法性**只由 `Role` 决定**；**时段不特权** | `contract-cards.md` **`A①-卡2` Reads**；`component-contract-consolidated.md` **§11 ＋ §12** |
+| **ADJ-03** | 物种层 Role：`INHERIT` **需要一个与三值可区分的形**；**选中等于 raw Role 的值一律写 `SET`（钉住）** | `contract-cards.md` **`A①-卡2` Durable mutation**（同值 `SET` 仍留记录）；**「形」仍未设计 ⇒ 见 §5** |
+| **ADJ-04** | §3.1 的四个组件字段 **就是** Component Recipes（Source ＋ 逐字段 op） | `contract-cards.md` **`RoleControl` Durable mutation**（`component recipes`） |
+| **ADJ-05** | `sourceOverride` ＝ **组件级独立 durable 绑定**（不是 §3.3 那张逐项记录上的字段） | `contract-cards.md` **`A①-卡1`／`RoleControl`**；`component-contract-consolidated.md` **§3** |
+| **ADJ-06** | owner 粒度 ＝ **（物种, 桶）** | `contract-cards.md` **`RoleControl`**；`component-contract-consolidated.md` **§9** |
+| **ADJ-07** | Policy Template 的 raw Role 默认值 ＝ **`CORE`** | `contract-cards.md` **`RoleControl` Reads**；`component-contract-consolidated.md` **§11** |
+| **ADJ-08** | owner 身份 ＝ **「中鱼习性模式」（`Engagement Mode`）**；**桶是数据迁移期的行单位表达** | `component-contract-consolidated.md` **§16（含射程说明）**；**页侧 CT §3.3 已落／RS §11.1 待**（见 §6） |
 
 **已裁（续）**：
 
-| ID | 裁定 |
-|---|---|
-| **ADJ-09** | **C_NARROW** —— **Source mutation 一律 staged、不分类别**；**Local Rebase Preview** 与 **Propagated Impact Preview** 两档按 **fan-out** 分级（不是按「点了几个控件」）。★ **核心不变量：「是否需要 staged confirm」≠「是否属于 full high-impact mutation」** —— 影响面只决定 Preview 有多重，不决定能不能先写盘。事务模型**只有两层**，不新增第三种 |
+| ID | 裁定 | `PROJECTED IN` |
+|---|---|---|
+| **ADJ-09** | **C_NARROW** —— **Source mutation 一律 staged、不分类别**；**Local Rebase Preview** 与 **Propagated Impact Preview** 两档按 **fan-out** 分级（不是按「点了几个控件」）。★ **核心不变量：「是否需要 staged confirm」≠「是否属于 full high-impact mutation」** —— 影响面只决定 Preview 有多重，不决定能不能先写盘。事务模型**只有两层**，不新增第三种 | `contract-cards.md` **`A①-卡1` Actions**；`component-contract-consolidated.md` **§8 ＋ §15** |
+
+★ **`PROJECTED IN` 是一栏检查，不是一个记录** —— **加一条 ADJ 的动作里包含「把这一栏填满」，空栏 ＝ 那条还没落投影。**
+理由（本族实测）：**「登记册」与「执行投影」之间原本没有一致性检查**，所以每加一条裁定就会漏 N 处投影、而由下游逐条抓出来 —— 实测三条：**ADJ-02 落在卡上而汇编里没有**、**ADJ-09 的两档在卡与汇编里都没投**、**ADJ-07 的 `CORE` 默认只在登记册**。⇒ **判据：一条 ADJ 的「已裁」与「已投」是两件事；只有 `PROJECTED IN` 全非空才算落完。**
 
 **九项的裁决留痕（都在《变更与裁决记录》，按节号可回原文核）**：ADJ-01～05 ＝ §374／§377；**ADJ-06／ADJ-07 ＝ §383**（ADJ-07 的后果一/二/三也在此节）；**ADJ-08 ＝ §385**；**ADJ-09 ＝ §392**。★ 这三节是它们的**唯一可引用落点** —— 本表的 ID 只是索引。
 
