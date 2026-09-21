@@ -113,18 +113,28 @@
 - **另有一张 `141:283`（SECTION）未随包** —— 它**含 section 边界、不等于 `176:283` 那一屏的紧致包围盒**，且导出为 **≈1.02×**（节点 `3800×1848` → 出图 `3880×1928`）⇒ **与上表三张不同参数，故不收**。
 - **MCP `get_screenshot` 不放大**：请求 `108:335`（3280）／`108:364`（3416）欲取高倍局部，**回图仍为 1×** ⇒ **这条通路拿不到高倍局部**；先前评审所用「4× 局部」**不是从这条通路来的**（那一路径未核）。
 
-## 七、图上另有 annotation 承载细则 —— 这里给**对外可见的摘要**
+## 七、图上 annotation 的 Current 摘要
 
-⚠️ **Figma 的 annotation 对读本目录的人不可见**（本目录只有文字与图像）。而 `108:311`／`108:335`／`176:283` 上各有一条较长的组总则。⇒ 这里给摘要，**以免"图上写了、读者看不到"**。
+⚠️ Figma annotation 对只读本目录的审阅者不可见，因此这里镜像**当前规则**；审阅沿革不再留在画布 annotation 内。
 
-**`108:311`／`108:335` 的组总则（摘要）**：
+**`108:335 componentCards`：**
+- Component Card 是摘要 + 快速编辑入口。
+- **Source / Template**：卡内下拉 ↔ 顶部 / 前层 Source Selector，写同一个 Component Recipe Source binding；改一处，另一处立即同步。
+- **焦点编辑栏不提供第三个 Source mutation 入口**；只显示当前 Source 上下文并编辑逐字段 Value / Operation / Provenance / Diagnostic。
+- **Role**：卡内 Role 下拉 ↔ Spatial Opportunity Policy 对应 Role 行，写同一个 Policy Authoring Truth。
+- Role 角标是当前结果值 CORE / SECONDARY / IGNORED，不等于完整 operation；物种层 Role operation = INHERIT / SET，行层 = absent / CLEAR / SET，Role 不允许 ADD。
+- Card 内不承担逐字段 ADD / SET / CLEAR 编辑。
 
-- **Source 两处入口的分工**：**顶部 `templateRow` 的四个来源选择器是「前层」选择器** —— 依据《编辑器持久层契约》§8 首行「每组件一个**前层** Source 选择器」，以及一条 Owner 裁定（**与前层同层、不要求先进入组件展开区才能选、显眼便利**）；**卡内入口**是 §7 的**「就地快速编辑」**。⇒ **两者不是"重复编辑器"**，因为它们**读同一份 Truth**（**双入口、单 Truth**）。
-- **本帧是物种层面** ⇒ 卡上角标读的是**物种层那一份 Role**；**物种层没有 `CLEAR`**。
-- **卡上三个可读点**：Role 角标（**结果值**）＋ 层签「物种层」（**改哪一层**）＋「继承／已覆盖」（**该层状态**）。
-- **Policy 控制条（7 枚 chip）**：**`水温 · Temperature 的 Role`**（哪一个 Role）＋ `层级 ▾ 物种层 · 默认（各行继承）`（哪一层）＋ **`目标行：LAKE_A × LARGEMOUTH_BASS/Q3`**（**哪一行**）＋ `桶层操作 ▾`（`absent 跟随继承` / `CLEAR 回到模板 raw 值` / `SET 设置`）（**该层可用操作**）。⇒ **四件齐：哪一个 Role／哪一层／哪一行／该层可用操作。**
+**`108:364 SpatialOpportunityPolicyBlock`：**
+- 两个作用域分开：**物种层默认**来自 Species Policy Recipe；**本行覆盖**只作用于目标 FishEnvAffinity 行。
+- Role row patch = absent / CLEAR / SET；CLEAR 回到当前 Species Policy Template 的 raw Role。
+- `fail_env_coeff` row patch = absent / CLEAR / ADD / SET。
+- Persistence：`AffinityRolePatch` key = `(row_key, component)`；`AffinityFailEnvCoeffPatch` key = `row_key`；它们与 numeric `AffinityAuthoringPatch` 并列、不合并。
+- 判读：CLEAR 属于「本行覆盖」，不是在修改物种默认。
 
-**另**：`176:283`（Policy 区）另有一条 —— 「**Policy 区 Role 行 ＝ Authoring Truth**」。
+**卫生回读（2026-09-21）**：上述两个 annotation group 均为 1 条；已移除“谁提出 / 哪轮 review / 为什么回应”的审阅留痕，只保留 Current 读图规则；`&` 计数均为 0。
+
+**另**：`176:283`（Policy 区）仍有其自身的 Authoring Truth 说明；本节不把历史 annotation 文案当 Current Contract。
 
 ## 八、卡上 Role 角标 —— 为什么它是"三态下拉"，以及为什么它**不做成白场**
 
