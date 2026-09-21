@@ -85,7 +85,10 @@
 - 每组件一个前层 Source 选择器；桶（覆盖层）另有「跟随物种」；温度多一项「当前物种生态数据」（存在时）。（《编辑器界面》§1.1；《编辑器与 Resolve》§11.3）
 - 可选来源矩阵（**按层分写**）：**前层（物种层）** —— Temperature ＝ `SHARED_TEMPLATE | SPECIES_CONCRETE`，Structure / Feeding Layer / Time Period ＝ 仅 `SHARED_TEMPLATE`；**桶（覆盖层）** —— **所有组件都只有 `SHARED_TEMPLATE` ＋「跟随物种」**，**不列 `SPECIES_CONCRETE`**（**连当前物种的也不列** —— 要引用当前物种的 Concrete，走「跟随物种」）。**任何层都不得 pin 非当前物种的 Concrete。**（《编辑器持久层契约》§3.3；《编辑器与 Resolve》§11.3 逐字「桶层另有「跟随物种」选项，**不把任何物种的 Concrete 当通用可选项**」；冻结卡 `A①-卡1`）
 - `SPECIES_CONCRETE` 属当前物种：identity ＝ `(speciesId, componentType)`，不进模板清单、不可被其它物种引用；不得 pin 另一物种的 Concrete。（《编辑器持久层契约》§3.3；记录页 §172 二）
-- 换 Source 是高影响动作：候选来源 → before / after Resolve → **Rebase Preview** → 显式确认 → 原子提交。禁止为保持旧 Effective Value 自动生成 `SET`。（《编辑器与 Resolve》§11.3；《编辑器界面》§1.1；《编辑器持久层契约》§3.10）
+- **每一笔 Source mutation 都要 staged confirm**：候选来源 → before / after Resolve → **Rebase Preview** → 显式确认 → 原子提交。禁止为保持旧 Effective Value 自动生成 `SET`。（《编辑器与 Resolve》§11.3；《编辑器界面》§1.1；《编辑器持久层契约》§3.10；记录页 §392 裁 ADJ-09）
+- **Preview 取哪一档由 `fan-out` 决定，不由「点了几个控件」决定**（记录页 §392 裁 ADJ-09）：**Local Rebase Preview** ＝ 只覆盖本次作用域（binding / Effective Source / follow-pin / 字段值 / 诊断 的 before-after；**不要求算整库**，不算两引用集 / 全局 changed count / 新增 Error·Warning）—— **桶组件的 `sourceOverride` 通常属这一档**；**Propagated Impact Preview** ＝ §3.10 原有的四类，**当一次 mutation 会主动扩散到当前 owner 之外的多个 consumer** 时升档（**物种层 Source 变更若只被自己消费仍是 Local**）。
+- ⚠️ **「要不要 staged confirm」与「是不是 full high-impact」是两个正交判据，不是一条轴的两端** —— 影响面大小**只决定 Preview 有多重，不决定能不能先写盘**。（记录页 §392 逐字；本判据＝该节核心不变量）
+- **`FOLLOW_PARENT`（删 `sourceOverride`）不留例外**：它同样改变 Effective Source ⇒ 也是 Source mutation；**即使当前 Effective Source 恰好不变也不是 no-op**（pin 住 `Template_A` 与跟随到 `Template_A` 当前值可相同、**未来行为不同**）⇒ **Preview 不得只展示 value diff**，至少还要 Binding intent／Effective Source／Future propagation。（记录页 §392）
 - Preview 至少区分：最终结果变化、结果未变但被本层 `SET` / 操作遮罩、新增 Error、新增 Warning。**被遮罩 ≠ 无影响。**（《编辑器持久层契约》§3.7「SET-masked 可不变」；冻结卡 `A②-卡10`、`A②-卡11`；记录页 §172 二 APPLY DELTA ⑦）
 - 已归档来源：既有 durable 引用继续合法、继续 Resolve / Publish，选择器显示「已归档」，不允许新建引用，普通 picker 隐藏 / 降级，不视为 ERROR。（《编辑器持久层契约》§3.10；《编辑器界面》§1.1）
 - 断链来源：可加载（load tolerant）、显示明确的 Source Missing、ERROR ＋ 阻断 Publish、**禁止任何自动 fallback / 自动切回物种来源 / 自动挑最近似模板**，必须由作者显式选新的合法来源。（《编辑器持久层契约》§3.10；冻结卡 `A①-卡6`）
@@ -155,7 +158,9 @@
 
 ## 15. 跨层护栏
 - Editor durable state 存作者意图（Source binding / `sourceOverride` / 物种操作 / 桶 patch / Role 与 Policy / 模板完整值 / identity 与生命周期），**不把 Effective / resolved 值当第二份可编辑真相**；Effective、provenance、诊断、影响结果都是派生。（《编辑器持久层契约》§3.3、§6.5；《编辑器界面》§1.3）
-- 自动保存：一次有效语义编辑 → 内存 typed 状态 → 短 debounce 合并 → 原子持久化；无常驻 Save；高影响动作（换来源 / 改模板完整值 / 重导 / 时段批量预设 / Replace References）走 prepare → Preview → 显式确认 → 一次原子提交；预览缓冲是短命 UI 状态，不落成草稿实体。（《编辑器界面》§1.2、§7；《编辑器持久层契约》§3.10）
+- 自动保存：一次有效语义编辑 → 内存 typed 状态 → 短 debounce 合并 → 原子持久化；无常驻 Save；预览缓冲是短命 UI 状态，不落成草稿实体。（《编辑器界面》§1.2、§7；《编辑器持久层契约》§3.10）
+- **事务模型只有两层，不新增第三种**（记录页 §392 裁 ADJ-09）：① **普通 semantic edit**（值 / op / Role）＝ debounce autosave，通常无 staged preview；② **staged mutation**（**所有** Source binding mutation ＋ Shared / bulk 传播类）＝ staged candidate → 显式确认 → 原子提交，**Preview 按 `fan-out` 取 Local 或 Propagated**。
+  - ⇒ **「换来源」属第②层，且是无条件 staged 的**（不因为它影响面小就退回 debounce）；**「改模板完整值 / 重导 / 时段批量预设 / Replace References」**同属第②层，其 Preview 为完整 Impact Preview。（《编辑器持久层契约》§6.3；记录页 §392）
 - Publish 只读取已成功持久化的 revision；尚未成值的输入不参与 Publish；未确认的高影响候选不得被当成 durable truth。（《编辑器界面》§1.1；《编辑器持久层契约》§6.3）
 - revision 冲突＝乐观检测：commit 只在预期 revision 仍匹配时写入，禁止 last-write-wins、禁止静默 auto-merge，进入重载 / 对比 / 对账路径。（《编辑器界面》§1.2；《编辑器持久层契约》§6.3）
 - 「生产配置外部变化」与「Editor State revision 冲突」是两类不同问题，不得都显示成「保存失败」。（《编辑器持久层契约》§6.4、§6.5；《编辑器界面》§9.2）
@@ -171,6 +176,8 @@
 - 程序开关；`if / else / return` 之类控制流编写；自定义聚合算子；自由编排 / 任意输入连线；Gate 控件 / `GatePolicy` 字段；模板共享面板的三档分级；不新增顶层空的 `Calculation Surfaces` 导航；不显示 Activity / Feeding Readiness 之类空壳；不新增第二套 Bake Editor、不新增脚本入口。（《编辑器界面》§5）
 - 占比 / 比例 与 分群逻辑两处只以禁用占位行呈现（字段位在、控件不在），不提供编辑控件；不得据此宣称本版已实现 Mode Share / Routing。（《编辑器界面》§5、§1.2）
 - 桶不是真正的 Engagement Mode；Runtime 无 EngagementMode identity，不得据 UI 名称另建 durable 的 Engagement Mode 身份 / 注册表 / 模式级 Concrete 来源。（《编辑器界面》§5；《编辑器与 Resolve》§11.1；记录页 §172 二 KEEP）
+  - ⚠️ **上面那条的射程 ＝ 「不得据 UI 名称另建身份 / 第二套注册表 / 模式级 Concrete 来源」，不是「owner 不叫模式」**。**owner 的 canonical 名是「中鱼习性模式」（`Engagement Mode`）**，它与「习性档案」（`FishEnvAffinityRef`）**1:1**（《编辑器与 Resolve》§7 逐字 `one Compat Mode ↔ exactly one FishEnvAffinityRef`），**桶只是它在数据迁移期的行单位表达** ⇒ **不得读成「根本没有 durable 的 Mode 身份」、进而把 owner 键在建在行单位上**。（记录页 §385 裁 **ADJ-08**；《编辑器持久层契约》§3.3 已按此写：逐字「这条 patch 的 owner 是「中鱼习性模式」（`Engagement Mode`）」）
+  - ⚠️ **页侧滞后，本行按滞后页照录（已派改）**：《编辑器界面》§5、《编辑器与 Resolve》§7、《编辑器心智模型与 IA》§8 仍写着「「中鱼习性模式 / 兼容壳」**只是**换皮展示、**不新增 EngagementMode durable identity**」这一形（**写于 ADJ-08 之前**）；而 canonical owner《编辑器持久层契约》§3.3 **已改成**「只是**同一 authoring 层**的业务抽象 / 换皮展示，与该 patch 是**抽象 / 物理投影关系**」。⇒ **页改后本行随之重渲染**；在此之前，**以 §3.3 那句为准**。
 - 品质页本版不开放（入口置灰、不展示品质字段）；不新建品质模板库、不把品质当作第五个习性组件。（《编辑器界面》§0、§2）
 - 组件卡不承担逐字段 `ADD / SET / CLEAR` 编辑（逐字段值在焦点编辑栏完成）；不给组件卡 Source / Role 另建 durable state；不把 Effective Value 当编辑真相存储；不为视觉一致强迫所有字段支持 `ADD`；不为结构对称给品质造模板；不按「当前数值相同」跨无关谱系合并生产行。（《编辑器界面》§1 导语、§7；《编辑器心智模型与 IA》§8）
 

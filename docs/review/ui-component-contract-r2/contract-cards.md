@@ -63,6 +63,11 @@ Actions:
   - FOLLOW_PARENT：覆盖层删 sourceOverride = 跟随物种（缺省态）—— ⚠️ **它走与 `SELECT_SOURCE` 同一条边界**：**candidate → Rebase Preview → 显式确认 → 原子提交**。**解除 pin 同样改变 Effective Source** ⇒ **不得成为直接写盘的旁路**。（记录页 §312 裁 `XR-F-01`）
   - EXTRACT_TEMPLATE：从当前组件提取为模板（创建动作，挂组件上下文——提案已交）——**同一动作、两个入口**（此处由组件卡／编辑面发起 ＋ `A②-卡8` 的工作区入口；不是两个动作）
   - 换源后既有 ops 原样保留、在新源上重 Resolve；必附 Rebase Preview（before/after）
+  - ★ **两档 Preview 由 `fan-out` 决定，不由「点了几个控件」决定**（记录页 §392 裁 ADJ-09）—— **每一笔 Source mutation 都要 staged confirm，这一条无例外；档位只决定 Preview 有多重**：
+    · **Local Rebase Preview**（**桶组件的 `sourceOverride` 通常属这一档**）：只覆盖本次作用域 —— binding / Effective Source / follow-pin / 字段值 / 诊断 的 before-after；**不要求算整库**（不算 `DirectReferenceSet` / `EffectiveConsumerSet` / 全局 changed count / 新增 Error·Warning）；
+    · **Propagated Impact Preview**（＝ §3.10 原有的四类）：**当一次 mutation 会主动扩散到当前 owner 之外的多个 consumer** 时升档。**物种层 Source 变更若只被自己消费，仍是 Local**；**传播到多个 follower 才升**。
+    ⚠️ **不得把「要不要 staged confirm」与「是不是 full high-impact」读成一条轴的两端** —— 它们正交（记录页 §392 逐字）。
+  - ⚠️ **`FOLLOW_PARENT` 在两档上都不留例外**：删 `sourceOverride` 同样改变 Effective Source ⇒ **它也是 Source mutation**；**即使当前 Effective Source 恰好不变，也不是 no-op**（pin 住 `Template_A` 与跟随到 `Template_A` **当前值可以完全相同、未来行为不同**：前者父层改 B 仍是 A，后者跟到 B）。⇒ **Preview 不能只展示 value diff**，至少还要 **Binding intent**（`PINNED → FOLLOW_PARENT`）／**Effective Source**（当前可能相同）／**Future propagation**（固定 → 跟随）。**同理，创建「与当前父层恰好同 Source」的 explicit pin 也是真实 durable change。**（记录页 §392 裁 ADJ-09）
   - 高影响批量换绑（Replace References）走 prepare→preview→confirm→atomic，且只改直接引用集
 Durable mutation:
   - **换 Source 不是「一选即写盘」**：`SELECT_SOURCE` 先形成 **candidate（不写持久）** → **Rebase Preview（before / after Resolve）** → **显式确认** → **原子提交**（《编辑器与 Resolve》§11.3；汇编 §8）。**`FOLLOW_PARENT`（跟随物种）的持久变更＝删除 `sourceOverride`，同样发生在该动作的「原子提交」那一步 —— 它与 `SELECT_SOURCE` 是同一条边界，不得读成「解除即写盘」。** 落盘对象：`source binding` / `patch`。（记录页 §272 裁 `A-F-05`；§328 裁 `R3-F-01` —— 消掉「解除那一步才写持久」留下的第二口径）
@@ -374,6 +379,9 @@ Must not:
 Component: RoleControl｜Role 三态（CORE / SECONDARY / IGNORED）
 Reads:
   - **Policy 那条 Authoring Truth**（四个角色 + fail_env_coeff）—— 组件卡上的 Role 下拉与 Policy 区 Role 行**读同一份**
+  - **raw Role 的默认值 ＝ `CORE`**（记录页 §383 裁 **ADJ-07**）—— **Policy Template 初生时若不显式给 Role，raw Role 就是 `CORE`**（**不是** `IGNORED`）。⇒ **实现不得自选缺省、也不得留未定义**。
+    · ⚠️ **这一条与「提角色补档案」是两件事，不得并读**：**「初生即 `CORE`」**说的是**初生状态**；**「从 `IGNORED` 提为 `CORE`／`SECONDARY` 且尚无档案时，编辑器补出的档案取 `1.00`」**说的是**一个动作**（《编辑器条件开关》§2）⇒ **不得读成「新物种自动补一份 `1.00` 的档案」**。（记录页 §383 后果三）
+    · ⚠️ **后果（不是缺陷，是 fail-closed）**：新建物种在尚未配置时处在**阻断态** —— `CORE` ＋ 缺必需 Profile ⇒ Resolve / Publish 阻断。**要合法空态，必须显式把 Role 设成 `IGNORED`** —— 空态不再是「什么都不做」的自然结果，而是一个**显式动作**。（记录页 §383 后果一／二）
   - 当前上下文：物种层（默认）／行级（当前那一生产行）
 Actions:
   - 物种层设置 ⇒ **改"默认"**（各行 INHERIT 它）
