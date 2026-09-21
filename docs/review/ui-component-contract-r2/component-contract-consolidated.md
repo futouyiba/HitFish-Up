@@ -184,7 +184,7 @@
 - 往返冒烟测试＝本版验收：Production → Bootstrap → Editor → 不做任何编辑 → Publish → Production，应逐位一致。（记录页 §164）
 - 生产侧只保存物化后的完整值 / 枚举，不保存 Source / op / patch provenance；Runtime 不做 base ＋ delta 合并。（《编辑器与 Resolve》§11.1）
 - 生产投影按结构化 authoring lineage 复用，不按 payload 相等：物种层用共享模板且无有效操作 → 可复用该模板的生产 Profile；桶层完全继承物种 Recipe → 可复用物种投影；有显式 `sourceOverride` 但最终为「纯共享模板 ＋ 零操作」→ 仍可复用该模板的 Profile（显式 pin 只分叉继承关系，不强制复制行）；最终仍含任何有效操作 → 该桶自有投影。**同值 `SET` 与纯 source pin 必须区分**：同值 `SET` 阻断未来模板改值 ⇒ 自有投影；`sourceOverride` ＋ 零操作 ＝ 未来继续跟随 ⇒ 可安全复用。（《编辑器持久层契约》§3.7）
-- 生产行 name 只是人类可读标签，不作 identity / join / 复用键；行名的三级形态＝模板级（作者填，不预填）/ 物种派生级 / 桶派生级（自动生成）。（《编辑器持久层契约》§4.4）
+- ★ **`name` 的射程要分两层写**（原文只写「只是人类可读标签，不作 identity / join / 复用键」—— **过宽**，独立复审于 `fa96900` 报出，2026-09-21 Owner 同向裁定）：**Editor / Materializer 内部定位 → 稳定 id / key**（`name` **不作** Editor identity）；**Production XLSX 跨子表引用 → 仍按现有物理 schema 写 `targetRow.name`**。⇒ **本期不得把 XLSX 引用单元格顺手迁成 id**（那是单独的**配置表 Schema Migration**；`TimePeriod` 连数字 group id 都没有）。因此 **新增／新建的 production row `name` 必须在对应 production lookup domain 内无歧义**，collision ⇒ **BLOCK**（不 silent suffix / fallback）。行名的三级形态＝模板级（作者填，不预填）/ 物种派生级 / 桶派生级（自动生成）。（《编辑器持久层契约》§4.4）
 - 不隐藏耦合：换来源不自动改 Role；改 Role 不自动换来源；Role 置 IGNORED 不自动删 Profile；重导 / 生态数据更新不自动切 Recipe Source；预设应用不产生长期预设 identity；值相等不自动转继承；同源不自动删 `sourceOverride`；payload 相等不自动合并 authoring owner；归档 / 断链来源不自动 fallback。（《编辑器持久层契约》§3.3、§3.5、§3.7、§3.10）
 
 ## 16. 负向清单
