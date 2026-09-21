@@ -176,7 +176,7 @@
 - Editor durable state 存作者意图（Source binding / `sourceOverride` / 物种操作 / 桶 patch / Role 与 Policy / 模板完整值 / identity 与生命周期），**不把 Effective / resolved 值当第二份可编辑真相**；Effective、provenance、诊断、影响结果都是派生。（《编辑器持久层契约》§3.3、§6.5；《编辑器界面》§1.3）
 - 自动保存：一次有效语义编辑 → 内存 typed 状态 → 短 debounce 合并 → 原子持久化；无常驻 Save；预览缓冲是短命 UI 状态，不落成草稿实体。（《编辑器界面》§1.2、§7；《编辑器持久层契约》§3.10）
 - **事务模型只有两层，不新增第三种**（记录页 §392 裁 ADJ-09）：① **普通 semantic edit**（值 / op / Role）＝ debounce autosave，通常无 staged preview；② **staged mutation**（**所有** Source binding mutation ＋ Shared / bulk 传播类）＝ staged candidate → 显式确认 → 原子提交，**Preview 按 `fan-out` 取 Local 或 Propagated**。
-  - ⇒ **「换来源」属第②层，且是无条件 staged 的**（不因为它影响面小就退回 debounce）；**「改模板完整值 / 重导 / 时段批量预设 / Replace References」**同属第②层，其 Preview 为完整 Impact Preview。（《编辑器持久层契约》§6.3；记录页 §392）
+  - ⇒ **「换来源」属第②层，且是无条件 staged 的**（不因为它影响面小就退回 debounce）；**「改模板完整值 / 重导 / Replace References」**同属第②层，其 Preview 为完整 Impact Preview。★ **「时段批量预设」不属第②层** —— 它**不是 Source mutation**：**无覆盖时无强制 staged confirm**；**会覆盖已有 local ops 时**走 **`Batch Overwrite Guard`**（五字段 before/after ＋ 哪些 local ops 被替换 ＋ 新增 Error·Warning ＋ explicit confirm），**随后是一个 atomic semantic edit**。⇒ **事务模型仍只有两层；该护栏不是第三种 durable transaction type、也不是 Source Rebase Preview。**（Owner 2026-09-21 裁）（《编辑器持久层契约》§6.3；记录页 §392）
 - Publish 只读取已成功持久化的 revision；尚未成值的输入不参与 Publish；未确认的高影响候选不得被当成 durable truth。（《编辑器界面》§1.1；《编辑器持久层契约》§6.3）
 - revision 冲突＝乐观检测：commit 只在预期 revision 仍匹配时写入，禁止 last-write-wins、禁止静默 auto-merge，进入重载 / 对比 / 对账路径。（《编辑器界面》§1.2；《编辑器持久层契约》§6.3）
 - 「生产配置外部变化」与「Editor State revision 冲突」是两类不同问题，不得都显示成「保存失败」。（《编辑器持久层契约》§6.4、§6.5；《编辑器界面》§9.2）

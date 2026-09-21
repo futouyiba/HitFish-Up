@@ -94,7 +94,7 @@
 | **Affinity Role Patch** | **CLOSED** | §3.4 逐字齐：`(row_key, component)`、op `CLEAR|SET`、`SET` 携 `role`、`INHERIT` ＝ 无记录 |
 | **Affinity Fail Env Coeff Patch** | **CLOSED** | §3.4 逐字齐：`row_key`、op `CLEAR|ADD|SET`、越界报错不 clamp |
 | **Species Policy Recipe** | **CLOSED（读数）** | §3.1 记录里逐字有 `policy_source_binding`；**但它的指称物（第五类 `TemplateKind`）在实现里不存在** ⇒ 那是**实现缺口**，不是形状未定 |
-| **Affinity Source Override** | **CLOSED** | 读数已裁（**组件级独立绑定**）；**owner 已裁** —— 身份是「中鱼习性模式」（`Engagement Mode`），**（物种, 桶）是它在数据迁移期的表达** |
+| **Affinity Source Override** | **CLOSED** | 读数已裁（**组件级独立绑定**）；★ **两层必须分开**：**authoring 粒度 ＝（物种, 桶）**（ADJ-06）；**物理 durable key ＝ `FishEnvAffinityRef`**（ADJ-08 ＝ `C_SPLIT_REGISTERS`）；**`Engagement Mode` 只是业务概念、不是 durable identity**。 |
 | **Profile Presence** | **CLOSED** | 矩阵已裁（**统一**：缺席合法性只由 `Role` 决定，时段不特权）；**默认值已裁 ＝ `CORE`** |
 | **Species Role UI** | **OPEN —— 控件形态待设计** | 裁定已给（`INHERIT` **需要一个与三值可区分的形**；**同值写 `SET`**）；**这个形本身还没被设计出来** —— 所以它开着的不是「待裁」而是「待做」。★ **2026-09-21 消歧**（bot 在 `OPEN-ITEMS.md:97` 上报的「状态相抵」）：**本行说的是这个控件的形**；**§1(b) 说的是「图上两个作用域分组的投影已执行完、待复审」** —— **两件事，不是同一状态**。⇒ **能力侧另有裁定（ADJ-12）：四组件必须有 reachable Setup path，该能力要求已 CLOSED；控件的精确形仍归 Species Role/UI 工作流。** |
 | **Follow / Pin 语义** | **CLOSED** | ⚠️ **先前这里写「相抵」，已撤回**：回原页核完，**它是已定的、只是没落到 picker 那一处** —— §3.3 逐字「无 `sourceOverride` ＝ 跟随」＋ §3.5 表「覆盖→不跟随／恢复为底板→跟随」⇒ **跟随 ＝ 没有那条记录**，故「跟随物种」**＝ 删除** `sourceOverride`（**不写同源记录**）。落页已派 |
