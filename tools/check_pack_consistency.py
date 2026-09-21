@@ -39,24 +39,34 @@
     C3 引用可解析   —— 包内/说明里引用的仓内路径是否真的存在
 
 自检（**非空转**；不通过则退 2、什么都不做）
-    五维，**两个方向都测**（「该红的会不会红」＋「不该红的会不会红」）：
+    隔离临时夹具，**两个方向都测**（「该红的会不会红」＋「不该红的会不会红」）：
       ① 同主题 · 极性相反          ⇒ 必须红
       ② 同主题 · 极性相同          ⇒ 必须绿
       ③ 带留痕盾的相反极性          ⇒ 必须绿（有意保留的旧说法不是缺陷）
       ④ 引用不存在的路径            ⇒ 必须红
       ⑤ 引用存在的路径              ⇒ 必须绿
+      ⑥ 真实 C2 缺陷 + 四个登记标记  ⇒ 必须红；裸零项主张/留痕/同块说明必须绿
 
 用法
     python3 tools/check_pack_consistency.py --pack docs/review/ui-component-contract-r2
     python3 tools/check_pack_consistency.py --pack <dir> --repo . --json
+
+输出约定
+    --json 的 stdout 为单个 JSON 对象；自检、错误与边界提示写 stderr。
+    status=completed / exit_code=0 只表示扫描完成（即使有候选）；不是一致性证明。
+    status=error / exit_code=2 表示参数、自检或输入失败；checks=null，不能当干净。
+    checks 包含 c1 候选、c2 声明/开项块计数/候选、c3 路径/缺失引用。
+    --help 仍输出帮助。C2 按块计数，不做自然语言语义判断或开项身份去重。
 """
 from __future__ import annotations
 
 import argparse
-import io
+import json
 import os
 import re
 import sys
+import tempfile
+from pathlib import Path
 
 # ── 极性标记 ────────────────────────────────────────────────────────────────
 CLOSED = [u"已裁", u"已闭", u"已落", u"已冻结", u"CLOSED", u"已对齐", u"已收敛",
@@ -118,18 +128,19 @@ def shielded(text: str) -> bool:
 def iter_blocks(path: str):
     """把 md 切成块：空行分段；表格行各自成块（表内一格一句，最易相抵）。"""
     cur, ln = [], 1
-    for i, line in enumerate(io.open(path, encoding="utf-8"), 1):
-        t = line.rstrip("\n")
-        if t.strip() == "" or t.lstrip().startswith("|"):
-            if cur:
-                yield ln, "\n".join(cur)
-                cur = []
-            if t.lstrip().startswith("|"):
-                yield i, t
-        else:
-            if not cur:
-                ln = i
-            cur.append(t)
+    with open(path, encoding="utf-8") as source:
+        for i, line in enumerate(source, 1):
+            t = line.rstrip("\n")
+            if t.strip() == "" or t.lstrip().startswith("|"):
+                if cur:
+                    yield ln, "\n".join(cur)
+                    cur = []
+                if t.lstrip().startswith("|"):
+                    yield i, t
+            else:
+                if not cur:
+                    ln = i
+                cur.append(t)
     if cur:
         yield ln, "\n".join(cur)
 
@@ -180,7 +191,7 @@ def _reg_marks(blk):
 def check_c2(files):
     claims, regs = [], 0
     for f in files:
-        txt = io.open(f, encoding="utf-8").read()
+        txt = Path(f).read_text(encoding="utf-8")
         for m in COUNT_CLAIM.finditer(txt):
             if QUOTED.search(m.group(0)):
                 continue
@@ -189,9 +200,9 @@ def check_c2(files):
             if (ZERO_CLAIM.search(blk) and not shielded(blk) and not QUOTED.search(blk)
                     and not _reg_marks(blk)):        # 同句并陈「另有一处未冻结」⇒ 不是裸主张
                 claims.append((os.path.basename(f) + ":%d" % ln, u"零项待裁"))
-            if _reg_marks(blk) and (u"子情形" in blk or u"未冻结" in blk) and not shielded(blk):
+            if _reg_marks(blk) and not shielded(blk):
                 regs += 1
-    # 「零项待裁」与「显式登记了未冻结子情形」不能并存
+    # 「零项待裁」与显式开项登记不能并存（仅作候选）
     bad = [c for c in claims if ZERO_CLAIM.search(c[1])] if regs else []
     return claims, regs, bad
 
@@ -205,7 +216,7 @@ def check_c3(files, repos):
     「不存在」⇒ 假阳性。修法：`--repo` 可重复，**只有所有给定仓都找不到**才报。"""
     seen, miss = set(), []
     for f in files:
-        for m in PATH_RE.finditer(io.open(f, encoding="utf-8").read()):
+        for m in PATH_RE.finditer(Path(f).read_text(encoding="utf-8")):
             p = m.group(1)
             if p in seen:
                 continue
@@ -216,101 +227,128 @@ def check_c3(files, repos):
 
 
 # ── 自检 ───────────────────────────────────────────────────────────────────
-def _tmp(txt):
-    import tempfile
-    fd, p = tempfile.mkstemp(suffix=".md")
-    os.write(fd, txt.encode("utf-8"))
-    os.close(fd)
-    return p
-
-
-def selftest(repo):
+def selftest():
+    """所有文件与仓根都来自本次隔离夹具，不借用待扫描仓的内容。"""
     res = {}
     try:
-        # ① 同主题 · 极性相反 ⇒ 必须红
-        a = _tmp(u"## 甲\n`WidgetFoo` 的射程已裁，只到 ADD。\n\n## 乙\n`WidgetFoo` 仍未裁，待设计。\n")
-        res["opposite-polarity-must-flag"] = len(check_c1([a])) >= 1
-        os.unlink(a)
-        # ② 同主题 · 极性相同 ⇒ 必须绿
-        b = _tmp(u"## 甲\n`WidgetFoo` 已裁。\n\n## 乙\n`WidgetFoo` 也已裁。\n")
-        res["same-polarity-must-pass"] = len(check_c1([b])) == 0
-        os.unlink(b)
-        # ③ 带留痕盾 ⇒ 必须绿（有意保留的旧说法）
-        c = _tmp(u"## 甲\n`WidgetFoo` 已裁。\n\n## 乙\n本行曾写「`WidgetFoo` 未裁」，已作废，保留作留痕。\n")
-        res["shielded-must-pass"] = len(check_c1([c])) == 0
-        os.unlink(c)
-        # ④ 引用不存在 ⇒ 必须红
-        d = _tmp(u"见 `docs/nope/nope.md`。\n")
-        _, miss = check_c3([d], [repo])
-        res["missing-path-must-flag"] = len(miss) >= 1
-        os.unlink(d)
-        # ⑤ 引用存在 ⇒ 必须绿
-        e = _tmp(u"见 `tools/check_doc_hygiene.py`。\n")
-        _, miss = check_c3([e], [repo])
-        res["existing-path-must-pass"] = len(miss) == 0
-        os.unlink(e)
-        # ⑥ ★★ 真实缺陷维（本脚本**在真实材料上**必须能红）——
-        #    夹具就是 2026-09-21 PR #7 上被独立复审报出的那一对**逐字**：
-        #    `OPEN-ITEMS` 头「十三项已裁，零项待裁」 vs 卡8「该子情形按「未冻结」读」。
-        import tempfile, shutil
-        dd = tempfile.mkdtemp()
-        io.open(os.path.join(dd, "a.md"), "w", encoding="utf-8").write(
-            u"## 2. Owner 裁决状态 —— **十三项已裁，零项待裁**\n")
-        io.open(os.path.join(dd, "b.md"), "w", encoding="utf-8").write(
-            u"  ⇒ **该子情形按「未冻结」读**：实现**不得默认它已冻结，也不得静默选一种**\n")
-        fl = [os.path.join(dd, f) for f in sorted(os.listdir(dd))]
-        _, _, bad = check_c2(fl)
-        res["REAL-DEFECT-must-flag"] = len(bad) >= 1
-        shutil.rmtree(dd)
+        with tempfile.TemporaryDirectory(prefix="pack-consistency-") as tmp:
+            root = Path(tmp)
+
+            def fixture(name, text):
+                path = root / name
+                path.write_text(text, encoding="utf-8")
+                return str(path)
+
+            a = fixture("opposite.md", "`WidgetFoo` 的射程已裁，只到 ADD。\n\n`WidgetFoo` 仍未裁，待设计。\n")
+            res["opposite-polarity-must-flag"] = len(check_c1([a])) >= 1
+            b = fixture("same.md", "`WidgetFoo` 已裁。\n\n`WidgetFoo` 也已裁。\n")
+            res["same-polarity-must-pass"] = len(check_c1([b])) == 0
+            c = fixture("shielded.md", "`WidgetFoo` 已裁。\n\n本行曾写「`WidgetFoo` 未裁」，已作废，保留作留痕。\n")
+            res["shielded-must-pass"] = len(check_c1([c])) == 0
+
+            repo = root / "repo"
+            (repo / "docs").mkdir(parents=True)
+            (repo / "docs" / "exists.md").write_text("fixture", encoding="utf-8")
+            d = fixture("missing.md", "见 `docs/nope/nope.md`。\n")
+            _, miss = check_c3([d], [str(repo)])
+            res["missing-path-must-flag"] = len(miss) >= 1
+            e = fixture("existing.md", "见 `docs/exists.md`。\n")
+            _, miss = check_c3([e], [str(repo)])
+            res["existing-path-must-pass"] = len(miss) == 0
+
+            # PR #7 真实缺陷的逐字摘录，保留作为回归。
+            claim = fixture("claim.md", "## 2. Owner 裁决状态 —— **十三项已裁，零项待裁**\n")
+            reg = fixture("real.md", "  ⇒ **该子情形按「未冻结」读**：实现**不得默认它已冻结，也不得静默选一种**\n")
+            _, _, bad = check_c2([claim, reg])
+            res["REAL-DEFECT-must-flag"] = len(bad) >= 1
+            _, regs, bad = check_c2([claim])
+            res["zero-claim-must-pass"] = regs == 0 and not bad
+            for marker in ("待裁", "未裁", "未决", "未冻结"):
+                reg = fixture("marker.md", "| ADJ-12 | %s |\n" % marker)
+                _, regs, bad = check_c2([claim, reg])
+                res[marker + "-must-flag"] = regs == 1 and len(bad) == 1
+                reg = fixture("marker.md", "| ADJ-12 | %s，已作废 |\n" % marker)
+                _, regs, bad = check_c2([claim, reg])
+                res[marker + "-shielded-must-pass"] = regs == 0 and not bad
+                reg = fixture("marker.md", "零项待裁，另有 ADJ-12 %s。\n" % marker)
+                _, regs, bad = check_c2([reg])
+                res[marker + "-qualified-must-pass"] = regs == 1 and not bad
     except Exception as ex:  # noqa: BLE001
         res["exception"] = "FAIL: %r" % ex
     return res
 
 
-def main():
-    ap = argparse.ArgumentParser()
+BOUNDARY = "候选发现器：每条结果须回原文核对；报 0 条不等于包内一致，C1 内容/射程型矛盾仍需人工检查。"
+
+
+class ArgumentParser(argparse.ArgumentParser):
+    def error(self, message):
+        raise ValueError(message)
+
+
+def main(argv=None):
+    argv = sys.argv[1:] if argv is None else argv
+    json_mode = "--json" in argv
+    ap = ArgumentParser(description=__doc__, allow_abbrev=False)
     ap.add_argument("--pack", required=True)
     ap.add_argument("--repo", action="append", default=[])
-    ap.add_argument("--json", action="store_true")
-    a = ap.parse_args()
+    ap.add_argument("--json", action="store_true", help="stdout 输出单个 JSON 对象；诊断写 stderr")
+    result = {"status": "error", "exit_code": 2, "pack": None, "files": [],
+              "selftest": {}, "checks": None, "error": None, "boundary": BOUNDARY}
+    try:
+        a = ap.parse_args(argv)
+        result["pack"] = a.pack
+        repos = [os.path.abspath(r) for r in (a.repo or ["."])]
+        st = result["selftest"] = selftest()
+        for k, v in st.items():
+            print("SELFTEST %-32s -> %s" % (k, "PASS" if v is True else v), file=sys.stderr)
+        if not st or not all(v is True for v in st.values()):
+            raise ValueError("SELFTEST FAILED —— 检查器不能区分「一致」与「相抵」；停止扫描")
+        files = sorted(os.path.join(a.pack, f) for f in os.listdir(a.pack) if f.endswith(".md"))
+        if not files:
+            raise ValueError("没匹配到 md —— 那是「没能检查」，不是「干净」")
+        result["files"] = files
+        c1 = check_c1(files)
+        claims, regs, bad = check_c2(files)
+        seen, miss = check_c3(files, repos)
+        result.update(status="completed", exit_code=0, checks={
+            "c1": {"candidates": c1},
+            "c2": {"claims": claims, "open_blocks": regs, "candidates": bad},
+            "c3": {"paths": seen, "missing": miss},
+        })
+    except (OSError, UnicodeError, ValueError) as ex:
+        result["error"] = str(ex)
+        print("ERROR: " + str(ex), file=sys.stderr)
 
-    repos = [os.path.abspath(r) for r in (a.repo or ["."])]
-    st = selftest(repos[0])
-    for k, v in st.items():
-        print("SELFTEST %-32s -> %s" % (k, "PASS" if v is True else v))
-    if not all(v is True for v in st.values()):
-        print("SELFTEST FAILED —— 检查器不能区分「一致」与「相抵」；什么都不做")
-        return 2
+    print(BOUNDARY, file=sys.stderr)
+    if json_mode:
+        print(json.dumps(result, ensure_ascii=False))
+    elif result["status"] == "completed":
+        print_report(result)
+    return result["exit_code"]
 
-    files = sorted(
-        os.path.join(a.pack, f) for f in os.listdir(a.pack) if f.endswith(".md")
-    )
-    if not files:
-        print("!! 没匹配到 md —— 那是「没能检查」，不是「干净」")
-        return 2
-    print("\n扫描 %d 个文件：%s\n" % (len(files), a.pack))
 
-    c1 = check_c1(files)
+def print_report(result):
+    print("\n扫描 %d 个文件：%s\n" % (len(result["files"]), result["pack"]))
+    checks = result["checks"]
+    c1 = checks["c1"]["candidates"]
     print("=== C1 主题极性相抵：%d 个候选 ===" % len(c1))
     for s, rows in c1:
         print("  ● 主题 %s" % s)
         for fn, ln, c, o, ck, ok, blk in rows[:4]:
             print("      %s:%d  [%s%s]  %s" % (fn, ln, "".join(ck), "".join(ok), blk.replace("\n", " ")[:110]))
 
-    claims, regs, bad = check_c2(files)
+    claims, regs, bad = (checks["c2"][key] for key in ("claims", "open_blocks", "candidates"))
     print("\n=== C2 计数相抵：%d 条计数声明，%d 处开项登记 ===" % (len(claims), regs))
     for c in claims:
-        print("      %s  →  %s" % c)
+        print("      %s  →  %s" % tuple(c))
     if bad:
         print("  ● ★ 计数声明与开项登记并存 ⇒ 候选相抵：%s" % bad)
 
-    seen, miss = check_c3(files, repos)
+    seen, miss = checks["c3"]["paths"], checks["c3"]["missing"]
     print("\n=== C3 引用可解析：%d 条仓内路径，%d 条不存在 ===" % (len(seen), len(miss)))
     for fn, p in miss:
         print("      ● %s 引  %s  —— 仓内不存在" % (fn, p))
-
-    print("\n⚠️ 本脚本是**候选发现器**：报出来的每一条都要人回原文核；**报 0 条不等于包内一致**。")
-    return 0
 
 
 if __name__ == "__main__":
