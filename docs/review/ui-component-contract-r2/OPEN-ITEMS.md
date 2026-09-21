@@ -37,39 +37,30 @@
 
 ## 2. Owner 裁决索引（产品依据，不代表审查关闭）
 
-本表只维护处置、出处和仓内规则入口；`PROJECTED IN` 是投影定位，不证明实现或图片通过。原裁决转录可在[固定基线 §2](https://github.com/futouyiba/HitFish-Up/blob/78fe441fb0b857f75bee097b87afa4a60e3dec04/docs/review/ui-component-contract-r2/OPEN-ITEMS.md#2-owner-裁决索引产品依据不代表审查关闭)查阅；本批未重读实时 Owner 记录。
+ADJ-01…13 的关闭裁定、原出处与投影定位见[固定裁决索引](https://github.com/futouyiba/HitFish-Up/blob/efa727e944d3dc6b9fdd18e934f0e1cdbde0013d/docs/review/ui-component-contract-r2/OPEN-ITEMS.md#2-owner-裁决索引产品依据不代表审查关闭)；不在日常台账重复维护已关闭的规则清单。“已裁／已投影”不证明实现、图片或本轮审核通过；本批未重读实时 Owner 记录。
 
-**Temperature Concrete Import 缺值策略：已裁。** 规则及目标物种护栏在[卡8](contract-cards.md#template-list)，不再挂“未冻结／三选一待裁”。选择该方案的理由随卡8；原过程由 Git 保留。
-
-| ID | 处置与原出处 | PROJECTED IN |
-|---|---|---|
-| ADJ-01 | 已裁；记录页 §374／§377。实现仓归属读数，不是实现完成证明。 | 实现归属摘要：durable schema 由 TS 编辑器仓实现，另一侧原型不承担本契约；依据见固定基线 ADJ-01，不代表已实现。 |
-| ADJ-02 | 已裁并投影；记录页 §374／§377。 | [统一缺席矩阵 §11](component-contract-consolidated.md#profile-lifecycle) |
-| ADJ-03 | 已裁并投影；记录页 §374／§377。设计关闭／实现未核分别处理。 | [记录态 §9](component-contract-consolidated.md#role-record-intent)、[RoleControl](contract-cards.md#role-control)、[证据边界](#species-role-ui) |
-| ADJ-04 | Component Recipes 形状已裁；记录页 §374／§377，持久层 §3.1。 | [RoleControl Durable mutation](contract-cards.md#role-control) |
-| ADJ-05 | Source override 独立绑定已裁；记录页 §374／§377。 | [组件记录 §3](component-contract-consolidated.md#component-clear)、[Source Selector](contract-cards.md#source-selector) |
-| ADJ-06 | Authoring 粒度已裁；记录页 §383。不得与 ADJ-08 的物理键混读。 | [Policy／粒度 §9](component-contract-consolidated.md#policy-profile)、[身份边界 §16](component-contract-consolidated.md#identity-boundaries) |
-| ADJ-07 | raw Role 默认已裁；记录页 §383。 | [Role记录态 §9](component-contract-consolidated.md#role-record-intent) |
-| ADJ-08 | C_SPLIT_REGISTERS 已裁并投影；记录页 §385。 | [身份边界 §16](component-contract-consolidated.md#identity-boundaries)，完整保留业务概念／物理键／Runtime边界；桶仍是数据迁移期的行单位表达；原页侧落点为 CT §1.1／§3.3、RS §11.1。 |
-| ADJ-09 | C_NARROW 已裁并投影；记录页 §392。 | [Source事务 §8](component-contract-consolidated.md#source-transaction)、[事务分类 §15](component-contract-consolidated.md#transaction-model) |
-| ADJ-10 | 作者词命名已裁；记录页 §393。原“页内相抵”定性不再使用。 | [卡7](contract-cards.md#autosave-status)已承接作者词与丢弃射程；不能再登记“本包不投影”。 |
-| ADJ-11 | A_NARROW 已闭并投影；持久层 v16 §3.7。 | [空底板投影 §11](component-contract-consolidated.md#empty-profile-projection) |
-| ADJ-12 | Setup能力已 CLOSED；原裁定转录在本包 RoleControl。 | [Setup §11](component-contract-consolidated.md#profile-lifecycle)、[RoleControl](contract-cards.md#role-control)；不替代UI形态／实现验证。 |
-| ADJ-13 | target／同层atomic batch已裁；原转录在本包汇编 §12。 | [TimePeriod §12](component-contract-consolidated.md#component-specifics)、[覆盖确认 §15](component-contract-consolidated.md#timeperiod-batch-guard) |
-
-“已裁”与“已有执行投影”分别核对；链接只证明存在入口，完整性仍须沿所引内容审核，不能以表格非空替代验收。
+- **ADJ-01 实现归属边界**：durable schema 由 TS 编辑器仓实现，另一侧原型不承担本契约；原出处为记录页 §374／§377，不代表已经实现。
+- **ADJ-08 的迁移语境**：桶仍是数据迁移期的行单位表达；身份边界见[汇编 §16](component-contract-consolidated.md#identity-boundaries)，原页侧落点为 CT §1.1／§3.3、RS §11.1。
+- **ADJ-03 设计关闭与实现取证**：[当前证据边界](#species-role-ui)分别登记；不因裁定已闭而关闭持久化验证。
+- Temperature Concrete Import 缺值策略与目标物种护栏从[卡8](contract-cards.md#template-list)读取；其已裁依据见固定索引，不再维护“未冻结／三选一待裁”的旧问题。
 
 <a id="role-profile-history"></a>
-**Role／Profile／Setup 历史入口**：原裁定及撤回规则见[固定台账](https://github.com/futouyiba/HitFish-Up/blob/78fe441fb0b857f75bee097b87afa4a60e3dec04/docs/review/ui-component-contract-r2/OPEN-ITEMS.md#role-profile-history)与其指向的旧 RoleControl；现行定义从上表读取。旧关闭／读数不得扩大为保存重载通过。
+**Role／Profile／Setup 历史入口**：原裁定及撤回规则见[固定台账](https://github.com/futouyiba/HitFish-Up/blob/78fe441fb0b857f75bee097b87afa4a60e3dec04/docs/review/ui-component-contract-r2/OPEN-ITEMS.md#role-profile-history)与其指向的旧 RoleControl；现行定义见[汇编 §11](component-contract-consolidated.md#profile-lifecycle)与[RoleControl](contract-cards.md#role-control)。旧关闭／读数不得扩大为保存重载通过。
 
+<a id="remaining-evidence"></a>
 ## 3. 剩余取证项
+
+以下项目沿既有未核范围登记，不以本轮文字整理宣称新缺陷或已完成。
 
 | 项 | 当前处理边界 | 下一步所需证据 |
 |---|---|---|
-| UI细则出处 | 未在本批复核，不自动升级为Current要求；完整清单只在[汇编 §18.5](component-contract-consolidated.md#18-未核--待裁)维护。 | 逐项 Current／Owner 依据；不能以文字整理作通过。 |
+| UI细则出处 | 完整待核清单见[下方](#ui-evidence)，不自动升级为 Current 要求。 | 逐项 Current／Owner 依据；不能以文字整理作通过。 |
 | 影响面“三数／四项”跨页读数 | 旧记录指 Resolve §11.3 未同步，本批未重读该页；仓内规则按[§14](component-contract-consolidated.md#template-reference-sets)。 | 新鲜回读对应页面，才能判断今天仍冲突或已消失。 |
-| Structure 固定字段数误读 | **已收口**；原“25 个 slot”的写法不能再作为当前冲突。 | 现行投影与原收口见[汇编 §18.8](component-contract-consolidated.md#18-未核--待裁)及[卡3](contract-cards.md#field-value-editor)。 |
-| ADJ-11 展开分支缺口 | 已闭；不重复列为剩余规则缺口。 | 完整规则见上表；实现是否通过另验。 |
+| CLEAR 的替代标签 | “已被本层替代”的显示场景仍归[卡2](contract-cards.md#operation-control)；能否另取“不再继承”只是旧比较的可翻转点，未新增命名裁定。 | 若重开命名，需 Current／Owner 依据，不能以整理改词。 |
+| Species Policy Recipe 实现取证 | 契约读数已闭；旧取证曾报第五类 TemplateKind 缺口，当前实现未复核。 | 绑定新实现 head 取证，不能把旧“实现里不存在”当今日状态。 |
+
+<a id="ui-evidence"></a>
+**UI 细则完整待核清单（原汇编 §18.5）**：本层操作数／诊断数／profile presence／source health 四展示项；结构筛选“全部／本层修改／问题”；组件卡不做 mini heatmap／完整字段 provenance／操作历史时间线三条负向（不能把焦点栏的独立 History 一并禁掉）；TimePeriod Setup 六步的具体 UI 序列与旧预设 preview 四项形态；模板 candidate 的“N 项待审查修改／撤销／审查修改”形态；Species 编辑“不弹 Modal、只在行旁给影响摘要”的强度映射；非 CORE 时 `temp_threshold` 的显示／保存及“不消费”文案；same-source pin 的“当前值不变，但继承关系变化”文案；P0 通道 variants 清单。原逐项缺出处说明见[固定汇编 §18](https://github.com/futouyiba/HitFish-Up/blob/efa727e944d3dc6b9fdd18e934f0e1cdbde0013d/docs/review/ui-component-contract-r2/component-contract-consolidated.md#18-未核--待裁)。Setup／Preset **机制**已分别在[汇编 §11](component-contract-consolidated.md#profile-lifecycle)／[汇编 §15](component-contract-consolidated.md#timeperiod-batch-guard)投影，本项不据旧 UI 取证重开机制裁定，也不把上述 UI 形态当成 Current 已核要求。
 
 ## 4. 易误报项的阅读入口
 
@@ -81,26 +72,13 @@
 
 ## 5. 契约读数与能力裁定（沿用固定来源）
 
-`CLOSED` 只表示原契约读数／能力问题已回答，不代表实现、图证据或整个Persistence通过。形状与算法只在所引文件维护；原完整读数见[固定基线 §5](https://github.com/futouyiba/HitFish-Up/blob/78fe441fb0b857f75bee097b87afa4a60e3dec04/docs/review/ui-component-contract-r2/OPEN-ITEMS.md#5-契约读数与能力裁定沿用固定来源)。
-
-| 子项 | 状态 | 规则入口／验证边界 |
-|---|---|---|
-| Component Recipe Shape | CLOSED（读数） | 持久层 §3.1；[RoleControl](contract-cards.md#role-control) |
-| Affinity Role Patch | CLOSED（读数） | 持久层 §3.4；[RoleControl Durable mutation](contract-cards.md#role-control) |
-| Affinity Fail Env Coeff Patch | CLOSED（读数） | 持久层 §3.4；[RoleControl Durable mutation](contract-cards.md#role-control) |
-| Species Policy Recipe | CLOSED（读数） | 持久层 §3.1；旧实现取证曾报第五类TemplateKind缺口，**当前实现未复核**，不得将旧“实现里不存在”当新实测。 |
-| Affinity Source Override | CLOSED（读数） | [组件记录 §3](component-contract-consolidated.md#component-clear)、[authoring／物理键分层 §16](component-contract-consolidated.md#identity-boundaries) |
-| Profile Presence | CLOSED | [Profile生命周期 §11](component-contract-consolidated.md#profile-lifecycle) |
-| Species Role UI | [当前审查项](#species-role-ui) | 操作入口、记录态和实现分别验收。 |
-| Follow／Pin | CLOSED（语义） | [Source×Operation §3](component-contract-consolidated.md#component-clear)、[卡1](contract-cards.md#source-selector) |
-| Source Transaction | CLOSED（能力） | [§8](component-contract-consolidated.md#source-transaction)、[§15](component-contract-consolidated.md#transaction-model) |
-| TimePeriod Transaction | CLOSED（能力） | [target §12](component-contract-consolidated.md#component-specifics)、[Batch Overwrite Guard](component-contract-consolidated.md#timeperiod-batch-guard)；“预设”的不同指称仍须区分，不据术语清理重开已裁能力。 |
+原契约读数／能力问题的关闭范围与出处见[固定能力表](https://github.com/futouyiba/HitFish-Up/blob/efa727e944d3dc6b9fdd18e934f0e1cdbde0013d/docs/review/ui-component-contract-r2/OPEN-ITEMS.md#5-契约读数与能力裁定沿用固定来源)。`CLOSED` 不代表实现、图证据或整个 Persistence 通过；现行形状与算法归汇编／执行卡，不在此保留第二张规则表。Species Role 的后续验证见[当前审查项](#species-role-ui)，第五类 TemplateKind 的旧缺口见[剩余取证](#remaining-evidence)。
 
 <a id="other-material-items"></a>
 ## 6. 其它材料与实现取证边界
 
 - **上游链接归属**：旧记录指主开发需求 §3.0 将作者分层链到副本，而定义归持久层 §3.3；本批未重读这些页面，不以旧记录宣布当前链接仍错或已修。
 - **卡10／卡11视觉投影**：旧登记为等实现后再投；本批未核实现或live Figma，实际物证仍从[图像登记](figma-current.md#image-evidence)取得，不因文档清理视为完成。
-- **契约名／实现名映射**：旧取证将契约 `ProductionRowLedger`（持久层 §3.2／§3.4）对应为实现 `ProductionRows`／`ProductionRowRecord`（`src/data/derived.ts:36/51`），`refs: Partial<Record<ProfileField, number | string | null>>` 对应四组件键。该记录用于按名定位，不是新身份；原裁定不为外观一致改名。原读数见[固定取证](https://github.com/futouyiba/HitFish-Up/blob/78fe441fb0b857f75bee097b87afa4a60e3dec04/docs/review/ui-component-contract-r2/OPEN-ITEMS.md#other-material-items)，**本批未重核实现，行号与类型是否仍相同需到实现仓确认**。
+- **契约名／实现名映射**：`ProductionRowLedger` 对应实现名的旧定位、类型与行号见[固定取证](https://github.com/futouyiba/HitFish-Up/blob/efa727e944d3dc6b9fdd18e934f0e1cdbde0013d/docs/review/ui-component-contract-r2/OPEN-ITEMS.md#other-material-items)；只用于定位，不是新身份，原裁定不为外观一致改名。本批未重核实现，使用前须在目标实现 head 确认。
 
 需要核对先前原文时使用 Git 历史；它不取代现行规则与新的实证。

@@ -264,30 +264,14 @@
 
 ## 17. 两份不一致
 
-本节只保留现行落点；旧稿逐字、取舍理由、撤回过程与历史探针完整保存在[固定基线 §17](https://github.com/futouyiba/HitFish-Up/blob/db97e9bb4784a8eaf2421cf88894c6d4e4beef2c/docs/review/ui-component-contract-r2/component-contract-consolidated.md#17-两份不一致)。历史中的失效写法不再作为日常规则；原零命中数只代表当时探针范围。
-
-| 原比较项 | 现行入口 |
-|---|---|
-| 1. 桶层缺省支显示 | [§4](#field-value-control)：操作名字与行内具体显示分层 |
-| 2. SET 越档；3. ADD 的 Tier metadata | [§5](#tier-contract) |
-| 4. 被替代上级操作的标签 | [卡2](contract-cards.md#operation-control)保留“已被本层替代”的显示场景；CLEAR 可否另取“不再继承”仍只是原比较的可翻转点，未在此新增命名裁定 |
-| 5. Policy 两动作 | [§10](#policy-clear) |
-| 6. INHERIT／CLEAR 的无值动作 | [§4](#field-value-control)；不再从旧补写给它们附加 typed 值条件 |
-| 7. 组件卡可快速编辑 | [§7](#7-组件卡--焦点编辑栏) |
+旧稿比较、撤回过程与历史探针见[固定基线 §17](https://github.com/futouyiba/HitFish-Up/blob/efa727e944d3dc6b9fdd18e934f0e1cdbde0013d/docs/review/ui-component-contract-r2/component-contract-consolidated.md#17-两份不一致)，不作为当前规则或本轮测量。现行入口：字段交互 [§4](#field-value-control)、Tier [§5](#tier-contract)、组件卡 [§7](#7-组件卡--焦点编辑栏)、Policy CLEAR [§10](#policy-clear)；具体替代标签场景见[卡2](contract-cards.md#operation-control)。未决命名的处置只在台账维护。
 
 <a id="18-未核--待裁"></a>
-## 18. 未核边界与现行入口
+## 18. 取证与现行入口
 
-以下按[固定基线 §18](https://github.com/futouyiba/HitFish-Up/blob/db97e9bb4784a8eaf2421cf88894c6d4e4beef2c/docs/review/ui-component-contract-r2/component-contract-consolidated.md#18-未核--待裁)保留取证边界，不把历史待核项自动判成当前缺陷或已完成；可变处置仍归[问题台账](OPEN-ITEMS.md#active-review-items)。本批未复查下列未核 UI 细则或其它 Current 页面。
+未核事项、下一步及完整 UI 细则清单只在[问题台账](OPEN-ITEMS.md#remaining-evidence)维护；原 **§18.5** 的完整清单已移至[UI 取证入口](OPEN-ITEMS.md#ui-evidence)，此处不再维护第二份动态状态。旧读数与已收口经过见[固定 §18](https://github.com/futouyiba/HitFish-Up/blob/efa727e944d3dc6b9fdd18e934f0e1cdbde0013d/docs/review/ui-component-contract-r2/component-contract-consolidated.md#18-未核--待裁)。
 
-1. **物种层缺省用户语言**：原冲突已收口；现行映射见[§4](#field-value-control)。旧稿、落页经过和零命中范围只在固定历史查阅。
-2. **Affinity 缺省支／CLEAR 用户语言**：原落页与卡2降级前提已收口；概念名与行内显示的区别见[§4](#field-value-control)，四格 UI 见[卡2](contract-cards.md#operation-control)。
-3. **正文命名**：按 §19 的边界，不将草稿词升级成产品标识符。
-4. **旧16组件名清单**：按 §19 读取固定清单，不据本次整理新增命名裁定。
-5. **尚未复核的 UI 细则清单**：本层操作数／诊断数／profile presence／source health 四展示项；结构筛选“全部／本层修改／问题”；组件卡不做 mini heatmap／完整字段 provenance／操作历史时间线三条负向（不能把焦点栏的独立 History 一并禁掉）；TimePeriod Setup 六步的具体 UI 序列与旧预设 preview 四项形态；模板 candidate 的“N 项待审查修改／撤销／审查修改”形态；Species 编辑“不弹 Modal、只在行旁给影响摘要”的强度映射；非 CORE 时 `temp_threshold` 的显示／保存及“不消费”文案；same-source pin 的“当前值不变，但继承关系变化”文案；P0 通道 variants 清单。原逐项缺出处说明见固定历史。Setup／Preset **机制**已分别在[§11](#profile-lifecycle)／[§15](#timeperiod-batch-guard)投影，本项不据旧 UI 取证重开机制裁定，也不把上述 UI 形态当成 Current 已核要求。
-6. **校验颜色**：原卡3 WARNING 黄标冲突已收口；现行分级见 §6 与卡3，历史更正不再内嵌。
-7. **影响统计跨页读数**：原记录指《编辑器与 Resolve》§11.3 的“三数”未随其余页面改为四项；本批未重读该页，不声称漂移今天仍在或已经消失。仓内现行候选影响统计与只读列表边界见[§14](#template-reference-sets)，未核处置仍见台账。
-8. **Structure 字段数量**：UI 不固化数量，现行投影见卡3；数据层 `member_key=0…24` 与 UI 固定字段数是不同主张。原比较与已收口过程仅留固定历史。
+物种／Affinity 字段语言见[§4](#field-value-control)，校验颜色见[§6](#validation-autosave)，Structure 动态字段与数据查表键的区别见[卡3](contract-cards.md#field-value-editor)；命名边界仍在 §19。
 
 <a id="19-待命名--需裁定"></a>
 ## 19. 命名边界
