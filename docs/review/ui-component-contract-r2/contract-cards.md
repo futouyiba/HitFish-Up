@@ -277,7 +277,7 @@ Structure 竖切的实现依赖见[汇编 §2](component-contract-consolidated.m
 Component: Template Library List｜模板清单与别名（模板工作区 22:2；对象导航 TEMPLATES 入口同源）
 Reads:
   - 模板清单（按组件过滤；平铺、默认按引用量排序）
-  - 每模板：templateId / stableKey（只读）、displayName、中文别名 name_zh / 英文别名 name_en、extracted_from（只作追溯）
+  - 每模板：templateId / stableKey（只读）、displayName、中文别名 name_zh / 英文别名 name_en（别名不是生产行 name）、extracted_from（只作追溯、不作关联依据）
   - 生命周期状态（ACTIVE / ARCHIVED）
 Actions:
   - 浏览 / 按组件筛选；编辑 name_zh / name_en

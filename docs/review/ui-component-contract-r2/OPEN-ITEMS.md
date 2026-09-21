@@ -59,6 +59,9 @@ ADJ-01…13 的关闭裁定、原出处与投影定位见[固定裁决索引](ht
 | CLEAR 的替代标签 | “已被本层替代”的显示场景仍归[卡2](contract-cards.md#operation-control)；能否另取“不再继承”只是旧比较的可翻转点，未新增命名裁定。 | 若重开命名，需 Current／Owner 依据，不能以整理改词。 |
 | Species Policy Recipe 实现取证 | 契约读数已闭；旧取证曾报第五类 TemplateKind 缺口，当前实现未复核。 | 绑定新实现 head 取证，不能把旧“实现里不存在”当今日状态。 |
 
+<a id="brief-source-verification"></a>
+**原 brief 的来源取证**：AggregationRole 的现行数值／次要聚合规则，以及 fail_env_coeff 的 GAP-013/014 现状，仍需回 Current 复核。原稿“列＋值都就位／空列会判 264 行非法”只是[原待核记录](https://github.com/futouyiba/HitFish-Up/blob/807cef92f75e660cae820ccd48996f7e0c922e18/docs/implementation-brief-0.3.4.0-B.md#L119-L125)，不得作为现行数值或验收判据。 本次仅迁移登记，未重读对应 Current 或重跑实现验证。
+
 <a id="ui-evidence"></a>
 **UI 细则完整待核清单（原汇编 §18.5）**：本层操作数／诊断数／profile presence／source health 四展示项；结构筛选“全部／本层修改／问题”；组件卡不做 mini heatmap／完整字段 provenance／操作历史时间线三条负向（不能把焦点栏的独立 History 一并禁掉）；TimePeriod Setup 六步的具体 UI 序列与旧预设 preview 四项形态；模板 candidate 的“N 项待审查修改／撤销／审查修改”形态；Species 编辑“不弹 Modal、只在行旁给影响摘要”的强度映射；非 CORE 时 `temp_threshold` 的显示／保存及“不消费”文案；same-source pin 的“当前值不变，但继承关系变化”文案；P0 通道 variants 清单。原逐项缺出处说明见[固定汇编 §18](https://github.com/futouyiba/HitFish-Up/blob/efa727e944d3dc6b9fdd18e934f0e1cdbde0013d/docs/review/ui-component-contract-r2/component-contract-consolidated.md#18-未核--待裁)。Setup／Preset **机制**已分别在[汇编 §11](component-contract-consolidated.md#profile-lifecycle)／[汇编 §15](component-contract-consolidated.md#timeperiod-batch-guard)投影，本项不据旧 UI 取证重开机制裁定，也不把上述 UI 形态当成 Current 已核要求。
 
