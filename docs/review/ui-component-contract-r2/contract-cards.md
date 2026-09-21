@@ -298,24 +298,27 @@ Must not:
 依据: 《编辑器持久层契约》§3.6（模板清单与别名记录表）＋§3.10（identity immutable；displayName 可改）；《编辑器界面》§7（平铺可滚动、按引用量排序、别名可编辑、source name 只读）
 ```
 
+<a id="template-lifecycle-control"></a>
 ### A②-卡9｜Template Lifecycle（ACTIVE / ARCHIVED）
+
+**机制入口**：[汇编 §14 生命周期与删除](component-contract-consolidated.md#template-lifecycle-guards)；本卡只承接操作、记录与显示。
 
 ```
 Component: Template Lifecycle｜模板生命周期
 Reads:
-  - 生命周期状态；DirectReferenceSet（Hard Delete guard 用）
+  - lifecycle；按汇编 §14 枚举的完整 DirectReferenceSet（包括 Preset／Policy durable 直接绑定）
 Actions:
-  - Archive（ACTIVE→ARCHIVED）；Restore（ARCHIVED→ACTIVE）
-  - Hard Delete（仅 DirectReferenceSet＝∅；Preset 引用也算 live）
+  - Archive（ACTIVE→ARCHIVED）／Restore（ARCHIVED→ACTIVE）；Hard Delete 执行前按所引 guard 清点引用
 Durable mutation:
-  - Archive / Restore 改生命周期状态；Hard Delete 删资产（前置＝显式解除 / 替换全部直接引用）
+  - Archive／Restore 只改 lifecycle；Hard Delete 通过 guard 后删除模板资产
 Must show:
-  - ARCHIVED 的限制可视（不可新建引用 / 不可直改完整值；要改先 Restore）
-  - Hard Delete 前的引用清点
+  - ARCHIVED 标记与不可新引用／不可直改值的限制；Restore 入口；删除前的直接引用清单
+Acceptance:
+  - 只有 Preset 仍直接引用、或模板已归档但仍有直接引用时，Hard Delete 不可执行；清空全部直接引用后才允许删除。
+  - 归档后既有 Recipe 仍可 Resolve／Publish；引用归档源的 Preset 不能 apply，指出具体源。编辑完整值须先 Restore。
 Must not:
-  - Archive 不自动改引用 / 不 fallback / 不自动找相似 / 不自动复制 payload
-  - ARCHIVED ≠ 可删；不新增第三态；归档模板从普通 Source Picker 隐藏 / 降级
-依据: 《编辑器持久层契约》§3.10（生命周期两态、Hard Delete＝DirectReferenceSet 空、Preset 引归档源 invalid-for-apply 且 UI 指名、归档从 Picker 隐藏）
+  - 不绕过汇编 §14 的两态、删除及归档传播边界；普通 Source Picker 按该节隐藏／降级归档项
+依据: 《编辑器持久层契约》v16 §3.6／§3.10；完整机制与来源版本见卡前入口。
 ```
 
 ### A②-卡10｜Edit Template Value（模板完整值编辑；高影响）
@@ -341,42 +344,48 @@ Must not:
 依据: 《编辑器持久层契约》§3.10（高影响四步；两引用集；**四项数**）＋§3.7（Template edit 下 projection 生命周期：SET-masked 可不变）；《编辑器界面》§1.1 共享影响面行（**四项数**同句）；水温曲线 P0 只读＝记录页 §199 ⑥②（⚠️ 该条**取代** Checkpoint「直接拖动绝对曲线／Handle 仍应表达为 SET」那句）
 ```
 
+<a id="replace-references"></a>
 ### A②-卡11｜Replace References（批量换绑 A→B）
+
+**机制入口**：[汇编 §14 两引用集](component-contract-consolidated.md#template-reference-sets)与[Replace 边界](component-contract-consolidated.md#template-replace-boundary)；staged 协议按[§8](component-contract-consolidated.md#source-transaction)。
 
 ```
 Component: Replace References｜批量换绑（模板 A → 模板 B）
 Reads:
-  - DirectReferenceSet(A)（枚举改动目标）；替换候选 B
+  - DirectReferenceSet(A)（改绑目标）；候选 B；全图 before／after Resolve 结果
 Actions:
-  - 选旧源 → 选新源 → 枚举直接引用 → 保留既有 ops / patches → re-resolve 全图 → before / after Impact Preview → 确认 → 原子 rebind
+  - 选 A → 选 B → 展示直接改绑对象与 Impact Preview → 显式确认 → 原子 rebind
 Durable mutation:
-  - 只重写 durable 直接绑定
+  - 只写直接 source bindings；operations／patches 按所引边界保留
 Must show:
-  - 改动前清点（哪些对象将被改绑）；**四项分列**（直接引用数 / Effective consumer 数 / 最终结果变化数 / 新增 Error·Warning）；Preview 含 ERROR 醒目
-Must not:
-  - 禁止给 EffectiveConsumer 自动写 sourceOverride（会把经继承消费的 child 变成显式 pin、静默改变 authoring 拓扑）
-  - 不为保持旧 Effective Value 生成 SET
-依据: 《编辑器持久层契约》§3.10（Replace 只改 DirectReferenceSet 逐字）＋§3.3（换源不自动清除既有调整）
+  - 哪些对象将被改绑；四项影响统计按汇编 §14 分列；Preview 中 ERROR 醒目
+Acceptance:
+  - Species 直接引用 A、child 继承它时，换绑只写 Species binding；child 经 Resolve 消费 B，仍无新增 sourceOverride。
+  - 已有 ADD／SET／CLEAR 保留；不为维持旧值制造 SET；after 统计来自全图 Resolve，不能只 diff 模板 payload。
+依据: 《编辑器持久层契约》v16 §3.10；Source 与操作正交仍见汇编 §3。
 ```
 
 <a id="reference-list"></a>
 ### A②-卡12｜Reference List（引用者列表；两集两数）
 
+**机制入口**：[汇编 §14 两引用集与统计上下文](component-contract-consolidated.md#template-reference-sets)；原 CXR-03 修正出处在该节保留，本卡不另维护一份定义。
+
 ```
 Component: Reference List｜「这一行还被谁用」引用者列表
 Reads:
-  - DirectReferenceSet 与 EffectiveConsumerSet（两组，可分列）；按四组件分组
+  - DirectReferenceSet 与 EffectiveConsumerSet；按四组件分组
 Actions:
   - 只读浏览（可滚动、不截断）；Replace 面板（卡11）另列 Direct 集
 Durable mutation:
   - 无（纯展示）
 Must show:
-  - 缺省显示 EffectiveConsumerSet（含经物种层继承者），分组标注「直接引用 / 经继承」
-  - **两集 ＋ 各自的两个数**（**直接引用数 / Effective consumer 数**）并列（Replace 的 target＝Direct 集）；共 N 条鱼 / M 个鱼种
-  - ⚠️ **本卡不出现「四项数」的后两项**（最终结果变化数 / 新增 Error·Warning）—— **它们需要「候选变更 ＋ before/after」上下文，而只读列表没有这个输入**（记录页 §288 裁 `CXR-03`）。**四项数只在有候选变更的上下文里出现（卡10／卡11）**；**不得由实现者自行补造候选机制**。
+  - 缺省显示 EffectiveConsumerSet（含经物种层继承者），标注「直接引用／经继承」
+  - 直接引用数／Effective consumer 数并列；共 N 条鱼／M 个鱼种
+Acceptance:
+  - 一个直接绑定有多个继承消费者时，两集两数分别展示；没有候选变更的列表不显示最终结果变化数／新增 Error·Warning，也不制造候选机制。
 Must not:
   - 不截断（只做滚动）；不把物理行共享展示成 Authoring 继承意图（碰巧同值 ≠ 有意共享）
-依据: 《编辑器持久层契约》§3.10（两引用集定义与用途；**四项数的定义与适用上下文** —— 本卡是只读列表，只取前两项，后两项归有候选变更的分析，记录页 §288 裁 `CXR-03`）＋§3.7（复用按 lineage、禁 payload-equality dedup）；《编辑器界面》§7（引用者列表不截断只滚动）＋§5（负向清单：不做三档分级）；现行实现形态（可滚动约 4.5 行、按四组件分组）
+依据: 《编辑器持久层契约》v16 §3.10（两集）、§3.7（lineage复用）；《编辑器界面》v20 §7（列表滚动不截断）。其余沿既有取证：界面 §5 不做三档分级；原实现形态为可滚动约4.5行、按四组件分组，本批未重跑实现。
 ```
 
 ## Part 3 收口提示

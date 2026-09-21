@@ -189,18 +189,32 @@
 
 <a id="template-lifecycle"></a>
 ## 14. 模板工作区与模板生命周期
+
+**本节是模板生命周期、两引用集及 Replace 边界在本包的完整机制投影**；卡9／11／12保留交互、记录与验收。权威为《编辑器持久层契约》v16（`Last Updated 2026-09-21 14:34 +08:00`）§3.6／§3.10；本批同时回读《编辑器界面》v20（`Last Updated 2026-09-21 17:19 +08:00`）§7。其余历史出处沿用基线，未重读实时 Owner 记录，也不声明实现已通过。Source staged 协议仍按[§8](#source-transaction)，不在本节重定义。
+
 - 五类 Live Template：Temperature / Structure / Feeding Layer / Time Period / Spatial Opportunity Policy。（《编辑器心智模型与 IA》§4；《编辑器持久层契约》§3.6）
 - 模板是**完整值资产**：operation 只存在于物种 Recipe 与桶 patch 上。（《编辑器持久层契约》§3.3、§3.7）
 - 两个入口、一个焦点编辑器：从组件卡钻入（中栏保持鱼上下文）与从模板库进入（中栏切到模板上下文）复用同一个模板值编辑器。（《编辑器心智模型与 IA》§4；《编辑器界面》§7）
 - 平铺、可滚动、默认按引用量排序；中文 / 英文别名可编辑；source name 只读且不作键。（《编辑器界面》§7）
 - 关联一律按 id；别名属 editor-state；不把 inheritance lineage 编进生产行 name。（《编辑器持久层契约》§3.6、§4.4；《编辑器界面》§1.2）
 - 「从当前鱼提取模板」**只创建 Template Asset**：不改当前鱼 Source、不清既有操作、不把 Recipe 折成新模板引用（即使 payload 完全相同）；要改 Source 须另走 Source Change ＋ Rebase Preview。（《编辑器界面》§7 逐字；记录页 §172 二 APPLY DELTA ⑤）
-- 生命周期 `ACTIVE / ARCHIVED` 两态：归档后既有引用继续 Resolve / Publish，不允许新建引用、不允许直接改完整值，可查看引用 / Replace References / Restore；要改先 Restore。归档模板从普通选择器隐藏 / 降级。（《编辑器持久层契约》§3.10）
-- 硬删除仅当直接引用集为空；`Archive` 不自动改引用 / 不 fallback / 不自动找相似 / 不自动复制 payload；归档 ≠ 可删。（《编辑器持久层契约》§3.10）
-- 改模板完整值是高影响动作：candidate → Impact Preview → 显式确认 → 原子提交 → 重新 Resolve → 物化受影响的生产投影。（《编辑器持久层契约》§3.10）
-- **两引用集的定义与用途**（《编辑器持久层契约》§3.10）：`DirectReferenceSet(A)` 是 durable state 中直接写了 A 的 source ref 的对象（Species Recipe source、Affinity `sourceOverride`、SpeciesPreset binding、Policy source），用于 Replace References 改动目标、hard-delete guard 和直引清单；`EffectiveConsumerSet(A)` 是 Resolve 后当前 Effective Source 为 A 的全部最终 Recipe，含经物种层继承者，用于 Impact Preview／before-after 分析。Hard Delete 须检查这些及其它 durable 直接引用。Policy Template 的 direct refs 为 Species policy source binding 与 SpeciesPreset policy binding；Affinity 没有 `policySourceOverride`，不得虚构该引用。只读展示见[卡12](contract-cards.md#reference-list)。
-- 影响面四项数：直接引用数 / Effective consumer 数 / 最终结果变化数 / 新增 Error·Warning —— **四个可以互不相同的数字**。（《编辑器持久层契约》§3.10；《编辑器界面》§1.1；记录页 §208）
-- Replace References 只改**直接引用集**；禁止给经继承消费的下游自动写 `sourceOverride`；不为保旧值生成 `SET`；现有 `ADD / SET / CLEAR` 全部保留；影响展示用重新 Resolve 后的结果，不是只 diff 两个模板 payload。（《编辑器持久层契约》§3.10；《编辑器与 Resolve》§11.3；冻结卡 `A②-卡11`）
+<a id="template-lifecycle-guards"></a>
+**生命周期与删除**（持久层 §3.6／§3.10；交互见[卡9](contract-cards.md#template-lifecycle-control)）：
+- 五类模板统一只有 `ACTIVE / ARCHIVED` 两态。归档后既有引用继续 Resolve／Publish，但不可新建引用、不可直接改完整值；可查看引用／Replace References／Restore，要改值先 Restore，再走 Impact Preview。普通 Source Picker 隐藏／降级归档模板。
+- Archive 不自动改引用、不 fallback、不自动找相似模板、不自动复制 payload；`ARCHIVED` 不等于可删。Hard Delete 仅在下述 `DirectReferenceSet` 为空时允许；已有直接引用须先显式解除／替换，检查范围包括 SpeciesPreset 与其它 durable 直接引用，不能只数当前 Effective consumers。
+- Preset 引用归档 source 时 `invalid-for-apply`，UI 指名是哪一个；禁止静默跳过／fallback／选最近似模板。这与既有 Recipe 引用仍可 Resolve／Publish 分开。（持久层 §3.10）
+
+<a id="template-reference-sets"></a>
+**两引用集与影响统计**（持久层 §3.10；只读展示见[卡12](contract-cards.md#reference-list)）：
+- `DirectReferenceSet(A)`＝durable state 中直接写了 A 的 source ref 的对象，包括 Species Recipe source、Affinity `sourceOverride`、SpeciesPreset binding、Policy source；用于 Replace 改动目标、Hard Delete guard 和直引清单。Policy Template 的 direct refs 是 Species policy source binding 与 SpeciesPreset policy binding；Affinity 没有 `policySourceOverride`，不得虚构。
+- `EffectiveConsumerSet(A)`＝Resolve 后当前 Effective Source 为 A 的全部最终 Recipe，含经物种层继承者；用于改值的 Impact Preview／before-after 分析。两集不能互代。
+- 模板改值／Replace 的候选变更场景中，影响面分列直接引用数／Effective consumer 数／最终结果变化数／新增 Error·Warning，四者可不同。卡12只读列表没有候选与 before/after 输入，故只展示前两项，不展示后两项、不自行制造候选机制；后两项归卡10／11等候选变更场景。此上下文边界沿用[固定基线卡12的 CXR-03 修正](https://github.com/futouyiba/HitFish-Up/blob/38f3dac85083542a63c310c5d65383579d1353b0/docs/review/ui-component-contract-r2/contract-cards.md#reference-list)，不冒称本批重读实时记录页 §288。
+
+<a id="template-replace-boundary"></a>
+**改值与批量换绑**（持久层 §3.10；卡10／[卡11](contract-cards.md#replace-references)）：
+- 模板完整值修改与 Replace 都属高影响动作，按[§8](#source-transaction)走候选、before/after Impact Preview、显式确认与原子提交；重新 Resolve 后的生产投影沿[§15](#cross-layer-guards)及卡10的既有边界，不以只比较两个模板 payload 代替影响分析。
+- Replace A→B 只重写 `DirectReferenceSet(A)` 的 durable 绑定，保留既有 operations／patches（含 `ADD / SET / CLEAR`），重 Resolve 全图。禁止给经继承消费的 child 自动写 `sourceOverride`，禁止为保持旧 Effective Value 生成 `SET`；同值不改变上述拓扑边界。
+
 - 正常传播不给每个消费者制造待复核债；只有真实诊断 / 复核条件才进待复核。（《编辑器心智模型与 IA》§5；《编辑器界面》§1.1）
 - 模板 → 模板的实时继承不支持；clone / save-as 后是独立模板；分类 / 族只用于分类与推荐，不构成继承父节点。（《编辑器持久层契约》§3.6；《编辑器心智模型与 IA》§4）
 
