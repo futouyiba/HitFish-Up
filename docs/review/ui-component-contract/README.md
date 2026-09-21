@@ -18,10 +18,11 @@
 | `REVISION-7.md` | `R3-FIG-01`（**契约文本陈旧**，图不重画）与 `R3-F-05`（**缺口成立、但你们给的修法被否**）两条的裁定处置；**该版自标「落了一半」**（卡侧已改、契约正文待落）—— 其中卡侧那一半**已被 REVISION 8 更正** |
 | `REVISION-8.md` | `R4-F-01` 的落笔形状已裁 —— **并更正我们在 REVISION 7 里写进冻结卡的形状（那一版有一半是被否掉的）**；含裁决后的完整 record 形状树，及一处**跨结果字面不一致**的取舍声明 |
 | `REVISION-9.md` | 契约正文落地（`R4-F-01`）＋图侧 `R4-FIG-02` 两作用域分开；保留物种层 Role op 的已知表征缺口 |
-| `REVISION-10.md` | cross-layer closure revision（§七 镜像改成 Current／卡 2 解降／Source＝前层＋Card、Role＝Card＋Policy「双入口单 Truth」／annotation 去审阅留痕／保留物种层 Role op 的纯 UI 表征缺口）。**⚠️ 该文件 §六 的「Persistence Contract: CLOSED / READBACK PASSED」已被推翻** —— `Species Component Recipe` 与 `AffinityAuthoringPatch.sourceOverride` 的**物理 schema 仍未闭**（见 `REVISION-12.md`）；在它真闭之前，**不得再写未加限定的「Persistence CLOSED」** |
+| `REVISION-10.md` | cross-layer closure revision（§七 镜像改成 Current／卡 2 解降／Source＝前层＋Card、Role＝Card＋Policy「双入口单 Truth」／annotation 去审阅留痕／保留物种层 Role op 的纯 UI 表征缺口）。**⚠️ 该文件 §六 的「Persistence Contract: CLOSED / READBACK PASSED」曾被推翻** —— 但 `REVISION-12` 用来推翻它的**三条理由，在《编辑器持久层契约》现文里已不成立**（§3.1 已是完整字段表；`sourceOverride` 落在**桶层 patch** 上；§3.3 的「恒 bucket」是**裁定**不是缺口）。⇒ **本包不再对"闭没闭"下判语，改为指向该页 §3.1／§3.3／§3.4／§3.10**（理由：**包里写「未闭」是包的判断，不是页的事实；写「CLOSED」同样不能代替页**）。见 `REVISION-14.md` §三 |
 | `REVISION-11.md` | `FIG-PACKET-01` —— **随包图已按现画布重导**（只换 `108:311` 一张；另两张逐字节未变） |
 | `REVISION-12.md` | packet 侧五处文本修正（**撤回 `REVISION-10` §六 过早的 `Persistence CLOSED`**／`Role 恒为 row-level` 收窄／两寄存器句／§六 字节数／README 去重）—— **不动图、不动 Notion** |
-| `REVISION-13.md` | **现行**：关闭 `§18` 里三条**已不再成立**的旧项（`18.1`／`18.2`／`18.6`／`18.8`，保留旧记录并标清被哪次更新替代）—— **回应「包内状态矛盾」** |
+| `REVISION-13.md` | 关闭 `§18` 里三条**已不再成立**的旧项（`18.1`／`18.2`／`18.6`／`18.8`，保留旧记录并标清被哪次更新替代）—— **回应「包内状态矛盾」** |
+| `REVISION-14.md` | **现行**：`[04]` 落法（物种格 → 三件 `物种层` ＋ `仅使用来源` ＋ `设置为`；两枚 chip 加不进 Current 帧 ⇒ 改判 **F**）＝ **对 `CXR-ROLE-UI-01` 的答复** ＋ ⚠️ **管线溯源修正**（REV-3 期三图是 MCP 产、REV-6 起换 REST ⇒ `230:673`／`176:283` 那两次「字节变化」**是换管线、不是内容变化**）＋ ⚠️ **撤回「Persistence 未闭」的表述**（按《编辑器持久层契约》现文重述）＋ 随包图 `108:311` → **175189** |
 | `img/` | **随包图像**（2026-09-21 导出；`scale=1`、整帧、不含 annotation）—— 型号与指纹见 `figma-current.md` §六 |
 | `README.md` | 本文件（索引与边界） |
 
