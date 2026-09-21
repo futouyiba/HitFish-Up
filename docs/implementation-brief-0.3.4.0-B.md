@@ -1,12 +1,12 @@
 # 0.3.4.0-B 开发 brief —— 可开工面 / 阻塞面
 
-**对齐时点**：2026-09-21（**第二轮**：补齐 §3.6／§3.7／§3.8，并折入当日新裁）。**依据 = 权威载体当天直读**，不是包内派生件。
+**原 brief 对齐时点**：2026-09-21 第二轮，来源 [PR #10 固定版本](https://github.com/futouyiba/HitFish-Up/blob/1edef11e8a9353ae6e66855b2e83c3f7a3725770/docs/implementation-brief-0.3.4.0-B.md)。本次只重新核对 CLEAR 及其必要边界：持久层 v16、Resolve v12、界面 v18（均标 `Last Updated 2026-09-21 14:34 +08:00`），以及裁决记录 §265／§312／§316；其余【画布】、【待核】、【裁定·未落页】保留原取证时点与状态，不表示本次重验。
 
 **★ 基准指针**（本 brief 是**辅助件**，不是权威）：
 
 | 载体 | 地位 | 说明 |
 |---|---|---|
-| `docs/review/ui-component-contract-r2/`（PR #7 分支） | **主基准** | 投影目录；**读它的 SHA 记在此处会立刻过期** ⇒ 用 `gh pr view 7 --json headRefOid` 取当前 head |
+| [本提交的审阅包](review/ui-component-contract-r2/README.md) | **主基准的仓内投影** | 来源 #7 @ `1409a13fde46dcb8d10bae039c26f6a0090bf497`；本次引用随同一提交交付，不用移动的 PR head 代替固定证据 |
 | 本项目内的 Current 文档（记录页 > 设计页） | **权威** | 两者冲突时以 Current 为准 |
 | **本文件** | **辅助** | 可开工面／阻塞面的**摘要**；**不替 Current 措辞**。**落码前回到 Current 再读对应小节。** |
 
@@ -38,22 +38,15 @@
 
 ### 2. op 词表与 allowlist 【契约 ＋ 画布】
 
-| 轴 | 物种层 | 桶 / 习性档案层 | ADD |
-|---|---|---|---|
-| **Role** | `INHERIT / SET` | `absent / CLEAR / SET` | **不允许** |
-| **`fail_env_coeff`** | `INHERIT / ADD / SET` | `absent / CLEAR / ADD / SET` | 允许 |
-| **numeric**（§3.3） | `ADD(delta) / SET(value)` | 另有 `CLEAR` | 数值型允许 |
-| **枚举绝对值**（如水温 `falloff`） | `INHERIT / SET` | `absent / CLEAR / SET` | **不得 ADD** |
-
-- **`INHERIT` ＝ 无记录**（**不造第三种记录**）；「记录存在 = 已覆盖，记录缺失 = 继承底板」。
-- `CLEAR` ＝ 移除继承自物种层的 operation，**回到物种当前 Policy Template 的 raw 值**。
-- **`fail_env_coeff` 越界**：最终值仍须满足 `[0, 0.10]`，越界 **Validator 报错，不 silent clamp**。
+- **组件 numeric / 枚举**：层 × 字段类型词表见[汇编 §13](review/ui-component-contract-r2/component-contract-consolidated.md#component-operation-allowlist)；CLEAR 的完整解析、记录形状与 Source 边界见[汇编 §3](review/ui-component-contract-r2/component-contract-consolidated.md#component-clear)。
+- **Policy（四 Role ＋ `fail_env_coeff`）**：词表与 CLEAR 的域内定义见[汇编 §10](review/ui-component-contract-r2/component-contract-consolidated.md#policy-clear)。**组件的 Effective Source 与 Policy Template 不可混为同一来源。**
+- `fail_env_coeff` 的值域与越界处理仍按《编辑器持久层契约》§3.4（仓内投影：[汇编 §9](review/ui-component-contract-r2/component-contract-consolidated.md#policy-profile)）。
 - **【画布】** 上述 op 集在 Figma 卡2 已画出可目视对照的形态：态1／态6／态7 把 `absent`／`CLEAR`／「缺省支」并排画开；态9 画「层 × 字段类型 ⇒ 选项集」；态10 画「原地展开（不设二级 drawer）」。
 
 ### 3. `sourceOverride` 的落点 【契约】
 
 - **桶层的 patch ＝ `AffinityAuthoringPatch`（owner ＝ `FishEnvAffinityRef`）**：**每组件可选 `sourceOverride`（换 Source —— 承载「桶可以换模板」）** ＋ 逐字段 `operationPatches`（`CLEAR | ADD | SET`）。
-- **同源显式 pin 保留**：`sourceOverride` 与物种层 Source 相同时**也不自动移除** —— 无 `sourceOverride` ＝ 未来物种层换 Source 时跟随；显式 `sourceOverride` ＝ **钉住**。（与「SET 同值仍是显式 pin」同一条判据：**当前 payload 相等 ≠ authoring intent 相等**。）
+- **同源 pin 与 CLEAR 的来源行为**：按[汇编 §3](review/ui-component-contract-r2/component-contract-consolidated.md#component-clear)；换操作与换 Source 分开，不能由当前 payload 是否相等推断 intent。
 - **两条 intent 不可混淆**：`SET 0.8`（模板值也是 0.8）**会阻断未来模板改值** ⇒ 自有 projection；`sourceOverride ＝ A ＋ 零 op` 表示未来继续跟随 A ⇒ **可安全复用 A 的行**。
 - **硬删除护栏（§3.10）**：Hard Delete **仅允许 DirectReferenceSet 为空**，须检查 Species Recipe source、Affinity `sourceOverride`、SpeciesPreset 及其它 durable 引用。**ARCHIVED ≠ 可删。**
 
@@ -65,12 +58,9 @@
 - **Replace References（A → B）只改 DirectReferenceSet**：保留既有 operations / patches、重 Resolve 全图、before/after Impact Preview、**原子提交**。**禁止**给所有 EffectiveConsumer 自动写 `sourceOverride = B` —— 那会把经继承消费的 child 变成**显式 pin**，静默改变 authoring 拓扑。
 - **`Affinity` 没有 `policySourceOverride`** ⇒ **不得虚构这类 direct ref**。Policy Template 的 direct refs ＝ Species policy source binding ＋ SpeciesPreset policy binding。
 
-### 5. `absent` / `CLEAR` / 「恢复为底板」是**三件不同的事**（§3.5）【契约】
+### 5. `absent` / `CLEAR` 与「恢复为底板」的记录语义（§3.3–§3.5）【契约】
 
-- `absent` ＝ **没有记录**（走缺省支）。
-- `CLEAR` ＝ **有一条记录**，效果是回到 Effective Source 原值。
-- 「恢复为底板」＝ **删除该覆盖记录**（**第三个独立动作**）。
-- **判据**：**「覆盖这一项」即使值恰好等于底板当前值，也不跟随** ⇒ **最终值相同 ≠ authoring intent 相同**，实现必须**读记录、不读值差**。
+完整记录语义统一见[汇编 §3](review/ui-component-contract-r2/component-contract-consolidated.md#component-clear)，Policy 的 raw 来源按[§10](review/ui-component-contract-r2/component-contract-consolidated.md#policy-clear)；实现落盘时同时遵守[§4 的无值动作例外](review/ui-component-contract-r2/component-contract-consolidated.md#field-value-control)。UI 状态读记录，不能用最终值差代替作者意图。
 
 ### 6. Source 与分类的硬约束 【契约】
 
@@ -94,7 +84,7 @@
 - **★ 展开的第三条臂（组件级）**：**底板为空** ∧ **该组件 `Effective Role = IGNORED`** ⇒ 该组件**不产生 Component Profile 的 production projection**、**不创建显式空 Profile**、**不因这一点阻断 Publish**；而 **`FishEnvAffinity` 主行与该组件的 `Role = IGNORED` 仍正常写回**，只是**不生成／不写回该组件的完整 Profile 子表值**；`ProductionRowLedger.refs[component]` **保持空**。**「空」＝「尚无该组件的 production projection」，不是一种新的 Runtime Profile 值**（该组件**因 `IGNORED` 根本不进入 evaluator**）。
   - **本臂的两条是合取，作用域不得放宽**：**`Effective Role = CORE / SECONDARY` 且缺必需 Profile ⇒ 仍按既有规则阻断 Publish** —— 本臂**不覆盖、也不弱化**它。
 - **粒度不变量**：**四个 numeric 组件全部按 bucket**（`(species, bucket, component, member)`，**TimePeriod 不按规格／row**）；**Role 单独按生产行覆盖**（**同 id 组合的不同行可以有不同 Role**，Validator **不得**因「同组合、Role 不同」报错）。⇒ **numeric 与 role 故意使用不同粒度，不要把二者塞进同一条 record shape。**
-- **四件必须写明的事**：① **底板不进生产表**；② **零覆盖的生产行也落完整值**；③ **恢复为底板 ＝ 删除 override record**（「override 值刚好等于底板」**仍是 override**）；④ **生产子表按 Authoring lineage 复用**，**跨无关 lineage 不得仅凭完整值相等自动合并**（「碰巧同值 ≠ 有意共享」）—— 本条范围 ＝ **编辑器的使用／导出保存路径**；**数据迁移另走「按完整最终值复用同值行」**，**两套规则明写分开**。**Runtime 只读最终全量，不做 base + delta 合并。**
+- **四件必须写明的事**：① **底板不进生产表**；② **零覆盖的生产行也落完整值**；③ **恢复为底板与同值覆盖的记录判据见[汇编 §3](review/ui-component-contract-r2/component-contract-consolidated.md#component-clear)**；④ **生产子表按 Authoring lineage 复用**，**跨无关 lineage 不得仅凭完整值相等自动合并**（「碰巧同值 ≠ 有意共享」）—— 本条范围 ＝ **编辑器的使用／导出保存路径**；**数据迁移另走「按完整最终值复用同值行」**，**两套规则明写分开**。**Runtime 只读最终全量，不做 base + delta 合并。**
 - **复用判定按结构 lineage，不按 payload 相等**：物种层 Source ＝ 共享模板且无任何 Effective Operation ⇒ **直接复用该模板的 production profile**；`SPECIES_CONCRETE` **即使无 op 也属物种自有 projection**。桶层先 Resolve 出 Effective Source 与逐字段 Effective Operation —— **完全继承物种 Recipe（无 `sourceOverride`、无字段 patch）⇒ 复用物种 projection**；**有显式 `sourceOverride` 但最终 Recipe 恰为「纯共享模板 ＋ 零 op」⇒ 复用该模板的 production profile**（**显式 pin 只分叉继承关系，不强制复制行**）；**最终仍含任何 Effective Operation ⇒ 该桶自有 projection**。★ **`equal-value SET` 与纯 source pin 必须区分**：`SET 0.8`（模板值也是 0.8）**会阻断未来模板改值** ⇒ 自有 projection；`sourceOverride = A ＋ 零 op` ＝ 未来继续跟随 A ⇒ **可安全复用 A 的行**。
 
 ### 9. 版本与升级规则（§3.8）【契约】

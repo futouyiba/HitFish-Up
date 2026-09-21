@@ -56,6 +56,8 @@
 
 **⚠️ 图与画布必须同批**：`img/` 四张与 `figma-current.md` 登记的字节数/指纹是**同一次导出**。若你怀疑图旧了，请核 `figma-current.md` §六 —— 那里给了**判图纪律**（「字节变了」≠「内容变了」；**比字节前先确认同一条导出管线**）。
 
+**CLEAR 查阅入口**：组件解析与记录语义在[汇编 §3](component-contract-consolidated.md#component-clear)，Policy 域在[§10](component-contract-consolidated.md#policy-clear)，组件 allowlist 在[§13](component-contract-consolidated.md#component-operation-allowlist)，落盘例外在[§4](component-contract-consolidated.md#field-value-control)，四格 UI 在[卡2](contract-cards.md#operation-control)。这些都是 Notion Current 的投影；历史比较与 Figma 文字按各处固定 SHA 保留。
+
 ## 怎么读
 
 1. 先读 `REVIEW-PROMPT.md`（审什么、怎么报）。
