@@ -35,7 +35,7 @@
 
 ---
 
-## 2. Owner 裁决状态 —— **八项已裁，一项待裁**
+## 2. Owner 裁决状态 —— **九项已裁，零项待裁**
 
 **已裁（记终局，不记两侧各半）**：
 
@@ -50,11 +50,11 @@
 | **ADJ-07** | Policy Template 的 raw Role 默认值 ＝ **`CORE`** |
 | **ADJ-08** | owner 身份 ＝ **「中鱼习性模式」（`Engagement Mode`）**；**桶是数据迁移期的行单位表达** |
 
-**待裁一项**：
+**已裁（续）**：
 
-| ID | 问题 | 两侧都说得通的读法 |
-|---|---|---|
-| **ADJ-09** | **单组件（一个组件的一个桶）切换 Source，算不算「高影响 Source 变更」？** | ① **算** —— 走 `prepare → Impact Preview → 显式确认 → 原子提交`；§6.3 的「Source 选定」读作**确认那一步**。② **不算** —— 只有 §3.10 列的四类算；单组件切换走 §6.3：**选择即短 debounce 后台落盘**，重算另给 Preview |
+| ID | 裁定 |
+|---|---|
+| **ADJ-09** | **C_NARROW** —— **Source mutation 一律 staged、不分类别**；**Local Rebase Preview** 与 **Propagated Impact Preview** 两档按 **fan-out** 分级（不是按「点了几个控件」）。★ **核心不变量：「是否需要 staged confirm」≠「是否属于 full high-impact mutation」** —— 影响面只决定 Preview 有多重，不决定能不能先写盘。事务模型**只有两层**，不新增第三种 |
 
 ## 3. 仍开 —— **登记在册的「未核 / 无页面出处」**（你可以给意见，但**不必**当缺口报）
 
@@ -89,10 +89,10 @@
 | **Profile Presence** | **CLOSED** | 矩阵已裁（**统一**：缺席合法性只由 `Role` 决定，时段不特权）；**默认值已裁 ＝ `CORE`** |
 | **Species Role UI** | **OPEN —— 形态待设计** | 裁定已给（`INHERIT` **需要一个与三值可区分的形**；**同值写 `SET`**）；**这个形本身还没被设计出来** —— 所以它开着的不是「待裁」而是「待做」 |
 | **Follow / Pin 语义** | **CLOSED** | ⚠️ **先前这里写「相抵」，已撤回**：回原页核完，**它是已定的、只是没落到 picker 那一处** —— §3.3 逐字「无 `sourceOverride` ＝ 跟随」＋ §3.5 表「覆盖→不跟随／恢复为底板→跟随」⇒ **跟随 ＝ 没有那条记录**，故「跟随物种」**＝ 删除** `sourceOverride`（**不写同源记录**）。落页已派 |
-| **Source Transaction** | **OPEN —— 射程未定** | ⚠️ **先前这里写「两条耐久规则相抵」，已撤回**：§6.3 与 §3.10 在**两种射程下都自洽**（见 ADJ-09 的两侧）。未定的是**单组件切换算不算高影响**，不是规则互斥 |
+| **Source Transaction** | **CLOSED** | 射程已裁（**ADJ-09 ＝ C_NARROW**）：**Source mutation 一律 staged**，Preview 按 **fan-out** 分 **Local / Propagated** 两档。⚠️ **先前这里写「两条耐久规则相抵」，已撤回** —— 实测是**两个正交判据**（「要不要 staged confirm」 vs 「属于哪一档」），不是一条轴的两端 |
 | **TimePeriod Transaction** | **OPEN** | 三处未定：预设的**五个 `SET` 落到哪一层**；**预览要显示什么**；`预设` 一词在本族有**四个不同指称物**（时段填表预设 ≠ Species Preset ≠ 档位 preset ≠ 动作按钮） |
 
-**⇒ 现在仍不能说「Persistence CLOSED」** —— 上表还开着 **三项**：`Species Role UI` 的**形**（待做）、`Source Transaction` 的**射程**（ADJ-09）、`TimePeriod Transaction`。**这一块只在全部子项 CLOSED 之后才算 CLOSED。**
+**⇒ 现在仍不能说「Persistence CLOSED」** —— 上表还开着 **两项**：`Species Role UI` 的**形**（唯一「待做」而非「待裁」的那项）、`TimePeriod Transaction`。**这一块只在全部子项 CLOSED 之后才算 CLOSED。**
 
 ## 6. 三处我（材料侧）报出去的、**不要求你判**的
 
