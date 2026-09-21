@@ -380,7 +380,8 @@ Component: RoleControl｜Role 三态（CORE / SECONDARY / IGNORED）
 Reads:
   - **Policy 那条 Authoring Truth**（四个角色 + fail_env_coeff）—— 组件卡上的 Role 下拉与 Policy 区 Role 行**读同一份**
   - **raw Role 的默认值 ＝ `CORE`**（记录页 §383 裁 **ADJ-07**）—— **Policy Template 初生时若不显式给 Role，raw Role 就是 `CORE`**（**不是** `IGNORED`）。⇒ **实现不得自选缺省、也不得留未定义**。
-    · ⚠️ **这一条与「提角色补档案」是两件事，不得并读**：**「初生即 `CORE`」**说的是**初生状态**；**「从 `IGNORED` 提为 `CORE`／`SECONDARY` 且尚无档案时，编辑器补出的档案取 `1.00`」**说的是**一个动作**（《编辑器条件开关》§2）⇒ **不得读成「新物种自动补一份 `1.00` 的档案」**。（记录页 §383 后果三）
+    · ⚠️ **「初生即 `CORE`」与「提角色」是两件事，不得并读** —— **「初生即 `CORE`」**说的是**初生状态**。（记录页 §383 后果三）
+      · ★ **2026-09-21 撤回（本条先前引的那句已按 Owner 裁决删除）**：先前此处引「**从 `IGNORED` 提为 `CORE`／`SECONDARY` 且尚无档案时，编辑器补出的档案取 `1.00`**」（《编辑器条件开关》§2）—— **该句已废，不得再作为规则引用**；**不得形成任何 universal「promotion ／ setup 生成一份全 `1.00` 的 Profile」规则**，**`Setup` 的初始值来自所选 Source**（见下一条 `B1a`／`B1b`）。
     · ★★ **2026-09-21 Owner 收口（ADJ-12，refine 后）**：`B1a` —— **Role promotion 不自动建 Profile**（**「提角色」这个动作本身不造数**）；`B1b` —— **删除任何 universal「promotion／setup 生成一份全 `1.00` 的 Profile」规则**。★ **`Setup` 的初始值来自所选 Source**（`choose / establish a legal Source → 得到可 Resolve 的 Profile`），**不是另外一套 default-value contract**。
       ⚠️ **为什么不能泛化**：**四组件不是同一数据形态** —— Structure／Feeding／Time 是 **affinity 数值**，**Temperature 是曲线参数**，谈「`1.00` Profile」**对它没有统一物理意义**。
       ⇒ **四类 Component 都必须有 reachable Setup path（P0 可用性缺口，能力已 CLOSED）**：`Profile absent → 显式 Setup / 配置档案 → 选择合法 Source / 建立可 Resolve 的 Profile`。**Structure / Feeding Layer / Temperature 空态给 `配置档案 / Setup`，进入合法 Shared Template Source 选择**；**Temperature** 若 Species Concrete 来源存在，另可走周期表导入。
