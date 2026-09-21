@@ -41,5 +41,9 @@ performance work.
 Read from Notion on 2026-09-18. Full list, plus the superseded premises this
 reference deliberately does **not** implement, is in
 [`docs/implementation-readiness.md`](../../docs/implementation-readiness.md) §1.
-Open contract gaps found by building this slice are in
-[`docs/implementation-gap.md`](../../docs/implementation-gap.md).
+The gap observations and rulings from that validation are recorded in
+[`docs/implementation-gap.md`](../../docs/implementation-gap.md). These documents
+retain their 2026-09-18 evidence scope; their status statements do not establish
+today's production implementation status. Fixed document versions and the current
+editor documentation entry are in [the documentation index](../../docs/README.md).
+A document snapshot commit is not, by itself, a tested implementation commit.
