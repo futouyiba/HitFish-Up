@@ -17,8 +17,9 @@
 
 **ADJ-03 的依据与射程**：
 
-- **产品裁定**沿用 §2 ADJ-03 的出处：由 Species Role durable op record 是否存在派生状态位；无记录不显示、有记录（包括同 raw 值 SET）显示“Role 已钉住”，不增加第二份 durable UI state。卡2 是记录意图的执行投影，**不把裁定原句冒称卡2 的逐字引文**。
+- **产品裁定与证明范围**：完整记录态／显示规则见[汇编 §9](component-contract-consolidated.md#role-record-intent)，交互与验收见[RoleControl](contract-cards.md#role-control)。来源仍沿 §2 ADJ-03 的裁定记录与固定历史；卡片是执行投影，不把裁定原句冒称卡2 的逐字引文，也不把下面的图片证据当 durable 往返结果。
 - **实现旁证**仅转述[前轮独立 REVIEW](https://github.com/futouyiba/HitFish-Up/pull/7#issuecomment-5757933398)对实现仓 `84e2221` 的亲读：物种 `policyRecipe` 与行级 `rules` 是两条 lane，`isRoleExpressed` 检查物种角色键存在性；`durableRolesOf` 输出角色值，测试里的 clear／absent 同值对照针对**行级 patch**。这些不能独自替代 Species INHERIT 与同 raw 值 SET 的记录态／显示证据。作者登记 `species[].policyRecipe.roles` 的读写往返尚未实测；本批及该轮 reviewer 均未运行下游实现。实现验证另归实现侧，不把实现仓整体完成设为本设计投影的前置。
+- **CC 实测勘误（由 Owner 转达）**：`durableRolesOf` 只读顶层 `rules`（行级 `AffinityRolePatch`，键 `(row_key, component)`）；物种层 Role 的落点是 `species[].policyRecipe`（CC 引 `stateSchema.ts:44`）。因此 `durableRolesOf`／`applyDurableRoles` 的行级路径不能证明 ADJ-03 所指物种层 `INHERIT` 与同原值 `SET` 的记录态；物种层可核实现路径及读写往返仍未实测。本批未重新运行实现，此处明确保留转述来源与未核边界。
 - **图片证据**只按实际文件判读；上述 #7 REVIEW 已亲核两态图片与语义映射，但未将其当成实现运行结果。后续 INHERIT 1×替换由 [#17 REVIEW](https://github.com/futouyiba/HitFish-Up/pull/17#issuecomment-5758641670) @ `8d4523c0372c12cbf1aad14ec652159c2782e5ad` 独立批准，现已进入 main；实际版本与指纹只在图像登记维护。本次与新 main 的兼容提交按 Owner 于 2026-09-21 的明确决定跳过增量复审并直接合并；这不构成独立审核通过，也不继承 #17 或本分支旧 head 的批准。后续新增或替换 Role 图只更新[图像登记](figma-current.md#image-evidence)及本条处置／剩余工作；README 与 brief 不复制状态。
 
 <a id="source-sync"></a>
@@ -63,12 +64,12 @@
 | ID | 裁定 | `PROJECTED IN`（**执行投影落在哪**） |
 |---|---|---|
 | **ADJ-01** | durable schema 的 canonical 实现 ＝ **TS 编辑器仓**（另一侧的原型不承担本契约） | —（**实现侧事实，本包不投影**） |
-| **ADJ-02** | Profile 缺席矩阵 ＝ **统一**：缺席合法性**只由 `Role` 决定**；**时段不特权** | `contract-cards.md` **`A①-卡2` Reads**；`component-contract-consolidated.md` **§11 ＋ §12** |
-| **ADJ-03** | 物种层 Role：`INHERIT` **需要一个与三值可区分的形**；**选中等于 raw Role 的值一律写 `SET`（钉住）** | `contract-cards.md` **`A①-卡2` Durable mutation**（同值 `SET` 仍留记录）；[记录态证据与剩余工作](#species-role-ui) |
+| **ADJ-02** | **已裁并投影**；统一缺席矩阵的出处为记录页 §374／§377。 | [汇编 §11](component-contract-consolidated.md#profile-lifecycle)、[RoleControl 验收](contract-cards.md#role-control)；历史转录见下方边界。 |
+| **ADJ-03** | **已裁并投影**；记录态区分裁定出处为记录页 §374／§377；设计证据关闭与实现未核分别处理。 | [汇编 §9 记录态](component-contract-consolidated.md#role-record-intent)、[RoleControl 显示／验收](contract-cards.md#role-control)、[关闭依据与剩余验证](#species-role-ui)。 |
 | **ADJ-04** | §3.1 的四个组件字段 **就是** Component Recipes（Source ＋ 逐字段 op） | `contract-cards.md` **`RoleControl` Durable mutation**（`component recipes`） |
 | **ADJ-05** | `sourceOverride` ＝ **组件级独立 durable 绑定**（不是 §3.3 那张逐项记录上的字段） | `contract-cards.md` **`A①-卡1`／`RoleControl`**；`component-contract-consolidated.md` **§3** |
 | **ADJ-06** | owner 粒度 ＝ **（物种, 桶）** | `contract-cards.md` **`RoleControl`**；`component-contract-consolidated.md` **§9** |
-| **ADJ-07** | Policy Template 的 raw Role 默认值 ＝ **`CORE`** | `contract-cards.md` **`RoleControl` Reads**；`component-contract-consolidated.md` **§11** |
+| **ADJ-07** | **已裁并投影**；raw Role 默认裁定在记录页 §383（含后果一／二／三）。 | [汇编 §9](component-contract-consolidated.md#role-record-intent)；缺席后果见[§11](component-contract-consolidated.md#profile-lifecycle)。 |
 | **ADJ-08** | ★ **`C_SPLIT_REGISTERS`：Semantic Concept ≠ Durable Identity**（Owner 2026-09-21 refine；**取代**先前那个「owner ＝ `Engagement Mode`」的读法）—— `Engagement Mode`／中鱼习性模式 是 **Simplified Production V0 的正式业务概念**；**B P0 不物化独立的 `EngagementMode` durable／runtime identity**，也不实现 Mode Share／Routing；**物理 durable key ＝ `FishEnvAffinityRef`**，`FishEngagementModeCompat` 是**对它的 mode-like authoring projection／兼容壳**；**桶是数据迁移期的行单位表达**。★ **要消灭的是「owner」这个模糊中间词**：`sourceOverride` 写作 **`(fishEnvAffinityRef, component)`**（若 schema 字段名为 `owner_ref`，则 **`owner_ref := FishEnvAffinityRef`**）。 | `component-contract-consolidated.md` **§16（含射程说明）**；**页侧：CT §1.1 ／ CT §3.3 ／ RS §11.1（本轮落）** |
 
 **已裁（续）**：
@@ -77,8 +78,8 @@
 |---|---|---|
 | **ADJ-09** | **C_NARROW，已裁并投影**；记录页 §392。原登记将 staged confirm 与 full high-impact 混成一轴的判断已撤回，不重新派单。 | [汇编 §8 完整机制](component-contract-consolidated.md#source-transaction)、[§15 事务分类](component-contract-consolidated.md#transaction-model)、[卡1交互／验收](contract-cards.md#source-selector)；原裁定转录见下方固定历史边界。 |
 | **ADJ-10** | 顶栏该动作的作者可见词 ＝ **「丢弃未保存的改动」**；**`Reset` 不得作作者可见词**（**这是命名裁定，不是页内相抵** —— 见 §6） | —（**作者可见词，落在页与画布；本包不投影**） |
-| **ADJ-11** | **A_NARROW** —— **空底板那一支：**当某组件的 Authoring Profile / Species Base **为空**、**且**该组件的 **Effective Role ＝ `IGNORED`** 时：**不产生该组件的 production projection、不创建显式空 Profile、不因这一点阻断 Publish**；但 **`FishEnvAffinity` 主行与该组件的 `Role = IGNORED` 仍正常写回**，**只是不生成/写回该组件的完整 Profile 子表值**；尚未产生生产 Profile 的对象 **`ProductionRowLedger.refs[component]` 保持空**。★ **「空」＝尚无该组件的 production projection，不是一种新的 Runtime Profile 值** —— **不是**把 `null`/`empty` 发下去，而是**该组件因 `IGNORED` 根本不进入 evaluator**。 | `component-contract-consolidated.md` **§11** |
-| **ADJ-12** | **四组件都必须有 reachable Setup path——P0 可用性缺口，能力已 CLOSED**：`Profile absent → 显式 Setup／配置档案 → 选择合法 Source／建立可 Resolve 的 Profile`。★ **不得自动生成 `1.00` Profile** —— ★ **`Role promotion ≠ Profile creation`**：「提角色」这个动作**本身不造数**；`IGNORED → CORE / SECONDARY` **不自动建 Profile、也不补一份全 `1.00`**。★ **旧「提角色时自动补一份行为中立档案」的规则按 `superseded` 处理**（Owner 2026-09-21）；本行此前写「提角色那条补档案规则**仍在**」与本包 `contract-cards.md` 的 `RoleControl`（`B1a`/`B1b`）**相抵**，已按后者更正（独立复审在 `fa96900` 上报出）。**TimePeriod 保持 Setup 能力；三种预设只是 Setup 后/中的一次性填表便利，不得被定义成 TimePeriod 独有的「Profile 创建语义」**。**UI exact shape 归 Species Role/UI 工作流**（见 §5）。 | `contract-cards.md` **`RoleControl` Reads** |
+| **ADJ-11** | **A_NARROW，已闭并投影**；Current 落点为《编辑器持久层契约》v16 §3.7，原展开分支缺口留痕见 §6。 | [汇编 §11 生产投影分支](component-contract-consolidated.md#empty-profile-projection)。 |
+| **ADJ-12** | **能力已 CLOSED**；B1a／B1b 已取代旧自动补档案规则，原 RoleControl 裁定转录保留于下方固定历史；本能力结论不代替 UI exact shape／实现验证。 | [汇编 §11 Setup机制](component-contract-consolidated.md#profile-lifecycle)、[RoleControl 入口／验收](contract-cards.md#role-control)；UI工作流见[当前项](#species-role-ui)。 |
 | **ADJ-13** | **TimePeriod Preset 的 target layer ＝ 作者当前所在的 authoring layer**：`Apply TimePeriod Preset → write five SET operations → target = current authoring layer / owner`。**不切换 authoring layer／不默认提升到 Species／不创建第三个 preset layer／不改 Source／不持久化 `presetId`／五个 `SET` 作为一个 atomic batch**。★ 若某 UI surface 本版只开放 Species authoring ⇒ 在那里自然只写 Species，**那是 surface capability 的后果，不是 Preset 自身拥有 Species 语义**。 | `component-contract-consolidated.md` **§12** |
 
 ★ **`PROJECTED IN` 是一栏检查，不是一个记录** —— **加一条 ADJ 的动作里包含「把这一栏填满」，空栏 ＝ 那条还没落投影。**
@@ -86,11 +87,14 @@
 
 **十三项的裁决留痕**：ADJ-01～05 ＝ §374／§377；**ADJ-06／ADJ-07 ＝ §383**（ADJ-07 的后果一/二/三也在此节）；**ADJ-08 ＝ §385**；**ADJ-09 ＝ §392**；**ADJ-10 ＝ §393**（★ 该节把它写成「页内相抵」，**定性已作废**，收口见 `deltas`）；**ADJ-11 ＝ 已落 Current** —— 《编辑器持久层契约》**§3.7「展开的第三条臂（组件级）」** 逐字存在（页 Version **16** / `Last Updated 2026-09-21 14:34`），**该节是它的 canonical owner**（2026-09-21 回读）；**ADJ-12 ＝ 本包 `contract-cards.md` 的 `RoleControl`**；**ADJ-13 ＝ 本包 `component-contract-consolidated.md` §12**。★ **前十一项**的这些节是它们在**记录页**的**唯一可引用落点**；**ADJ-12／ADJ-13 的落点在本包（如上），记录页节号未在此登记** —— 本表的 ID 只是索引。
 
+<a id="role-profile-history"></a>
+**Role／Profile／Setup 的来源与历史边界**：ADJ-02／03 的原出处为记录页 §374／§377，ADJ-07 为 §383，ADJ-11 的 Current owner 为《编辑器持久层契约》§3.7，ADJ-12 的原转录在本包 RoleControl。裁定逐字与已撤旧规则的修正分别保留于[固定基线台账](https://github.com/futouyiba/HitFish-Up/blob/add09fdaa9c197740df6735160af45c1ebb32370/docs/review/ui-component-contract-r2/OPEN-ITEMS.md#L66)、[原材料侧 ADJ-11 处置](https://github.com/futouyiba/HitFish-Up/blob/add09fdaa9c197740df6735160af45c1ebb32370/docs/review/ui-component-contract-r2/OPEN-ITEMS.md#L130)和[原 RoleControl](https://github.com/futouyiba/HitFish-Up/blob/add09fdaa9c197740df6735160af45c1ebb32370/docs/review/ui-component-contract-r2/contract-cards.md#L386)。本批回读持久层 v16 及界面 v20 的适用小节，未重读实时 Owner 记录／实现；已关闭的设计／读数不扩成保存重载通过。日常规则按上表的完整投影入口，历史只保留审计用途。
+
 ## 3. 其他登记项（保留原取证边界）
 
 - **无页面出处的 UI 细则**：卡上「本层操作数 / 诊断数 / profile presence / source health」四个展示项；结构编辑面的筛选；「组件卡不做 mini heatmap / 不展开完整字段 provenance / 不做操作历史时间线」三条负向。—— 页面上只列了摘要、模板选择器、Role 角标、继承/覆盖状态。
 - **两处口径不一致**：影响面数字「三项 vs 四项」（**四项那一侧有页面依据**）；「25 个 Structure slot」只在一处出现（**UI 不固化字段数**）。
-- **~~一条覆盖缺口~~ ⇒ ★ 已闭（`ADJ-11 ＝ A_NARROW`，见 §6）**：`§3.7` 的展开算法原**只分「有数值覆盖 → 取覆盖值」／「否则 → 取底板值」两支**，**没有「底板该组件为空」那一支** —— 而契约别处明确承认那个状态。**★ 现状：第三条展开臂已落**（《编辑器持久层契约》§3.7），**本条保留作留痕**。⚠️ **先前本行写「一条覆盖缺口」而 §6 写「已闭」—— 同一份文件两处相抵**，2026-09-21 按 §6 更正。
+- **ADJ-11 原展开分支缺口：已闭**。统一从 §6 的固定处置背景读取，不再在此复述旧算法；本条保留历史索引，不重新列为当前缺口。
 
 ---
 
@@ -112,11 +116,11 @@
 | 子项 | 状态 | 依据 / 剩什么 |
 |---|---|---|
 | **Component Recipe Shape** | **CLOSED** | 读数已裁（§3.1 的四个组件字段**就是** Component Recipes：Source ＋ 逐字段 op）；逐字已交写入者 |
-| **Affinity Role Patch** | **CLOSED** | §3.4 逐字齐：`(row_key, component)`、op `CLEAR|SET`、`SET` 携 `role`、`INHERIT` ＝ 无记录 |
+| **Affinity Role Patch** | **CLOSED（读数）** | 《编辑器持久层契约》§3.4；完整形状／键与payload见[RoleControl Durable mutation](contract-cards.md#role-control)。原读数见固定历史，不作为实现完成声明。 |
 | **Affinity Fail Env Coeff Patch** | **CLOSED** | §3.4 逐字齐：`row_key`、op `CLEAR|ADD|SET`、越界报错不 clamp |
 | **Species Policy Recipe** | **CLOSED（读数）** | §3.1 记录里逐字有 `policy_source_binding`；**但它的指称物（第五类 `TemplateKind`）在实现里不存在** ⇒ 那是**实现缺口**，不是形状未定 |
 | **Affinity Source Override** | **CLOSED** | 读数已裁（**组件级独立绑定**）；★ **两层必须分开**：**authoring 粒度 ＝（物种, 桶）**（ADJ-06）；**物理 durable key ＝ `FishEnvAffinityRef`**（ADJ-08 ＝ `C_SPLIT_REGISTERS`）；**`Engagement Mode` 只是业务概念、不是 durable identity**。 |
-| **Profile Presence** | **CLOSED** | 矩阵已裁（**统一**：缺席合法性只由 `Role` 决定，时段不特权）；**默认值已裁 ＝ `CORE`** |
+| **Profile Presence** | **CLOSED** | ADJ-02／07 已裁；现行仓内矩阵与初生后果见[汇编 §11](component-contract-consolidated.md#profile-lifecycle)，raw 默认见[§9](component-contract-consolidated.md#role-record-intent)。 |
 | **Species Role UI** | [当前审查项](#species-role-ui) | 操作入口、记录态分别验收；此处不复制动态状态。 |
 | **Follow / Pin 语义** | **CLOSED** | ⚠️ **先前这里写「相抵」，已撤回**：回原页核完，**它是已定的、只是没落到 picker 那一处** —— §3.3 逐字「无 `sourceOverride` ＝ 跟随」＋ §3.5 表「覆盖→不跟随／恢复为底板→跟随」⇒ **跟随 ＝ 没有那条记录**，故「跟随物种」**＝ 删除** `sourceOverride`（**不写同源记录**）。落页已派 |
 | **Source Transaction** | **CLOSED** | ADJ-09 射程已裁；机制与交互沿 §2 该行的投影入口。旧“两条耐久规则相抵”判断已撤回，完整原文仅按下方固定历史读取；不以本能力状态代替实现验收。 |
@@ -127,8 +131,8 @@
 <a id="other-material-items"></a>
 ## 6. 材料侧登记与固定处置背景
 
-- **`§3.7` 的展开算法少一支** ⇒ **★ 已闭（ADJ-11 ＝ A_NARROW）**：它原来只分「有数值覆盖 → 取覆盖值」／「否则 → 取底板值」，**没有「底板该组件为空」那一支**。⇒ **现在补上**：`底板为空` **且** `Effective Role ＝ IGNORED` ⇒ **不产生该组件的 production projection、不创建显式空 Profile、不因这一点阻断 Publish**（主行与该组件的 `Role = IGNORED` 仍正常写回；`ProductionRowLedger.refs[component]` 保持空）。**投影落在汇编 §11。**
-  - ★ **保留这条作留痕**（它一度是一个缺口）；**不移除**。
+- **ADJ-11 原展开分支缺口：已闭（A_NARROW）**。《编辑器持久层契约》v16 §3.7 已承接；完整机制见[汇编 §11](component-contract-consolidated.md#empty-profile-projection)。原缺口及修正过程保留于[固定历史](#role-profile-history)，当前不另维护一份展开规则。
+  - 保留该缺口曾存在的审计事实；历史链接不替代现行投影，也不证明实现完成。
 - **链接图指向副本而非 owner**：《主开发需求》§3.0 把作者分层诸事实链到《编辑器与 Resolve》§11 与《Editor → Persistence》，而它们的 canonical owner 是《编辑器持久层契约》§3.3。
 - ★ **跨页重复定义 —— 「超过 60 处／已盘出」这句已撤回（2026-09-21）**：**我无法证实那个数**（**没有清单、没有出处**；全族只在我写的那一句里出现过），而写入者用**两个独立探测器**复现：**句级恒等**命中 10 条（其中 7 条是噪声：`<table header-row="true">`、`**Last Updated:**` 行、单 `<td>`、mermaid 边）／**字符 30-gram 重合**（扩到 8 页、剥掉 URL 与块标记）**真内容只有 3 条** ⇒ ★ **机械口径下全族只有 3 处**。
   ⇒ ★ **判据**：**一个不可证实的数不该驱动一项机械工作**；而且**这一句「已盘出」正是本族禁的那类断言 —— 它让下游放弃追查**。（本族同族条：[[corrections-need-evidence]]、[[intent-claims-need-authority]]。）

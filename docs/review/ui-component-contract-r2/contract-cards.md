@@ -91,7 +91,7 @@ Must not:
 <a id="operation-control"></a>
 ### A①-卡2｜Operation Control（缺省支·调整·设置为·仅使用当前来源）
 
-**语义入口**：[汇编 §3](component-contract-consolidated.md#component-clear) 定义组件 CLEAR / absent、Source 独立性与同值意图；[§13](component-contract-consolidated.md#component-operation-allowlist) 定义组件 allowlist；[§4](component-contract-consolidated.md#field-value-control) 定义落盘时机与无值动作例外。本卡保留「层 × 类型」四格 UI 和展示职责，不另存一份完整解析定义；Policy 用[§10](component-contract-consolidated.md#policy-clear)。
+**语义入口**：[汇编 §3](component-contract-consolidated.md#component-clear) 定义组件 CLEAR / absent、Source 独立性与同值意图；[§13](component-contract-consolidated.md#component-operation-allowlist) 定义组件 allowlist；[§4](component-contract-consolidated.md#field-value-control) 定义落盘时机与无值动作例外。本卡保留「层 × 类型」四格 UI 和展示职责，不另存一份完整解析定义；Policy 用[§10](component-contract-consolidated.md#policy-clear)。 Profile／Setup 机制另见[§11](component-contract-consolidated.md#profile-lifecycle)；原实现类型缺口只按[固定取证](https://github.com/futouyiba/HitFish-Up/blob/add09fdaa9c197740df6735160af45c1ebb32370/docs/review/ui-component-contract-r2/contract-cards.md#L115)读取。
 
 ```
 Component: Operation Control｜字段操作控件（INHERIT/ADD/SET/CLEAR 四动作）
@@ -112,9 +112,8 @@ Actions:
   - 设置为（SET）：绝对值
   - 每次编辑=替换当前格唯一 op（每层每字段至多一个最终 op）；**`SET` 之后下层仍可 `ADD`** —— **下层表达替换上层 operation，`ADD` 仍以下层当前来源值为基准**（记录页 §316 裁 `CXR-04`）
   - **档位随 op 走**：`ADD` 不带 Tier、`SET` 才用 Tier（记录页 §199 ⑥①）
-  - **组件的 Profile 缺席是合法状态，其合法性只由 `Role` 决定 —— 四个组件一致，时段不特权**（记录页裁 ADJ-02「统一」）：`Role = IGNORED` ⇒ 缺席合法（自动不消费）；`CORE` / `SECONDARY` 缺必需 Profile ⇒ Resolve / Publish 阻断。
-    - **激活 `CORE` / `SECONDARY` 不自动造 profile** —— 生成是**显式动作**（记录页 §199 ⑥③）；其可见校验态落 `A①-卡6`。
-    - ⚠️ **实现面已知偏窄（不改变本卡口径）**：解析类型目前**只有时段可空**，其余三个不可空 ⇒ 「缺席」对那三个**尚不可表达**。⇒ 那是**实现缺口（`Role` 侧已裁、类型侧未对齐）**，不是本卡的特权条款。
+  - Profile 缺席、Role promotion 与可见校验按汇编 §11 的统一机制；错误显示仍交 A①-卡6，不由本卡另定义空态矩阵。
+    - 原取证曾记录解析类型只有时段可空、其余三组件不可空，属于实现缺口而非时段特权；本批未重跑实现，不能用该历史读数判当前实现；固定记录见卡前链接。
 Durable mutation:
   - 按所引汇编 §3 写入／删除字段记录，不经值差合成；typed 值的提交要求和 INHERIT / CLEAR 例外按汇编 §4。
   - UI 计数沿用本卡冻结投影：CLEAR 计入本层操作数。该计数仍属 Current 页面未核的 UI 展示项（汇编 §4、§18.5），不能借 durable 语义把它升级为 Current 规则。
@@ -228,7 +227,10 @@ Must not:
 依据: 记录页 §199 ⑥③（激活 Role 后须立刻把「缺 required Profile」做成可见校验态；**判级仍按上游**——界面 §1.4 已载「CORE / SECONDARY 缺必需 Profile 才阻断」，本条补的是**时点与可见性**，不是新的判级）；《编辑器界面》§1.4（三处校验分工：开发需求 §7 总则／条件开关 §10 编辑器静态／配置表 §5 Schema 不变量）＋§1.2（越界两侧；Validator ERROR 不是「保存失败」）；《开发需求》§7（发布阻断总则；发布前阻断≠authoring 持久化阻断）；《配置表与校验》§5；《编辑器持久层契约》§7.1（durable-valid 与 publish-valid 分开、durable 允许携带 ERROR）＋§6.5（诊断＝派生量、每次重算）＋§3.10（BROKEN_SOURCE_REF load-tolerant/publish-strict；Preset 引归档源 invalid-for-apply 且 UI 指名）
 ```
 
+<a id="autosave-status"></a>
 ### A①-卡7｜Autosave Status（保存状态；＝A1 顶栏保存状态区）
+
+**本批来源核对**：《编辑器界面》v20（`Last Updated 2026-09-21 17:19 +08:00`）§9.1 明确丢弃未 durable 的本地态；《编辑器持久层契约》v16 §6.3 规定保存／Publish／revision 边界。旧窗口限定及 `CXR7-DISCARD-01` 修正过程保留于[固定基线卡7](https://github.com/futouyiba/HitFish-Up/blob/add09fdaa9c197740df6735160af45c1ebb32370/docs/review/ui-component-contract-r2/contract-cards.md#L231)，不再作为当前动作限制。实时记录页 §178／§393 本批未重读，历史作者词裁定不替代本次 Current 射程。
 
 ```
 Component: Autosave Status｜自动保存状态区（顶栏）
@@ -236,7 +238,7 @@ Reads:
   - durable write 结果；base revision 对比（打开时记录、每次 commit 前校验）
 Actions:
   - 保存失败时：重试／显式 reload-reconcile（外部修改＝BLOCK＋报告，不 auto-merge）
-  - **「丢弃未保存的改动」＝ 丢弃尚未落盘的编辑，回到「上一次成功持久化的 revision」**（**作者可见词**；⚠️ `Reset` 是它的工程词、**不得作作者可见串**）。**它的射程 ＝ 一切未持久本地态**，**不止**「防抖未到点」与「保存失败之后」两个窗口 —— ★ **本行先前写「autosave 下只在两个窗口有实际效果」，与同类语义编辑的 staged candidate 相抵**：Source mutation **一律 staged**（见本节 `SELECT_SOURCE` / `FOLLOW_PARENT`：**candidate 不写持久** → Rebase Preview → 显式确认 → 原子提交）⇒ **停在该 Preview 的候选是「尚未确认的 staged candidate」**，而《编辑器界面》§9.1 逐字把它列入本动作的范围（独立复审在 `72a49c25` 上报出 `CXR7-DISCARD-01`）。⇒ **本动作须覆盖：防抖未到点 ／ 保存失败之后 ／ 未确认的 staged Source candidate ／ 其它未持久 UI 态。** ★ **边界不变：不回退已成功 autosave 的 durable revision**（盘上仍是上次成功的 revision；不产生新记录、也不删任何已持久记录）。
+  - 「丢弃未保存的改动」：仅清除真正尚未 durable 的本地态，包括输入临时字符串、未确认的 staged Source candidate 及其它明确 ephemeral UI 状态；防抖未提交与保存失败后仍未持久的编辑同在此范围。显示回到上次成功持久化 revision，不回退任何已成功 autosave 的语义编辑；不是 Undo。Source candidate 的确认协议见卡1。
   - Publish 按钮：显式、批量、独立——消费 durable revision；持久化失败先修（Publish 不隐式执行不可见 Save）
 Durable mutation:
   - 状态本身不入 durable（UI state）；semantic edit→debounce/coalesce→原子持久
@@ -246,9 +248,10 @@ Must show:
   - 「有错误」链接到卡6 校验节
 Must not:
   - 不常驻 Save 按钮；不把 Validator ERROR 当保存失败
+  - 作者可见动作名为「丢弃未保存的改动」，不用工程词 Reset（命名裁定沿卡前固定历史）。
   - **「丢弃未保存的改动」不得读作「回到出厂 / 空态」**；它也不是 Publish 的一部分（不因它触发任何物化 / 发布）
   - 不 silent last-write-wins；autosave ≠ Publish ≠ Git commit
-依据: 《编辑器界面》§1.1（验证入口：无常驻 Save、四态 已保存/已保存·有错误/保存中/保存失败、Publish 显式批量独立、错误精确定位）＋§1.2（四态口径；ERROR≠保存失败；外部改动⇒阻断覆盖、显式重载/reconcile）＋§9.1（动作按钮 **丢弃未保存的改动**／`Publish`／导出／Bass 预设；Publish 消费已持久化 revision）；《编辑器持久层契约》§6.3（语义编辑边界；乐观检测、禁 silent last-write-wins；Autosave≠Publish≠Git commit；Publish 不隐式执行不可见 Save）；**该动作语义＝记录页 §178**（丢弃尚未落盘的编辑、回到上次成功持久化的 revision；只在防抖未到点／保存失败后有效；不做出厂/空态、不属 Publish）＋★ **作者可见词「丢弃未保存的改动」＝记录页 §393 裁 ADJ-10**（⚠️ **`Reset` 不得作作者可见串**；**《编辑器界面》§9.1 已于 2026-09-21 12:40 改词，本卡按改后写** —— 改前那句逐字是 `` `Reset` / `Publish` / `导出` / `Bass 预设` ``，**引用旧句即引用已不存在的页串**）
+依据: 《编辑器界面》v20 §1.1／§1.2（保存状态、ERROR≠保存失败、外部改动阻断并显式重载／reconcile）、§9.1（丢弃真正未 durable 的本地态，明确含未确认 staged candidate；不是 Undo）；《编辑器持久层契约》v16 §6.3（语义编辑、乐观 revision 检测、禁止 silent last-write-wins；Autosave／Git commit／Publish 相互独立，Publish 不隐式 Save）。历史命名及修正依据见卡前固定版本链接，不以旧窗口概括当前射程。
 ```
 
 ---
@@ -386,26 +389,20 @@ Must not:
 ### 补记｜`RoleControl`（Role 三态 × 两层）—— 主代理 2026-09-20 裁（记录页 §249／§250／§252）
 
 <a id="role-control"></a>
-Policy CLEAR 的来源、词表与无值规则见[汇编 §10](component-contract-consolidated.md#policy-clear)；此处只保留 RoleControl 的记录形状和 UI 职责。
+**机制入口**：[汇编 §9](component-contract-consolidated.md#role-record-intent)定义 raw Role 与记录态／UI 派生，[§11](component-contract-consolidated.md#profile-lifecycle)定义 Profile 缺席、promotion、Setup及空底板投影；Policy CLEAR／词表仍见[§10](component-contract-consolidated.md#policy-clear)。本卡保留读取、交互、落盘字段和验收。旧 Setup 重复说明及 B1a／B1b 收口原文见[固定基线 RoleControl](https://github.com/futouyiba/HitFish-Up/blob/add09fdaa9c197740df6735160af45c1ebb32370/docs/review/ui-component-contract-r2/contract-cards.md#L386)，不复述已废的自动补档案规则。
 
 ```
 Component: RoleControl｜Role 三态（CORE / SECONDARY / IGNORED）
 Reads:
-  - **Policy 那条 Authoring Truth**（四个角色 + fail_env_coeff）—— 组件卡上的 Role 下拉与 Policy 区 Role 行**读同一份**
-  - **raw Role 的默认值 ＝ `CORE`**（记录页 §383 裁 **ADJ-07**）—— **Policy Template 初生时若不显式给 Role，raw Role 就是 `CORE`**（**不是** `IGNORED`）。⇒ **实现不得自选缺省、也不得留未定义**。
-    · ⚠️ **「初生即 `CORE`」与「提角色」是两件事，不得并读** —— **「初生即 `CORE`」**说的是**初生状态**。（记录页 §383 后果三）
-      · ★ **2026-09-21 撤回（本条先前引的那句已按 Owner 裁决删除）**：先前此处引「**从 `IGNORED` 提为 `CORE`／`SECONDARY` 且尚无档案时，编辑器补出的档案取 `1.00`**」（《编辑器条件开关》§2）—— **该句已废，不得再作为规则引用**；**不得形成任何 universal「promotion ／ setup 生成一份全 `1.00` 的 Profile」规则**，**`Setup` 的初始值来自所选 Source**（见下一条 `B1a`／`B1b`）。
-    · ★★ **2026-09-21 Owner 收口（ADJ-12，refine 后）**：`B1a` —— **Role promotion 不自动建 Profile**（**「提角色」这个动作本身不造数**）；`B1b` —— **删除任何 universal「promotion／setup 生成一份全 `1.00` 的 Profile」规则**。★ **`Setup` 的初始值来自所选 Source**（`choose / establish a legal Source → 得到可 Resolve 的 Profile`），**不是另外一套 default-value contract**。
-      ⚠️ **为什么不能泛化**：**四组件不是同一数据形态** —— Structure／Feeding／Time 是 **affinity 数值**，**Temperature 是曲线参数**，谈「`1.00` Profile」**对它没有统一物理意义**。
-      ⇒ **四类 Component 都必须有 reachable Setup path（P0 可用性缺口，能力已 CLOSED）**：`Profile absent → 显式 Setup / 配置档案 → 选择合法 Source / 建立可 Resolve 的 Profile`。**Structure / Feeding Layer / Temperature 空态给 `配置档案 / Setup`，进入合法 Shared Template Source 选择**；**Temperature** 若 Species Concrete 来源存在，另可走周期表导入。
-      ⚠️ **不要因此新增「空 Profile 对象」**；**UI exact shape 归 Species Role/UI 工作流，不在本卡**。
-      ⇒ **四类 Component 都必须有 reachable Setup path（P0 可用性缺口，能力已 CLOSED）**：`Profile absent → 显式 Setup / 配置档案 → 选择合法 Source / 建立可 Resolve 的 Profile`。**Structure / Feeding Layer / Temperature 空态给 `配置档案 / Setup`，进入合法 Shared Template Source 选择**；**Temperature** 若 Species Concrete 来源存在，另可走周期表导入；**TimePeriod 保持 Setup 能力，且三种预设只是 Setup 后/中的一次性填表便利，不得被定义成 TimePeriod 独有的「Profile 创建语义」**。
-      ⚠️ **不要因此新增「空 Profile 对象」**；**UI exact shape 归 Species Role/UI 工作流，不在本卡**。
-    · ⚠️ **后果（不是缺陷，是 fail-closed）**：新建物种在尚未配置时处在**阻断态** —— `CORE` ＋ 缺必需 Profile ⇒ Resolve / Publish 阻断。**要合法空态，必须显式把 Role 设成 `IGNORED`** —— 空态不再是「什么都不做」的自然结果，而是一个**显式动作**。（记录页 §383 后果一／二）
-  - 当前上下文：物种层（默认）／行级（当前那一生产行）
+  - Policy Authoring Truth（四个角色＋fail_env_coeff）：组件卡 Role 下拉与 Policy 区 Role 行读取同一份。
+  - 当前物种默认 Role op／Policy Template raw Role、或当前生产行的 Role patch；显示从记录派生，按所引汇编 §9 判读。
+  - 当前层／行、Profile presence、合法 Source 可用性及当前诊断；默认值／缺席矩阵按所引 §9／§11，不从最终值反推记录。
 Actions:
-  - 物种层设置 ⇒ **改"默认"**（各行 INHERIT 它）
-  - 行级（桶／生产行）设置 ⇒ 改「该行的覆盖」；CLEAR 与缺省支分别按所引汇编 §10 执行，UI 必须区分这两个动作。
+  - 物种层选具体角色：写本层 SET（各行继承该默认）；回到 INHERIT：显式删除本层 Role op，不以选中同 raw 值代替。
+  - 行级设置：只改当前行的覆盖；CLEAR 与缺省支按所引 §10 分别执行，UI 区分两个动作。
+  - 显式 Setup：Structure／Feeding Layer／Temperature 空态提供进入合法 Shared Template Source 选择的可达路径；Temperature 若合法 Species Concrete 存在，另可走生态数据导入／建立来源，导入目标物种与缺值护栏仍按卡8。
+    · TimePeriod 同样保留 Source／Setup 路径；三种预设只是 Setup 后／中的一次性填表便利，不能充当独有 Profile 创建语义。具体可用来源按汇编 §8 的层级 allowlist。
+    · 不新增空 Profile 对象；UI exact shape 仍归 Species Role/UI 工作流。Setup 的完整机制与初值来源按汇编 §11。
 Durable mutation:
   - **Role 的 durable 落点在 Policy**，**不另建卡级 state**
   - **形状（裁决 `AR-FCF-CT-01/02/03/04`，2026-09-21；记录页 §342）**：
@@ -416,7 +413,13 @@ Durable mutation:
   - ⚠️ **行级 patch 必须携 `op`**：不携 op 则 **`CLEAR` 与「`SET` 恰好等于模板 raw 值」不可区分** ⇒ **op 不得从值反推**。
   - ⚠️ **`scope_key` 正式改名 `row_key`（不是简称）**：该记录**永远只有 row scope** —— 留一个泛化的 `scope_key` 没买到能力、**反而暗示还有别的 scope**。`species_key` **降为属性**（组织／查询／reconcile／诊断），**不参与 identity**；**唯一键 ＝ `(row_key, component)`**。
   - 粒度：**两条 patch 轨道（`AffinityRolePatch` / `AffinityFailEnvCoeffPatch`）恒为 row-level**；**物种层的 Role op（`INHERIT` / `SET`）不是 override，而是决定该物种的 `Effective Default Role`**，住在 §3.1 的 `Species Base Record`／`Species Policy Recipe` —— **与本节两条 patch 轨道并存；不得为「统一粒度」把它删掉**。**物种层默认与行级覆盖分属不同记录，不得塞回同一张** —— 物种层默认的**唯一键 ＝ `(species_key, component)`**，**每个「物种 × 组件」恰好一个 Effective Default Role**（同 id 组合的不同行可以有不同 Role）。
+Acceptance:
+  - 物种 raw Role=CORE：INHERIT（无记录）与 SET CORE 的 Effective Role 可相同，但记录态及“Role 已钉住”显示必须可区分；修改一处，另一入口直接读同一 Truth，不经同步代码。
+  - IGNORED＋缺 Profile 后选 CORE：只保存 Role，不自动建 Profile／选默认 Source；立即可见 required-Profile ERROR，Publish 阻断，作者可进入 Setup。四组件分别走通，Temperature 不套全1.00数值档案，TimePeriod 不靠预设替代 Source 建立。
+  - 同一组合的两条生产行可有不同 Role，更新目标行不得影响另一行；粒度与键按上面的独立记录形状验收。
+  - 空底板且 IGNORED 的组件按汇编 §11 不投影，主行／Role照写、refs空；改为 CORE／SECONDARY 且仍缺必需 Profile 必须阻断，不能一概按空态放行。
 Must show:
+  - 物种记录态标记按所引汇编 §9，从 Role op record 派生，不另存状态位。
   - **必须显式说出「你在改哪一层 / 哪一行」**：物种层 ⇒「默认（各行继承）」；行级 ⇒ 当前那一行（如 `LAKE_A × LARGEMOUTH_BASS/Q3`）
   - **不许**默认改整个 scope 却在 UI 上说成改一行
   - **批量改多行 ⇒ 必须是显式的多选/批量动作，不是缺省**

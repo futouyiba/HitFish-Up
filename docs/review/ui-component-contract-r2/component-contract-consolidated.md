@@ -108,8 +108,11 @@
 
 <a id="policy-profile"></a>
 ## 9. Profile × Spatial Opportunity Policy
+
+**本节保留 Policy 归属与 Role 记录态的完整机制投影**；Profile 缺席、promotion 与 Setup 的完整投影在[§11](#profile-lifecycle)，Policy 操作词表／CLEAR 来源仍在[§10](#policy-clear)，落盘形状与键见[RoleControl](contract-cards.md#role-control)。权威仍是 Current／Owner；本批回读《编辑器持久层契约》v16（`Last Updated 2026-09-21 14:34 +08:00`）§3.1／§3.4／§3.7，以及《编辑器界面》v20（`Last Updated 2026-09-21 17:19 +08:00`）§1.2／§1.4，未重读实时裁定记录。
+
 - Profile 回答「这条鱼对这个环境轴是什么习性」；Role 回答「这份习性在聚合里如何被消费」。（《编辑器与 Resolve》§2.2；《编辑器心智模型与 IA》§7）
-- 改 Role **不创建 / 不删除 Profile、不改 Profile 数值**。（《编辑器持久层契约》§3.4；界面 §1.2「Role 三态互斥」）
+- Role 与 Profile 的变更边界按[§11](#profile-lifecycle)，不能由改变消费角色推导创建／删除或改写 Profile。
 - 空间机会聚合策略有独立共享 Policy Template，payload ＝ 四个角色 ＋ `fail_env_coeff`；它是第五类 `TemplateKind`，**不是第五个 Component** —— 不扩 `ComponentType`、Runtime 仍四条件槽、不新建生产 Policy 子表。（《编辑器持久层契约》§3.6；记录页 §172 二 A）
 - Policy Source 只绑物种层；**桶层没有 `policySourceOverride`**，不得虚构这类直接引用。（《编辑器持久层契约》§3.10；记录页 §172 二 B）
 - 粒度必须分离：数值 override 按 **bucket**（`young / mature`，TimePeriod 不按规格 / row）；Role override 按 **生产行**。同一 id 组合的不同行可有不同 Role，Validator 不得因 Role 不同报错。（《编辑器持久层契约》§3.4、§3.7）
@@ -117,6 +120,12 @@
 - `fail_env_coeff` 的 `ADD` 是绝对数值增量，不是百分比 / 乘数。（《编辑器持久层契约》§3.4 逐字「ADD 为绝对数值增量」）
 - Editor 没有钓场上下文：不提供 Pond selector，不编辑 `baseOpportunityIntensity / isBackgroundFish / envCoeffMin`；`fail_env_coeff` 是本编辑器可编辑的习性档案字段，不是 `FishRelease` 的 `envCoeffMin`。（《编辑器界面》§6）
 - 诊断归属：字段 → 字段控件；Profile → 组件卡；Policy → 聚合策略区；全局 / Publish → 顶栏 ＋ 校验清单。（冻结卡 `A①-卡6`；《编辑器界面》§1.4）
+
+<a id="role-record-intent"></a>
+**Role 记录态与 UI 派生**：
+- Policy Template 的 raw Role 默认值为 `CORE`，不是 `IGNORED`，不能由实现自选缺省或留未定义；「初生默认」与作者从 IGNORED 提角色是不同事件。（《编辑器持久层契约》§3.1；记录页 §383 ADJ-07）
+- 物种 Role 的 `INHERIT` 用无本层 op record 表示；选中任何具体 Role（包括与当前 Policy Template raw Role 相同的值）仍写 `SET`。回到 INHERIT 要显式删除本层 Role op，不能用选同值代替；行级 patch 与物种默认仍按不同记录／键落盘。（《编辑器持久层契约》§3.1、§3.4；完整字段见 RoleControl）
+- 物种 UI 必须可区分无记录 INHERIT 与三值 SET。状态位从 Species Role durable op record 是否存在派生：无记录不显示“Role 已钉住”，有记录（含同 raw 值 SET）显示；不增加第二份 durable UI state。此显示裁定沿用[固定基线 ADJ-03 依据](https://github.com/futouyiba/HitFish-Up/blob/add09fdaa9c197740df6735160af45c1ebb32370/docs/review/ui-component-contract-r2/OPEN-ITEMS.md#L20)，本批未重读该实时 Owner 记录；卡片只承接显示／验收。设计证据与保存重载未核的区别见[问题台账](OPEN-ITEMS.md#species-role-ui)。
 
 <a id="policy-clear"></a>
 ## 10. Role 与 Policy 的操作词表
@@ -130,20 +139,24 @@
 
 <a id="profile-lifecycle"></a>
 ## 11. Profile 生命周期
-- Role ＝ IGNORED 不删除 Profile；本版不提供通用的「删除组件 Profile」动作。（《编辑器持久层契约》§3.3；界面 §1.4）
-- **Profile 缺席的合法性只由 `Role` 决定 —— 四个组件一致，时段不特权**（记录页 §377 裁 **ADJ-02**「统一」）：`Role = IGNORED` ⇒ 缺席合法（自动不消费）；`CORE` / `SECONDARY` 缺必需 Profile ⇒ Resolve / Publish 阻断。
-  - ⚠️ **上面这一条是矩阵、不是时段规则**：写「Time Period 支持合法空态」**不是错**，但**只有它一条会被读成时段特权**（那正是被裁掉的那一侧）。§12 的 Time Period 空态只是**这个矩阵在时段上的实例**。
-- **激活 `CORE` / `SECONDARY` 不自动生成 Profile**，生成是显式动作（《编辑器界面》§1.2；记录页 §199 ⑥③）。
-- ⚠️ **合法空态要显式做**：`Role` 的 raw 默认值是 **`CORE`**（记录页 §383 裁 **ADJ-07**）⇒ 空态**不再**是「什么都不做」的自然结果，**必须显式把 `Role` 设成 `IGNORED`** —— 而**新建物种在尚未配置时因此处在阻断态**，那是 **fail-closed、不是缺陷**。（记录页 §383 后果一／二）
-- 激活 CORE / SECONDARY 而未生成所需 Profile 时，**必须当场呈现为可见校验态**，不得让作者停在无提示的非法态；判级仍按上游（CORE / SECONDARY 缺必需 Profile ＝ 阻断）。（《编辑器界面》§1.4；记录页 §199 ⑥③）
-- 不得创建 required Source / identity 为 null 的半成品记录。（《编辑器持久层契约》§3.7 四件之 1）
-- ★ **空底板那一支 ＝ 展开算法的第三条臂 —— `A_NARROW`**（记录页裁 **ADJ-11**）：当某组件的 **Authoring Profile / Species Base 为空**、**且**该组件的 **Effective Role ＝ `IGNORED`** 时 ⇒ **该组件不产生 Component Profile 的 production projection、不创建显式空 Profile、不因这一点阻断 Publish**。
-  - **而哪一半照旧**：**`FishEnvAffinity` 主行与该组件的 `Role = IGNORED` 仍正常写回**；**只是不生成/写回该组件的完整 Profile 子表值**；尚未产生生产 Profile 的对象 **`ProductionRowLedger.refs[component]` 保持空**。
-  - ★ **「空」＝ 尚无该组件的 production projection，不是一种新的 Runtime Profile 值** —— **不是**把 `null`／`empty` 发下去当 Profile 消费，而是**该组件因 `IGNORED` 根本不进入 evaluator**。
-  - ⚠️ **作用域是合取、不得放宽**：两条**同时**成立才走这条臂。`Effective Role = CORE / SECONDARY` 且缺必需 Profile ⇒ **仍按既有规则阻断 Publish**，本臂**不覆盖、也不弱化**它。
-  - ⚠️ **`ProductionRowLedger` 与 `refs[component]` 按 Owner 逐字写** —— 落页前先核这两个名字是否为既有载体名；**本包逐字照录，不代它改名**（本族标识符按字节精确）。
-  - ★ **它与「「无档案」不得被读成一个值」同源**：`namedItemsOfProfiles` 把「无档案」与「档案全 0」压成同形，会让「无档案 ⇒ 全 0 ⇒ 门控失败 ⇒ 静默踢出」。⇒ 本臂逐字「**根本不进入 evaluator**」**正是那条守卫的语义依据**。
-  - ★ **落地形态：它不是展开判定的「第四种结果」，而是「在该判定之前被排除」** —— 逐字两次说的是**排除**（「不产生 production projection」／「根本不进入 evaluator」）⇒ **实现应在 caller 按合取条件先筛掉该组件，再对剩下的走上游已有的展开判定；不得为它扩那个判定的取值域。**（★ 通则：**出现一个新结果时先问它是「同一判定的新取值」还是「根本不该进入这个判定」；扩词表永远是最后的选择。**）
+
+**本节是 Role／Profile／Setup 关系在本包的完整机制投影**；来源版本见[§9](#policy-profile)。ADJ-02／07／11／12 的裁定出处、关闭范围和历史转录归[台账](OPEN-ITEMS.md#role-profile-history)，不以本节声明实现已经通过。
+
+**缺席与校验**（《编辑器界面》§1.4；《编辑器持久层契约》§3.1、§3.7）：四组件按同一 Effective Role 矩阵判断，TimePeriod 不特权。`IGNORED` 时缺 Profile 合法、自动不消费；`CORE / SECONDARY` 缺必需 Profile 则 Resolve／Publish 阻断。按[§9 的 raw 默认](#role-record-intent)，新物种尚未配置时会处于阻断态；合法空态须显式设成 IGNORED，不能把“尚未配置”当作默认忽略。激活 CORE／SECONDARY 但缺 required Profile 时必须立即显示可见诊断，不能停在无提示非法态；这是 UI 呈现要求，不改变上游判级。
+
+**Promotion 与 Setup**（《编辑器持久层契约》§3.1；《编辑器界面》§1.2／§1.4；原 B1a／B1b 裁定沿固定历史）：
+- 改 Role 只改变角色，不创建／删除 Profile，不改 Profile 数值、不自动选择默认 Source、不写全 `1.00`。将 Role 设为 IGNORED 不删除已有 Profile；本版不提供通用“删除组件 Profile”动作（持久层 §3.3）。
+- 四组件都必须有显式可达的 Setup 路径：`Profile absent → choose / establish a legal Source → 可 Resolve 的完整 Profile`。初值来自所选合法 Source；不能另建通用 `1.00` 默认值契约，不新增空 Profile 对象或 required Source／identity 为 null 的半成品。
+- Setup 优先复用 Source 模型，不新增 durable `CreateProfile`，也不要求必须有字面“新建档案”按钮；判据是路径可达（界面 §1.2）。四组件数据形态不同：Structure／Feeding／Time 是 affinity 数值，Temperature 是曲线参数，不能用通用 `1.00` Profile 统一。具体入口见[RoleControl](contract-cards.md#role-control)，Source allowlist 仍按[§8](#source-transaction)。
+- TimePeriod 同样有 Setup 能力；三种预设只是 Setup 后／中的一次性填表便利，不是它独有的 Profile 创建机制（持久层 §3.3；界面 §1.2）。预设的 target 与覆盖确认仍按[§12](#component-specifics)、[Batch Overwrite Guard](#timeperiod-batch-guard)，不因 Setup 收敛改变。
+- `IGNORED + absent → 作者提 Role → Role durable autosave → CORE + absent` 是可达的 durable-but-publish-invalid 中间态：显示 required-Profile ERROR／Publish Block，聚焦 Setup，再由作者显式选择／建立 Source；不得丢 Role 回默认掩盖错误。该执行顺序沿用[已审 brief 的 ED-20 护栏](https://github.com/futouyiba/HitFish-Up/blob/add09fdaa9c197740df6735160af45c1ebb32370/docs/implementation-brief-0.3.4.0-B.md#L54)，持久有效与可发布有效仍分开。
+
+<a id="empty-profile-projection"></a>
+**空底板的生产投影分支（ADJ-11＝A_NARROW）**，权威为《编辑器持久层契约》§3.7：
+- 仅当该组件 `Authoring Profile / Species Base 为空` **且** `Effective Role = IGNORED`，才不产生该组件的 Component Profile production projection、不创建显式空 Profile，也不因该组件缺席阻断 Publish。
+- `FishEnvAffinity` 主行及该组件的 `Role = IGNORED` 仍正常写回；仅不生成／写回该组件完整 Profile 子表值。尚无 production Profile 时，`ProductionRowLedger.refs[component]` 保持空（载体与字段见持久层 §3.2）。
+- “空”表示尚无该组件 production projection，不是新 Runtime Profile 值，不把 null／empty 当 Profile 下发；该组件根本不进入 evaluator。CORE／SECONDARY 缺必需 Profile 仍阻断，不能把合取条件放宽成任意缺席都放行。
+- 保留本包既有执行约束：caller 按上述合取条件先排除该组件，其余才进入已有展开判定，不扩该判定的取值域；不得让 `namedItemsOfProfiles` 将无档案压成全 0 再触发门控失败。[原解释与修正留痕](https://github.com/futouyiba/HitFish-Up/blob/add09fdaa9c197740df6735160af45c1ebb32370/docs/review/ui-component-contract-r2/component-contract-consolidated.md#L132)仅作历史审计，不再另维护一份机制。
 
 <a id="component-specifics"></a>
 ## 12. Feeding Layer / Time Period / Temperature
