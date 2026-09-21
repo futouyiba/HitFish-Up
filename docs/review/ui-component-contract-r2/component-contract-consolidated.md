@@ -34,25 +34,24 @@
 
 **操作选项**：组件 allowlist 见 [§13](#component-operation-allowlist)，Policy 见 [§10](#policy-clear)；四格用户选项投影见 [卡2](contract-cards.md#operation-control)。
 
-**用户语言**（裁定 c；初版被 commit 侧证据修正，见 §17.1）：
+**用户语言**（裁定 c；概念名与行内显示分层）：
 - 物种层：**仅使用来源** / **调整** / **设置为**。
 - Affinity 层：**沿用物种调整** / **沿用物种设置为**（按实际继承到的那一个操作给串）/ **仅使用当前来源**（`CLEAR`）/ **调整** / **设置为**。
 - Affinity 缺省支显示的是**实际继承到了什么**，不显示泛称「沿用物种操作」；物种层没有操作时，Affinity 缺省支显示「仅使用来源」。
 - 「沿用物种调整 / 沿用物种设置为」沿用的是物种层的**操作**，不是物种层的最终数值；这两支不得与「仅使用当前来源」合并成一个模糊的「恢复」。（《编辑器与 Resolve》§11.1 逐字「`absent` ＝ 跟随物种层 operation」、§11.2）
 - **⚠️ 上面三条要按「两个寄存器」读，别读成「泛称被禁」**：**「沿用物种操作」是这一支的「名字」（概念层，保留）**；**行内「显示」必须给具体串**（见上一条）。⇒ **名字 ≠ 显示**：**名字保留、显示给具体串**，两者不矛盾。而「沿用物种操作」与「仅使用当前来源」**不得合并成一个模糊的「恢复」**。（记录页 §331 四、§359 ①）
 - **作者可见的串一律取作者词汇**：`INHERIT` / `ADD` / `SET` / `CLEAR` 是**操作令牌**，`Override` / `Reset` 是**工程词**，两者都不是作者词；作者词＝本节上一段那五支。（《编辑器界面》§1.2「操作的用户语言」；《编辑器心智模型与 IA》§2 作者词汇表）
-  - ⚠️ **出处校正（2026-09-21，回读复核后）**：本条此前写作「**不向作者暴露** `CLEAR` / `Override` / `Reset` 等工程词（《编辑器界面》§1.2 只给四词用户语言）」。★ **那不是《编辑器界面》§1.2 的逐字** —— 回读实测该页**全页 `Reset` = 0、`Override` = 0、「不向作者暴露」= 0**，§1.2 给的是**操作 → 用户语言的映射**（`CLEAR` ⇒「仅使用当前来源」），**页上没有禁令句**。⇒ **本条的实际强度是「作者词表由该映射给出」，不是「页上有一条禁令」。**
-  - ⇒ **给下游的用法限制**：**不得把本条当成「页上明禁 `Reset` / `CLEAR`」引用**。「`Reset` 不能作作者可见词」是一条**命名裁定**（记录页），**不是页内相抵**。（★ 这一处是**我把转述当成了页上逐字** —— 记在案的同类错：**引《页》§N 前先回那页读一次**。）
+  - **出处边界**：《编辑器界面》§1.2 给的是操作到用户语言的映射，不得引成页上逐字禁止 `Reset`／`Override`。`Reset` 不能作作者可见词的依据是记录页命名裁定，具体动作见[卡7](contract-cards.md#autosave-status)；原校正过程由 Git 保留。
 
 **显示**：
 - 折叠态只显示：字段名、当前操作摘要、Effective Value、Diagnostic。展开态显示：当前来源、被继承的操作、本层操作、Effective Value、provenance / 算式。（本轮裁定 g；草稿 §4）
 - 显式展示「来源 → 当前层操作 → 当前值」；`ADD` 与 `SET` 视觉可辨；典型三行：来源值 `0.80` · 相对调整 `-0.20` · 当前值 `0.60`。（《编辑器心智模型与 IA》§3；《编辑器界面》§1.2）
 - 被替代的上级操作**只用于解释 provenance，不再参与链式计算**，且视觉降级。（本轮裁定 g；草稿 §4、§6）
-- **不许把「替换」画成「叠加」**（按层分写）：**每层每字段最多一个最终 operation**（**不允许 `ADD+ADD`／`SET+ADD` 之类的链**）；**覆盖是整层替换、不是叠加**：某桶对该项一旦自己表达，**底板那一层对该项整个不生效**。（《编辑器持久层契约》**§3.3** 逐字，L456／L457；另见《编辑器心智模型与 IA》§1 同规则的自行表述）
+- **显示约束**：不得把[§3 的整层操作替换](#component-clear)画成叠加；被替代的上层操作只解释 provenance，不参加计算。
 - 已覆盖但数值与**底板**相同，**仍须读作已覆盖**（界面读记录，不按值差）。（《编辑器持久层契约》§3.5 逐字）
 
 **durable 语义**：
-- CLEAR 留记录与同值 pin 按 [§3](#component-clear)；每层每字段最多一个最终操作，编辑＝替换当前格。（《编辑器持久层契约》§3.3、§3.5）
+- CLEAR 留记录、同值 pin 及每格唯一操作按[§3](#component-clear)。
 - **「计入本层操作数」属于 UI 展示项，Current 页面无出处**（§18 未核项 5）；保留 [卡2](contract-cards.md#operation-control) 的既有执行投影，不将其升级为 Current 规则。
 - 输入控件里的临时字符串（`-`、`0.`、空）不是持久值，不覆盖上一笔 durable 值。（《编辑器界面》§1.2；《编辑器持久层契约》§7.1）
 
@@ -75,7 +74,10 @@
 - **不得从裸数值自动反推 Tier**：数字落进某档范围不等于声明该档。（《编辑器持久层契约》§3.3「不得从生产最终值反推」）
 - **`SET` 值越出该档可表达范围时不自动转 `CUSTOM`**（那是静默改写作者意图）：保留档位标签 ＋ 出一个可见诊断，由作者显式改。（本轮裁定 e；《编辑器持久层契约》§3.4）
 
+<a id="validation-autosave"></a>
 ## 6. 校验 × Autosave
+
+本节是通用校验判级的完整仓内投影；卡3／卡6保留控件反馈、定位与验收，保存状态及动作见[卡7](contract-cards.md#autosave-status)。
 - 三条通道分开：raw input 非法（不落 typed、不产生 durable）／typed 语义非法（可 durable 自动保存）／I/O 或 revision 冲突（写入未成功）。（《编辑器界面》§1.2、§1.4；《编辑器持久层契约》§7.1）
 - 校验对象＝ resolved / Effective 值，不是 `ADD` 操作数的符号；负 `ADD` 使终值非负即合法。（《编辑器界面》§1.2；《主开发需求》§9）
 - `< 0` ＝ ERROR：可自动保存（带错误继续修）、阻断 Publish、Runtime 不得接收。（《编辑器界面》§1.2；《主开发需求》§7、§9）
@@ -83,7 +85,7 @@
 - 不允许 runtime clamp / abs / shift / 归一 / fallback / 带符号权重修复负 Fit。（《主开发需求》§9 逐字）
 - `0` 不自动等于 Gate Fail：离散 Fit ＝ `0` 时，CORE 触发 Gate、SECONDARY 不触发、IGNORED 不消费 —— 同一个 `0` 的后果由 Role 决定。（《编辑器界面》§1.1 四档表 REJECT 行逐字；记录页 §199 ④ GAP-007）
 
-- 顶栏四态：已保存 / 已保存·有错误 / 保存中 / 保存失败；Validator ERROR 不是「保存失败」；无常驻 Save。（《编辑器界面》§1.1、§1.2；冻结卡 `A①-卡7`）
+- 顶栏保存状态及其与 Validator ERROR 的区别按[卡7](contract-cards.md#autosave-status)展示；校验诊断不替代持久化结果。
 - 阻断 Publish 时提供可发现的出口：进入校验清单、逐条定位到组件 / 字段，执行仍被阻断。（《编辑器界面》§1.1 逐字「发布前全量校验，错误精确定位，不静默修复」；冻结卡 `A①-卡6`）
 - 诊断是派生量，每次重算，不持久化为第二真相。（《编辑器持久层契约》§6.5）
 
@@ -107,8 +109,8 @@
 - ⚠️ **「要不要 staged confirm」与「是不是 full high-impact」是两个正交判据，不是一条轴的两端** —— 影响面大小**只决定 Preview 有多重，不决定能不能先写盘**。（记录页 §392 逐字；本判据＝该节核心不变量）
 - **`FOLLOW_PARENT`（删 `sourceOverride`）不留例外**：它同样改变 Effective Source ⇒ 也是 Source mutation；**即使当前 Effective Source 恰好不变也不是 no-op**（pin 住 `Template_A` 与跟随到 `Template_A` 当前值可相同、**未来行为不同**）⇒ **Preview 不得只展示 value diff**，至少还要 Binding intent／Effective Source／Future propagation。（记录页 §392）
 - Preview 至少区分：最终结果变化、结果未变但被本层 `SET` / 操作遮罩、新增 Error、新增 Warning。**被遮罩 ≠ 无影响。**（《编辑器持久层契约》§3.7「SET-masked 可不变」；冻结卡 `A②-卡10`、`A②-卡11`；记录页 §172 二 APPLY DELTA ⑦）
-- 已归档来源：既有 durable 引用继续合法、继续 Resolve / Publish，选择器显示「已归档」，不允许新建引用，普通 picker 隐藏 / 降级，不视为 ERROR。（《编辑器持久层契约》§3.10；《编辑器界面》§1.1）
-- 断链来源：可加载（load tolerant）、显示明确的 Source Missing、ERROR ＋ 阻断 Publish、**禁止任何自动 fallback / 自动切回物种来源 / 自动挑最近似模板**，必须由作者显式选新的合法来源。（《编辑器持久层契约》§3.10；冻结卡 `A①-卡6`）
+- 已归档来源的既有引用与新建限制按[§14 生命周期](#template-lifecycle-guards)；选择器显示「已归档」，不将合法既有引用标为 ERROR。（《编辑器持久层契约》§3.10；《编辑器界面》§1.1）
+- 断链来源（诊断码 `BROKEN_SOURCE_REF`）：可加载（load tolerant）、显示明确的 Source Missing、ERROR ＋ 阻断 Publish、**禁止任何自动 fallback / 自动切回物种来源 / 自动挑最近似模板**，必须由作者显式选新的合法来源。（《编辑器持久层契约》§3.10；冻结卡 `A①-卡6`）
 
 <a id="policy-profile"></a>
 ## 9. Profile × Spatial Opportunity Policy
@@ -168,13 +170,14 @@
 
 **Time Period**（覆盖确认的完整规则见 [§15 Batch Overwrite Guard](#timeperiod-batch-guard)，不得套用 Source 事务）：
 - 五段 DAWN / MORNING / AFTERNOON / DUSK / NIGHT；未配置时显示合法空态，不置灰（**它的合法性来自 §11 的统一矩阵，不是时段特权**；且按 §11，空态须由作者**显式**把 `Role` 设成 `IGNORED` 得到）。（《编辑器界面》§1.1；记录页 §377／§383）
-- 三预设（晨暮型 / 昼行型 / 夜行型）是一次性批写五个字段的 `SET`：不是 Source、不是模板 identity、不进长期继承链；应用后不持久化 `presetId`，当前 Source binding 不变；覆盖已有本层操作时须 batch preview ＋ 显式确认；五个 `SET` 各自可带该预设明确的 Tier 语义；**后续单字段修改后不得再宣称仍属某预设**；模板名不进 Runtime。（《编辑器界面》§1.1；记录页 §172 二 APPLY DELTA ④）
+- 三预设（晨暮型 / 昼行型 / 夜行型）是一次性批写五个字段的 `SET`：不是 Source、不是模板 identity、不进长期继承链；应用后不持久化 `presetId`，当前 Source binding 不变；覆盖确认按本节所引 §15；五个 `SET` 各自可带该预设明确的 Tier 语义；**后续单字段修改后不得再宣称仍属某预设**；模板名不进 Runtime。（《编辑器界面》§1.1；记录页 §172 二 APPLY DELTA ④）
 - 预设不负责创建 Source；应用后原 Source binding 仍在（即使五项都被 `SET` 遮罩也不删除 / 弱化）。（《编辑器界面》§1.1）
 - ★ **三预设那五个 `SET` 落到哪一层（ADJ-13，refine 后）**：**`target = active Recipe / Patch authoring owner`** —— **Species context ⇒ 写 Species TimePeriod Recipe 的 5 个 `SET`；Affinity / bucket context ⇒ 写当前 Affinity TimePeriod operationPatches 的 5 个 `SET`**；**五个 `SET` 同 owner、同 layer、一个 atomic batch**。
   - **不切换 authoring layer／不默认提升到 Species／不创建第三个 preset layer／不改 Source／不持久化 `presetId`／五个 `SET` 作为一个 atomic batch。**（记录页裁 **ADJ-13**）
   - ★ **若某 UI surface 本版只开放 Species authoring ⇒ 在那里自然只写 Species** —— **那是 surface capability 的后果，不是 Preset 自身拥有 Species 语义**。（★ 与 ADJ-12 同源：**三种预设是 Setup 后/中的一次性填表便利，不是 TimePeriod 独有的「Profile 创建语义」**）
 
-**Temperature**：
+<a id="temperature-behavior"></a>
+**Temperature**（本包完整参数／曲线机制；具体控件见[卡3](contract-cards.md#field-value-editor)，导入前提与目标物种护栏见[卡8](contract-cards.md#template-list)）：
 - 6 参数 ＋ 连续曲线；同图显示 `temp_threshold`；另有「从钓鱼元素周期表导入」入口。（《编辑器界面》§1.1）
 - 字段能力：`acceptMin / favMin / favMax / acceptMax / threshold` ＝ 数值型项（无档位）；`falloff_shape`（项名位 `falloff`）＝ 枚举绝对值项。（《编辑器持久层契约》§3.3；记录页 §175 六.2）
 - **P0 曲线只读、不 drag-author**；**6 项参数（5 数值 ＋ `falloff_shape` 枚举）**仍按项编辑。（记录页 §199 ⑥②；冻结卡 `A①-卡3`）
@@ -186,8 +189,8 @@
 <a id="component-operation-allowlist"></a>
 ## 13. 字段能力表
 （页面上只有「数值型项 / 枚举绝对值项」两种说法；草稿另起了三个名，见 §19）
-- 数值型 · 带档位（Structure / Feeding Layer / Time Period）：物种层 `ADD` / `SET`（无操作 ＝ `INHERIT`）；桶层 `absent` / `CLEAR` / `ADD` / `SET`；`SET` 可携带 `affinity_tier`。（《编辑器持久层契约》§3.3）
-- 数值型 · 无档位（Temperature 四边界 ＋ `threshold`）：同上；Temperature 不带 `affinity_tier`。（同上；记录页 §174 二）
+- 数值型 · 带档位（Structure / Feeding Layer / Time Period）：物种层 `ADD` / `SET`（无操作 ＝ `INHERIT`）；桶层 `absent` / `CLEAR` / `ADD` / `SET`；Tier 元数据按[§5](#tier-contract)。（《编辑器持久层契约》§3.3）
+- 数值型 · 无档位（Temperature 四边界 ＋ `threshold`）：操作选项同上，Tier 适用边界按[§5](#tier-contract)。（同上；记录页 §174 二）
 - 枚举绝对值（`falloff_shape`，项名位 `falloff`）：物种层 `SET`（无操作 ＝ `INHERIT`）；桶层 `absent` / `CLEAR` / `SET`；**不得 `ADD`**。（《编辑器持久层契约》§3.3 逐字「枚举绝对值不得 ADD」）
 - 层决定有无 `CLEAR`，字段类型决定有无 `ADD`；不可把桶层选项暴露给物种层。对应四格用户语言见 [卡2](contract-cards.md#operation-control)。（记录页 §312 裁 `XR-F-03`）
 
@@ -252,11 +255,8 @@
 - 程序开关；`if / else / return` 之类控制流编写；自定义聚合算子；自由编排 / 任意输入连线；Gate 控件 / `GatePolicy` 字段；模板共享面板的三档分级；不新增顶层空的 `Calculation Surfaces` 导航；不显示 Activity / Feeding Readiness 之类空壳；不新增第二套 Bake Editor、不新增脚本入口。（《编辑器界面》§5）
 - 占比 / 比例 与 分群逻辑两处只以禁用占位行呈现（字段位在、控件不在），不提供编辑控件；不得据此宣称本版已实现 Mode Share / Routing。（《编辑器界面》§5、§1.2）
 - 桶不是真正的 Engagement Mode；Runtime 无 EngagementMode identity，不得据 UI 名称另建 durable 的 Engagement Mode 身份 / 注册表 / 模式级 Concrete 来源。（《编辑器界面》§5；《编辑器与 Resolve》§11.1；记录页 §172 二 KEEP）
-  - ⚠️ ★ **2026-09-21 Owner 收口为 `C_SPLIT_REGISTERS`（取代本节先前那条「owner 的 canonical 名是「中鱼习性模式」」的读法）**：**要消灭的是「owner」这个同时指「业务语义归属」与「物理 durable identity」的模糊中间词。**
-    ⇒ **业务语义概念** ＝ `Engagement Mode`／中鱼习性模式（**Simplified Production V0 的正式业务概念**，**B P0 不实现 Mode Share / Routing**）；**物理 durable key ＝ `FishEnvAffinityRef`**；`FishEngagementModeCompat` 是**对 Affinity 的 mode-like authoring projection ／ 兼容壳**；**Runtime / production 无独立 `EngagementMode` identity。**
-    ⇒ ★ **上面那条禁令（不得据 UI 名称另建身份 / 第二套注册表 / 模式级 Concrete 来源）依然成立** —— 它禁的是**据 UI 名称造身份**，与本次收口**同向**。
-    ⇒ ★ **`sourceOverride` 一律写作 `(fishEnvAffinityRef, component)`**（**若 schema 字段名为 `owner_ref`，则 `owner_ref := FishEnvAffinityRef`**）—— **不要留一个抽象的 `owner` 让实现者猜是哪套 identity。**（记录页裁 **ADJ-08 ＝ `C_SPLIT_REGISTERS`**）
-  - ⚠️ ★ **页侧本轮已收口（2026-09-21）**：**CT §1.1 ／ CT §3.3 ／ RS §11.1 三处已按 `C_SPLIT_REGISTERS` 改写**；**《编辑器界面》§5 不动** —— 它写的是 **Runtime 域**那句（「Runtime 无 `EngagementMode` identity」／「durable owner ＝ `FishEnvAffinityRef`」），**与本次收口相容**；RS §7 ／ IA §8 同理。⇒ **不再有「按滞后页照录」这件事。**
+  - **业务概念与 durable identity 分离**（记录页 §385，ADJ-08＝`C_SPLIT_REGISTERS`）：`Engagement Mode`／中鱼习性模式是 Simplified Production V0 的正式业务概念；B P0 不实现 Mode Share／Routing。物理 durable key 为 `FishEnvAffinityRef`；`FishEngagementModeCompat` 是对 Affinity 的 mode-like authoring projection／兼容壳；Runtime／production 无独立 `EngagementMode` identity。业务概念不能充当另一套物理身份。
+  - `sourceOverride` 的物理键写作 `(fishEnvAffinityRef, component)`；若 schema 字段名为 `owner_ref`，则 `owner_ref := FishEnvAffinityRef`。不留抽象的 `owner` 让实现猜身份；原页侧依据为 CT §1.1／§3.3、RS §11.1，Runtime 禁令与 UI §5／RS §7／IA §8 相容。逐页改写经过由 Git 保留。
 - 品质页本版不开放（入口置灰、不展示品质字段）；不新建品质模板库、不把品质当作第五个习性组件。（《编辑器界面》§0、§2）
 - 组件卡不承担逐字段 `ADD / SET / CLEAR` 编辑（逐字段值在焦点编辑栏完成）；不给组件卡 Source / Role 另建 durable state；不把 Effective Value 当编辑真相存储；不为视觉一致强迫所有字段支持 `ADD`；不为结构对称给品质造模板；不按「当前数值相同」跨无关谱系合并生产行。（《编辑器界面》§1 导语、§7；《编辑器心智模型与 IA》§8）
 

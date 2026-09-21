@@ -2,12 +2,7 @@
 
 **状态（两批各自唯一；改自记录页 §265 裁 `F-07`）**：**批次① ＝ 七张全部「已冻结 v1.1」**（`A①-卡1`／`卡2`／`卡3`／`卡4`／`卡5`／`卡6`／`卡7`）；**批次②（`A②-卡8`…`卡12`）＝ 已冻结**（记录页 §244，以该节为冻结留痕）。**本文件不再有任何「起草稿」状态。** 据记录页 §164（冻结接口，已回页核实）。铁律遵守：卡片＝执行投影，机制唯一载体仍是 Current 文档，「依据」行不空——引 Current § 或记录页 §。
 
-**CLEAR 相关历史取证**：以下旧注、收口记录及卡2 原依据长引文固定于 [PR #7 原文](https://github.com/futouyiba/HitFish-Up/blob/1409a13fde46dcb8d10bae039c26f6a0090bf497/docs/review/ui-component-contract-r2/contract-cards.md)；保留审计作用，不作为另一份现行定义。
-
-**⛔ 旧注（已作废，保留作留痕）**：本行曾写「`A①-卡2` ＝ 已裁、但暂不作为无条件执行依据 —— 它所需的用户语言**尚未落入 Current 页面**、且 Current 仍保留相抵旧串（汇编 §18.1–2）⇒ **落到页后即恢复**」（记录页 §312 裁 `XR-F-07`）。
-**收口（2026-09-21，逐字回读两页）**：该恢复条件**已满足** —— 《编辑器界面》§1.2 与《编辑器心智模型与 IA》§2 的**旧串**（「跟随（INHERIT）」「跟随物种配置」「恢复为来源值」）**均 0 命中**；「仅使用来源」「仅使用当前来源」**在位**；两页各自写明「沿用物种操作」（无记录）与「仅使用当前来源」（CLEAR）**是两个动作、不合并成一个模糊的「恢复」**（《编辑器界面》§1.2 逐字：「桶（覆盖层）须**显式区分**「沿用物种操作」与「仅使用当前来源」两个动作，不合并成一个模糊的「恢复」」；《编辑器心智模型与 IA》§2 以另一措辞写明同一区分：「「沿用物种操作」（无记录）与「仅使用当前来源」（CLEAR）是两个动作」）⇒ **依 §312 的「落到页后即恢复」，`A①-卡2` 恢复为「已冻结 v1.1」。**
-
-**批次①清单口径**：§164 原列六项；主代理工作令列七项（多出 Field Value Editor）。本稿按七张出——**建议保留分卡**：op 选择（选哪个动作）与值输入（敲什么数）是两个交互面、两条校验链；收口时若判并入 Operation Control 可并，机械合并即可。
+**阅读边界**：各卡保留消费者操作、显示、记录和验收场景；所引汇编维护共用机制，卡片摘要不另增规则。卡2恢复执行依据的原核对与修订过程见[固定基线](https://github.com/futouyiba/HitFish-Up/blob/ceceb630ec338f23a11170f9e047fbabd101eaf0/docs/review/ui-component-contract-r2/contract-cards.md#L3-L10)，不作为新一轮来源扫描。操作选择与值输入分卡的职责按[汇编 §4](component-contract-consolidated.md#field-value-control)。
 
 **命名口径（记录页 §271 裁 `A-F-09`）**：本文件各卡的 `Component:` 行**是卡片层标识，不是产品／契约命名** —— 允许与页面语汇不同形，但**不得被下游当作稳定标识符**（不得拿它去建代码枚举／schema 字段／选择器／i18n key）。**凡页面上已有名字的物，一律以页面名为准**（如草稿的 `FieldValueRow` ⇒ 页面名 **`FieldValueControl`**）。正文（需求文档）里指向同一个物时，**只用页面已有的串、或纯语义描述**（§19 前置句已定）。
 
@@ -17,7 +12,7 @@
 
 | # | 控件 | 层·面 | 批次 | 状态 |
 |---|---|---|---|---|
-| A1 | 顶栏（对象标题/动作/保存状态/Publish） | 框架 | ①（保存状态）＋④（系统面） | 保存区=卡7；**该动作的作者可见词 ＝ 「丢弃未保存的改动」**（记录页 §393 裁 **ADJ-10**）；**语义＝丢弃尚未落盘的编辑、回到上次成功持久化的 revision（记录页 §178）——不是「回到出厂/空态」**。⚠️ **`Reset` 不得作作者可见串** |
+| A1 | 顶栏（对象标题/动作/保存状态/Publish） | 框架 | ①（保存状态）＋④（系统面） | 保存区及「丢弃未保存的改动」动作按[卡7](#autosave-status)；本行仅作入口索引 |
 | A2 | 面包屑 | 框架 | ④ | 已规格（v2） |
 | A3 | dirtyDot（按层待写盘） | 框架 | ④ | 语义已拍＝记录页 §167 六（随卡7 落地） |
 | A4 | drawer 导航 ×4 变体 | 对象导航 | ④ | 已规格（v2） |
@@ -47,7 +42,7 @@
 
 ---
 
-## Part 2｜第一批 Contract Cards（**七张已冻结 v1.1 ＝ 记录页 §165 ＋ 2026-09-21 恢复 `A①-卡2`，依据见文件头「收口」**）
+## Part 2｜第一批 Contract Cards（**七张已冻结 v1.1 ＝ 记录页 §165 ＋ 2026-09-21 恢复 `A①-卡2`，依据见文件头固定基线**）
 
 **编号口径（防撞车）**：本席编号＝**A 线批次编号**，标题带前缀（`A①-卡1`…`A①-卡7`、`A②-卡8`…`A②-卡12`）。**GPT 清单另有一套「卡4 ComponentCard／卡5 Impact Preview」，与本席 `A①-卡4`（Effective Value Display）／`A①-卡5`（Provenance Display）不是同一批** —— 引用务必带前缀。
 
@@ -60,7 +55,7 @@
 Component: Source Selector｜来源选择器（模板行每格；物种层与兼容壳·覆盖层两变体）
 Reads:
   - 该组件当前 source binding（物种层 recipe source；覆盖层 patch sourceOverride）
-  - allowlist（**按层分写**）：**前层（物种层）** —— 水温 = `SHARED_TEMPLATE` ∣ `SPECIES_CONCRETE`；结构 / 觅食水层 / 时段 = 仅 `SHARED_TEMPLATE`；**桶（覆盖层）** —— **所有组件都只有 `SHARED_TEMPLATE` ＋「跟随物种」**，**不列 `SPECIES_CONCRETE`**（与同卡 Must not 那句一致）（记录页 §312 裁 `XR-F-02`）
+  - 按所引汇编 §8 的层级 Source allowlist 生成可选项；本卡不另维护矩阵。
   - 模板清单（平铺、作者命名、默认按引用量排序；ARCHIVED 降级不列）
   - 水温额外读「当前物种生态数据存在与否」
 Actions:
@@ -85,7 +80,7 @@ Must not:
   - 不自动清 operations；不静默生成 SET 保旧值；same-source 不自动去 pin
   - 覆盖层 picker 不列 SpeciesConcrete（Mode 经「跟随物种」间接继承）
   - 归档模板不出现在普通 picker；不做分组/族折叠（平铺）
-依据: 《编辑器界面》§1.1（前层 Source 选择器；温度多一项「当前物种生态数据」；桶另有「跟随物种」；换源不复制不清除＋Rebase Preview；提取为模板；归档隐藏/降级）；《编辑器持久层契约》§3.3（P0 allowlist：温度＝SHARED_TEMPLATE∣SPECIES_CONCRETE、余三组件仅 SHARED_TEMPLATE；AffinityAuthoringPatch.sourceOverride＝桶可换模板；同源显式 pin 保留）＋§3.10（生命周期两态、两引用集、**四项数**、Replace 只改 Direct、BROKEN_SOURCE_REF、高影响四步）；显示层级（四格裁定）＝记录页 §160 四（照准）；截断 (a)＝记录页 §167 六
+依据: Source矩阵与事务见汇编 §8（《编辑器界面》§1.1；《编辑器持久层契约》§3.3／§3.10）；生命周期／引用集见汇编 §14。显示层级（四格裁定）＝记录页 §160 四；截断 (a)＝记录页 §167 六。
 ```
 
 <a id="operation-control"></a>
@@ -108,7 +103,7 @@ Actions:
       · **桶层 × 枚举**：沿用物种设置为 / 仅使用当前来源 / 设置为（**物种层无操作时该缺省支同样显示「仅使用来源」**）。
       ⇒ UI 四格出处：记录页 §312 裁 `XR-F-03`。
   - 缺省支与「仅使用当前来源」是独立入口；执行所引汇编 §3 的 absent / CLEAR 分支。
-  - 调整（ADD）：带符号增量，**相对当前来源值**（**当前来源**可以是共享模板，也可以是合法的 `SPECIES_CONCRETE`）—— ⚠️ **不写成「模板值」**：合法来源里 `SPECIES_CONCRETE` **没有模板绑定**。⚠️ **合法来源里 `SPECIES_CONCRETE` 没有模板绑定**（汇编 §8 明定物种层温度可 Concrete、且 Concrete 不进模板清单）⇒ 写「相对该层所挂模板值」会**把这一类合法来源排除在外**。（记录页 §312 裁 `CXR-04`）
+  - 调整（ADD）：输入相对当前来源值的带符号增量，按汇编 §3 解析；合法 SPECIES_CONCRETE 没有模板绑定，因此输入提示不得只写「模板值」。（记录页 §312／§316 CXR-04）
   - 设置为（SET）：绝对值
   - 每次编辑=替换当前格唯一 op（每层每字段至多一个最终 op）；**`SET` 之后下层仍可 `ADD`** —— **下层表达替换上层 operation，`ADD` 仍以下层当前来源值为基准**（记录页 §316 裁 `CXR-04`）
   - 档位控件的可用性按汇编 §5 随当前 op 切换。
@@ -136,7 +131,7 @@ Must not:
 <a id="field-value-editor"></a>
 ### A①-卡3｜Field Value Editor（数值/档位/曲线输入）
 
-**Tier 入口**：[汇编 §5](component-contract-consolidated.md#tier-contract)维护档位表、op适用形状与诊断边界；本卡保留输入、显示及具体操作。
+**机制入口**：[Tier §5](component-contract-consolidated.md#tier-contract)、[校验 §6](component-contract-consolidated.md#validation-autosave)、[水温 §12](component-contract-consolidated.md#temperature-behavior)、[Profile／Setup §11](component-contract-consolidated.md#profile-lifecycle)。本卡保留输入、显示及具体操作。
 
 ```
 Component: Field Value Editor｜值输入控件（数值输入、档位选择、水温曲线）
@@ -150,7 +145,7 @@ Actions:
   - 数值输入：Enter/blur 形成有效 typed 值＝一笔 semantic edit
   - 档位选择（tier）；Custom 精确值
   - **`falloff_shape` 那格（项名 `falloff`）是枚举 `<select>`（`LINEAR` / `SMOOTHSTEP`）——不给 `ADD` 入口**（口径与卡2 一致：枚举项三支）
-  - **水温曲线 P0 只读、不 drag-author**（记录页 §199 ⑥②）；**6 项参数仍按项编辑**（**5 个数值项 ＋ 1 个枚举项 `falloff_shape`**；相对关系走显式相对调整入口＝卡2 ADD）—— ⚠️ 原文写「6 个**数值**参数」**把枚举项也算进「数值」**；**数 6 本身不改**（它是记录页 §175 六.1 的裁定：「把实现的 5 项拉回契约已写的 6 项」）。（记录页 §312 裁 `XR-F-04`）。⚠️ 该条**取代** Checkpoint「直接拖动绝对曲线／Handle 仍应表达为 SET」那句——不要再给曲线加拖拽授权
+  - 水温曲线按汇编 §12 展示；参数继续通过各项输入控件编辑，数值项的相对调整交卡2。曲线只读不能扩大成整段温度档案不可编辑。
   - 时段三预设一次性填表（应用时覆盖确认；模板名不进 Runtime）
 Durable mutation:
   - 有效 typed 值经卡2 落 op；raw buffer（"-" "0." "abc"）不写 durable typed、不覆盖上一 durable 值（保留 UI local）
@@ -158,14 +153,14 @@ Durable mutation:
 Must show:
   - 仅在汇编 §5 适用的字段／op 上提供档位选择；越档保留作者选中的标签，并显示诊断供作者显式修改。
   - 每项 继承/已覆盖 状态（读记录）
-  - 越界分级反馈：Effective<0＝ERROR（**红标**）、>1＝WARNING（**红标，不阻断**）、两者皆可保存 —— **分级靠文案与阻断性区分，不靠颜色**（三处逐字：《编辑器界面》§1.2／§1.4 ＋《主开发需求》§7）
+  - 按汇编 §6 显示 Effective 值诊断；ERROR／WARNING 都用红标，靠文案与阻断性区分，不靠颜色。
   - 不可解析＝即时输入错误
-  - 时段未配空态文案；**激活 CORE／SECONDARY 不自动生成 Profile**（记录页 §199 ⑥③）——空态应指向**显式创建／选择来源**的路径，并**立刻显示「缺 required Profile」校验态**（`A①-卡6`）。⚠️ **不得再写「提为 CORE/SECONDARY 即生成 profile」**——依据写法＝「**记录页 §116 二（该支）已被 §199 ⑥③ 取代**」（**只废那一支，§116 二 整条未废**，勿写成「§116 已作废」）
+  - 时段未配时显示空态，并按汇编 §11 引导显式 Setup、呈现缺 required Profile 诊断（卡6）；本卡不另定义 Role promotion 后果。
 Must not:
   - 不静默 clamp/取绝对值/平移/归一
   - 不把 raw 字符串写 typed state；不把「未配置」编码成 null 必填字段的现存记录
   - 不因 UI 统一强行给枚举绝对值项上 ADD（**射程只落在枚举绝对值项 `falloff_shape`**；`acceptMin / favMin / favMax / acceptMax` **属那 5 个数值项、`ADD` 合法**，不得一并禁掉）
-依据: 《编辑器界面》§1.1（Affinity 四档表；时段未配置合法空态；三预设表）＋§1.2（越界分两侧：>1＝WARNING 放行、<0＝ERROR 阻断 Publish；校验对象＝resolved/Effective 值、负 ADD 使终值非负即合法；临时字符串（-、0.、空）不是持久值；语义编辑经短 debounce 原子落盘）；《开发需求》§3.2/§7/§9；《配置表与校验》§5（Effective Fit 两侧＋不 clamp）；《编辑器持久层契约》§7.1（未解析控件字符串不入 durable）＋§3.3（Tier 规则归汇编 §5；**各字段 operation allowlist：枚举绝对值不得 ADD，`falloff` 属此类**）；衰减形状可项级覆盖＝记录页 §175（**§175 六.1** 定性更正：不是改判、是把实现的 5 项拉回契约已写的 6 项；**§175 六.2** 命名更正＝项名/字段名两层、不统一——本条按六.2 写。⚠️ §175 四「统一用 `falloff`」**已被六.2 撤销**，勿引）；temp_threshold∈[0,1]＝《配置表与校验》§5／《开发需求》§4.3
+依据: Tier规则见汇编 §5；校验／持久化边界见 §6 与 §4；参数／曲线机制见 §12；operation allowlist见 §13。输入与显示依据：《编辑器界面》§1.1／§1.2、《编辑器持久层契约》§7.1；项名／字段名分层采用记录页 §175 六.2（不采用其已撤销的 §175 四统一命名）；temp_threshold∈[0,1]＝《配置表与校验》§5／《开发需求》§4.3。
 ```
 
 ### A①-卡4｜Effective Value Display（当前值展示）
@@ -206,6 +201,8 @@ Must not:
 ```
 
 ### A①-卡6｜Validation·Diagnostic（校验诊断；＝C11 抽屉校验节）
+
+**机制入口**：[通用校验 §6](component-contract-consolidated.md#validation-autosave)、[断链来源 §8](component-contract-consolidated.md#source-transaction)、[Profile 缺席 §11](component-contract-consolidated.md#profile-lifecycle)；本卡规定诊断如何展示与定位，下面是消费者场景。
 
 ```
 Component: Validation·Diagnostic｜校验诊断（ERROR/WARNING）
@@ -259,11 +256,8 @@ Must not:
 ---
 
 ## 收口提示（给主代理）
-1. **卡3 去留**：建议保留分卡（理由见封面）；若并，卡3 的 raw-buffer/越界/档位条款并入卡2/卡6。
-2. **slice C 依赖**：七卡中 1/2/3/4/6/7 全部落在 Structure vertical slice 路径上（Species→Structure→Shared Template→Species ADD→Affinity sourceOverride→SET/CLEAR→autosave→Resolve Preview→materialize）⇒ 原文写「**这六张冻结前**，实现线勿动该路径、Figma 线勿投影该块」（§164 护栏已含）。⚠️ **该护栏的条件现已满足**：批次①**七张（含卡 2）均已冻结 v1.1** ⇒ **它不再构成「勿动」**；此处保留作留痕。
-3. **②后的机械替换点**：各卡「依据」行 packet 指针→Current §（预计落点：契约 §3.3/§3.7（§162 已落 op 行/lineage 句）、界面 §1.x、开发需求 §7）；替换时逐卡回报。
-4. 术语按 §102：卡片正文用「兼容壳/习性档案」，标识符原样。
 
+Structure 竖切的实现依赖见[汇编 §2](component-contract-consolidated.md#structure-slice)，卡片冻结状态见文件头。卡片正文用「兼容壳／习性档案」，技术标识符原样保留（记录页 §102）；已满足的冻结前门禁与逐卡派单经过由 Git 保存。
 
 ---
 
@@ -284,9 +278,9 @@ Actions:
   - 浏览 / 按组件筛选；编辑 name_zh / name_en
   - 「从当前鱼提取模板」（创建）＝**`A①-卡1` 的 EXTRACT_TEMPLATE 在本工作区的入口**——**同一动作、两个入口**，不另实现一套
   - 水温「从钓鱼元素周期表导入」：按现行契约走 **Concrete Source 更新**（**不是直接造模板**）—— ⚠️ **它是高影响重导**：**prepare → Preview → 显式确认 → 一次原子提交**（汇编 §15 已把「重导」列为高影响动作）；**Concrete Source 已被 Recipe／继承行消费时，重导会改变多个 Effective Value** ⇒ **不得写成「直接更新 Source」**。（记录页 §312 裁 `XR-F-05`）；本工作区入口按「导入 → 可提取为模板」两步读（**收口已确认**）。**不承诺导入后四值齐备**。★ **此处先前有内部不闭合，收口如下**（同一份文件另处已写「周期表导入的字段级 provenance 差异：**前四项＝生态数据**；`temp_threshold`/`falloff_shape`＝游戏参数」）：**「四值齐备与否」是「源里有没有」的事实，不是口径未定** ——
-  · **`acceptMin` / `acceptMax` 的取值口径已定**：由 **`fav ± 2.0℃`** 推导（**下限截 0**，**设计值、非实测**；交付物见水温调研包 `final/`，**未落 Current，落页是剩余一步**；本文件另处引的 fav/accept 取值口径出处照旧）。
+  · **来源边界**：下条推导是设计值、非实测，原交付物为水温调研包 `final/`；原登记未落 Current，本次未核上游是否已落页，不把这一历史状态当今天的实测。
   · ★ **该子情形已裁（Owner 2026-09-21）：取「按既定口径推导」。** 规则收窄为 —— `favMin` / `favMax` **有效时**：`acceptMin = max(0, favMin − 2℃)`、`acceptMax = favMax + 2℃`；`acceptMin` / `acceptMax` **属设计推导值，不要求周期表提供实测值**；**若连推导前提 `favMin` / `favMax` 都缺失或非法 ⇒ Reject Import**。
-  · ★ **不得「保留旧 `accept`」** —— 理由（Owner 逐字）：保留旧值会形成「**新 `fav` ＋ 旧 `accept`**」的**历史依赖与混合 provenance**，使 **Reimport 非幂等**；既定推导则**确定、可解释、可重复**。  ⇒ **本条不再按「未冻结」读**；**三选一已关闭**（留痕见 `OPEN-ITEMS` §2）。
+  · ★ **不得「保留旧 `accept`」** —— 理由（Owner 逐字）：保留旧值会形成「**新 `fav` ＋ 旧 `accept`**」的**历史依赖与混合 provenance**，使 **Reimport 非幂等**；既定推导则**确定、可解释、可重复**。  处置与来源索引见 `OPEN-ITEMS` §2。
   · ★ **目标物种护栏（独立条件，不因上述缺值裁定而删除）**：**⚠️ 导入必须带显式目标物种**：该动作更新的是 `SPECIES_CONCRETE` 的 identity ＝ `(speciesId, componentType)`，**而本工作区（`22:2`）的 Reads 里没有 current species、也没有 species selector** ⇒ **入口必须显式选目标物种**（有当前物种时可默认为它），**不得用隐式/未知物种执行**；**未选物种 ＝ 该动作不可执行**，不是「就用当前物种」。替代方案（等价）：把该入口限定到**已有明确 species context** 处。（记录页 §328 裁 `R3-F-06`）
 Durable mutation:
   - 别名写编辑器持久层模板记录（template_key 空＝未物化，editor_key 必填）；抽取创建模板资产
@@ -325,7 +319,7 @@ Must not:
 
 ### A②-卡10｜Edit Template Value（模板完整值编辑；高影响）
 
-原误搬 Tier／op 规则的撤回保留于[固定基线卡10](https://github.com/futouyiba/HitFish-Up/blob/db97e9bb4784a8eaf2421cf88894c6d4e4beef2c/docs/review/ui-component-contract-r2/contract-cards.md#L333)。
+**机制入口**：[模板完整值与影响统计 §14](component-contract-consolidated.md#template-reference-sets)、[确认及改值边界](component-contract-consolidated.md#template-replace-boundary)、[水温曲线 §12](component-contract-consolidated.md#temperature-behavior)；本卡保留模板编辑流程及显示。
 
 ```
 Component: Edit Template Complete Value｜模板改值（共享模板完整值编辑）
@@ -334,18 +328,18 @@ Reads:
 Actions:
   - 编辑草稿 → Impact Preview（before / after Resolve）→ 显式确认 → 原子提交 → re-resolve → 物化受影响 production projections
   - ⚠️ **本卡不出现 `ADD`／`SET`／`CLEAR` 这类 operation 语义** —— 模板是**完整值资产**，**operation 只存在于物种 Recipe 与桶 patch 上**（《编辑器持久层契约》§3.3／§3.7）。
-  ⇒ Tier／op 形状属于值记录，不属于模板完整值资产；旧误引的撤回见卡前固定历史。
-  - **水温曲线：P0 只读、不 drag-author**（记录页 §199 ⑥②）—— 本席读作**仅禁拖拽／Handle 授权，6 项参数（5 数值 ＋ 1 枚举）仍可编辑**（主语是「曲线」而非「温度档案」）。**本读法主代理 2026-09-20 已核、待复核点关闭**：与界面 §1.1「6 参数 ＋ 连续曲线」同口径 ⇒ 曲线作为**编辑面**只读，**参数作为项仍可编辑**。**可翻点**：若翻成「整段不可编辑」，改动面＝本卡 Actions ＋ 界面 §1.1 那句，两处
+  ⇒ 具体记录规则按汇编 §14；本卡不把模板值编辑呈现为字段 operation 编辑。
+  - 水温曲线按汇编 §12 只读展示；作者仍通过参数项编辑模板完整值，不提供曲线拖拽／Handle。
 Durable mutation:
   - 改 completeValue＝一次全局作者确认；Preview buffer＝短命 UI state，不是 durable Draft Entity
 Must show:
-  - **四项分列（逐字；《契约》§3.10 与《编辑器界面》§7 同句）**：**直接引用数 / Effective consumer 数 / 最终结果变化数 / 新增 Error·Warning** —— 是**四个可以互不相同的数字**
+  - 候选变更的四项影响统计按汇编 §14 分列，不把直接引用与最终结果变化混作一个数。
   - after-state 出现 publish-blocking ERROR 时醒目标出（仍可确认保存；Publish 阻断到修复——错误进卡6）
 Must not:
   - **不实现水温曲线 drag-author**（P0）；也**不得把「曲线只读」扩大成「温度档案不可编辑」**
   - 不给全部引用者制造逐项 review debt（正常传播不产生 N 个下游待办；只有真实异常 / Validator 问题单独暴露）
   - 不静默改任何 consumer 绑定
-依据: 《编辑器持久层契约》§3.10（高影响四步；两引用集；**四项数**）＋§3.7（Template edit 下 projection 生命周期：SET-masked 可不变）；《编辑器界面》§1.1 共享影响面行（**四项数**同句）；水温曲线 P0 只读＝记录页 §199 ⑥②（⚠️ 该条**取代** Checkpoint「直接拖动绝对曲线／Handle 仍应表达为 SET」那句）
+依据: 《编辑器持久层契约》§3.10／§3.7、《编辑器界面》§1.1／§7，机制统一见汇编 §14；水温曲线 P0 能力见汇编 §12（记录页 §199 ⑥②）。
 ```
 
 <a id="replace-references"></a>
