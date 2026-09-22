@@ -21,13 +21,13 @@
 
 - **契约卡（行为权威）**：`docs/review/ui-component-contract-r2/`（`component-contract-consolidated.md`、`contract-cards.md`、`README.md`、`figma-current.md`、`OPEN-ITEMS.md`），基线 **main @ `8f60ed4c`**。
 - **裁定**：《变更与裁决记录》（Notion Current，读数 2026-09-22）§392 ADJ-09（两正交判据／两档 Preview／FOLLOW_PARENT 不留例外）、§394（ADJ-11 第三臂已落《编辑器持久层契约》§3.7）、§331①（双入口单 Truth＝前层 Source Selector ↔ 卡 Source 下拉，焦点栏不设 Source 选择器）；`#43` 评论 Owner 裁定（2026-09-22）：`#30` 并进 `#60`，Setup 链归 `#60`、`#61` 与本批不吸收 Setup。
-- **画布现状（只读，2026-09-22）**：PROJECTION 区版式范式＝`PROJECTION｜…` section＋`proj_*` 裸帧（890 宽）＋`态N｜…` 画布标签＋逐帧 annotation 四段结构（态说明／规则直链／规则链接版本／图注取证，`#57-after` 起、经 `#71` 收敛的现行形态）；annotation 链接约定按 `#73`（默认分支稳定锚点＋独立短 SHA）。
+- **画布现状（只读，2026-09-22）**：PROJECTION 区版式范式＝`PROJECTION｜…` section＋`proj_*` 裸帧（890 宽）＋`态N｜…` 画布标签＋逐帧局部短 annotation（默认不超过两行、一个稳定规则直链）；规则版本与必要旧图取证按明确覆盖范围登记在 Card／Frame／批次说明，旧图证据单列；annotation 链接约定按 `#73`（默认分支稳定锚点＋独立短 SHA）。
 - **文档侧**：issues `#54`／`#62`／`#63` 正文；防撞预读 `#59`／`#60`／`#61`。
 
 ## Writer 通用要求（三册共用，落画时逐条执行）
 
 1. **门槛**（沿 `#62`/`#63` 正文）：approved/merged 文档与 G2、前批独立 PASS、显式单 writer 租约；fresh live intake＋私有写前快照；双 skill（官方 `figma-use`＋仓内 `figma-mockup-write`）必读。
-2. **写入**：整组读→只改目标→整组写→整组回读；annotation 用 `label` 型单字段、读源 `labelMarkdown || label`、写前 unescape；新 section 全部为新宿主——回归探针必须含**按区域枚举**的覆盖（基线清单天然看不见新增宿主）。
+2. **写入**：整组读→只改目标→整组写→整组回读；annotation 用 `label` 型单字段、读源 `labelMarkdown || label`，局部默认不超过两行且只含一个稳定规则直链；版本与必要旧图取证按明确覆盖范围登记、不逐条重复；写前 unescape；新 section 全部为新宿主——回归探针必须含**按区域枚举**的覆盖（基线清单天然看不见新增宿主）。
 3. **证据**：同通路比较；字段／转义（`&`=0）计数、几何（`absoluteBoundingBox`）、节点数 Δ（frame 与 text 每件各计 1）、`figma.skipInvisibleInstanceChildren` 实读值，随探针报告原始数；截图＋raw 证据；独立 live reviewer PASS/BLOCK。
 4. **标记**：三组全部 `⚑UNIMPL（GAP 号待补）`（依 `#54` 指令）；示例数据＝示意，不构成产品读数；静态画面不证明任何运行／持久化实现。
 5. **公开边界**：不写内部 URL、Notion 页面 id、fileKey、节点 id 清单、凭据（本目录已按此自查）。
