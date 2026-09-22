@@ -193,6 +193,7 @@ Must not:
 依据: 《编辑器界面》§9.1（焦点编辑栏显式展示「来源 → 当前层操作 → 当前值」）；《编辑器与 Resolve》§11.1（Effective Source＋Effective Operation → Effective Value＝派生结果）；《编辑器持久层契约》§3.7（equal-value SET 与纯 source pin **在 projection 复用判定上**必须区分——**不是**立牌可判的根）；⚠️ **「SET 掩盖」这个量只在 Impact Preview 语境可算**（`A②-卡10`／`A②-卡11` 的 before/after 都在手，其分类里保留该支）；**立牌上收纳**（本卡）
 ```
 
+<a id="provenance-display"></a>
 ### A①-卡5｜Provenance Display（来源与过程展示）
 
 水温导入的推导、缺值与目标物种规则统一见[卡8](#template-list)；本卡只区分字段的来源性质，不复制推导公式。
@@ -213,6 +214,7 @@ Must not:
 依据: 《编辑器持久层契约》§3.3（周期表重新导入更新 Concrete Source 本身、不落 tuning operation；研究事实修正走更新 Source、游戏调参保持 Source 写 Species operation；SPECIES_CONCRETE identity＝(speciesId, componentType)）；《编辑器与 Resolve》§3（Resolve Preview provenance 区）＋§11.3（Template/档位/delta 不进 Runtime）；《编辑器界面》§1.3（别名与微调 provenance 留 editor-state）；fav/accept 的来源性质与推导规则见卡前卡8入口
 ```
 
+<a id="validation-diagnostic"></a>
 ### A①-卡6｜Validation·Diagnostic（校验诊断；＝C11 抽屉校验节）
 
 **机制入口**：[通用校验 §6](component-contract-consolidated.md#validation-autosave)、[断链来源 §8](component-contract-consolidated.md#source-transaction)、[Profile 缺席 §11](component-contract-consolidated.md#profile-lifecycle)；本卡规定诊断如何展示与定位，下面是消费者场景。
@@ -354,6 +356,7 @@ Must not:
 
 目标设计的未实现状态与示例数据须在annotation／图像登记中明确标 `⚑UNIMPL`（缺GAP编号时标明待补）／示例，不混入作者控件文案；静态画面只证明该画面，不证明列表真实滚动、原子提交或保存重载已经实现。实时取证与写前快照仍按项目Figma技能，不能用本段免除。
 
+<a id="template-value-editor"></a>
 ### A②-卡10｜Edit Template Value（模板完整值编辑；高影响）
 
 **机制入口**：[模板完整值与影响统计 §14](component-contract-consolidated.md#template-reference-sets)、[确认及改值边界](component-contract-consolidated.md#template-replace-boundary)、[水温曲线 §12](component-contract-consolidated.md#temperature-behavior)、[Publish边界 §15](component-contract-consolidated.md#cross-layer-guards)与[卡7](#autosave-status)；共用候选交互见[N2](#rebase-impact-preview)，水温用途说明见[卡3局部投影](#temperature-threshold-ui)。本卡保留模板编辑流程及显示。
