@@ -27,7 +27,7 @@
 ## Writer 通用要求（三册共用，落画时逐条执行）
 
 1. **门槛**（沿 `#62`/`#63` 正文）：approved/merged 文档与 G2、前批独立 PASS、显式单 writer 租约；fresh live intake＋私有写前快照；双 skill（官方 `figma-use`＋仓内 `figma-mockup-write`）必读。
-2. **写入**：整组读→只改目标→整组写→整组回读；annotation 用 `label` 型单字段、读源 `labelMarkdown || label`，局部默认不超过两行且只含一个稳定规则直链；版本与必要旧图取证按明确覆盖范围登记、不逐条重复；写前 unescape；新 section 全部为新宿主——回归探针必须含**按区域枚举**的覆盖（基线清单天然看不见新增宿主）。
+2. **写入**：整组读→只改目标→整组写→整组回读；annotation 用 `label` 型单字段、读源 `labelMarkdown || label`，局部默认不超过两行且只含一个稳定规则直链；版本与必要旧图取证按明确覆盖范围登记，不逐条重复；写前 unescape；新 section 全部为新宿主——回归探针必须含**按区域枚举**的覆盖（基线清单天然看不见新增宿主）。
 3. **证据**：同通路比较；字段／转义（`&`=0）计数、几何（`absoluteBoundingBox`）、节点数 Δ（frame 与 text 每件各计 1）、`figma.skipInvisibleInstanceChildren` 实读值，随探针报告原始数；截图＋raw 证据；独立 live reviewer PASS/BLOCK。
 4. **标记**：三组全部 `⚑UNIMPL（GAP 号待补）`（依 `#54` 指令）；示例数据＝示意，不构成产品读数；静态画面不证明任何运行／持久化实现。
 5. **公开边界**：不写内部 URL、Notion 页面 id、fileKey、节点 id 清单、凭据（本目录已按此自查）。
