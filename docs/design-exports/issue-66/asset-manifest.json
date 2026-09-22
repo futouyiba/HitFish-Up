@@ -1,5 +1,5 @@
 {
-  "status": "complete; static export evidence only",
+  "status": "export evidence complete (16/16); per-asset registration fields pending",
   "assets": [
     {
       "asset": "pv_1",
