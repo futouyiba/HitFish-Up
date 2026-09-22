@@ -31,4 +31,5 @@
 ## 本仓
 
 - **本仓是公开仓**：不写入内网 URL、Notion 页面 id、凭据。
+- 已落成的七页编辑器规范以 Git Markdown 作为 Agent 协作与规范文本的唯一可 diff 源；Notion Current 是面向人和对话式阅读的发布投影。Notion 的格式与结构规则仍适用于后续发布，但发布不在本批执行；完整边界见 [文档权威与发布投影](docs/authority-model.md)。
 - 根目录的 `AGENTS.md` 是一份**文档**（独立审核策略），不是 agent 指令文件。
