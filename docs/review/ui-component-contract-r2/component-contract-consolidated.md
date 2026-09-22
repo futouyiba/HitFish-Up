@@ -17,7 +17,7 @@
 <a id="component-clear"></a>
 ## 3. Source × Operation 正交
 
-**本节是组件字段 CLEAR / 继承语义在本包的完整投影，权威仍是《编辑器持久层契约》v16 §3.3、§3.5。** 本次直接核对其 `Last Updated 2026-09-21 14:34 +08:00` 版本，以及《编辑器与 Resolve》v12 §11.1–11.2；Policy 域另见 [§10](#policy-clear)，不能套用组件来源定义。组件的层 × 字段类型 allowlist 统一见 [§13](#component-operation-allowlist)。
+**本节是组件字段 CLEAR / 继承语义在本包的完整投影，Git Markdown 的承接位置见[文档权威与发布投影](../../authority-model.md)。** 本次直接核对《编辑器持久层契约》v16 §3.3、§3.5，以及《编辑器与 Resolve》v12 §11.1–11.2；Policy 域另见 [§10](#policy-clear)，不能套用组件来源定义。组件的层 × 字段类型 allowlist 统一见 [§13](#component-operation-allowlist)。
 
 - **按记录解析，不按结果值反推**：物种层 `INHERIT` ＝ 无本层记录；桶层 `absent` ＝ 无该字段 patch，沿用物种层 operation。桶层 `CLEAR` 则保留一条 **op-only** patch，显式移除继承的 operation，回到当前 Effective Source 原值；它是继承控制，不是第三种数值调整。同值 `SET` 仍保留显式 pin，不能因结果相等改成 `absent` 或 `CLEAR`。（《编辑器持久层契约》§3.3、§3.5；记录页 §265 裁 `F-03`）
 - **「恢复为底板」的数据动作是删除该字段覆盖记录**，从而回到 `absent`；不是写 `CLEAR`，也不是写一个恰好相等的 `SET`。这三个意图不得共用模糊的「恢复」操作名。物种层没有 `CLEAR`；其 `INHERIT` 同样用无记录表达。（《编辑器持久层契约》§3.3、§3.5；《编辑器与 Resolve》§11.2）
@@ -115,7 +115,7 @@
 <a id="policy-profile"></a>
 ## 9. Profile × Spatial Opportunity Policy
 
-**本节保留 Policy 归属与 Role 记录态的完整机制投影**；Profile 缺席、promotion 与 Setup 的完整投影在[§11](#profile-lifecycle)，Policy 操作词表／CLEAR 来源仍在[§10](#policy-clear)，落盘形状与键见[RoleControl](contract-cards.md#role-control)。权威仍是 Current／Owner；本批回读《编辑器持久层契约》v16（`Last Updated 2026-09-21 14:34 +08:00`）§3.1／§3.4／§3.7，以及《编辑器界面》v20（`Last Updated 2026-09-21 17:19 +08:00`）§1.2／§1.4，未重读实时裁定记录。
+**本节保留 Policy 归属与 Role 记录态的完整机制投影**；Profile 缺席、promotion 与 Setup 的完整投影在[§11](#profile-lifecycle)，Policy 操作词表／CLEAR 来源仍在[§10](#policy-clear)，落盘形状与键见[RoleControl](contract-cards.md#role-control)。Owner 裁定决定产品语义；本节是 Git Markdown 的仓内规范承接位置。本批回读《编辑器持久层契约》v16（`Last Updated 2026-09-21 14:34 +08:00`）§3.1／§3.4／§3.7，以及《编辑器界面》v20（`Last Updated 2026-09-21 17:19 +08:00`）§1.2／§1.4，未重读实时裁定记录。
 
 - Profile 回答「这条鱼对这个环境轴是什么习性」；Role 回答「这份习性在聚合里如何被消费」。（《编辑器与 Resolve》§2.2；《编辑器心智模型与 IA》§7）
 - Role 与 Profile 的变更边界按[§11](#profile-lifecycle)，不能由改变消费角色推导创建／删除或改写 Profile。

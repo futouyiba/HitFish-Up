@@ -1,6 +1,6 @@
 # 0.3.4.0-B 开发 brief —— 实现入口与边界
 
-本 brief 是实现导航和依赖清单，不另定义产品契约。权威仍是本项目 Current 文档与 Owner 裁定；[审阅包](review/ui-component-contract-r2/README.md)是仓内投影。落码前回读对应 Current 小节；原取证的权威顺序为记录页 > 设计页；遇真实冲突先按来源报告，不自行调和。
+本 brief 是实现导航和依赖清单，不另定义产品契约。七页编辑器规范的 Git 承接位置见[文档权威与发布投影](authority-model.md)；Owner 裁定决定产品语义，Notion Current 是面向人和对话式阅读的发布投影。落码前回读对应 Git 承接章节；遇真实冲突先按来源报告，不自行调和。
 
 **来源边界**：本次回读《编辑器持久层契约》v16（`Last Updated 2026-09-21 14:34 +08:00`），核对下列持久层入口与 Source 事务；没有重新核实其它 Current、实时 Figma 或实现代码。原 brief 的逐字取证、【画布】、【待核】及【裁定·未落页】标签见[固定基线全文](https://github.com/futouyiba/HitFish-Up/blob/807cef92f75e660cae820ccd48996f7e0c922e18/docs/implementation-brief-0.3.4.0-B.md)（更早来源为其引用的 PR #10）。标签只说明当时取证，不代表今天仍未落页，也不自动成为当前已核结论。
 

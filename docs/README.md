@@ -1,6 +1,6 @@
 # 文档阅读入口
 
-先按任务选择当前投影或版本化证据。文档职责与两层 Authority 见[审阅包入口](review/ui-component-contract-r2/README.md#projection-maintenance)，Markdown 改动的风险分级与审核收口见[审阅说明](review/ui-component-contract-r2/REVIEW-PROMPT.md#review-closure)；本页只导航，不另维护规则或问题状态。
+先按任务选择当前规范、发布投影或版本化证据。仓内规范的权威分层与七页职责见[文档权威与发布投影](authority-model.md)；审阅包是当前消费者与证据投影，职责见[审阅包入口](review/ui-component-contract-r2/README.md#projection-maintenance)，Markdown 改动的风险分级与审核收口见[审阅说明](review/ui-component-contract-r2/REVIEW-PROMPT.md#review-closure)；本页只导航，不另维护规则或问题状态。
 
 ## 当前工作入口
 

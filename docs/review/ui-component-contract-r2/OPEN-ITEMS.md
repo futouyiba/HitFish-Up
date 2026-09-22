@@ -1,11 +1,11 @@
 # OPEN-ITEMS — 审之前先读这个
 
-**用途**：本审阅包唯一的可变问题台账：记录处置、剩余工作与关闭依据。README／开发 brief 只导航；[图像登记](figma-current.md#image-evidence)负责画面事实、版本与指纹。**产品真相来自 Notion Current／Owner 裁定；图像只能证明所拍状态；审查关闭必须引用对应 exact head 的独立 REVIEW。** 本台账不新增产品权威，也不以“已裁／已投影”替代复审结论。
+**用途**：本审阅包唯一的可变问题台账：记录处置、剩余工作与关闭依据。README／开发 brief 只导航；[图像登记](figma-current.md#image-evidence)负责画面事实、版本与指纹。**七页编辑器规范的收口文本来自 Git Markdown；Notion Current 是面向人和对话式阅读的发布投影；Owner 裁定决定产品语义。** 图像只能证明所拍状态；审查关闭必须引用对应 exact head 的独立 REVIEW。本台账不新增产品权威，也不以“已裁／已投影”替代复审结论。
 
 <a id="active-review-items"></a>
 ## 1. 当前审查项与证据
 
-本节分别登记设计／图证据关闭与实现未核；每条审核只适用于其 exact head。后续文档修改按[风险分级与审核收口](REVIEW-PROMPT.md#review-closure)验收，不沿用旧批准。产品规则只从所引汇编／执行卡读取。
+本节是问题处置与证据台账，不是产品 Contract。A2 的 Current 读取结果是本次核对的历史来源快照；其页面版本与 Notion 载体只说明取证时点，不改变 Git 规范源或当前 Owner。
 
 <a id="species-role-ui"></a>
 ### Species Role UI：操作入口与记录态分别验收
