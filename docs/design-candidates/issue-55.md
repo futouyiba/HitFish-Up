@@ -24,13 +24,13 @@
 
 ### Card 4｜A①-卡4 Effective Value Display
 
-- **契约依据**：[Effective Value Display](../review/ui-component-contract-r2/contract-cards.md#effective-value-display)、[Effective value](../review/ui-component-contract-r2/component-contract-consolidated.md#field-effective-value)。
+- **契约依据**：[Effective Value Display](../review/ui-component-contract-r2/contract-cards.md#effective-value-display)。
 - **画布读数**：`proj_ev_1`–`proj_ev_6`；`proj_ev_1`、`proj_ev_2`、`proj_ev_5` 主体有 `ro`「只读 · 派生」，`proj_ev_6` 有 `noEdit`「本栏无输入框 / 无档位 / 无“恢复为底板”」；annotation 已保留实现未重核边界。
 - **判断：不需改（保留）**。只读派生值与无编辑入口已表达；不把卡4改造成卡10/卡11编辑载体。
 
 ### Card 5｜A①-卡5 Provenance Display
 
-- **契约依据**：[Provenance Display](../review/ui-component-contract-r2/contract-cards.md#provenance-display)、[Template list](../review/ui-component-contract-r2/contract-cards.md#template-list)、[Provenance／Runtime boundary](../review/ui-component-contract-r2/component-contract-consolidated.md#provenance-runtime-boundary)。
+- **契约依据**：[Provenance Display](../review/ui-component-contract-r2/contract-cards.md#provenance-display)、[Template list](../review/ui-component-contract-r2/contract-cards.md#template-list)。
 - **画布读数**：`proj_pv_1` 的 `note` 为「每段可展开到该项的 op 记录（含 tier）；本链＝『这个值为什么是这样』」；`proj_pv_2` 的 `unimpl` 为来源类别未在耐久层表达；`proj_pv_4` 的 `h1/h2` 明确「生态数据（前四项）」与「游戏参数」；`proj_pv_5` 的 `c1/c2/c3` 明确不进 Resolver／Runtime payload、不塞 production name、不作关联／复用判据。
 - **判断：不需改（保留）**。现状已覆盖来源→操作→当前值、字段来源性质、以及 Runtime／命名／复用边界；`⚑UNIMPL`／`⚐UNVERIFIED` 仍保留，不用静态图宣称实现。
 
