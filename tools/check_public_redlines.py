@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Check public-repo red lines in added lines or whole files.
 
-Red lines (per issue #43 line 44: public repo material must not carry
+Red lines (per issue #43 line 44: NEW public-repo material must not carry
 internal URLs, Notion page ids, Figma fileKey / node-id lists, or
 credentials; public records keep publishable source names and verdicts
 only).
@@ -46,6 +46,10 @@ import subprocess
 import sys
 
 TS_RE = re.compile(r"\d{1,4}:\d{2}:\d{2}")  # no \b: must also strip inside ISO "T14:38:03"
+# Timezone offsets like +08:00 are this repo's own doc convention ("Last
+# Updated 2026-09-21 14:34 +08:00"), not node ids: main-agent ruling
+# 2026-09-22. Signed form only; a bare HH:MM still fires (fail-closed).
+TZ_RE = re.compile(r"[+-]\d{2}:\d{2}")
 
 RULES = [
     # (name, regex, extra predicate or None)
@@ -54,7 +58,11 @@ RULES = [
      lambda m: (any(c.isdigit() for c in m.group())
                 and any(c.isalpha() for c in m.group())
                 and not re.fullmatch(r"[0-9a-f]+", m.group()))),
-    ("notion_id", re.compile(r"\b[0-9a-f]{32}\b"), None),
+    # Notion serializes page ids with dashes (8-4-4-4-12 hex); the bare
+    # 32-hex form covers de-dashed copies. Both must fire.
+    ("notion_id", re.compile(
+        r"\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b"
+        r"|\b[0-9a-f]{32}\b"), None),
     ("credential", re.compile(
         r"\b(?:sk|pk|rk)-[A-Za-z0-9]{20,}\b"
         r"|\b(?:ghp|gho|github_pat)_[A-Za-z0-9_]{20,}\b"
@@ -66,10 +74,13 @@ SELFTEST_CASES = [
     # (line, rule expected to fire or None)
     ("see node 999:999 for details", "node_id"),
     ("logged at 2026-09-22T14:38:03 and 14:38:05 (timestamps, must not fire)", None),
+    ("Last Updated 2026-09-21 14:34 +08:00 (tz offset whitelisted; bare 14:34 still fires)", "node_id"),
+    ("url http://127.0.0.1:8080 probes port (adjudicated lead, fires on 1:8080)", "node_id"),
     ("fileKey fixture FileKeyFixture12345678 here", "file_key"),
     ("long camelCase term SpatialOpportunityPolicy (digitless, must not fire)", None),
     ("merge commit 863522bf38d3be9cf6b645a24362755cc666f55b (git SHA, must not fire)", None),
     ("notion page 0123456789abcdef0123456789abcdef linked", "notion_id"),
+    ("notion api dump id 550e8400-e29b-41d4-a456-426614174000 here", "notion_id"),
     ("clean prose with normal words and 12:42-style times", "node_id"),  # bare HH:MM: fail-closed, fires
     ("token sk-abcdefghijklmnopqrst fired", "credential"),
     ("nothing suspicious here", None),
@@ -79,7 +90,7 @@ SELFTEST_CASES = [
 def scan_line(line):
     """Return [(rule, matched_text), ...] for one line."""
     hits = []
-    stripped = TS_RE.sub(" ", line)
+    stripped = TZ_RE.sub(" ", TS_RE.sub(" ", line))
     for name, rx, pred in RULES:
         for m in rx.finditer(stripped):
             if pred is None or pred(m):
