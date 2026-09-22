@@ -75,6 +75,17 @@ SELFTEST_CASES = [
     ("see node 999:999 for details", "node_id"),
     ("logged at 2026-09-22T14:38:03 and 14:38:05 (timestamps, must not fire)", None),
     ("Last Updated 2026-09-21 14:34 +08:00 (tz offset whitelisted; bare 14:34 still fires)", "node_id"),
+    # The two fixtures below close the self-test coverage gap found in the
+    # independent review of PR #82: the fixture above cannot falsify a
+    # broken TZ_RE (both sides of the assertion are {node_id}).
+    # (a) signed offset alone must be silent -> red if TZ_RE never matches
+    #     (a broken whitelist would let "08:00" fire node_id);
+    # (b) a range's bare left side must still fire -> red if TZ_RE is
+    #     broadened to unsigned HH:MM (over-swallowing). Note: a STANDALONE
+    #     "-12:34" is whitelisted (same as "-05:30", reviewer-verified);
+    #     the range form is what locks fail-closed.
+    ("tz offset +08:00 alone (whitelisted, must not fire)", None),
+    ("window 09:15-12:30 (signed tail eaten, bare left side still fires)", "node_id"),
     ("url http://127.0.0.1:8080 probes port (adjudicated lead, fires on 1:8080)", "node_id"),
     ("fileKey fixture FileKeyFixture12345678 here", "file_key"),
     ("long camelCase term SpatialOpportunityPolicy (digitless, must not fire)", None),
