@@ -26,9 +26,9 @@
 
 未随包的投影只能检查文字是否自洽、是否与执行卡相抵，不能据此验证画布。没有图不等于投影不存在；离开画布不可判的内容标 `NOTE: 不足以判`。缺证据对应的处置与剩余工作见[问题台账](OPEN-ITEMS.md#active-review-items)。
 
-## 权威（本目录是派生物，不是权威）
+## 权威与发布投影
 
-**Product Authority 是项目内的 Notion Current／Owner 裁定，决定产品事实。Repository Projection Owner／仓内投影 Owner 只决定该事实在仓内由哪个位置完整维护，不升级为产品 Authority。** 图像是特定版本的物证；OPEN-ITEMS 汇总问题状态，不能改变产品规则。独立审查关闭以对应 exact head 的 REVIEW 为依据；文档修改的审核要求见[风险分级](REVIEW-PROMPT.md#review-closure)。
+**Owner 裁定决定产品语义；Git Markdown 是已收口规范的唯一可 diff 权威载体；Notion Current 是面向人和对话式阅读的发布投影。** Notion 评论是反馈，不直接改变规范文本；Notion 中发现的修正必须先回流 Markdown，经审核合并后再发布。图像是特定版本的物证；OPEN-ITEMS 汇总问题状态，不能改变产品规则。完整边界与七页职责矩阵见[文档权威与发布投影](../../authority-model.md)。独立审查关闭以对应 exact head 的 REVIEW 为依据；文档修改的审核要求见[风险分级](REVIEW-PROMPT.md#review-closure)。
 
 本目录**不含任何内部链接** —— 按项目对外规则，内部 URL 与页面 id 一律不进仓。因此文中的 **《页名》§N** 是**项目内载体的引用**，在本目录里读不到 ⇒ **遇到这类引用，审「这句话本身是否自洽」，不要去核出处**；若某条离开出处就不可判，用 `NOTE` 标出即可（那本身就是有用的信号）。
 

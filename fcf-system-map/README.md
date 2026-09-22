@@ -5,8 +5,7 @@
 **版面是怎么定的、为什么这么定，见 [LAYOUT.md](LAYOUT.md)。** 那里记着实测出来的
 引擎行为（水平容器是"高度汇"、宽度只能有一个来源且只撑**直接**子块）、折叠语义、
 "横向=类别并列 / 竖向=执行顺序"这条语汇、以及**边的走位规则**（层级关系不画线；
-出入口约束对平行四边形无效，跨行长边走左右空白走廊）。内容语义不在本页也不在
-LAYOUT.md，在 Notion 的《FCF R0 Canonical Map Content Ledger》。
+出入口约束对平行四边形无效，跨行长边走左右空白走廊）。内容语义边界见下方“内容语义与版面职责”；本仓七页编辑器规范的权威分层见 [authority model](../docs/authority-model.md)。
 
 ```bash
 python3 build/build_diagram.py     # 5 个 source JSON -> generated/fcf-system-map.drawio
@@ -79,21 +78,19 @@ python3 build/test_roundtrip.py     # 该抓的 8 类 / 该忽略的 2 类，逐
 
 ---
 
-## 内容语义的权威在 Notion
+## 内容语义与版面职责
 
-**版面在这里迭代，含义在 Notion 固化。** 每个节点「要表达的意思」以
-**《FCF 总图｜内容语义清单 R0｜Canonical Map Content Ledger》**为准
-（挂 `Fish-Centric Conditional Funnel｜Design Branch Index` 下，
-page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
+**版面与已落成规范都在这里以 Git 版本管理；Notion 保留为 Owner 裁定、人工阅读和发布投影的载体。** 本仓七页编辑器规范的权威分层见[文档权威与发布投影](../docs/authority-model.md)。本总图自身的内容语义清单仍是独立的设计语义边界，不因七页编辑器规范的权威迁移而被悄悄改写。
 
 分工：
 
 | | 归谁 |
 |---|---|
-| **含义** —— 每一层/每一块表达什么、流与边界、命名约定、待定项 | **Notion 清单**（权威） |
+| **总图内容语义** —— 每一层/每一块表达什么、流与边界、命名约定、待定项 | 本图的语义清单与 Owner 裁定；仓内图源按 Git 管理 |
 | **版面** —— 行带高度、横向展开 vs 纵向堆叠、是否接容器动态布局 | **本 repo**（自由迭代） |
+| **Notion Current** | 人工阅读与发布投影，不成为本图仓内语义的第二个手工规范源 |
 
-两者冲突时：**改本 repo 去对齐 Notion**，不要反过来悄悄改含义。
+本图的语义清单与仓内图源发生冲突时，先报告冲突并请求确认；不得静默覆盖任一来源。
 
 ---
 
