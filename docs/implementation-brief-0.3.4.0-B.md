@@ -8,6 +8,8 @@
 
 ## 一、实现范围、顺序与依赖
 
+视觉／交互依赖与 annotation 职责按[投影维护边界](review/ui-component-contract-r2/README.md#projection-maintenance)判断。
+
 1. **先落记录与 schema**：按《编辑器持久层契约》§3.1–3.4、§3.6、§3.8 和 §5 实现物种记录、生产行台账、各自独立的 patch 与模板清单；本文件第二节保留尚无完整仓内替代的细节。序列化格式归实现线，不改变字段／类型／必填／键。
 2. **打通 Structure 竖切**：按[汇编 §2](review/ui-component-contract-r2/component-contract-consolidated.md#structure-slice)与[执行卡](review/ui-component-contract-r2/contract-cards.md)实现 Species → 共享模板 → Species ADD → Affinity sourceOverride → SET／CLEAR → autosave → Resolve Preview → materialize。卡片的冻结依据和依赖在卡片文件维护，不在此复制阶段状态。
 3. **接 Source 与模板传播**：Source 选择器用[汇编 §8](review/ui-component-contract-r2/component-contract-consolidated.md#source-transaction)和[卡1](review/ui-component-contract-r2/contract-cards.md#source-selector)；模板生命周期／换绑用[汇编 §14](review/ui-component-contract-r2/component-contract-consolidated.md#template-lifecycle)与卡8–12。先具备 candidate、Resolve 及 revision 检测，再连接确认提交；不得把候选当已落盘数据。
