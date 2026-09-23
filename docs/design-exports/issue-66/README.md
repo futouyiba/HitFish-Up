@@ -49,7 +49,7 @@ Previous evidence is not rewritten: old screenshot/report versions remain separa
 - Canvas read time and route：**9 帧**＝`2026-09-22T11:46:50Z`（原批：只读盘点＋3–4 帧批次导出）；**7 帧（重导）**＝doc 读取 `2026-09-23T05:12:55Z`／帧核 `2026-09-23T05:13:10Z`（服务端导出，1×）。
 - Canvas object description：`Document`／`editorType=figma`／page `Current｜0.3.4.0-B 编辑器假图（W4B B Current）`。
 - 画布文档版本（observed）：**9 帧 @ `2402018176087182650`**；**7 帧（重导）@ `2402269427359123151`**（作者线声明；终验者以画布版本史独立核：`…151` 建於 `2026-09-23T04:27:58Z`、被 `2402284481774699642`（`05:36:38Z`）取代 ⇒ `05:12:55Z` 那一刻的当前版本正是 `…151`）。
-- Image/live consistency：`consistent`（16/16；**9 帧 @ `2402018176087182650` ／ 7 帧 @ `2402269427359123151`**，读取窗口 `2026-09-23T05:12:55Z–05:13:10Z`）。★ **时点性读数**：绑定上述画布版本与读取窗口，不宣称永久。
+- Image/live consistency：**9 帧 `consistent` @ `2402018176087182650`，读取窗口 `2026-09-22T11:46:50Z`；7 帧 `consistent` @ `2402269427359123151`，读取窗口 `2026-09-23T05:12:55Z–05:13:10Z`**。★ **时点性读数**：每组只绑定自己的画布版本与读取窗口，不宣称永久。
 - Export time：**按组两区间** —— **9 帧**：`未落/待核；有界区间 [2026-09-22T11:46:50Z, 2026-09-23T02:59:04Z]`（下界＝#92 README inventory read time；上界＝#92 首笔 `d235a31c` committedDate）；**7 帧（重导）**：`2026-09-23T05:12:55Z–05:13:10Z`（作者线声明的读取/帧核时点；本提交时间不作为导出时间）——本地无精确日志，不猜测。
 - Proof boundary：the PNG proves only static pixels at export time; it does not prove runtime behavior or persistence.
 
