@@ -437,10 +437,10 @@ Must not:
 
 ---
 
-### 补记｜`RoleControl`（Role 三态 × 两层）—— 主代理 2026-09-20 裁（记录页 §249／§250／§252）
+### `RoleControl`｜Role 三态 × 两层
 
 <a id="role-control"></a>
-**机制入口**：[汇编 §9](component-contract-consolidated.md#role-record-intent)定义 raw Role 与记录态／UI 派生，[§11](component-contract-consolidated.md#profile-lifecycle)定义 Profile 缺席、promotion、Setup及空底板投影；Policy CLEAR／词表仍见[§10](component-contract-consolidated.md#policy-clear)。本卡保留读取、交互、落盘字段和验收。旧 Setup 重复说明及 B1a／B1b 收口原文见[固定基线 RoleControl](https://github.com/futouyiba/HitFish-Up/blob/add09fdaa9c197740df6735160af45c1ebb32370/docs/review/ui-component-contract-r2/contract-cards.md#L386)，不复述已废的自动补档案规则。
+**机制入口**：[汇编 §9](component-contract-consolidated.md#role-record-intent)定义 raw Role 与记录态／UI 派生，[§11](component-contract-consolidated.md#profile-lifecycle)定义 Profile 缺席、promotion、Setup 与空底板投影；Policy CLEAR／词表见[§10](component-contract-consolidated.md#policy-clear)。本卡只保留读取、交互、落盘字段和验收。
 
 ```
 Component: RoleControl｜Role 三态（CORE / SECONDARY / IGNORED）
@@ -457,7 +457,7 @@ Actions:
     · 不新增空 Profile 对象；UI exact shape 仍归 Species Role/UI 工作流。Setup 的完整机制与初值来源按汇编 §11。
 Durable mutation:
   - **Role 的 durable 落点在 Policy**，**不另建卡级 state**
-  - **形状（裁决 `AR-FCF-CT-01/02/03/04`，2026-09-21；记录页 §342）**：
+  - **持久化形状**：
     · **物种侧**：§3.1 那条整体记录**仍叫 `Species Base Record`／底板记录、不改名** —— **它不只装 Policy**（还装 `temperature`／`structure`／`feeding_layer`／`time_period`／`roles`／`name_cache`）⇒ `Species Policy Recipe` **不能当整条记录的名字**。记录**内部**分两层：`component recipes`（＝ `Species Recipe`：四个 Component 的 Source ＋ field operations）与 **`Species Policy Recipe`**（＝ **Policy 专属子结构**：`policy source binding` ＋ 四个 Role op ＋ `fail_env_coeff` op）。
     · **row 侧两条独立 durable 记录**（**不用 `field`／`track` 判别列**）：**`AffinityRolePatch`** —— key ＝ **`(row_key, component)`**、`op ＝ CLEAR | SET`、`role`（**SET 时必携**）；**`AffinityFailEnvCoeffPatch`** —— key ＝ **`row_key`**、`op ＝ CLEAR | ADD | SET`、`value`（**ADD／SET 时必携**）。
     · **与 `AffinityAuthoringPatch`（§3.3：`sourceOverride` ＋ numeric patches）并列 —— 不改名、不合并**（两者**粒度不同**：numeric ＝ bucket-level，Role ＝ row-level）。可以说「share the same Affinity owner」，**不能说「是同一条持久化记录」**。
@@ -481,5 +481,5 @@ Must not:
   - **不许两份 state** —— 不许「持久化一份 + UI 一份」／不许两处各存一份再同步／不许 UI 侧缓存。**判据：改一处之后，另一处不经过任何「同步代码」就变了。**
   - 不给组件卡另建 durable Role state
   - **永不允许 `ADD`**（契约 §3.4）
-依据: 契约 §3.4（Role 词表：物种层 `INHERIT / SET`、桶层 `absent / CLEAR / SET`、**永不 `ADD`**；粒度不变量）＋§3.10（Role 单独按生产行覆盖）＋§7／§9（双入口单 Truth；Policy payload ＝ 四角色 ＋ `fail_env_coeff`）＋**记录页 §342（裁决 `AR-FCF-CT-01`＝两条 sibling track／`-02`＝四个名字按层级拆开、整条记录不改名／`-03`＝两条并列 durable record／`-04`＝`species_key` 降属性 ＋ `scope_key` 改名 `row_key`、唯一键 `(row_key, component)`）** ＋记录页 §249／§250（Owner 澄清：**数据只有一份**，持久层与内存态都在 Policy；Policy 视觉须与习性组件明显不同）＋§252（裁 B）
+依据: 《编辑器持久层契约》§3.4／§3.10；[汇编 §7](component-contract-consolidated.md#component-card)／[§9](component-contract-consolidated.md#role-record-intent)／[§10](component-contract-consolidated.md#policy-clear)。
 ```
