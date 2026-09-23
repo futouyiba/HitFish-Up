@@ -449,8 +449,8 @@ Reads:
   - 当前物种默认 Role op／Policy Template raw Role、或当前生产行的 Role patch；显示从记录派生，按所引汇编 §9 判读。
   - 当前层／行、Profile presence、合法 Source 可用性及当前诊断；默认值／缺席矩阵按所引 §9／§11，不从最终值反推记录。
 Actions:
-  - 物种层选具体角色：写本层 SET（各行继承该默认）；回到 INHERIT：显式删除本层 Role op，不以选中同 raw 值代替。
-  - 行级设置：只改当前行的覆盖；CLEAR 与缺省支按所引 §10 分别执行，UI 区分两个动作。
+  - **物种层**作者动作：`沿用策略模板`（删除本层 Role op）或 `设置为 CORE / SECONDARY / IGNORED`（写本层 SET）。即使 SET 与模板 raw Role 同值，也保留显式 pin，不按结果值折叠。
+  - **生产行级**作者动作：`沿用物种角色`（absent）／`使用策略模板原始角色`（CLEAR）／`设置为 CORE / SECONDARY / IGNORED`（SET）。只改当前 `row_key`，不得把一个兼容覆盖里的多条行默认广播。
   - 显式 Setup：Structure／Feeding Layer／Temperature 空态提供进入合法 Shared Template Source 选择的可达路径；Temperature 若合法 Species Concrete 存在，另可走生态数据导入／建立来源，导入目标物种与缺值护栏仍按卡8。
     · TimePeriod 同样保留 Source／Setup 路径；三种预设只是 Setup 后／中的一次性填表便利，不能充当独有 Profile 创建语义。具体可用来源按汇编 §8 的层级 allowlist。
     · 不新增空 Profile 对象；UI exact shape 仍归 Species Role/UI 工作流。Setup 的完整机制与初值来源按汇编 §11。
@@ -470,10 +470,12 @@ Acceptance:
   - 同一组合的两条生产行可有不同 Role，更新目标行不得影响另一行；粒度与键按上面的独立记录形状验收。
   - 空底板且 IGNORED 的组件按汇编 §11 不投影，主行／Role照写、refs空；改为 CORE／SECONDARY 且仍缺必需 Profile 必须阻断，不能一概按空态放行。
 Must show:
-  - 物种记录态标记按所引汇编 §9，从 Role op record 派生，不另存状态位。
-  - **必须显式说出「你在改哪一层 / 哪一行」**：物种层 ⇒「默认（各行继承）」；行级 ⇒ 当前那一行（如 `LAKE_A × LARGEMOUTH_BASS/Q3`）
-  - **不许**默认改整个 scope 却在 UI 上说成改一行
-  - **批量改多行 ⇒ 必须是显式的多选/批量动作，不是缺省**
+  - Role 展开态只表达 **Effective Role ＋ 当前 Authoring Intent ＋ 必要 provenance**；不把数值字段的 `仅使用来源 / 仅使用当前来源 / 调整` 词表套到 Role。
+  - 物种记录态标记按所引汇编 §9，从 Role op record 派生，不另存状态位。Species Context 只编辑 Species Role，Policy Template raw Role 只读解释。
+  - **必须显式说出「你在改哪一层 / 哪一行」**：物种层 ⇒「默认（各行继承）」；行级 ⇒ 当前那一行（如 `LAKE_A × LARGEMOUTH_BASS/Q3`）。行级 Context 中 Species Effective Default 与 Policy Template raw Role 均只读。
+  - 若当前兼容覆盖聚合多条生产行：卡片 / Policy 区显示角色摘要（例如 `CORE · 4 行` 或 `多个角色 · 4 行`）并进入逐行编辑，**不得提供单一 Role 下拉**。
+  - **不许**默认改整个 scope 却在 UI 上说成改一行。
+  - P0 不做批量 Role；以后若做，必须是显式多选 / 批量动作，不得作为兼容覆盖的缺省行为。
 Must not:
   - **不许两份 state** —— 不许「持久化一份 + UI 一份」／不许两处各存一份再同步／不许 UI 侧缓存。**判据：改一处之后，另一处不经过任何「同步代码」就变了。**
   - 不给组件卡另建 durable Role state
