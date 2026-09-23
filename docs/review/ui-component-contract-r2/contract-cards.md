@@ -253,18 +253,18 @@ Reads:
 Actions:
   - 保存失败时：重试／显式 reload-reconcile（外部修改＝BLOCK＋报告，不 auto-merge）
   - 「丢弃未保存的改动」：仅清除真正尚未 durable 的本地态，包括输入临时字符串、未确认的 staged Source candidate 及其它明确 ephemeral UI 状态；防抖未提交与保存失败后仍未持久的编辑同在此范围。显示回到上次成功持久化 revision，不回退任何已成功 autosave 的语义编辑；不是 Undo。Source candidate 的确认协议见卡1。
-  - Publish 按钮：显式、批量、独立——消费 durable revision；持久化失败先修（Publish 不隐式执行不可见 Save）
+  - 顶栏 `发布到生产配置…`：只进入 / 聚焦 canonical Publish 区，不直接执行 writeback。唯一 Publish executor 在该区内；消费 durable revision，持久化失败先修（Publish 不隐式执行不可见 Save）。完整 preflight / generation 边界见[汇编 §15 Publish](component-contract-consolidated.md#publish-boundary)。
 Durable mutation:
   - 状态本身不入 durable（UI state）；semantic edit→debounce/coalesce→原子持久
   - **「丢弃未保存的改动」不改 durable** —— 它只丢弃未落盘的那一笔；盘上仍是上次成功的 revision（故它不产生新记录、也不删任何已持久记录）
 Must show:
-  - 四态：已保存 / 已保存·有错误 / 保存中… / 保存失败（I/O·revision 冲突）
+  - 四态：`编辑器已保存` / `编辑器已保存 · 有错误` / `编辑器保存中…` / `编辑器保存失败`（I/O·revision 冲突）；不得缩成会与 Production Publish 混淆的裸 `已保存`。
   - 「有错误」链接到卡6 校验节
 Must not:
   - 不常驻 Save 按钮；不把 Validator ERROR 当保存失败
   - 作者可见动作名为「丢弃未保存的改动」，不用工程词 Reset（命名裁定沿卡前固定历史）。
   - **「丢弃未保存的改动」不得读作「回到出厂 / 空态」**；它也不是 Publish 的一部分（不因它触发任何物化 / 发布）
-  - 不 silent last-write-wins；autosave ≠ Publish ≠ Git commit
+  - 不 silent last-write-wins；autosave ≠ Publish ≠ Git commit；Production generation mismatch / unverifiable 属 Publish preflight，不显示成 Autosave 保存失败。
 依据: 《编辑器界面》v20 §1.1／§1.2（保存状态、ERROR≠保存失败、外部改动阻断并显式重载／reconcile）、§9.1（丢弃真正未 durable 的本地态，明确含未确认 staged candidate；不是 Undo）；《编辑器持久层契约》v16 §6.3（语义编辑、乐观 revision 检测、禁止 silent last-write-wins；Autosave／Git commit／Publish 相互独立，Publish 不隐式 Save）。历史命名及修正依据见卡前固定版本链接，不以旧窗口概括当前射程。
 ```
 
