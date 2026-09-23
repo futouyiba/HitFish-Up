@@ -50,7 +50,7 @@ Previous evidence is not rewritten: old screenshot/report versions remain separa
 - Canvas object description：`Document`／`editorType=figma`／page `Current｜0.3.4.0-B 编辑器假图（W4B B Current）`。
 - 画布文档版本（observed）：`2402018176087182650`。
 - Image/live consistency：`consistent`（16/16 @ `2402018176087182650`）。
-- Export time：`未落/待核` —— 本地无导出时点日志，不猜测。
+- Export time：`未落/待核；有界区间 [2026-09-22T11:46:50Z, 2026-09-23T02:59:04Z]`（下界＝#92 README inventory read time；上界＝#92 首笔 `d235a31c` committedDate）—— 本地无精确日志，不猜测。
 - Proof boundary：the PNG proves only static pixels at export time; it does not prove runtime behavior or persistence.
 
 **批次源文档锚（离线设计稿 blob 版本）**
