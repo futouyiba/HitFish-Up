@@ -5,6 +5,7 @@
 ## 1. 产品拓扑与三栏
 - 三栏＝对象导航 ｜ 上下文总览 ｜ 焦点编辑。几何：250 ＋ 890 ＋ 460 ＋ 边距 ＝ 1680。（《编辑器界面》§9.1；《编辑器心智模型与 IA》§3）
 - 左栏三类入口：FISH（Species → 习性 / 品质）／TEMPLATES（五类）／SPECIES PRESETS。物种预置＝一次性写五个来源绑定（四组件 ＋ Policy），**不是父节点**。（《编辑器心智模型与 IA》§3、§4）
+- **Quality Stable Data 与 Quality→习性档案归属分开**：`FISH QUALITY STABLE` 页面本期仍置灰，不开放品质自身字段；但习性档案 Authoring Surface 可编辑**既有** `FishQualityRef → FishEnvAffinityRef` 归属关系。这里编辑的是“哪个既有品质使用哪个习性档案”，不是创建/编辑 Quality，也不产生新的 Quality / Engagement Mode / tier / routing identity。（[#103 Owner adjudication](https://github.com/futouyiba/HitFish-Up/issues/103#issuecomment-5795214587)）
 - 中栏 Context 与右栏 Focus **不是同一个导航状态**：允许短暂 detached，但必须显式提示（右栏标题明确对象身份 ＋ 低成本「切回当前上下文」），不得让作者误以为右栏仍在编辑中栏对象。detached 只是 UI 导航状态，不产生新的 durable authoring entity。（《编辑器心智模型与 IA》§3 逐字「切换上下文不销毁编辑现场」）
 - 中栏与右栏不得形成两套重复编辑器。（《编辑器界面》§1 导语：逐字段值编辑在焦点编辑栏完成）
 - 控件名用现行页已经落下的 `FieldValueControl`（承载 Field ＋ Effective Value ＋ optional Tier ＋ Local Operation ＋ Diagnostic）。（裁定 f；《编辑器界面》§1。草稿另有叫法，见 §19）
@@ -231,7 +232,7 @@
 - 自动保存：一次有效语义编辑 → 内存 typed 状态 → 短 debounce 合并 → 原子持久化；无常驻 Save；预览缓冲是短命 UI 状态，不落成草稿实体。（《编辑器界面》§1.2、§7；《编辑器持久层契约》§3.10）
 
 <a id="transaction-model"></a>
-**事务分类**（《编辑器持久层契约》§6.3；记录页 §392）：只有两层，不新增第三种 durable transaction type。① 普通 semantic edit（值 / op / Role）走上述 debounce autosave，通常无 staged preview；② 所有 Source binding mutation 与 Shared / bulk 传播类，执行 [§8 的 staged 协议与 Preview 分档](#source-transaction)。
+**事务分类**（《编辑器持久层契约》§6.3；记录页 §392；[#103 Owner adjudication](https://github.com/futouyiba/HitFish-Up/issues/103#issuecomment-5795214587)）：只有两层，不新增第三种 durable transaction type。① 普通 semantic edit（值 / op / Role）走上述 debounce autosave，通常无 staged preview；② **staged binding / propagated mutation**：Component Source binding、`FishQualityRef → FishEnvAffinityRef` reassignment、Shared / bulk 传播类，都必须先形成 ephemeral candidate，再 Preview、显式确认、revision 核验、原子提交。Quality reassignment **不是 Component Source mutation**，UI 不复用“Source Rebase Preview”的业务命名，但可复用同一 staged-confirm 基础设施；其 Preview 至少展示目标 FishQuality、原 FishEnvAffinity、新 FishEnvAffinity、关键 Resolve 差异与新增诊断。提交必须直接 old → new，**不得制造 `FishQualityRef → null` 的 durable 中间态**。
 
 <a id="timeperiod-batch-guard"></a>
 **TimePeriod Batch Overwrite Guard**（Owner 2026-09-21 裁，沿用[固定基线 §15](https://github.com/futouyiba/HitFish-Up/blob/807cef92f75e660cae820ccd48996f7e0c922e18/docs/review/ui-component-contract-r2/component-contract-consolidated.md#15-跨层护栏)与[原能力裁定](https://github.com/futouyiba/HitFish-Up/blob/807cef92f75e660cae820ccd48996f7e0c922e18/docs/review/ui-component-contract-r2/OPEN-ITEMS.md#L122-L123)）：Preset 不是 Source mutation，不因 ADJ-09 自动要求 staged confirm；它属于普通 semantic edit。
@@ -257,7 +258,7 @@
 - 桶不是真正的 Engagement Mode；Runtime 无 EngagementMode identity，不得据 UI 名称另建 durable 的 Engagement Mode 身份 / 注册表 / 模式级 Concrete 来源。（《编辑器界面》§5；《编辑器与 Resolve》§11.1；记录页 §172 二 KEEP）
   - **业务概念与 durable identity 分离**（记录页 §385，ADJ-08＝`C_SPLIT_REGISTERS`）：`Engagement Mode`／中鱼习性模式是 Simplified Production V0 的正式业务概念；B P0 不实现 Mode Share／Routing。物理 durable key 为 `FishEnvAffinityRef`；`FishEngagementModeCompat` 是对 Affinity 的 mode-like authoring projection／兼容壳；Runtime／production 无独立 `EngagementMode` identity。业务概念不能充当另一套物理身份。
   - `sourceOverride` 的物理键写作 `(fishEnvAffinityRef, component)`；若 schema 字段名为 `owner_ref`，则 `owner_ref := FishEnvAffinityRef`。不留抽象的 `owner` 让实现猜身份；原页侧依据为 CT §1.1／§3.3、RS §11.1，Runtime 禁令与 UI §5／RS §7／IA §8 相容。逐页改写经过由 Git 保留。
-- 品质页本版不开放（入口置灰、不展示品质字段）；不新建品质模板库、不把品质当作第五个习性组件。（《编辑器界面》§0、§2）
+- **Quality Stable Data 页面本版不开放**（入口置灰、不展示/编辑品质自身字段）；**不新建品质模板库、不把品质当作第五个习性组件**。这条禁令**不包含**既有 `FishQualityRef → FishEnvAffinityRef` 归属关系：该关系可在习性档案 Authoring Surface 编辑，但只允许关联/重分配**已有 FishQuality**，不得把“+ 关联已有品质”解释为创建新 Quality。（[#103 Owner adjudication](https://github.com/futouyiba/HitFish-Up/issues/103#issuecomment-5795214587)）
 - 组件卡不承担逐字段 `ADD / SET / CLEAR` 编辑（逐字段值在焦点编辑栏完成）；不给组件卡 Source / Role 另建 durable state；不把 Effective Value 当编辑真相存储；不为视觉一致强迫所有字段支持 `ADD`；不为结构对称给品质造模板；不按「当前数值相同」跨无关谱系合并生产行。（《编辑器界面》§1 导语、§7；《编辑器心智模型与 IA》§8）
 
 ---
