@@ -152,7 +152,7 @@ page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
 
 | 文件 | 职责 |
 |---|---|
-| `graph.json` | 73 个节点（stable ID + **中文 label** + 英文 caption + 行归属 + lane + `kind` 形状）+ 31 条语义边（只标"流过去的是什么"；跨模块的边锚在**模块标题**上，见 LAYOUT.md §6.4） |
+| `graph.json` | 79 个节点（stable ID + **中文 label** + 英文 caption + 行归属 + lane + `kind` 形状）+ 41 条语义边（只标"流过去的是什么"；跨模块的边锚在**模块标题**上，见 LAYOUT.md §6.4） |
 | `layout.json` | **版面**：容器包纳树（`C:` 前缀的容器 + `graph.json` 节点作叶子；轴线 / 间距 / 缩进 / 侧钉 / 折叠态） |
 | `scopes.json` | Scope = 压缩阶梯 + 透明度；`OVERALL`（不裁剪）+ `0.3.4.0-B`（lens，逐节点归类） |
 | `views.json` | View = 展开粒度 + 可选 lens |
@@ -163,10 +163,11 @@ page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
 
 **压缩阶梯**：`中鱼升级（本体）→ FCF v1 → Simplified V0 → 0.3.4 → 0.3.4.0-B（当前版本投影）`。每一层是范围更小的投影，不是不同系统。
 
-**0.3.4.0-B** 是唯一登记完毕的 lens：**21 ACTIVE / 8 BOUNDARY / 44 OUT**。
+**0.3.4.0-B** 是唯一登记完毕的 lens：**27 ACTIVE / 8 BOUNDARY / 44 OUT**。
 
-- ACTIVE：行2 / 烘焙 / **通道 1 及其全部分解**（三种因子各自的形状 / 栖息地动态偏好 /
-  门控与条件判断失败 / 汇聚漏斗：系数聚合 · 是否背景鱼 · 系数下限 · 权重聚合 · 通道返回值）
+- ACTIVE：行2 / 烘焙 / **通道 1 及其全部分解**（五个因子各一条窄竖列 / 栖息地动态偏好 /
+  每个核心因子各自的门控 / 每因子一个亲和度计算 / 汇聚漏斗：核心贡献 · 次要贡献 ·
+  原始环境系数 · 是否背景鱼 · 最终环境系数 · 最终合成 · 基础机会强度 · 通道返回值）
 - BOUNDARY：行1 及其三块与 L1 细节（B 消费的输入）
 - OUT：通道 2–5（活性·进食动机·警戒度·动态进食偏好，全在 B 的「不交付」清单里）、行3–7 全域
 
@@ -197,7 +198,7 @@ page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
 stable IDs:            73 (unique, syntax-safe)
 edges:                 31 semantic (层级关系由容器嵌套表达，不再另画结构线)
 views:                 overall, 0340b (default overall)
-scope lens:            0.3.4.0-B — 21 ACTIVE / 8 BOUNDARY / 44 OUT, all nodes classified once
+scope lens:            0.3.4.0-B — 27 ACTIVE / 8 BOUNDARY / 44 OUT, all nodes classified once
 ladder declared, unassigned: 0.3.4, SIMPLIFIED-V0, FCF-V1
 contracts:             9 entries (refs valid)
 determinism:           consecutive builds byte-identical; committed artifact fresh

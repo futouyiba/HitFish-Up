@@ -5,6 +5,10 @@
 白做了；误报（把 draw.io 保存时的噪声当成改动）会淹没真信号，让我去改一堆没动过
 的地方。两边都会毁掉回路，所以两种情况都在这里锁住。
 
+⚠️ **测试不许硬编码 cell id。** 图上的 id 会随设计改名（类别头节点退场、
+`R2.C1.K` 改叫 `R2.C1.F1.FIT`……），写死 id 的测试会跟着碎 —— 而那是测试的问题、
+不是被测对象的问题。所以下面一律**按特征挑**被测的 cell，把挑中的 id 记下来再断言。
+
 用自己的临时文件，**不碰 working/** —— 那里面可能是你正在做的手工改动。
 
     python3 build/test_roundtrip.py
@@ -21,13 +25,12 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
-from roundtrip import diff_files, pages_of, parse_style  # noqa: E402
+from roundtrip import diff_files, parse_style  # noqa: E402
 
 SRC = HERE.parent / "generated" / "fcf-system-map.drawio"
 fails = []
-# 测试里"按特征挑出来"的那两条边，id 在 mutate() 里填，main() 里断言。
-DRAG_ID = [None]
-NOISE_ID = [None]
+# mutate() 按特征挑出来的 id，main() 据此断言。
+PICK = {}
 
 
 def check(cond, msg):
@@ -48,32 +51,52 @@ def mutate(src: Path, dst: Path) -> None:
     model.set("dx", "4821")
     model.set("dy", "1777")
 
-    def cell(cid):
-        for uo in model.iter("UserObject"):
-            if uo.get("id") == cid:
-                return uo, uo.find("mxCell")
-        for mx in model.iter("mxCell"):
-            if mx.get("id") == cid:
-                return mx, mx
-        raise KeyError(cid)
+    # ── 按特征挑被测 cell（见模块 docstring）──────────────────────────
+    verts = [mx for mx in model.iter("mxCell")
+             if mx.get("vertex") == "1" and mx.get("id") not in (None, "0", "1")
+             and mx.find("mxGeometry") is not None]
+    labeled = [mx for mx in verts if (mx.get("value") or "").strip()]
+    # 挑**嵌套**的 cell（父不是图层）—— 顶层的局部坐标恰好等于绝对坐标，
+    # 拿它测"报的是不是绝对坐标"测不出东西。
+    nested = [mx for mx in labeled if (mx.get("parent") or "").startswith("C:")]
+    pool = nested or labeled
+    check(len(pool) >= 5, "带文字且嵌套的 cell 少于 5 个，测试样本不够")
+    if len(pool) < 5:
+        return
+    pick_move, pick_resize, pick_relabel, pick_remove, pick_restyle = pool[:5]
+    PICK.update(move=pick_move.get("id"), resize=pick_resize.get("id"),
+                relabel=pick_relabel.get("id"), remove=pick_remove.get("id"),
+                restyle=pick_restyle.get("id"))
 
-    def geo(cid):
-        return cell(cid)[1].find("mxGeometry")
+    edges = [mx for mx in model.iter("mxCell")
+             if mx.get("edge") == "1" and mx.get("id")]
+    withpts = [e for e in edges
+               if e.find("mxGeometry") is not None
+               and e.find("mxGeometry").find("Array") is not None
+               and e.find("mxGeometry").find("Array").findall("mxPoint")]
+    simple = [e for e in edges if e not in withpts]
+    check(bool(withpts) and bool(simple), "找不到足够的边来做拖动/噪声测试")
+    if not (withpts and simple):
+        return
+    PICK.update(drag=withpts[0].get("id"), noise=simple[0].get("id"))
 
-    g = geo("R2.F.CORE")                     # 移动
+    def geo(mx):
+        return mx.find("mxGeometry")
+
+    # ── 真改动 ──────────────────────────────────────────────────────
+    g = geo(pick_move)                      # 移动
     g.set("x", str(int(g.get("x")) + 37))
     g.set("y", str(int(g.get("y")) - 11))
-    g = geo("R2.C1.A1")                      # 拉大
+
+    g = geo(pick_resize)                    # 拉大
     g.set("width", str(int(g.get("width")) + 100))
     g.set("height", str(int(g.get("height")) + 20))
 
-    holder, _ = cell("R2.C1.V")              # 改文字（普通 cell 在 value 上）
-    holder.set("value", "通道返回值")
+    pick_relabel.set("value", "我改过的名字")   # 改文字（普通 cell 在 value 上）
 
-    uo, _ = cell("R2.C1.F5")                 # 删一个
-    for parent in model.iter():
-        if uo in list(parent):
-            parent.remove(uo)
+    for parent in model.iter():             # 删一个
+        if pick_remove in list(parent):
+            parent.remove(pick_remove)
             break
 
     newmx = ET.SubElement(model.find("root"), "mxCell")   # 新画一个（自动 id）
@@ -87,35 +110,19 @@ def mutate(src: Path, dst: Path) -> None:
         ng.set(k, v)
     ng.set("as", "geometry")
 
-    edges = [mx for mx in model.iter("mxCell")
-             if mx.get("edge") == "1" and mx.get("id")]
-    # 不写死边 id —— 边会随设计改名，测试不该跟着碎。按特征挑：
-    #   * 有途经点的边（走廊绕行的那几条）→ 用来测"拖动线段"
-    #   * 没有途经点的简单边          → 用来测"只重排 style 键序不该被报"
-    withpts = [e for e in edges
-               if e.find("mxGeometry") is not None
-               and e.find("mxGeometry").find("Array") is not None
-               and e.find("mxGeometry").find("Array").findall("mxPoint")]
-    simple = [e for e in edges if e not in withpts]
-    check(withpts and simple, "找不到足够的边来做拖动/噪声测试")
-    if not (withpts and simple):
-        return
-    drag = withpts[0].find("mxGeometry").find("Array")
+    drag = geo(withpts[0]).find("Array")    # 拖一条边（改已有 Array 的点）
     for el, (x, y) in zip(drag.findall("mxPoint"), ((30, 700), (30, 1500))):
         el.set("x", str(x))
         el.set("y", str(y))
-    noise_edge = simple[0]
 
-    mx, _ = cell("R2.C1.F1")                 # 改样式 + 键序重排
-    sm = parse_style(mx.get("style"))
+    sm = parse_style(pick_restyle.get("style"))          # 改样式 + 键序重排
     sm["fillColor"] = "#ff0000"
-    mx.set("style", ";".join("%s=%s" % (k, v) for k, v in reversed(list(sm.items()))) + ";")
+    pick_restyle.set("style",
+                     ";".join("%s=%s" % (k, v) for k, v in reversed(list(sm.items()))) + ";")
 
-    x = noise_edge                           # 噪声 2：只重排键序，不该被报
-    sm = parse_style(x.get("style"))
-    x.set("style", ";".join("%s=%s" % (k, v) for k, v in reversed(list(sm.items()))) + ";")
-    NOISE_ID[0] = x.get("id")
-    DRAG_ID[0] = withpts[0].get("id")
+    sm = parse_style(simple[0].get("style"))             # 噪声 2：只重排键序，不该被报
+    simple[0].set("style",
+                  ";".join("%s=%s" % (k, v) for k, v in reversed(list(sm.items()))) + ";")
 
     ET.indent(tree, space="  ")
     tree.write(str(dst), encoding="utf-8", xml_declaration=True)
@@ -132,16 +139,15 @@ def main():
 
         r = diff_files(base, edited)
         got = {(c["id"], c["kind"]) for c in r["changes"]}
-        model_changes = {(c["id"], c["kind"]) for c in r["model"]}
 
         expect = {
-            ("R2.F.CORE", "moved"),
-            ("R2.C1.A1", "resized"),
-            ("R2.C1.V", "relabeled"),
-            ("R2.C1.F5", "removed"),
+            (PICK["move"], "moved"),
+            (PICK["resize"], "resized"),
+            (PICK["relabel"], "relabeled"),
+            (PICK["remove"], "removed"),
             ("k7QmZ3vRt9", "added"),
-            (DRAG_ID[0], "rerouted"),
-            ("R2.C1.F1", "restyled"),
+            (PICK["drag"], "rerouted"),
+            (PICK["restyle"], "restyled"),
         }
         for pair in sorted(expect - got):
             fails.append("漏报：%s %s" % pair)
@@ -150,9 +156,9 @@ def main():
         check(("(model)", "page") not in got, "模型级差异被混进了 cell 差异")
 
         # 噪声必须一字不报
-        check(not any(c["id"] == NOISE_ID[0] for c in r["changes"]),
+        check(not any(c["id"] == PICK["noise"] for c in r["changes"]),
               "误报：只重排 style 键序被当成了改动（%s；draw.io 保存必然这样做）"
-              % NOISE_ID[0])
+              % PICK["noise"])
         check(not any(c["kind"] == "visibility" for c in r["changes"]),
               "误报：出现无中生有的 visibility 变化")
 
@@ -166,7 +172,7 @@ def main():
         check(moved["detail"]["abs_from"] != moved["detail"]["local_from"],
               "moved 报的是局部坐标，不是绝对坐标")
 
-        # 字节级确定性：同样的两份输入必须逐字节同结果
+        # 确定性：同样的两份输入必须同结果
         check(json.dumps(diff_files(base, edited), sort_keys=True, ensure_ascii=False)
               == json.dumps(r, sort_keys=True, ensure_ascii=False),
               "对差结果不是确定性的")
@@ -179,6 +185,7 @@ def main():
     print("TEST: PASS")
     print("  该抓的：moved / resized / relabeled / removed / added / rerouted / restyled / page")
     print("  该忽略的：画布 dx/dy 位移、未改动边的 style 键序重排")
+    print("  被测 cell 按特征挑：%s" % json.dumps(PICK, ensure_ascii=False))
 
 
 if __name__ == "__main__":

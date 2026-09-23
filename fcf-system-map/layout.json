@@ -31,7 +31,10 @@
     "skip": 34,
     "gate": 46,
     "end": 44,
-    "factor": 34
+    "factor": 34,
+    "fcore": 88,
+    "fsec": 150,
+    "fskip": 88
   },
   "root": {
     "axis": "v",
@@ -151,6 +154,9 @@
         },
         {
           "ref": "C:C1/GRID"
+        },
+        {
+          "ref": "C:C1/FAILROW"
         },
         {
           "ref": "C:C1/AGG"
@@ -473,23 +479,40 @@
     },
     "C:C1/AGG": {
       "axis": "v",
-      "w": 620,
+      "w": 760,
       "center": true,
       "children": [
         {
           "node": "R2.C1.A1",
+          "role": "title",
+          "w": 120
+        },
+        {
+          "ref": "C:C1/AGG/PROD"
+        },
+        {
+          "node": "R2.C1.AGG.RAW",
           "fill": true
         },
         {
-          "ref": "C:C1/AGG/SPLIT"
+          "node": "R2.C1.BG",
+          "w": 260,
+          "center": true,
+          "h": 72
         },
         {
-          "node": "R2.C1.A3",
+          "ref": "C:C1/AGG/BR"
+        },
+        {
+          "node": "R2.C1.FINAL",
           "fill": true
+        },
+        {
+          "ref": "C:C1/AGG/SYN"
         },
         {
           "node": "R2.C1.V",
-          "w": 320,
+          "w": 420,
           "center": true
         }
       ]
@@ -499,133 +522,143 @@
       "even": true,
       "children": [
         {
-          "ref": "C:C1/C1"
+          "ref": "C:C1/F1"
         },
         {
-          "ref": "C:C1/C2"
+          "ref": "C:C1/F2"
         },
         {
-          "ref": "C:C1/C3"
+          "ref": "C:C1/F3"
+        },
+        {
+          "ref": "C:C1/F4"
+        },
+        {
+          "ref": "C:C1/F5"
         }
       ]
     },
-    "C:C1/C1": {
+    "C:C1/F1": {
       "axis": "v",
       "children": [
         {
-          "node": "R2.F.CORE",
-          "center": true,
-          "w": 140
-        },
-        {
-          "ref": "C:C1/C1/F"
+          "node": "R2.C1.F1",
+          "w": 210,
+          "center": true
         },
         {
           "node": "R2.GATE",
-          "w": 320,
+          "w": 200,
           "center": true,
-          "h": 64
+          "h": 56
         },
         {
-          "ref": "C:C1/C1/OUT"
-        }
-      ]
-    },
-    "C:C1/C2": {
-      "axis": "v",
-      "children": [
-        {
-          "node": "R2.F.SEC",
-          "center": true,
-          "w": 140
-        },
-        {
-          "ref": "C:C1/C2/F"
-        },
-        {
-          "node": "R2.C1.S",
+          "node": "R2.C1.F1.FIT",
           "fill": true
         }
       ]
     },
-    "C:C1/C3": {
+    "C:C1/F2": {
       "axis": "v",
       "children": [
         {
-          "node": "R2.F.SKIP",
-          "center": true,
-          "w": 140
-        },
-        {
-          "ref": "C:C1/C3/F"
-        }
-      ]
-    },
-    "C:C1/C1/F": {
-      "axis": "h",
-      "even": true,
-      "children": [
-        {
-          "node": "R2.C1.F1",
-          "icon": "square"
-        },
-        {
           "node": "R2.C1.F2",
-          "icon": "triangle"
-        }
-      ]
-    },
-    "C:C1/C1/OUT": {
-      "axis": "h",
-      "even": true,
-      "children": [
+          "w": 210,
+          "center": true
+        },
         {
-          "node": "R2.C1.K",
+          "node": "R2.C1.GATE.B",
+          "w": 200,
+          "center": true,
           "h": 56
         },
         {
-          "node": "R2.C1.GFAIL",
-          "h": 56
+          "node": "R2.C1.F2.FIT",
+          "fill": true
         }
       ]
     },
-    "C:C1/C2/F": {
-      "axis": "h",
-      "even": true,
+    "C:C1/F3": {
+      "axis": "v",
       "children": [
         {
           "node": "R2.C1.F3",
-          "icon": "hexagon"
+          "w": 150,
+          "center": true
         },
         {
-          "node": "R2.C1.F4",
-          "icon": "circle"
+          "node": "R2.C1.F3.FIT",
+          "fill": true
         }
       ]
     },
-    "C:C1/C3/F": {
-      "axis": "h",
-      "even": true,
+    "C:C1/F4": {
+      "axis": "v",
+      "children": [
+        {
+          "node": "R2.C1.F4",
+          "w": 150,
+          "center": true
+        },
+        {
+          "node": "R2.C1.F4.FIT",
+          "fill": true
+        }
+      ]
+    },
+    "C:C1/F5": {
+      "axis": "v",
       "children": [
         {
           "node": "R2.C1.F5",
-          "icon": "hexagon-off"
+          "w": 200,
+          "center": true
         }
       ]
     },
-    "C:C1/AGG/SPLIT": {
+    "C:C1/FAILROW": {
+      "axis": "h",
+      "children": [
+        {
+          "node": "R2.C1.GFAIL",
+          "w": 300,
+          "h": 56
+        }
+      ]
+    },
+    "C:C1/AGG/PROD": {
       "axis": "h",
       "even": true,
       "children": [
         {
-          "node": "R2.C1.BG",
-          "w": 240,
-          "center": true
+          "node": "R2.C1.AGG.CORE"
         },
         {
-          "node": "R2.C1.A2",
-          "w": 280,
-          "center": true
+          "node": "R2.C1.AGG.SEC"
+        }
+      ]
+    },
+    "C:C1/AGG/BR": {
+      "axis": "h",
+      "even": true,
+      "children": [
+        {
+          "node": "R2.C1.A2"
+        },
+        {
+          "node": "R2.C1.BG.NO"
+        }
+      ]
+    },
+    "C:C1/AGG/SYN": {
+      "axis": "h",
+      "even": true,
+      "children": [
+        {
+          "node": "R2.C1.A3"
+        },
+        {
+          "node": "R2.C1.BASE"
         }
       ]
     }

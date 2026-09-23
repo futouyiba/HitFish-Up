@@ -71,6 +71,11 @@ KIND_STYLE = {
     "gate":    ("rhombus;whiteSpace=wrap;html=1;", "#f8cecc", "#b85450"),
     "end":     ("rounded=1;arcSize=50;strokeWidth=2;", "#dae8fc", "#6c8ebf"),
     "factor":  ("rounded=0;", "#dae8fc", "#6c8ebf"),
+    # 因子：**形状代表类别**（照 Design Owner 2026-09-23 给的参照 SVG），
+    # 名字写回框上。所以这三个不再是"图标"，而是带形状样式的普通格子。
+    "fcore":   ("shape=hexagon;perimeter=hexagonPerimeter;size=26;", "#dbeafe", "#2563eb"),
+    "fsec":    ("shape=ellipse;", "#dcfce7", "#16a34a"),
+    "fskip":   ("rounded=1;dashed=1;", "#f8fafc", "#94a3b8"),
     "outside": ("rounded=1;dashed=1;", "#f5f5f5", "#a6a6a6"),
     "group":   ("rounded=1;dashed=1;strokeWidth=1;", "#fcfcfc", "#bbbbbb"),
     "gtitle":  ("rounded=0;", "#eeeeee", "#999999"),
@@ -178,7 +183,7 @@ ICON_PREFIX = "I:"
 LEAF_W = {
     "data": 260, "l1": 250, "process": 260, "cube": 260, "outside": 260,
     "group": 300, "core": 190, "sec": 190, "skip": 190, "gate": 130,
-    "end": 300, "factor": 40,
+    "end": 300, "factor": 40, "fcore": 210, "fsec": 150, "fskip": 200,
 }
 DEFAULT_LEAF_W = 240
 ROOT_X, ROOT_Y = 40, 150
@@ -395,7 +400,8 @@ def measure(node, forced_w, ctx):
             # 标题条只占固定宽度，不再被父容器的 fill 撑成横贯整行的长色框。
             # **不能用字数推算宽度** —— 那样改一个 label 就会改几何，
             # 重命名稳定性检查（cell 几何在改名后不得变动）会立刻报错。
-            node["_w"] = ctx["titleW"]
+            # 容器可以显式再收窄（如「环境聚合」：宽了会横在进聚合的连线前面）。
+            node["_w"] = node["spec"].get("w") or ctx["titleW"]
             node["_h"] = ctx["titleH"]
             return
         if node.get("icon"):
@@ -532,7 +538,7 @@ def layout(lay, graph, views):
                          "entryDx": e.get("entryDx"), "entryDy": e.get("entryDy"),
                          "points": e.get("points"),
                          "route": e.get("route"), "lane": e.get("lane"),
-                         "via": e.get("via"),
+                         "via": e.get("via"), "gutter": e.get("gutter"),
                          "id": "E:%s->%s" % (e["from"], e["to"])})
 
     by_cid = {}
@@ -570,6 +576,26 @@ def layout(lay, graph, views):
         # 为什么非要途经点：**平行四边形（kind=data）会忽略 exitX/exitY**（实测：
         # 圆角矩形、立方体都认，"从左边出去"对行一的三个数据块完全不生效），
         # 那条线于是从方块正中往下扎，横穿行一的细节带。见 memory 的布局硬规则。
+        if e.get("route") == "gap":
+            # 走「列与列之间的缝」。有些边两侧都被堵死：往下走撞自己那一列下面的
+            # fit，往左走撞左边那一列的门控 —— 只剩这条缝可走。
+            # 缝的横坐标 = **源所在那一列**的左缘减半个间距（不写死）。
+            col_x, n = None, s
+            while n is not None:
+                par = by_cid.get(n.get("parent")) if n.get("parent") else None
+                if par is not None and par["spec"].get("even"):
+                    for c in par.get("children", []):
+                        if c is n:
+                            col_x = _abs(c)[0]
+                            break
+                    break
+                n = par
+            mx = round((col_x if col_x is not None else sx) - ctx["spacing"] / 2)
+            e["points"] = [[mx, round(sy + s["_h"] / 2)],
+                           [mx, round(ty + t["_h"] / 2)]]
+            e["exit"] = e["entry"] = None
+            continue
+
         if e.get("route") in ("left", "right"):
             lane = e.get("lane") or 0
             mx = (8 + lane * 9 if e["route"] == "left"
@@ -578,7 +604,9 @@ def layout(lay, graph, views):
             if e.get("via") == "S":
                 # 先纵向挪出自己那一条横带再横穿：同行邻居会挡住直着过去的路
                 # （行一的「投放与机会强度」要往右走，正撞上右边的「习性配置的构成」）。
-                y = round(sy + s["_h"] + ROUTE_GUTTER)
+                # 留白逐边可调：默认 20 挪不出"方块 + 间隔"那么高的一行（门控要挪过
+                # 自己那一列的 fit，得 70）。
+                y = round(sy + s["_h"] + (e.get("gutter") or ROUTE_GUTTER))
                 e["points"] = [[round(sx + s["_w"] / 2), y], [mx, y], [mx, mid_y]]
             else:
                 e["points"] = [[mx, round(sy + s["_h"] / 2)], [mx, mid_y]]
