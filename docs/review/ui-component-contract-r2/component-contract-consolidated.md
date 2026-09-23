@@ -136,14 +136,14 @@
 **Role 记录态与 UI 派生**：
 - Policy Template 的 raw Role 默认值为 `CORE`，不是 `IGNORED`，不能由实现自选缺省或留未定义；「初生默认」与作者从 IGNORED 提角色是不同事件。（《编辑器持久层契约》§3.1；记录页 §383 ADJ-07）
 - 物种 Role 的 `INHERIT` 用无本层 op record 表示；选中任何具体 Role（包括与当前 Policy Template raw Role 相同的值）仍写 `SET`。回到 INHERIT 要显式删除本层 Role op，不能用选同值代替；行级 patch 与物种默认仍按不同记录／键落盘。（《编辑器持久层契约》§3.1、§3.4；完整字段见 RoleControl）
-- 物种 UI 必须可区分无记录 INHERIT 与三值 SET。显示从 Species Role durable op record 是否存在派生：无记录显示为「策略模板」，有记录（含同 raw 值 SET）显示为「本层设置」；不增加第二份 durable UI state，也不要求把工程词“Role 已钉住”作为作者文案。设计证据与保存重载未核的区别见[问题台账](OPEN-ITEMS.md#species-role-ui)。
+- 物种 UI 必须可区分无记录 INHERIT 与三值 SET。显示从 Species Role durable op record 是否存在派生：无记录显示为「策略模板」，有记录（含同 raw 值 SET）显示为「本层设置」；不增加第二份 durable UI state。设计证据与保存重载未核的区别见[问题台账](OPEN-ITEMS.md#species-role-ui)。
 
 <a id="policy-clear"></a>
 ## 10. Role 与 Policy 的操作词表
 **本节是 Policy 域 CLEAR 的完整投影**，权威为《编辑器持久层契约》v16 §3.4（同 §3 的核对版本）；裁决依据为记录页 §265 `F-04`。仅负责此域的来源与词表，记录存在性、同值意图区分沿用 [§3](#component-clear)，无值动作的落盘例外见 [§4](#field-value-control)。
 - Role：物种层 `INHERIT / SET`；**生产行级** `absent / CLEAR / SET`；**永不允许 `ADD`**。（《编辑器持久层契约》§3.4）
 - `fail_env_coeff`：物种层 `INHERIT / ADD / SET`；**生产行级** `absent / CLEAR / ADD / SET`。（《编辑器持久层契约》§3.4）
-- `fail_env_coeff` 的作者语言按 Policy 数值字段表达：物种层＝`沿用策略模板值 / 调整 / 设置为`；生产行级＝`沿用物种设置 / 使用策略模板原始值 / 调整 / 设置为`，分别对应 absent / CLEAR / ADD / SET。它不使用 Role 的三态词表，也不虚构 row-level Policy Source。
+- `fail_env_coeff` 的作者语言按 Policy 数值字段表达：物种层＝`沿用策略模板值 / 调整 / 设置为`；生产行级＝`沿用物种配置 / 使用策略模板原始值 / 调整 / 设置为`，分别对应 absent / CLEAR / ADD / SET。它不使用 Role 的三态词表，也不虚构 row-level Policy Source。
 - Policy 侧的 `CLEAR` 语义：移除继承自物种层的操作，**回到物种当前 Policy Template 的 raw 值**。（《编辑器持久层契约》§3.4）
 - 该定义同时覆盖四个 Role 与 `fail_env_coeff`；`CLEAR` 不携值。**Affinity 没有 `policySourceOverride`**，不能把组件级来源 pin 的能力搬入 Policy。（《编辑器持久层契约》§3.4、§3.10）
 - 行级缺省（继承物种层 Role 操作）与 `CLEAR`（回到 Policy Template raw Role）是两个不同动作，UI 必须区分：物种层作者词为「沿用策略模板 / 设置为 CORE|SECONDARY|IGNORED」；行级作者词为「沿用物种角色 / 使用策略模板原始角色 / 设置为 CORE|SECONDARY|IGNORED」。`INHERIT / absent / CLEAR / SET` 只作为 durable 令牌，不直接充当作者文案。
@@ -263,7 +263,7 @@
 ## 16. 负向清单
 不做（画进假图等于把作者引向不存在的能力）：
 - 程序开关；`if / else / return` 之类控制流编写；自定义聚合算子；自由编排 / 任意输入连线；Gate 控件 / `GatePolicy` 字段；模板共享面板的三档分级；不新增顶层空的 `Calculation Surfaces` 导航；不显示 Activity / Feeding Readiness 之类空壳；不新增第二套 Bake Editor、不新增脚本入口。（《编辑器界面》§5）
-- 本版**不显示占比 / 分群的伪控件或预留字段**，也不提供对应编辑入口；若需要说明边界，只用普通说明文字表达「本版不实现 Mode Share / Routing」。未来 Routing 的 eligibility、互斥与 share / normalization 语义另行设计，不从当前 Compat UI 反推。
+- 本版**不显示占比 / 分群的伪控件或预留字段**，也不提供对应编辑入口；若需要说明边界，只用普通说明文字表达「本版不实现 Mode Share / Routing」。未来 Routing 另行设计，不从当前 Compat UI 反推其参数形态。
 - 桶不是真正的 Engagement Mode；Runtime 无 EngagementMode identity，不得据 UI 名称另建 durable 的 Engagement Mode 身份 / 注册表 / 模式级 Concrete 来源。（《编辑器界面》§5；《编辑器与 Resolve》§11.1；记录页 §172 二 KEEP）
   - **业务概念与 durable identity 分离**（记录页 §385，ADJ-08＝`C_SPLIT_REGISTERS`）：`Engagement Mode`／中鱼习性模式是 Simplified Production V0 的正式业务概念；B P0 不实现 Mode Share／Routing。物理 durable key 为 `FishEnvAffinityRef`；`FishEngagementModeCompat` 是对 Affinity 的 mode-like authoring projection／兼容壳；Runtime／production 无独立 `EngagementMode` identity。业务概念不能充当另一套物理身份。
   - `sourceOverride` 的物理键写作 `(fishEnvAffinityRef, component)`；若 schema 字段名为 `owner_ref`，则 `owner_ref := FishEnvAffinityRef`。不留抽象的 `owner` 让实现猜身份；原页侧依据为 CT §1.1／§3.3、RS §11.1，Runtime 禁令与 UI §5／RS §7／IA §8 相容。逐页改写经过由 Git 保留。
