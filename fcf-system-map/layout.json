@@ -548,9 +548,9 @@
         },
         {
           "node": "R2.GATE",
-          "w": 200,
+          "w": 214,
           "center": true,
-          "h": 56
+          "h": 104
         },
         {
           "node": "R2.C1.F1.FIT",
@@ -568,9 +568,9 @@
         },
         {
           "node": "R2.C1.GATE.B",
-          "w": 200,
+          "w": 214,
           "center": true,
-          "h": 56
+          "h": 104
         },
         {
           "node": "R2.C1.F2.FIT",

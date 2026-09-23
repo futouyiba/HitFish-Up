@@ -115,14 +115,14 @@
       "parent": "R2.C1",
       "lane": "r2L2d",
       "kind": "gate",
-      "caption": "鱼的可接受水温边界（temp_accept_min / max）"
+      "caption": "可接受水温边界"
     },
     {
       "id": "R2.C1.F2.FIT",
       "label": "亲和度计算",
       "parent": "R2.C1",
       "lane": "r2c1F",
-      "kind": "fcore",
+      "kind": "core",
       "caption": "仅门控通过后"
     },
     {
@@ -130,7 +130,7 @@
       "label": "亲和度计算",
       "parent": "R2.C1",
       "lane": "r2c1F",
-      "kind": "fsec",
+      "kind": "sec",
       "caption": "无门控"
     },
     {
@@ -230,7 +230,7 @@
     {
       "id": "R2.GATE",
       "label": "门控 A",
-      "caption": "鱼的可接受水温边界（temp_accept_min / max）",
+      "caption": "可接受水温边界",
       "parent": "R2.C1",
       "lane": "r2L2d",
       "kind": "gate"
@@ -264,7 +264,7 @@
       "label": "最终合成",
       "parent": "R2.C1",
       "lane": "r2c1G",
-      "kind": "data",
+      "kind": "process",
       "caption": "基础机会强度只乘一次"
     },
     {
@@ -753,8 +753,8 @@
       "from": "R2.C1.F1.FIT",
       "to": "R2.C1.AGG.CORE",
       "type": "DATA_FLOW",
-      "exit": "S",
-      "entry": "N"
+      "route": "left",
+      "lane": 1
     },
     {
       "from": "R2.C1.F3.FIT",
@@ -818,14 +818,14 @@
       "to": "R2.C1.F3.FIT",
       "type": "DATA_FLOW",
       "exit": "S",
-      "entry": "NW"
+      "entry": "N"
     },
     {
       "from": "R2.C1.F4",
       "to": "R2.C1.F4.FIT",
       "type": "DATA_FLOW",
       "exit": "S",
-      "entry": "NE"
+      "entry": "N"
     },
     {
       "from": "R2.GATE",
@@ -882,21 +882,21 @@
       "to": "R2.C1.AGG.RAW",
       "type": "DATA_FLOW",
       "exit": "S",
-      "entry": "NW"
+      "entry": "N"
     },
     {
       "from": "R2.C1.AGG.SEC",
       "to": "R2.C1.AGG.RAW",
       "type": "DATA_FLOW",
       "exit": "S",
-      "entry": "NE"
+      "entry": "N"
     },
     {
       "from": "R2.C1.BG.NO",
       "to": "R2.C1.FINAL",
       "type": "DATA_FLOW",
       "exit": "S",
-      "entry": "NE"
+      "entry": "N"
     },
     {
       "from": "R2.C1.FINAL",
@@ -906,7 +906,9 @@
     {
       "from": "R2.C1.BASE",
       "to": "R2.C1.A3",
-      "type": "DATA_FLOW"
+      "type": "DATA_FLOW",
+      "exit": "W",
+      "entry": "E"
     },
     {
       "from": "R2.C1.A3",
@@ -918,8 +920,8 @@
       "to": "R2.C1.A2",
       "type": "CONTROL_OR_SELECTION",
       "label": "是：背景鱼",
-      "exit": "E",
-      "entry": "W"
+      "exit": "S",
+      "entry": "N"
     },
     {
       "from": "R2.C1.BG",
@@ -927,14 +929,14 @@
       "type": "CONTROL_OR_SELECTION",
       "label": "否：非背景鱼",
       "exit": "S",
-      "entry": "NW"
+      "entry": "N"
     },
     {
       "from": "R2.C1.A2",
       "to": "R2.C1.FINAL",
       "type": "DATA_FLOW",
       "exit": "S",
-      "entry": "NW"
+      "entry": "N"
     }
   ]
 }

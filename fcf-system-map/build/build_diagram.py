@@ -73,7 +73,9 @@ KIND_STYLE = {
     "factor":  ("rounded=0;", "#dae8fc", "#6c8ebf"),
     # 因子：**形状代表类别**（照 Design Owner 2026-09-23 给的参照 SVG），
     # 名字写回框上。所以这三个不再是"图标"，而是带形状样式的普通格子。
-    "fcore":   ("shape=hexagon;perimeter=hexagonPerimeter;size=26;", "#dbeafe", "#2563eb"),
+    # ⚠️ `hexagon` 的 `size` 是**比例**不是像素（默认 0.25）。写 size=26 等于 26 倍
+    # 斜角，轮廓自己折成蝴蝶结 —— 必须配 `fixedSize=1` 才是像素。实测过 7 个候选。
+    "fcore":   ("shape=hexagon;perimeter=hexagonPerimeter;fixedSize=1;size=26;", "#dbeafe", "#2563eb"),
     "fsec":    ("shape=ellipse;", "#dcfce7", "#16a34a"),
     "fskip":   ("rounded=1;dashed=1;", "#f8fafc", "#94a3b8"),
     "outside": ("rounded=1;dashed=1;", "#f5f5f5", "#a6a6a6"),
