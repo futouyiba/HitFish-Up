@@ -66,16 +66,16 @@ Previous evidence is not rewritten: old screenshot/report versions remain separa
 
 | Group（组／层） | Frame（帧名） | Label（画布标签） | Frame range | Image dimensions | PNG SHA-256 | Export time | Image/live | UNIMPL/UNVERIFIED boundary |
 |---|---|---|---|---|---|---|---|---|
-| A①-卡5 Provenance Display | `proj_pv_1` | 待核 | 单帧 | 890×150 | `a35444a37f0a26ed09fa663fbcb8bcd09073a60d501b940d932c56567e63f247` | 未落/待核 | consistent | 无标记 |
-| A①-卡5 Provenance Display | `proj_pv_2` | 待核 | 单帧 | 890×150 | `47f502271fb07525c7e34fb50dcc33fa5c735561e74f3f89ff346b9f39db0242` | 未落/待核 | consistent | `⚑UNIMPL` |
-| A①-卡5 Provenance Display | `proj_pv_3` | 待核 | 单帧 | 890×150 | `f651a7f1eb5ff77271cc7211a80991fbb944f9ad07b5deb3f2374f84c85f89a8` | 未落/待核 | consistent | `⚑UNIMPL` |
-| A①-卡5 Provenance Display | `proj_pv_4` | 待核 | 单帧 | 890×204 | `5174d94c19464d3a616fb44c308acd507ede571b8f772b36b4ed1643d2d8a37a` | 未落/待核 | consistent | `⚐UNVERIFIED` |
-| A①-卡5 Provenance Display | `proj_pv_5` | 待核 | 单帧 | 890×150 | `425700cabd2a8d8b71e8c241076fff585d207f0a26294fc28e94552ec0c9aa04` | 未落/待核 | consistent | 无标记 |
-| A②-卡8 Template Library List | `proj_tl_1` | 待核 | 单帧 | 890×150 | `85c5d2ad1e39be2d876f8cbc833449a3591e4aba22708faf5d27f9dbf41fbe72` | 未落/待核 | consistent | 无标记 |
+| A①-卡5 Provenance Display | `proj_pv_1` | 待核 | 单帧 | 890×150 | `b5df97402d2a36a65aca0c8b993215c6d7a9a7ce696068d476e55dc6f1648703` | 未落/待核 | consistent | 无标记 |
+| A①-卡5 Provenance Display | `proj_pv_2` | 待核 | 单帧 | 890×150 | `a0397f186d7ac87d9c7264fd69b032bb5dc92c9d92626b7a3edf07e921e2573c` | 未落/待核 | consistent | `⚑UNIMPL` |
+| A①-卡5 Provenance Display | `proj_pv_3` | 待核 | 单帧 | 890×150 | `90bc928f40ac2cbaf22955e04f2a0ea9d50d46b4b6899db37de1a11524a87672` | 未落/待核 | consistent | `⚑UNIMPL` |
+| A①-卡5 Provenance Display | `proj_pv_4` | 待核 | 单帧 | 890×204 | `1e7939275ed9b20e783ad9528ddc798ee78b9939f721bbfc7a72e288ee4e12f9` | 未落/待核 | consistent | `⚐UNVERIFIED` |
+| A①-卡5 Provenance Display | `proj_pv_5` | 待核 | 单帧 | 890×150 | `6a9aa59cab0490e3d486e09b4e0a3330c87f21182dff4bb663fef10f94f7a760` | 未落/待核 | consistent | 无标记 |
+| A②-卡8 Template Library List | `proj_tl_1` | 待核 | 单帧 | 890×150 | `8225c67fda798334374a05fd7aa7525327e37e8fa62a57e43239e187f0f34e39` | 未落/待核 | consistent | 无标记 |
 | A②-卡8 Template Library List | `proj_tl_2` | 待核 | 单帧 | 890×150 | `9b7b6c9fa7d4ad9d92f50539773f307661daed762d491ade6005058c0830a5e5` | 未落/待核 | consistent | 无标记 |
 | A②-卡8 Template Library List | `proj_tl_3` | 待核 | 单帧 | 890×150 | `8c46918bf0445955076d787680c92ccd6cc76560e9d5ba22bb8bd5dd678df931` | 未落/待核 | consistent | 无标记 |
 | A②-卡8 Template Library List | `proj_tl_4` | 待核 | 单帧 | 890×188 | `9de07b4f93a20b4666efbf596657782475795eadf15326a207e11e76af6b11e8` | 未落/待核 | consistent | 无标记 |
-| A②-卡12 Reference List | `proj_rl_1` | 待核 | 单帧 | 890×150 | `c8cb511e76ffcf290c53dae31617dab2a4c0489d353eefb7796175f7e7fa856c` | 未落/待核 | consistent | 无标记 |
+| A②-卡12 Reference List | `proj_rl_1` | 待核 | 单帧 | 890×150 | `689ecf5dbf9518b8065bbbba53d7fc16cf0fd2e95dcdd8cdc08de79c47f63293` | 未落/待核 | consistent | 无标记 |
 | A②-卡12 Reference List | `proj_rl_2` | 待核 | 单帧 | 890×150 | `a39f42060cee7a4c427c4f8a99774408804363e48f2c0e5aed21a5d0c366e478` | 未落/待核 | consistent | 无标记 |
 | A②-卡12 Reference List | `proj_rl_3` | 待核 | 单帧 | 890×150 | `560c3706ca0b999f47e28c344684717fd201cebd1220adf8b5b95ce5de7bfb92` | 未落/待核 | consistent | 无标记 |
 | A①-RoleControl 两入口／记录态／行级操作 | `proj_role_1` | 待核 | 单帧 | 890×176 | `dc04725b027a1e37eab48635c2cfd2ba8fa5aadb53f681a1ec522df32853f9c3` | 未落/待核 | consistent | `⚑UNIMPL` |
@@ -83,7 +83,7 @@ Previous evidence is not rewritten: old screenshot/report versions remain separa
 | A①-RoleControl 两入口／记录态／行级操作 | `proj_role_3` | 待核 | 单帧 | 890×176 | `d9e015de87e568ae67a573ca85838398c73518d6fb0cb708cc14909f7c36e587` | 未落/待核 | consistent | `⚑UNIMPL` |
 | A①-RoleControl 两入口／记录态／行级操作 | `proj_role_4` | 待核 | 单帧 | 890×176 | `053917b5097d1cdaebc085dfdd3dbd0603adc7a2e343128ad85f4ae70d344612` | 未落/待核 | consistent | `⚑UNIMPL` |
 
-覆盖自检：16 行＝16 资产，无重复、无遗漏；尺寸多重集 = {150×10, 176×4, 188×1, 204×1}，与 `asset-manifest.json` 逐条一致；标记分布 `⚑UNIMPL`×6（`proj_pv_2`／`proj_pv_3`／`proj_role_1`–`4`）＋`⚐UNVERIFIED`×1（`proj_pv_4`）＋无标记×9。`Label` 为画布标签文本节点、不在 PNG 像素内，本批未提供逐帧标签串，故记 `待核`。
+覆盖自检（**射程逐条写明**）：16 行＝16 资产，无重复、无遗漏；尺寸多重集 = {150×10, 176×4, 188×1, 204×1}——**本句「与 `asset-manifest.json` 逐条一致」的射程仅到「尺寸多重集」这一列**，**不含逐行 hash**；标记分布 `⚑UNIMPL`×6（`proj_pv_2`／`proj_pv_3`／`proj_role_1`–`4`）＋`⚐UNVERIFIED`×1（`proj_pv_4`）＋无标记×9。**逐行内容自检（2026-09-23 补）**：本表 `PNG SHA-256` 列 16 行**逐行**与 `asset-manifest.json` 及仓库实物 blob 核过（7 帧重导后）。`Label` 为画布标签文本节点、不在 PNG 像素内，本批未提供逐帧标签串，故记 `待核`。
 
 ## Current local evidence
 
