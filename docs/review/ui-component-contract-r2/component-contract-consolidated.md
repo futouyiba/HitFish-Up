@@ -5,8 +5,8 @@
 ## 1. 产品拓扑与三栏
 - 三栏＝对象导航 ｜ 上下文总览 ｜ 焦点编辑。几何：250 ＋ 890 ＋ 460 ＋ 边距 ＝ 1680。（《编辑器界面》§9.1；《编辑器心智模型与 IA》§3）
 - 左栏三类入口：FISH（Species → 习性 / 品质）／TEMPLATES（五类）／SPECIES PRESETS。物种预置＝一次性写五个来源绑定（四组件 ＋ Policy），**不是父节点**。（《编辑器心智模型与 IA》§3、§4）
-- **Quality Stable Data 与 Quality→习性档案映射分开**：`FISH QUALITY STABLE` 页面本期仍置灰，不开放品质自身字段；既有 `FishQualityRef → FishEnvAffinityRef` 映射由 Production / 数据迁移维护。习性档案 Authoring Surface 只读展示**当前 Editor 会话载入的既有映射快照**中，哪些 Quality 使用该档案；Production 后续外部变化由独立 drift / generation 诊断处理，不把只读摘要变成实时 Routing 数据源。Editor 本期不新增、删除或重分配这条映射，也不引入 Quality / Engagement Mode / tier / routing identity。
-- **本版习性层级＝物种底板 ＋ 兼容覆盖**：Species Base 是主要 Authoring Truth；`young / mature` 是当前版本的兼容 authoring scope，不是真正的 Engagement Mode。numeric patch 按 bucket；Component Source 仍沿既有 Affinity/sourceOverride 身份规则；Role 与 `fail_env_coeff` 按 production-row 粒度处理。UI 同处一个兼容覆盖 Context 不改变这些物理 owner。产品 UI 显示「物种底板」与「兼容覆盖 · 幼年 / 成年及以上」；无本层 numeric / Source 差异时显示「沿用底板」，不得用「未存」暗示档案缺失，也不得把生产行名（如 `NORMAL`）冒充产品 Mode identity。
+- **Quality Stable Data 与 Production 习性引用分开**：`FISH QUALITY STABLE` 页面本期仍置灰，不开放品质自身字段。StockRelease / Production 中既有的 Quality＋`FishEnvAffinityRef` 引用由 Production / 数据迁移维护；习性档案 Authoring Surface 只读展示**当前 Editor 会话载入快照中，哪些既有 Production 引用指向该 Affinity**。UI 可按 Quality 聚合成人类可读摘要，但不得把聚合反推成新的全局 `Quality → Affinity` durable identity，也不把它当实时 Routing 数据源。Production 后续外部变化由 drift / generation 诊断处理。Editor 本期不新增、删除或重分配这些引用，也不引入 Quality / Engagement Mode / tier / routing identity。
+- **本版习性层级＝物种底板 ＋ 兼容覆盖**：Species Base 是主要 Authoring Truth；`young / mature` 是当前版本的兼容 authoring scope，不是真正的 Engagement Mode。numeric patch 按 bucket；Component Source 仍沿既有 Affinity/sourceOverride 身份规则；Role 与 `fail_env_coeff` 按 production-row 粒度处理。UI 同处一个兼容覆盖 Context 不改变这些物理 owner。产品 UI 显示「物种底板」与「兼容覆盖 · 幼年 / 成年及以上」。只有当该 Compat 下**没有任何本地 authoring record**（包括 numeric patch、`sourceOverride`、所含 production rows 的 Role / `fail_env_coeff` patch）时才显示「沿用底板」；存在任一记录则显示「有本层调整」，不按 Effective 值是否相同反推。不得用「未存」暗示档案缺失，也不得把生产行名（如 `NORMAL`）冒充产品 Mode identity。
 - 中栏 Context 与右栏 Focus **不是同一个导航状态**：允许短暂 detached，但必须显式提示（右栏标题明确对象身份 ＋ 低成本「切回当前上下文」），不得让作者误以为右栏仍在编辑中栏对象。detached 只是 UI 导航状态，不产生新的 durable authoring entity。（《编辑器心智模型与 IA》§3 逐字「切换上下文不销毁编辑现场」）
 - 中栏与右栏不得形成两套重复编辑器。（《编辑器界面》§1 导语：逐字段值编辑在焦点编辑栏完成）
 - 控件名用现行页已经落下的 `FieldValueControl`（承载 Field ＋ Effective Value ＋ optional Tier ＋ Local Operation ＋ Diagnostic）。（裁定 f；《编辑器界面》§1。草稿另有叫法，见 §19）
@@ -251,7 +251,7 @@
 - 顶栏 `发布到生产配置…` **只作为入口**，进入 / 聚焦唯一 Publish 区；唯一 writeback executor 留在该区。Autosave 只表达 Editor durable state（`编辑器已保存 / 编辑器已保存 · 有错误 / 编辑器保存中… / 编辑器保存失败`），Publish 不隐式 Save，也不等同 Git commit。
 - Publish 只消费**最新成功持久化 revision**；尚未成值的输入、保存失败编辑、未确认 staged candidate 均不得进入 Publish。
 - Preflight 只看三项：① Editor state 已 durable；② full validation 无 blocking ERROR；③整组 Production generation 可验证且仍匹配 expected baseline。任一失败均 BLOCK。
-- Generation 只作并发安全 token：mismatch / unverifiable 都 BLOCK，不 silent overwrite / auto-merge / 自动采纳 Production。成功 writeback 后重新读取**整组 7 本工作簿同刻度 generation**作为下一次 baseline；partial failure 不得显示成功，也不得按 target 拼 baseline，必须先重读整组 generation。
+- Generation 只作并发安全 token：mismatch / unverifiable 都 BLOCK，不 silent overwrite / auto-merge / 自动采纳 Production。成功 writeback 后重新读取**整组 Production generation**作为下一次 baseline（当前实现为 7 本工作簿同刻度身份）；partial failure 不得显示成功，也不得按 target 拼 baseline，必须先重读整组 generation。
 - V1 只展示本次 Publish 的 success / failure / partial failure；不维护 `已发布 / 有未发布修改 / 与上次发布一致` 或 durable Publish History。Editor revision 冲突与 Production generation mismatch 是两类问题，不得都显示成「保存失败」。
 - 本版只有一次性 Bootstrap：`Production → Bootstrap → Editor durable state`；持续反向对账 / 自动采纳 Production 不在本版。验收包含无编辑往返：Production → Bootstrap → Editor → Publish → Production 逐位一致。
 - 生产侧只保存物化后的完整值 / 枚举，不保存 Source / op / patch provenance；Runtime 不做 base ＋ delta 合并。（《编辑器与 Resolve》§11.1）
@@ -267,7 +267,7 @@
 - 桶不是真正的 Engagement Mode；Runtime 无 EngagementMode identity，不得据 UI 名称另建 durable 的 Engagement Mode 身份 / 注册表 / 模式级 Concrete 来源。（《编辑器界面》§5；《编辑器与 Resolve》§11.1；记录页 §172 二 KEEP）
   - **业务概念与 durable identity 分离**（记录页 §385，ADJ-08＝`C_SPLIT_REGISTERS`）：`Engagement Mode`／中鱼习性模式是 Simplified Production V0 的正式业务概念；B P0 不实现 Mode Share／Routing。物理 durable key 为 `FishEnvAffinityRef`；`FishEngagementModeCompat` 是对 Affinity 的 mode-like authoring projection／兼容壳；Runtime／production 无独立 `EngagementMode` identity。业务概念不能充当另一套物理身份。
   - `sourceOverride` 的物理键写作 `(fishEnvAffinityRef, component)`；若 schema 字段名为 `owner_ref`，则 `owner_ref := FishEnvAffinityRef`。不留抽象的 `owner` 让实现猜身份；原页侧依据为 CT §1.1／§3.3、RS §11.1，Runtime 禁令与 UI §5／RS §7／IA §8 相容。逐页改写经过由 Git 保留。
-- **Quality Stable Data 页面本版不开放**（入口置灰、不展示/编辑品质自身字段）；**不新建品质模板库、不把品质当作第五个习性组件**。既有 `FishQualityRef → FishEnvAffinityRef` 仅作为当前 Editor 会话载入的 Production / 数据迁移映射快照，只读投影到习性档案上下文，用于说明当前影响到哪些 Quality；本版不提供关联、删除、重分配、占比或 Routing 编辑。
+- **Quality Stable Data 页面本版不开放**（入口置灰、不展示/编辑品质自身字段）；**不新建品质模板库、不把品质当作第五个习性组件**。StockRelease / Production 中既有的 Quality＋`FishEnvAffinityRef` 引用仅作为当前 Editor 会话载入快照只读投影到习性档案上下文；可按 Quality 聚合显示，但不新增全局 Quality→Affinity identity。本版不提供关联、删除、重分配、占比或 Routing 编辑。
 - 组件卡不承担逐字段 `ADD / SET / CLEAR` 编辑（逐字段值在焦点编辑栏完成）；不给组件卡 Source / Role 另建 durable state；不把 Effective Value 当编辑真相存储；不为视觉一致强迫所有字段支持 `ADD`；不为结构对称给品质造模板；不按「当前数值相同」跨无关谱系合并生产行。（《编辑器界面》§1 导语、§7；《编辑器心智模型与 IA》§8）
 
 ---
