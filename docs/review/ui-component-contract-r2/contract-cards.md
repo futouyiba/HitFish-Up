@@ -456,15 +456,15 @@ Actions:
     · TimePeriod 同样保留 Source／Setup 路径；三种预设只是 Setup 后／中的一次性填表便利，不能充当独有 Profile 创建语义。具体可用来源按汇编 §8 的层级 allowlist。
     · 不新增空 Profile 对象；UI exact shape 仍归 Species Role/UI 工作流。Setup 的完整机制与初值来源按汇编 §11。
 Durable mutation:
-  - **Role 的 durable 落点在 Policy**，**不另建卡级 state**
-  - **持久化形状**：
-    · **物种侧**：§3.1 那条整体记录**仍叫 `Species Base Record`／底板记录、不改名** —— **它不只装 Policy**（还装 `temperature`／`structure`／`feeding_layer`／`time_period`／`roles`／`name_cache`）⇒ `Species Policy Recipe` **不能当整条记录的名字**。记录**内部**分两层：`component recipes`（＝ `Species Recipe`：四个 Component 的 Source ＋ field operations）与 **`Species Policy Recipe`**（＝ **Policy 专属子结构**：`policy source binding` ＋ 四个 Role op ＋ `fail_env_coeff` op）。
-    · **row 侧两条独立 durable 记录**（**不用 `field`／`track` 判别列**）：**`AffinityRolePatch`** —— key ＝ **`(row_key, component)`**、`op ＝ CLEAR | SET`、`role`（**SET 时必携**）；**`AffinityFailEnvCoeffPatch`** —— key ＝ **`row_key`**、`op ＝ CLEAR | ADD | SET`、`value`（**ADD／SET 时必携**）。
-    · **与 `AffinityAuthoringPatch`（§3.3：`sourceOverride` ＋ numeric patches）并列 —— 不改名、不合并**。它们可在同一个 Compat UI context 中被作者看到，但**物理 owner / key 与粒度不同**：numeric ＝ bucket-level，Role / `fail_env_coeff` ＝ row-level；不得据共同 UI context 合并成同一条持久化记录。
-    ⇒ **没有 `layer`、没有 `"*"` 哨兵、没有 nullable scope、没有 `track` 判别列**；**Role 值不得参与唯一键**。
-  - ⚠️ **行级 patch 必须携 `op`**：不携 op 则 **`CLEAR` 与「`SET` 恰好等于模板 raw 值」不可区分** ⇒ **op 不得从值反推**。
-  - ⚠️ **`scope_key` 正式改名 `row_key`（不是简称）**：该记录**永远只有 row scope** —— 留一个泛化的 `scope_key` 没买到能力、**反而暗示还有别的 scope**。`species_key` **降为属性**（组织／查询／reconcile／诊断），**不参与 identity**；**唯一键 ＝ `(row_key, component)`**。
-  - 粒度：**两条 patch 轨道（`AffinityRolePatch` / `AffinityFailEnvCoeffPatch`）恒为 row-level**；**物种层的 Role op（`INHERIT` / `SET`）不是 override，而是决定该物种的 `Effective Default Role`**，住在 §3.1 的 `Species Base Record`／`Species Policy Recipe` —— **与本节两条 patch 轨道并存；不得为「统一粒度」把它删掉**。**物种层默认与行级覆盖分属不同记录，不得塞回同一张** —— 物种层默认的**唯一键 ＝ `(species_key, component)`**，**每个「物种 × 组件」恰好一个 Effective Default Role**（同 id 组合的不同行可以有不同 Role）。
+  - **Role / `fail_env_coeff` 的 durable truth 在 Policy 域**，组件卡不另建 durable state。
+  - **物种侧**：`Species Base Record` 是整体聚合记录；其中 `component recipes`（四个 Component 的 Source ＋ field operations）与 `Species Policy Recipe`（policy source binding ＋ 四个 Role op ＋ `fail_env_coeff` op）是不同子结构。
+  - **生产行侧**：
+    · `AffinityRolePatch`：key = `(row_key, component)`；`op = CLEAR | SET`；SET 时必须携 `role`。
+    · `AffinityFailEnvCoeffPatch`：key = `row_key`；`op = CLEAR | ADD | SET`；ADD / SET 时必须携 `value`。
+    · 两者都是 row-level，与 bucket-level numeric patch / Component Source authoring 保持独立物理记录；共同出现在 Compat UI context 不改变 owner、key 或粒度。
+  - 行级 patch 必须显式携 `op`；不得从最终值反推 CLEAR / SET / ADD。Role 值不参与唯一键。
+  - 行级 Policy patch 只使用 `row_key` 作为 scope identity；`species_key` 仅用于组织、查询、reconcile 与诊断，不参与行级 patch identity。
+  - 物种 Role op（`INHERIT / SET`）定义 `Effective Default Role`，位于 `Species Policy Recipe`；每个 `(species_key, component)` 恰好一个物种默认。生产行 patch 在此默认之上逐行覆盖，同一物种同一组件的不同行可以得到不同 Effective Role。
 Acceptance:
   - 物种 raw Role=CORE：INHERIT（无记录）与 SET CORE 的 Effective Role 可相同，但记录态及作者可见 provenance 必须可区分（例如「策略模板」vs「本层设置」）；修改一处，另一入口直接读同一 Truth，不经同步代码。
   - IGNORED＋缺 Profile 后选 CORE：只保存 Role，不自动建 Profile／选默认 Source；立即可见 required-Profile ERROR，Publish 阻断，作者可进入 Setup。四组件分别走通，Temperature 不套全1.00数值档案，TimePeriod 不靠预设替代 Source 建立。
