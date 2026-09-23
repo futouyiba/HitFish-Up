@@ -451,6 +451,7 @@ Reads:
 Actions:
   - **物种层**作者动作：`沿用策略模板`（删除本层 Role op）或 `设置为 CORE / SECONDARY / IGNORED`（写本层 SET）。即使 SET 与模板 raw Role 同值，也保留显式 pin，不按结果值折叠。
   - **生产行级**作者动作：`沿用物种角色`（absent）／`使用策略模板原始角色`（CLEAR）／`设置为 CORE / SECONDARY / IGNORED`（SET）。只改当前 `row_key`，不得把一个兼容覆盖里的多条行默认广播。
+  - **`fail_env_coeff`**：物种层＝`沿用策略模板值 / 调整 / 设置为`；生产行级＝`沿用物种设置 / 使用策略模板原始值 / 调整 / 设置为`（absent / CLEAR / ADD / SET）。与 Role 同表呈现时仍保持独立 op 词表，不把 Role 三态套给 coeff。
   - 显式 Setup：Structure／Feeding Layer／Temperature 空态提供进入合法 Shared Template Source 选择的可达路径；Temperature 若合法 Species Concrete 存在，另可走生态数据导入／建立来源，导入目标物种与缺值护栏仍按卡8。
     · TimePeriod 同样保留 Source／Setup 路径；三种预设只是 Setup 后／中的一次性填表便利，不能充当独有 Profile 创建语义。具体可用来源按汇编 §8 的层级 allowlist。
     · 不新增空 Profile 对象；UI exact shape 仍归 Species Role/UI 工作流。Setup 的完整机制与初值来源按汇编 §11。
