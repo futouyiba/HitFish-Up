@@ -445,7 +445,7 @@ Must not:
 ```
 Component: RoleControl｜Role 三态（CORE / SECONDARY / IGNORED）
 Reads:
-  - Policy Authoring Truth（四个角色＋fail_env_coeff）：组件卡 Role 控件与 Policy 区读取同一份。Species 或单一 production-row owner 可直接编辑；multi-row Compat 的组件卡只显示摘要，Policy 区用行级表承接实际 mutation。
+  - Policy Authoring Truth（四个角色＋fail_env_coeff）：组件卡 Role 控件与 Policy 区读取同一份。Species 或单一 production-row owner 可直接编辑；multi-row Compat 的组件卡只显示摘要，Policy 区按 production row 展开逐行 mutation。
   - 当前物种默认 Role op／Policy Template raw Role、或当前生产行的 Role patch；显示从记录派生，按所引汇编 §9 判读。
   - 当前层／行、Profile presence、合法 Source 可用性及当前诊断；默认值／缺席矩阵按所引 §9／§11，不从最终值反推记录。
 Actions:
@@ -473,8 +473,8 @@ Acceptance:
 Must show:
   - Role 展开态只表达 **Effective Role ＋ 当前 Authoring Intent ＋ 必要 provenance**；不把数值字段的 `仅使用来源 / 仅使用当前来源 / 调整` 词表套到 Role。
   - 物种记录态标记按所引汇编 §9，从 Role op record 派生，不另存状态位。Species Context 只编辑 Species Role，Policy Template raw Role 只读解释。
-  - **必须显式说出「你在改哪一层 / 哪一行」**：物种层 ⇒「默认（各行继承）」；生产行级 ⇒ 行级表中的明确 row identity（如 `LAKE_A × LARGEMOUTH_BASS/Q3`）。每行同时显示其 Species Effective Default / Policy Template provenance 所需信息，不要求为此新增独立“精确生产行 Context”。
-  - 若当前兼容覆盖聚合多条生产行：组件卡显示角色摘要（例如 `CORE · 4 行` 或 `多个角色 · 4 行`）；Policy 区直接列出生产行表，逐行编辑四个 Role 与 `fail_env_coeff`，**不得提供单一 bucket-level Role / coeff 控件**。
+  - **必须显式说出「你在改哪一层 / 哪一行」**：物种层 ⇒「默认（各行继承）」；生产行级 ⇒ 行级编辑区中的明确 row identity（如 `LAKE_A × LARGEMOUTH_BASS/Q3`）。每行同时显示其 Species Effective Default / Policy Template provenance 所需信息，不要求为此新增独立“精确生产行 Context”。
+  - 若当前兼容覆盖聚合多条生产行：组件卡显示角色摘要（例如 `CORE · 4 行` 或 `多个角色 · 4 行`）；Policy 区按 production row 展开，逐行编辑四个 Role 与 `fail_env_coeff`，**不得提供单一 bucket-level Role / coeff 控件**。
   - **不许**默认改整个 scope 却在 UI 上说成改一行。
   - P0 不做跨行批量 Role / `fail_env_coeff`；以后若做，必须是显式多选 / 批量动作，不得作为兼容覆盖的缺省行为。
 Must not:
