@@ -5,8 +5,8 @@
 ## 1. 产品拓扑与三栏
 - 三栏＝对象导航 ｜ 上下文总览 ｜ 焦点编辑。几何：250 ＋ 890 ＋ 460 ＋ 边距 ＝ 1680。（《编辑器界面》§9.1；《编辑器心智模型与 IA》§3）
 - 左栏三类入口：FISH（Species → 习性 / 品质）／TEMPLATES（五类）／SPECIES PRESETS。物种预置＝一次性写五个来源绑定（四组件 ＋ Policy），**不是父节点**。（《编辑器心智模型与 IA》§3、§4）
-- **Quality Stable Data 与 Quality→习性档案映射分开**：`FISH QUALITY STABLE` 页面本期仍置灰，不开放品质自身字段；既有 `FishQualityRef → FishEnvAffinityRef` 映射由 Production / 数据迁移维护，习性档案 Authoring Surface 只读展示当前哪些 Quality 使用该档案。Editor 本期不新增、删除或重分配这条映射，也不引入 Quality / Engagement Mode / tier / routing identity。
-- **本版习性层级＝物种底板 ＋ 兼容覆盖**：Species Base 是主要 Authoring Truth；`young / mature` 是其上的稀疏兼容覆盖，不是两个真正的 Engagement Mode。产品 UI 显示「物种底板」与「兼容覆盖 · 幼年 / 成年及以上」；无本层 patch 时显示「沿用底板」，不得用「未存」暗示档案缺失，也不得把生产行名（如 `NORMAL`）冒充产品 Mode identity。
+- **Quality Stable Data 与 Quality→习性档案映射分开**：`FISH QUALITY STABLE` 页面本期仍置灰，不开放品质自身字段；既有 `FishQualityRef → FishEnvAffinityRef` 映射由 Production / 数据迁移维护。习性档案 Authoring Surface 只读展示**当前 Editor 会话载入的既有映射快照**中，哪些 Quality 使用该档案；Production 后续外部变化由独立 drift / generation 诊断处理，不把只读摘要变成实时 Routing 数据源。Editor 本期不新增、删除或重分配这条映射，也不引入 Quality / Engagement Mode / tier / routing identity。
+- **本版习性层级＝物种底板 ＋ 兼容覆盖**：Species Base 是主要 Authoring Truth；`young / mature` 承载 Source / numeric 等 bucket-level 稀疏兼容覆盖，不是两个真正的 Engagement Mode。Role / `fail_env_coeff` 仍按各自已定的 production-row 粒度处理，不能因 UI 同处一个兼容覆盖 Context 就提升成 bucket-level。产品 UI 显示「物种底板」与「兼容覆盖 · 幼年 / 成年及以上」；无本层 Source / numeric patch 时显示「沿用底板」，不得用「未存」暗示档案缺失，也不得把生产行名（如 `NORMAL`）冒充产品 Mode identity。
 - 中栏 Context 与右栏 Focus **不是同一个导航状态**：允许短暂 detached，但必须显式提示（右栏标题明确对象身份 ＋ 低成本「切回当前上下文」），不得让作者误以为右栏仍在编辑中栏对象。detached 只是 UI 导航状态，不产生新的 durable authoring entity。（《编辑器心智模型与 IA》§3 逐字「切换上下文不销毁编辑现场」）
 - 中栏与右栏不得形成两套重复编辑器。（《编辑器界面》§1 导语：逐字段值编辑在焦点编辑栏完成）
 - 控件名用现行页已经落下的 `FieldValueControl`（承载 Field ＋ Effective Value ＋ optional Tier ＋ Local Operation ＋ Diagnostic）。（裁定 f；《编辑器界面》§1。草稿另有叫法，见 §19）
@@ -252,7 +252,7 @@
 - Publish 只消费**最新成功持久化 revision**；尚未成值的输入、保存失败的编辑、未确认的 staged candidate 均不得进入 Publish。
 - Publish preflight 只有三项硬门：① Editor durable state 已成功保存；② full validation 无 blocking ERROR；③ Production target generation 可验证且仍与本会话预期基线一致。任一失败均 BLOCK。
 - Production generation 只作并发安全 token：`expected == current → PASS`；mismatch 或 unverifiable 都 BLOCK，给作者可理解提示；不得 silent last-write-wins、不得 auto-merge、不得自动采纳 Production 值。具体 hash / version / workbook fingerprint 属实现细节，不升级为作者概念。
-- 成功 writeback 后，下一次 Publish 使用的 expected generation 必须前移到**本次写入后的实际 generation**。若一次 Publish 涉及多个 target，任一 target 失败则整体不得显示“发布成功”；已成功 target 可更新自己的 post-write generation baseline，失败 target 保持原基线。
+- 成功 writeback 后，下一次 Publish 使用的 expected generation 必须前移到**本次写入后重新读取到的整组 Production generation**。本版 generation 仍按既有 7 本工作簿同刻度身份判断，不拆成 per-target baseline。若 writeback 发生 partial failure，整体不得显示“发布成功”，也不得自行拼接新 baseline；必须重新读取整组 target generation，再进入后续发布判断。
 - V1 不要求维护 `已发布 / 有未发布修改 / 与上次发布一致` 这类长期发布状态，也不要求 durable Publish History；只需清楚展示本次 Publish 的 success / failure / partial failure 结果。
 - revision 冲突＝Editor durable commit 的乐观检测；Production generation mismatch＝Publish preflight 的外部变化检测。两者是不同问题，不得都显示成「保存失败」。
 - 本版只有一次性 Bootstrap：`Production →（一次性 Bootstrap）→ 初始化 editor durable state → 此后 editor durable state 是 authoring truth`；持续的批量反向对账 / 采纳生产值**不在本版**，只给只读诊断。
@@ -266,11 +266,11 @@
 ## 16. 负向清单
 不做（画进假图等于把作者引向不存在的能力）：
 - 程序开关；`if / else / return` 之类控制流编写；自定义聚合算子；自由编排 / 任意输入连线；Gate 控件 / `GatePolicy` 字段；模板共享面板的三档分级；不新增顶层空的 `Calculation Surfaces` 导航；不显示 Activity / Feeding Readiness 之类空壳；不新增第二套 Bake Editor、不新增脚本入口。（《编辑器界面》§5）
-- 占比 / 比例 与 分群逻辑两处只以禁用占位行呈现（字段位在、控件不在），不提供编辑控件；不得据此宣称本版已实现 Mode Share / Routing。（《编辑器界面》§5、§1.2）
+- 本版**不显示占比 / 分群的伪控件或预留字段**，也不提供对应编辑入口；若需要说明边界，只用普通说明文字表达「本版不实现 Mode Share / Routing」。未来 Routing 的 eligibility、互斥与 share / normalization 语义另行设计，不从当前 Compat UI 反推。
 - 桶不是真正的 Engagement Mode；Runtime 无 EngagementMode identity，不得据 UI 名称另建 durable 的 Engagement Mode 身份 / 注册表 / 模式级 Concrete 来源。（《编辑器界面》§5；《编辑器与 Resolve》§11.1；记录页 §172 二 KEEP）
   - **业务概念与 durable identity 分离**（记录页 §385，ADJ-08＝`C_SPLIT_REGISTERS`）：`Engagement Mode`／中鱼习性模式是 Simplified Production V0 的正式业务概念；B P0 不实现 Mode Share／Routing。物理 durable key 为 `FishEnvAffinityRef`；`FishEngagementModeCompat` 是对 Affinity 的 mode-like authoring projection／兼容壳；Runtime／production 无独立 `EngagementMode` identity。业务概念不能充当另一套物理身份。
   - `sourceOverride` 的物理键写作 `(fishEnvAffinityRef, component)`；若 schema 字段名为 `owner_ref`，则 `owner_ref := FishEnvAffinityRef`。不留抽象的 `owner` 让实现猜身份；原页侧依据为 CT §1.1／§3.3、RS §11.1，Runtime 禁令与 UI §5／RS §7／IA §8 相容。逐页改写经过由 Git 保留。
-- **Quality Stable Data 页面本版不开放**（入口置灰、不展示/编辑品质自身字段）；**不新建品质模板库、不把品质当作第五个习性组件**。既有 `FishQualityRef → FishEnvAffinityRef` 仅作为 Production / 数据迁移映射只读投影到习性档案上下文，用于说明当前影响到哪些 Quality；本版不提供关联、删除、重分配、占比或 Routing 编辑。
+- **Quality Stable Data 页面本版不开放**（入口置灰、不展示/编辑品质自身字段）；**不新建品质模板库、不把品质当作第五个习性组件**。既有 `FishQualityRef → FishEnvAffinityRef` 仅作为当前 Editor 会话载入的 Production / 数据迁移映射快照，只读投影到习性档案上下文，用于说明当前影响到哪些 Quality；本版不提供关联、删除、重分配、占比或 Routing 编辑。
 - 组件卡不承担逐字段 `ADD / SET / CLEAR` 编辑（逐字段值在焦点编辑栏完成）；不给组件卡 Source / Role 另建 durable state；不把 Effective Value 当编辑真相存储；不为视觉一致强迫所有字段支持 `ADD`；不为结构对称给品质造模板；不按「当前数值相同」跨无关谱系合并生产行。（《编辑器界面》§1 导语、§7；《编辑器心智模型与 IA》§8）
 
 ---
