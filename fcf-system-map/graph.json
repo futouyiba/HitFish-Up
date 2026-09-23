@@ -14,7 +14,7 @@
     "responseInputs": "响应模块两路输入：派生环境场 + 玩家策略与操作数据 / Cue 吸引元素。",
     "row5Clarified": "圆桌四件已由 Design Owner 确认：品质抽取调整 = 中鱼习性模式带来的品质份额调整；硬保底 = 尾部保护 / 独立控制层；动态权重调整 = 按玩家标签 × 鱼标签强制干预中鱼体验（规则未细化，属 SEMANTIC_OPEN）。",
     "notFinal": "Design Owner 2026-09-17：本结构可作为当前画图依据，但尚未到最终结构，会在画图过程中迭代。",
-    "contentAuthority": "内容语义的权威清单在 Notion：**FCF 总图｜内容语义清单 R0｜Canonical Map Content Ledger** (page 3dea4137-d236-81a3-92c2-d8574720eefa，挂 Fish-Centric Conditional Funnel｜Design Branch Index 下)。版面（本 repo 的构建参数）可以迭代；但含义以该页为准。两者冲突时改本 repo 去对齐。"
+    "contentAuthority": "内容语义的权威清单在 Notion：**FCF 总图｜内容语义清单 R0｜Canonical Map Content Ledger** (page id 已移除，挂 Fish-Centric Conditional Funnel｜Design Branch Index 下)。版面（本 repo 的构建参数）可以迭代；但含义以该页为准。两者冲突时改本 repo 去对齐。"
   },
   "semantics": {
     "hierarchy": "parent = 容器包纳关系。方块挂在包着它的容器下（parent 指向容器，不是行）；七行本身是一条垂直容器链里的兄弟。",

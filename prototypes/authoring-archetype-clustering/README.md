@@ -24,6 +24,7 @@ python3 prototypes/authoring-archetype-clustering/scripts/clustering.py
 
 - `data/raw/feishu_v3_selected_fields.csv`：飞书表格直读，267 行 × 34 列，来源字段；由本任务调查导出。
 - `data/raw/fish_reference_267.csv`：Notion 公共资料库 2026-09-08 snapshot 的 267 条辅助字段。
+- `data/raw/fish_db_page{1,2,3}.json`（Notion 库原始导出）**不随公开仓分发**：含内部页面 id，按公开仓红线（Owner 2026-09-23 裁定）已移出公开树；如需从原始导出复现 `fish_reference_267.csv`，须另行提供授权/脱敏数据。脚本对缺失的输入会显式退出并说明原因，不会静默产出。
 
 源表/参考资料均保留 provenance；空白不是 0。除非文件明确写 `SOURCE-LINKED`，不要把推导结果当正式 0.3.4 配置。
 

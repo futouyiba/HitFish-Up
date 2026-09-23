@@ -84,7 +84,7 @@ python3 build/test_roundtrip.py     # 该抓的 8 类 / 该忽略的 2 类，逐
 **版面在这里迭代，含义在 Notion 固化。** 每个节点「要表达的意思」以
 **《FCF 总图｜内容语义清单 R0｜Canonical Map Content Ledger》**为准
 （挂 `Fish-Centric Conditional Funnel｜Design Branch Index` 下，
-page `3dea4137-d236-81a3-92c2-d8574720eefa`）。
+page id 已移除）。
 
 分工：
 

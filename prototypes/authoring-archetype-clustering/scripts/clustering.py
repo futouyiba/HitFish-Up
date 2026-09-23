@@ -12,7 +12,21 @@ from lib_signature import TEMP_GRID, TIME_PERIODS, FEEDING_LAYERS, temperature_s
 ROOT = Path(__file__).resolve().parents[1]
 RAW = ROOT / "data" / "raw"
 OUT = ROOT / "outputs"
-OUT.mkdir(exist_ok=True)
+
+INPUT_FILES = ["feishu_v3_selected_fields.csv", "fish_reference_267.csv"]
+
+
+def require_inputs():
+    """数据缺失即显式退出（Owner 2026-09-23 裁定：不得静默假绿）。
+
+    原始导出不随公开仓分发；运行需另行提供授权/脱敏数据。
+    """
+    missing = [name for name in INPUT_FILES if not (RAW / name).is_file()]
+    if missing:
+        for name in missing:
+            print("[skip] 输入数据缺失：%s（原始导出不随公开仓分发，运行需另行提供授权/脱敏数据）"
+                  % (RAW / name).relative_to(ROOT), file=sys.stderr)
+        sys.exit(2)
 
 
 def f(v, default=np.nan):
@@ -31,6 +45,8 @@ def csv_rows(path, name_col):
 
 
 def main():
+    require_inputs()
+    OUT.mkdir(exist_ok=True)
     rows = csv_rows(RAW / "feishu_v3_selected_fields.csv", "鱼种")
     # join Notion auxiliary rows by source record ID where needed
     ref = {r["源记录ID"]: r for r in csv_rows(RAW / "fish_reference_267.csv", "中文名")}

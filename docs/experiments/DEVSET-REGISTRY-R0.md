@@ -2,8 +2,8 @@
 
 - 状态:**EXECUTED UNDER FROZEN R3(2026-09-16;FCF-PC-BASELINE-R3-20260916,WORKING VALIDATION BASELINE / NOT PROMOTED)**——Design Owner Development Review(D1–D6)后,在 `programaticHitFish` `feature/pc-cue-validation-r2-clean` 以 R2 契约执行;fixture 见该仓 `pc_validation/fixtures/devset_r2_backfilled.json`;R1 回填版本保留为 provenance
 - 来源:baseline [R0 §12](../baselines/FCF-PC-BASELINE-R0-20260915.md) 枚举 + Design Owner 2026-09-16 裁决(新增 Walleye)+ 回填材料:
-  - Presentation Adapter Development Set Manifest v1(frozen 2026-08-25,Notion `3c7a4137d23681b7adc7cafa9f444b6b`)
-  - Response Language Contract Delta R0 §14 Expression Pressure Test(2026-09-05,Notion `3d0a4137d2368168b678ccfafc85583c`)
+  - Presentation Adapter Development Set Manifest v1(frozen 2026-08-25,Notion id 已移除)
+  - Response Language Contract Delta R0 §14 Expression Pressure Test(2026-09-05,Notion id 已移除)
 - 纪律:本表不发明语义;来源未定值标 `UNKNOWN_FROM_SOURCE`;无任何 ResponseBand 数字;DEV regression 证明事实需求/可表达性/所需 delta/ownership 结果,不证明 HIGH=多少。
 - 据本表任何 case 修改 baseline 时,该 case 永久保持 Development 身份(R0 §10)。
 

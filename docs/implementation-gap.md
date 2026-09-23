@@ -40,12 +40,12 @@ reference implementation, and written back to the two authority pages
 | GAP-004 | `gatePolicy` **never shipped**, so there is no legacy payload and no read-through channel. Any occurrence of the key is an error (Bass slice §8 V6, read literally). Docs that still describe it as current are to be made consistent with the spec. | Owner 2026-09-18: it is a new feature with no historical/stock data, so there is nothing to migrate. A role edit (e.g. CORE → SECONDARY) is ordinary authoring — bake always uses the *current* role; no migration logic is involved. |
 
 **Written back 2026-09-18** to four authority pages — Schema & Validator
-(`3dca4137d23681e28c5bc2f29c63dc16`: new §1.1 key table + rewritten §3.8 Trace block +
+(id 已移除: new §1.1 key table + rewritten §3.8 Trace block +
 ruling note), Bake Authoring / 条件开关 Working
-(`3dca4137d236816ab0add70228a80d51`: §6.2 / §6.3 profile keys → snake_case, ruling note,
+(id 已移除: §6.2 / §6.3 profile keys → snake_case, ruling note,
 page renamed off the deleted GatePolicy wording), Main Control
-(`3dda4137d2368109aa54ec4f7acbab26`: new §33 ruling section + read-pointer update), and
-开发需求 (`3dda4137d23681c68ec3fb1944573af4`: §4.1 example block aligned to §4.0). All were
+(id 已移除: new §33 ruling section + read-pointer update), and
+开发需求 (id 已移除: §4.1 example block aligned to §4.0). All were
 fresh-read, written as narrow deltas with distinct anchors, and read back in full. The
 only remaining item is implementation-side: land these plus §26.4 deltas 1–9 on the W6
 branch.
@@ -69,10 +69,10 @@ ruling the §4.0 spelling wins; both strings in §4.1 were corrected in the same
 **Status:** RESOLVED 2026-09-18 (see Rulings above)
 
 **Authority:**
-- 中鱼0.3.4.0-B｜开发需求 §4.0 / §4.1–§4.4 (`3dda4137d23681c68ec3fb1944573af4`) uses
+- 中鱼0.3.4.0-B｜开发需求 §4.0 / §4.1–§4.4 (id 已移除) uses
   snake_case config-table column names.
 - 0.3.4.0-B｜Bake Authoring / 条件开关 Working §6.2 / §6.3
-  (`3dca4137d236816ab0add70228a80d51`) uses camelCase names for the same things.
+  (id 已移除) uses camelCase names for the same things.
 
 **What is known:** the six **Temperature** keys *are* canonical and identical on both
 pages: `temp_accept_min / temp_fav_min / temp_fav_max / temp_accept_max /
@@ -111,10 +111,10 @@ Validator §1.1 and 开发需求 §4.1.
 **Status:** RESOLVED 2026-09-18 (see Rulings above)
 
 **Authority:** 0.3.4.0-B｜Bake Authoring Schema & Validator Contract §3.8
-(`3dca4137d23681e28c5bc2f29c63dc16`) defines `BakeEvaluationTrace`. Its own
+(id 已移除) defines `BakeEvaluationTrace`. Its own
 2026-09-17 note states that in that structure `spatialOpportunityIntensity` is a
 **historical** key and `gateFailureCap?` is superseded by the failure branch, "gateResults[]
-保留为展示位". Main Control §25.6 / §26.4 delta 6 (`3dda4137d2368109aa54ec4f7acbab26`)
+保留为展示位". Main Control §25.6 / §26.4 delta 6 (id 已移除)
 require the *code* field and trace key to become `spatial_distribution_weight`.
 
 **What is known:** the value is `SpatialDistributionWeight = BaseOpportunityIntensity ×
@@ -153,7 +153,7 @@ Rulings above.
 **Status:** RESOLVED 2026-09-18 — explicit `null` = IGNORED (see Rulings above)
 
 **Authority:** 0.3.4.0-B｜Bass NORMAL Fixed Template Vertical Slice §5
-(`3dda4137d236818c9b61e6bc7fc348a7`) serializes
+(id 已移除) serializes
 `{"conditionKey":"TIME_PERIOD","aggregationRole":null}` and annotates
 "`TIME_PERIOD` 的 `null` = IGNORED（自动不消费）". But 开发需求 §4.5 guardrail 2 and
 Schema & Validator §5 require the opposite distinction: "忽略 = 作者显式决定，与
