@@ -242,11 +242,18 @@
 - 会覆盖已有 local ops：batch preview 列五字段 before/after、哪些 local ops 被替换、新增 Error·Warning，随后 explicit confirm ＋ atomic commit；不做 full-library impact scan。
 - 五个 `SET` 是同 owner／同 layer 的一个 atomic batch；target、Source 不变及不持久化 presetId 等边界见[§12](#component-specifics)。该护栏不是第三种 durable transaction type，也不是 Source Rebase Preview。
 
-- Publish 只读取已成功持久化的 revision；尚未成值的输入不参与 Publish；未确认的高影响候选不得被当成 durable truth。（《编辑器界面》§1.1；《编辑器持久层契约》§6.3）
-- revision 冲突＝乐观检测：commit 只在预期 revision 仍匹配时写入，禁止 last-write-wins、禁止静默 auto-merge，进入重载 / 对比 / 对账路径。（《编辑器界面》§1.2；《编辑器持久层契约》§6.3）
-- 「生产配置外部变化」与「Editor State revision 冲突」是两类不同问题，不得都显示成「保存失败」。（《编辑器持久层契约》§6.4、§6.5；《编辑器界面》§9.2）
-- 本版只有一次性 Bootstrap：`Production →（一次性 Bootstrap）→ 初始化 editor durable state → 此后 editor durable state 是 authoring truth`；持续的批量反向对账 / 采纳生产值**不在本版**，只给只读诊断。（《编辑器持久层契约》§6.5；《编辑器界面》§9.2）
-- 往返冒烟测试＝本版验收：Production → Bootstrap → Editor → 不做任何编辑 → Publish → Production，应逐位一致。（记录页 §164）
+<a id="publish-boundary"></a>
+**Publish 边界**：
+- 顶栏 `发布到生产配置…` **只作为入口**，进入 / 聚焦唯一的 Publish 区；顶栏本身不执行 writeback，不建立第二套 Publish executor。真正 side effect 只允许由 canonical Publish 区的单一执行动作触发。
+- Autosave 与 Publish 明确分离：顶栏保存状态只表达 Editor durable state，作者文案为 `编辑器已保存 / 编辑器已保存 · 有错误 / 编辑器保存中… / 编辑器保存失败`；Publish 不隐式 Save，也不把 Git commit 当 Publish。
+- Publish 只消费**最新成功持久化 revision**；尚未成值的输入、保存失败的编辑、未确认的 staged candidate 均不得进入 Publish。
+- Publish preflight 只有三项硬门：① Editor durable state 已成功保存；② full validation 无 blocking ERROR；③ Production target generation 可验证且仍与本会话预期基线一致。任一失败均 BLOCK。
+- Production generation 只作并发安全 token：`expected == current → PASS`；mismatch 或 unverifiable 都 BLOCK，给作者可理解提示；不得 silent last-write-wins、不得 auto-merge、不得自动采纳 Production 值。具体 hash / version / workbook fingerprint 属实现细节，不升级为作者概念。
+- 成功 writeback 后，下一次 Publish 使用的 expected generation 必须前移到**本次写入后的实际 generation**。若一次 Publish 涉及多个 target，任一 target 失败则整体不得显示“发布成功”；已成功 target 可更新自己的 post-write generation baseline，失败 target 保持原基线。
+- V1 不要求维护 `已发布 / 有未发布修改 / 与上次发布一致` 这类长期发布状态，也不要求 durable Publish History；只需清楚展示本次 Publish 的 success / failure / partial failure 结果。
+- revision 冲突＝Editor durable commit 的乐观检测；Production generation mismatch＝Publish preflight 的外部变化检测。两者是不同问题，不得都显示成「保存失败」。
+- 本版只有一次性 Bootstrap：`Production →（一次性 Bootstrap）→ 初始化 editor durable state → 此后 editor durable state 是 authoring truth`；持续的批量反向对账 / 采纳生产值**不在本版**，只给只读诊断。
+- 往返冒烟测试＝本版验收：Production → Bootstrap → Editor → 不做任何编辑 → Publish → Production，应逐位一致。
 - 生产侧只保存物化后的完整值 / 枚举，不保存 Source / op / patch provenance；Runtime 不做 base ＋ delta 合并。（《编辑器与 Resolve》§11.1）
 - 生产投影按结构化 authoring lineage 复用，不按 payload 相等：物种层用共享模板且无有效操作 → 可复用该模板的生产 Profile；桶层完全继承物种 Recipe → 可复用物种投影；有显式 `sourceOverride` 但最终为「纯共享模板 ＋ 零操作」→ 仍可复用该模板的 Profile（显式 pin 只分叉继承关系，不强制复制行）；最终仍含任何有效操作 → 该桶自有投影。**同值 `SET` 与纯 source pin 必须区分**：同值 `SET` 阻断未来模板改值 ⇒ 自有投影；`sourceOverride` ＋ 零操作 ＝ 未来继续跟随 ⇒ 可安全复用。（《编辑器持久层契约》§3.7）
 - ★ **`name` 的射程要分两层写**（原文只写「只是人类可读标签，不作 identity / join / 复用键」—— **过宽**，独立复审于 `fa96900` 报出，2026-09-21 Owner 同向裁定）：**Editor / Materializer 内部定位 → 稳定 id / key**（`name` **不作** Editor identity）；**Production XLSX 跨子表引用 → 仍按现有物理 schema 写 `targetRow.name`**。⇒ **本期不得把 XLSX 引用单元格顺手迁成 id**（那是单独的**配置表 Schema Migration**；`TimePeriod` 连数字 group id 都没有）。因此 **新增／新建的 production row `name` 必须在对应 production lookup domain 内无歧义**，collision ⇒ **BLOCK**（不 silent suffix / fallback）。行名的三级形态＝模板级（作者填，不预填）/ 物种派生级 / 桶派生级（自动生成）。（《编辑器持久层契约》§4.4）
