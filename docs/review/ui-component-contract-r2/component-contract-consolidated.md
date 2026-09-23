@@ -92,7 +92,7 @@
 - 诊断是派生量，每次重算，不持久化为第二真相。（《编辑器持久层契约》§6.5）
 
 ## 7. 组件卡 ＋ 焦点编辑栏
-- 组件卡是**摘要 ＋ 快速编辑入口**，不是只读卡：可就地改 **Source / Template** 与 **Role 三态**；逐字段值仍在右侧 460px 焦点编辑栏完成。（《编辑器界面》§1 导语、§1.1）
+- 组件卡是**摘要 ＋ 快速编辑入口**，不是只读卡：可就地改 **Source / Template**；Role 在当前 Context 对应单一 Role owner（Species 或精确生产行）时可就地改，兼容覆盖若聚合多条生产行则只显示 Role 摘要并进入逐行编辑。逐字段值仍在右侧 460px 焦点编辑栏完成。（《编辑器界面》§1 导语、§1.1）
 - 卡上展示：组件身份、当前 Source / Template、当前 Role 角标、继承 / 覆盖状态、诊断。（《编辑器界面》§1.1「卡片展示摘要、模板选择器、Role 角标与继承 / 覆盖状态」；冻结卡 `A①-卡1` 的「卡上 `templateName` 与闭值同源同名」「same-source pin 的『已显式固定』记号」）
 - **入口与 Truth 的对应**：**前层 Source Selector（顶部 `templateRow`，每组件一个）与组件卡的来源 / Source 下拉**（**卡上这一个入口同时覆盖 Template 与 Source** —— 换模板就是换 Source 绑定）指向**同一个**组件 Recipe Source binding；**卡的 Role 控件与 Policy 区 Role 行**指向**同一个** Policy Authoring Truth。⇒ **各自「双入口、单 Truth」，不得增设第三个 mutation 面。** ⚠️ **入口叫「来源 / Source」，不叫 Template** —— 合法来源里含 `SPECIES_CONCRETE`（**它不是模板**）；**当所选来源是共享模板时，卡上以该模板名显示它**（展示层才出现 Template 字样）。⚠️ Source 在合法当前 owner 上可就地改；Role 只有在当前 Context 对应**单一 Role owner**（Species 或精确生产行）时才提供可编辑下拉。兼容覆盖若聚合多条生产行，卡与 Policy 区只显示 Role 摘要并进入逐行编辑，不得把 row-level Role 伪装成 bucket-level 控件。两入口都不另存 durable 副本。⚠️ **两入口「同源」说的是 durable truth 同源**；**未确认的 Source 变更是 candidate（UI 态）** —— 两处可同时显示它，**但它还不是 truth**（见 §8 的 candidate → Rebase Preview → 显式确认 → 原子提交）。⚠️ **焦点编辑栏不提供 Source 下拉** —— 它只显示当前 Source 的上下文／来源说明（在那里再放一个 Source 选择器，就成了「Top Row ＋ Card ＋ Focus Editor」三个 mutation surface，**复杂度没有买到新能力**）。（《编辑器持久层契约》§8 首行「每组件一个**前层** Source 选择器」；《编辑器界面》§1 导语、§1.1、§7；《编辑器心智模型与 IA》§6、§7、§8；记录页 §172 二 KEEP、§331 裁 `R3-FIG-01`、§358 裁「入口不叫 Template」）
 - 卡的 Source / Role 不得另建一套 durable state。（《编辑器界面》§7；《编辑器心智模型与 IA》§8）
@@ -133,7 +133,7 @@
 **Role 记录态与 UI 派生**：
 - Policy Template 的 raw Role 默认值为 `CORE`，不是 `IGNORED`，不能由实现自选缺省或留未定义；「初生默认」与作者从 IGNORED 提角色是不同事件。（《编辑器持久层契约》§3.1；记录页 §383 ADJ-07）
 - 物种 Role 的 `INHERIT` 用无本层 op record 表示；选中任何具体 Role（包括与当前 Policy Template raw Role 相同的值）仍写 `SET`。回到 INHERIT 要显式删除本层 Role op，不能用选同值代替；行级 patch 与物种默认仍按不同记录／键落盘。（《编辑器持久层契约》§3.1、§3.4；完整字段见 RoleControl）
-- 物种 UI 必须可区分无记录 INHERIT 与三值 SET。状态位从 Species Role durable op record 是否存在派生：无记录不显示“Role 已钉住”，有记录（含同 raw 值 SET）显示；不增加第二份 durable UI state。此显示裁定沿用[固定基线 ADJ-03 依据](https://github.com/futouyiba/HitFish-Up/blob/add09fdaa9c197740df6735160af45c1ebb32370/docs/review/ui-component-contract-r2/OPEN-ITEMS.md#L20)，本批未重读该实时 Owner 记录；卡片只承接显示／验收。设计证据与保存重载未核的区别见[问题台账](OPEN-ITEMS.md#species-role-ui)。
+- 物种 UI 必须可区分无记录 INHERIT 与三值 SET。显示从 Species Role durable op record 是否存在派生：无记录显示为「策略模板」，有记录（含同 raw 值 SET）显示为「本层设置」；不增加第二份 durable UI state，也不要求把工程词“Role 已钉住”作为作者文案。设计证据与保存重载未核的区别见[问题台账](OPEN-ITEMS.md#species-role-ui)。
 
 <a id="policy-clear"></a>
 ## 10. Role 与 Policy 的操作词表
