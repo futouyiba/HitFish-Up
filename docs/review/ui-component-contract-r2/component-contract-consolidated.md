@@ -97,7 +97,7 @@
 ## 7. 组件卡 ＋ 焦点编辑栏
 - 组件卡是**摘要 ＋ 快速编辑入口**，不是只读卡：可就地改 **Source / Template**；Role 在当前 Context 对应单一 Role owner 时可就地改，multi-row Compat 只显示 Role 摘要，实际行级 mutation 由 Policy 区生产行表承接。逐字段值仍在右侧 460px 焦点编辑栏完成。（《编辑器界面》§1 导语、§1.1）
 - 卡上展示：组件身份、当前 Source / Template、当前 Role 角标、继承 / 覆盖状态、诊断。（《编辑器界面》§1.1「卡片展示摘要、模板选择器、Role 角标与继承 / 覆盖状态」；冻结卡 `A①-卡1` 的「卡上 `templateName` 与闭值同源同名」「same-source pin 的『已显式固定』记号」）
-- **入口与 Truth 的对应**：**前层 Source Selector（顶部 `templateRow`，每组件一个）与组件卡的来源 / Source 下拉**（**卡上这一个入口同时覆盖 Template 与 Source** —— 换模板就是换 Source 绑定）指向**同一个**组件 Recipe Source binding；**卡的 Role 控件与 Policy 区 Role 行**指向**同一个** Policy Authoring Truth。⇒ **各自「双入口、单 Truth」，不得增设第三个 mutation 面。** ⚠️ **入口叫「来源 / Source」，不叫 Template** —— 合法来源里含 `SPECIES_CONCRETE`（**它不是模板**）；**当所选来源是共享模板时，卡上以该模板名显示它**（展示层才出现 Template 字样）。⚠️ Source 在合法当前 owner 上可就地改；Role 只有在当前 Context 对应**单一 Role owner**时才提供卡上可编辑下拉。multi-row Compat 的卡上只显示 Role 摘要，Policy 区直接使用生产行表逐行编辑，不得把 row-level Role 伪装成 bucket-level 控件。两入口都不另存 durable 副本。⚠️ **两入口「同源」说的是 durable truth 同源**；**未确认的 Source 变更是 candidate（UI 态）** —— 两处可同时显示它，**但它还不是 truth**（见 §8 的 candidate → Rebase Preview → 显式确认 → 原子提交）。⚠️ **焦点编辑栏不提供 Source 下拉** —— 它只显示当前 Source 的上下文／来源说明（在那里再放一个 Source 选择器，就成了「Top Row ＋ Card ＋ Focus Editor」三个 mutation surface，**复杂度没有买到新能力**）。（《编辑器持久层契约》§8 首行「每组件一个**前层** Source 选择器」；《编辑器界面》§1 导语、§1.1、§7；《编辑器心智模型与 IA》§6、§7、§8；记录页 §172 二 KEEP、§331 裁 `R3-FIG-01`、§358 裁「入口不叫 Template」）
+- **入口与 Truth 的对应**：**前层 Source Selector（顶部 `templateRow`，每组件一个）与组件卡的来源 / Source 下拉**（**卡上这一个入口同时覆盖 Template 与 Source** —— 换模板就是换 Source 绑定）指向**同一个**组件 Recipe Source binding；**卡的 Role 控件与 Policy 区 Role 行**指向**同一个** Policy Authoring Truth。⇒ **各自「双入口、单 Truth」，不得增设第三个 mutation 面。** ⚠️ **入口叫「来源 / Source」，不叫 Template** —— 合法来源里含 `SPECIES_CONCRETE`（**它不是模板**）；**当所选来源是共享模板时，卡上以该模板名显示它**（展示层才出现 Template 字样）。⚠️ Source 在合法当前 owner 上可就地改；Role 只有在当前 Context 对应**单一 Role owner**时才提供卡上可编辑下拉。multi-row Compat 的卡上只显示 Role 摘要，Policy 区按 production row 展开逐行编辑，不得把 row-level Role 伪装成 bucket-level 控件。两入口都不另存 durable 副本。⚠️ **两入口「同源」说的是 durable truth 同源**；**未确认的 Source 变更是 candidate（UI 态）** —— 两处可同时显示它，**但它还不是 truth**（见 §8 的 candidate → Rebase Preview → 显式确认 → 原子提交）。⚠️ **焦点编辑栏不提供 Source 下拉** —— 它只显示当前 Source 的上下文／来源说明（在那里再放一个 Source 选择器，就成了「Top Row ＋ Card ＋ Focus Editor」三个 mutation surface，**复杂度没有买到新能力**）。（《编辑器持久层契约》§8 首行「每组件一个**前层** Source 选择器」；《编辑器界面》§1 导语、§1.1、§7；《编辑器心智模型与 IA》§6、§7、§8；记录页 §172 二 KEEP、§331 裁 `R3-FIG-01`、§358 裁「入口不叫 Template」）
 - 卡的 Source / Role 不得另建一套 durable state。（《编辑器界面》§7；《编辑器心智模型与 IA》§8）
 - 字段行**原地展开**，不设二级 drawer。（本轮裁定 g；页面只规定 2 列紧凑控件与折叠栏位）
 
@@ -147,7 +147,7 @@
 - Policy 侧的 `CLEAR` 语义：移除继承自物种层的操作，**回到物种当前 Policy Template 的 raw 值**。（《编辑器持久层契约》§3.4）
 - 该定义同时覆盖四个 Role 与 `fail_env_coeff`；`CLEAR` 不携值。**Affinity 没有 `policySourceOverride`**，不能把组件级来源 pin 的能力搬入 Policy。（《编辑器持久层契约》§3.4、§3.10）
 - 行级缺省（继承物种层 Role 操作）与 `CLEAR`（回到 Policy Template raw Role）是两个不同动作，UI 必须区分：物种层作者词为「沿用策略模板 / 设置为 CORE|SECONDARY|IGNORED」；行级作者词为「沿用物种角色 / 使用策略模板原始角色 / 设置为 CORE|SECONDARY|IGNORED」。`INHERIT / absent / CLEAR / SET` 只作为 durable 令牌，不直接充当作者文案。
-- Role 控件显示 **Effective Role ＋ 当前 Authoring Intent ＋ 必要 provenance**。Species Context 只编辑 Species Role。兼容覆盖若只对应一条 production row，可直接编辑该行 Role；若对应多条 production rows，组件卡只显示摘要，**Policy 区直接展开行级表**（每行明确 row identity，逐行编辑四个 Role 与 `fail_env_coeff`），不得另造隐式广播的 bucket-level Role / coeff 控件。P0 不做跨行批量 Role / `fail_env_coeff`。
+- Role 控件显示 **Effective Role ＋ 当前 Authoring Intent ＋ 必要 provenance**。Species Context 只编辑 Species Role。兼容覆盖若只对应一条 production row，可直接编辑该行 Role；若对应多条 production rows，组件卡只显示摘要，**Policy 区按 production row 展开行级编辑区**（每行明确 row identity，逐行编辑四个 Role 与 `fail_env_coeff`），不得另造隐式广播的 bucket-level Role / coeff 控件。P0 不做跨行批量 Role / `fail_env_coeff`。
 - 不因最终值 / 枚举相等自动推断 inherit、CLEAR 或 SET。（《编辑器持久层契约》§3.5、§3.3）
 
 <a id="profile-lifecycle"></a>
@@ -251,7 +251,7 @@
 - 顶栏 `发布到生产配置…` **只作为入口**，进入 / 聚焦唯一 Publish 区；唯一 writeback executor 留在该区。Autosave 只表达 Editor durable state（`编辑器已保存 / 编辑器已保存 · 有错误 / 编辑器保存中… / 编辑器保存失败`），Publish 不隐式 Save，也不等同 Git commit。
 - Publish 只消费**最新成功持久化 revision**；尚未成值的输入、保存失败编辑、未确认 staged candidate 均不得进入 Publish。
 - Preflight 只看三项：① Editor state 已 durable；② full validation 无 blocking ERROR；③整组 Production generation 可验证且仍匹配 expected baseline。任一失败均 BLOCK。
-- Generation 只作并发安全 token：mismatch / unverifiable 都 BLOCK，不 silent overwrite / auto-merge / 自动采纳 Production。成功 writeback 后重新读取**整组 Production generation**作为下一次 baseline（当前实现为 7 本工作簿同刻度身份）；partial failure 不得显示成功，也不得按 target 拼 baseline，必须先重读整组 generation。
+- Generation 只作并发安全 token：mismatch / unverifiable 都 BLOCK，不 silent overwrite / auto-merge / 自动采纳 Production。成功 writeback 后重新读取**整组 Production generation**作为下一次 baseline；partial failure 不得显示成功，也不得按 target 拼 baseline，必须先重读整组 generation。
 - V1 只展示本次 Publish 的 success / failure / partial failure；不维护 `已发布 / 有未发布修改 / 与上次发布一致` 或 durable Publish History。Editor revision 冲突与 Production generation mismatch 是两类问题，不得都显示成「保存失败」。
 - 本版只有一次性 Bootstrap：`Production → Bootstrap → Editor durable state`；持续反向对账 / 自动采纳 Production 不在本版。验收包含无编辑往返：Production → Bootstrap → Editor → Publish → Production 逐位一致。
 - 生产侧只保存物化后的完整值 / 枚举，不保存 Source / op / patch provenance；Runtime 不做 base ＋ delta 合并。（《编辑器与 Resolve》§11.1）
