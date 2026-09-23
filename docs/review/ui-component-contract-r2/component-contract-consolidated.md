@@ -88,7 +88,10 @@
 - `0` 不自动等于 Gate Fail：离散 Fit ＝ `0` 时，CORE 触发 Gate、SECONDARY 不触发、IGNORED 不消费 —— 同一个 `0` 的后果由 Role 决定。（《编辑器界面》§1.1 四档表 REJECT 行逐字；记录页 §199 ④ GAP-007）
 
 - 顶栏保存状态及其与 Validator ERROR 的区别按[卡7](contract-cards.md#autosave-status)展示；校验诊断不替代持久化结果。
-- 阻断 Publish 时必须提供**可读位置**：进入校验清单，每条至少说明「对象 → 当前层 / 行 → 区域 / 组件 → 具体项」以及错误原因，使作者可沿现有稳定导航自行找到并修复。V1 **不要求**建立跨 Context 的精准跳转、Back stack、`EditorAddress / TargetRouter / RevealPlan` 或“最佳修复位置”系统。（冻结卡 `A①-卡6`）
+
+以下四条为 #109 带来的语义变化，共同出处＝冻结卡 `A①-卡6`。
+
+- 阻断 Publish 时必须提供**可读位置**：进入校验清单，每条至少说明「对象 → 当前层 / 行 → 区域 / 组件 → 具体项」以及错误原因，使作者可沿现有稳定导航自行找到并修复。V1 **不要求**建立跨 Context 的精准跳转、Back stack、`EditorAddress / TargetRouter / RevealPlan` 或“最佳修复位置”系统。
 - Diagnostic producer 不得在生成过程中丢掉渲染位置所需的已有语义信息（如 species / row 或 scope、component、item / field）；这些信息只用于派生 breadcrumb / UI 展示，不新增第二份 durable truth，也不要求新增统一 `Diagnostic.owner` 身份层。
 - 已有的局部 locate / focus 能力可以保留为超集，但不是 V1 Freeze 的必要 Contract；不得为了统一导航而反向删除已有可用能力。
 - 跨字段不变量的诊断指向共同语义区域并在消息中列出相关字段，不强行把错误归罪给任意单字段（例如水温边界顺序错误定位到 Temperature Profile）。
