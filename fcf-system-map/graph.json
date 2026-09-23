@@ -110,46 +110,114 @@
       "kind": "process"
     },
     {
-      "id": "R2.F.CORE",
-      "label": "核心因子",
+      "id": "R2.C1.GATE.B",
+      "label": "门控 B",
       "parent": "R2.C1",
-      "lane": "r2L2b",
-      "kind": "core"
+      "lane": "r2L2d",
+      "kind": "gate",
+      "caption": "可接受水温边界"
+    },
+    {
+      "id": "R2.C1.F2.FIT",
+      "label": "亲和度计算",
+      "parent": "R2.C1",
+      "lane": "r2c1F",
+      "kind": "core",
+      "caption": "仅门控通过后"
+    },
+    {
+      "id": "R2.C1.F4.FIT",
+      "label": "亲和度计算",
+      "parent": "R2.C1",
+      "lane": "r2c1F",
+      "kind": "sec",
+      "caption": "无门控"
+    },
+    {
+      "id": "R2.C1.AGG.CORE",
+      "label": "核心贡献",
+      "parent": "R2.C1",
+      "lane": "r2c1G",
+      "kind": "process",
+      "caption": "只包含门控通过后的核心亲和度"
+    },
+    {
+      "id": "R2.C1.AGG.SEC",
+      "label": "次要贡献",
+      "parent": "R2.C1",
+      "lane": "r2c1G",
+      "kind": "process",
+      "caption": "次要亲和度，无门控直接参与"
+    },
+    {
+      "id": "R2.C1.AGG.RAW",
+      "label": "原始环境系数",
+      "parent": "R2.C1",
+      "lane": "r2c1G",
+      "kind": "data",
+      "caption": "核心贡献 × 次要贡献"
+    },
+    {
+      "id": "R2.C1.FINAL",
+      "label": "最终环境系数",
+      "parent": "R2.C1",
+      "lane": "r2c1G",
+      "kind": "data",
+      "caption": "失败分支与正常分支在这里汇合"
+    },
+    {
+      "id": "R2.C1.BASE",
+      "label": "基础机会强度",
+      "parent": "R2.C1",
+      "lane": "r2c1G",
+      "kind": "data",
+      "caption": "prob_weight_ideal｜来自机会种子"
+    },
+    {
+      "id": "R2.C1.BG.NO",
+      "label": "否｜非背景鱼",
+      "parent": "R2.C1",
+      "lane": "r2c1G",
+      "kind": "process",
+      "caption": "门控失败 → failEnvCoeff；通过 → 原样"
     },
     {
       "id": "R2.C1.F1",
-      "label": "核心因子（方块）",
+      "label": "核心因子 A",
       "parent": "R2.C1",
       "lane": "r2c1F",
-      "kind": "factor"
+      "kind": "fcore",
+      "caption": "例如：水温"
     },
     {
       "id": "R2.C1.F2",
-      "label": "核心因子（三角）",
+      "label": "核心因子 B",
       "parent": "R2.C1",
       "lane": "r2c1F",
-      "kind": "factor"
+      "kind": "fcore",
+      "caption": "例如：结构"
     },
     {
       "id": "R2.C1.F3",
-      "label": "次要因子（六边形）",
+      "label": "次要因子 A",
       "parent": "R2.C1",
       "lane": "r2c1F",
-      "kind": "factor"
+      "kind": "fsec"
     },
     {
       "id": "R2.C1.F4",
-      "label": "次要因子（圆）",
+      "label": "次要因子 B",
       "parent": "R2.C1",
       "lane": "r2c1F",
-      "kind": "factor"
+      "kind": "fsec"
     },
     {
       "id": "R2.C1.F5",
-      "label": "忽略因子（六角形）",
+      "label": "忽略因子",
       "parent": "R2.C1",
       "lane": "r2c1F",
-      "kind": "factor"
+      "kind": "fskip",
+      "caption": "✗ 无门控 · 无亲和计算 · 无聚合线"
     },
     {
       "id": "R2.C1.BG",
@@ -160,23 +228,9 @@
       "kind": "gate"
     },
     {
-      "id": "R2.F.SEC",
-      "label": "次要因子",
-      "parent": "R2.C1",
-      "lane": "r2L2c",
-      "kind": "sec"
-    },
-    {
-      "id": "R2.F.SKIP",
-      "label": "忽略因子",
-      "parent": "R2.C1",
-      "lane": "r2L2c2",
-      "kind": "skip"
-    },
-    {
       "id": "R2.GATE",
-      "label": "门控",
-      "caption": "各影响因素 / 习性组各有自己的门控",
+      "label": "门控 A",
+      "caption": "可接受水温边界",
       "parent": "R2.C1",
       "lane": "r2L2d",
       "kind": "gate"
@@ -187,31 +241,31 @@
       "parent": "R2.C1",
       "lane": "r2c1G",
       "kind": "process",
-      "caption": "门控不通过 → 转背景鱼下限"
+      "caption": "任一核心门控失败 → 跳过环境聚合"
     },
     {
       "id": "R2.C1.A1",
-      "label": "环境权重系数聚合",
+      "label": "环境聚合",
       "parent": "R2.C1",
       "lane": "r2c1G",
       "kind": "process",
-      "caption": "把各路算出的亲和系数汇总"
+      "caption": "核心与次要的亲和度在同一阶段收束"
     },
     {
       "id": "R2.C1.A2",
-      "label": "环境系数下限",
+      "label": "是｜背景鱼",
       "parent": "R2.C1",
       "lane": "r2c1G",
       "kind": "process",
-      "caption": "应用 threshold：低于则抬到 threshold"
+      "caption": "门控失败 → 系数下限；通过 → 取聚合值与下限的较大者"
     },
     {
       "id": "R2.C1.A3",
-      "label": "环境权重聚合",
+      "label": "最终合成",
       "parent": "R2.C1",
       "lane": "r2c1G",
-      "kind": "data",
-      "caption": "= 基础机会强度 × 环境权重系数"
+      "kind": "process",
+      "caption": "基础机会强度只乘一次"
     },
     {
       "id": "R3",
@@ -414,25 +468,25 @@
       "caption": "通道 2–5"
     },
     {
-      "id": "R2.C1.K",
-      "label": "核心因子计算",
-      "caption": "通过门控的一路 → 亲和系数",
+      "id": "R2.C1.F1.FIT",
+      "label": "亲和度计算",
+      "caption": "仅门控通过后",
       "parent": "R2.C1",
       "lane": "r2c1K",
       "kind": "core"
     },
     {
-      "id": "R2.C1.S",
-      "label": "次要因子计算",
-      "caption": "综合习性配置 + 条件组 → 亲和系数",
+      "id": "R2.C1.F3.FIT",
+      "label": "亲和度计算",
+      "caption": "无门控",
       "parent": "R2.C1",
       "lane": "r2c1S",
       "kind": "sec"
     },
     {
       "id": "R2.C1.V",
-      "label": "该通道的值",
-      "caption": "交回烘焙求解器",
+      "label": "返回：空间分布权重",
+      "caption": "未归一化权重，不是概率",
       "parent": "R2.C1",
       "lane": "r2c1V",
       "kind": "end"
@@ -696,26 +750,26 @@
       "route": "right"
     },
     {
-      "from": "R2.C1.K",
-      "to": "R2.C1.A1",
+      "from": "R2.C1.F1.FIT",
+      "to": "R2.C1.AGG.CORE",
       "type": "DATA_FLOW",
-      "exit": "S",
-      "entry": "NW"
+      "route": "left",
+      "lane": 1
     },
     {
-      "from": "R2.C1.S",
-      "to": "R2.C1.A1",
+      "from": "R2.C1.F3.FIT",
+      "to": "R2.C1.AGG.SEC",
       "type": "DATA_FLOW",
       "exit": "S",
-      "entry": "NE"
+      "entry": "N"
     },
     {
       "from": "R2.C1.GFAIL",
-      "to": "R2.C1.A2",
+      "to": "R2.C1.BG",
       "type": "DATA_FLOW",
-      "exit": "SE",
-      "entry": "E",
-      "exitDx": 560
+      "exitDx": 560,
+      "route": "left",
+      "lane": 1
     },
     {
       "from": "R2.F.HAB",
@@ -754,28 +808,28 @@
     },
     {
       "from": "R2.C1.F2",
-      "to": "R2.GATE",
+      "to": "R2.C1.GATE.B",
       "type": "DATA_FLOW",
       "exit": "S",
       "entry": "NE"
     },
     {
       "from": "R2.C1.F3",
-      "to": "R2.C1.S",
+      "to": "R2.C1.F3.FIT",
       "type": "DATA_FLOW",
       "exit": "S",
-      "entry": "NW"
+      "entry": "N"
     },
     {
       "from": "R2.C1.F4",
-      "to": "R2.C1.S",
+      "to": "R2.C1.F4.FIT",
       "type": "DATA_FLOW",
       "exit": "S",
-      "entry": "NE"
+      "entry": "N"
     },
     {
       "from": "R2.GATE",
-      "to": "R2.C1.K",
+      "to": "R2.C1.F1.FIT",
       "type": "CONTROL_OR_SELECTION",
       "label": "通过",
       "exit": "S",
@@ -786,38 +840,103 @@
       "to": "R2.C1.GFAIL",
       "type": "CONTROL_OR_SELECTION",
       "label": "不通过",
-      "exit": "SW",
-      "entry": "N"
+      "route": "left",
+      "lane": 0
     },
     {
-      "from": "R2.C1.A1",
+      "from": "R2.C1.AGG.RAW",
       "to": "R2.C1.BG",
       "type": "DATA_FLOW",
       "exit": "S",
       "entry": "N"
     },
     {
+      "from": "R2.C1.GATE.B",
+      "to": "R2.C1.F2.FIT",
+      "type": "CONTROL_OR_SELECTION",
+      "label": "通过"
+    },
+    {
+      "from": "R2.C1.GATE.B",
+      "to": "R2.C1.GFAIL",
+      "type": "CONTROL_OR_SELECTION",
+      "label": "不通过",
+      "route": "gap"
+    },
+    {
+      "from": "R2.C1.F2.FIT",
+      "to": "R2.C1.AGG.CORE",
+      "type": "DATA_FLOW",
+      "exit": "S",
+      "entry": "N"
+    },
+    {
+      "from": "R2.C1.F4.FIT",
+      "to": "R2.C1.AGG.SEC",
+      "type": "DATA_FLOW",
+      "exit": "S",
+      "entry": "N"
+    },
+    {
+      "from": "R2.C1.AGG.CORE",
+      "to": "R2.C1.AGG.RAW",
+      "type": "DATA_FLOW",
+      "exit": "S",
+      "entry": "N"
+    },
+    {
+      "from": "R2.C1.AGG.SEC",
+      "to": "R2.C1.AGG.RAW",
+      "type": "DATA_FLOW",
+      "exit": "S",
+      "entry": "N"
+    },
+    {
+      "from": "R2.C1.BG.NO",
+      "to": "R2.C1.FINAL",
+      "type": "DATA_FLOW",
+      "exit": "S",
+      "entry": "N"
+    },
+    {
+      "from": "R2.C1.FINAL",
+      "to": "R2.C1.A3",
+      "type": "DATA_FLOW"
+    },
+    {
+      "from": "R2.C1.BASE",
+      "to": "R2.C1.A3",
+      "type": "DATA_FLOW",
+      "exit": "W",
+      "entry": "E"
+    },
+    {
+      "from": "R2.C1.A3",
+      "to": "R2.C1.V",
+      "type": "DATA_FLOW"
+    },
+    {
       "from": "R2.C1.BG",
       "to": "R2.C1.A2",
       "type": "CONTROL_OR_SELECTION",
       "label": "是：背景鱼",
-      "exit": "E",
-      "entry": "W"
+      "exit": "S",
+      "entry": "N"
     },
     {
       "from": "R2.C1.BG",
-      "to": "R2.C1.A3",
+      "to": "R2.C1.BG.NO",
       "type": "CONTROL_OR_SELECTION",
-      "label": "否：跳过下限",
+      "label": "否：非背景鱼",
       "exit": "S",
-      "entry": "NW"
+      "entry": "N"
     },
     {
       "from": "R2.C1.A2",
-      "to": "R2.C1.A3",
+      "to": "R2.C1.FINAL",
       "type": "DATA_FLOW",
       "exit": "S",
-      "entry": "NE"
+      "entry": "N"
     }
   ]
 }
