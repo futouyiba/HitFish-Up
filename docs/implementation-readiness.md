@@ -22,26 +22,26 @@ Read from Notion on **2026-09-18**. The task prompt's stated entry points turned
 
 | Page | ID | Role |
 | --- | --- | --- |
-| FCF Prototype Validation Router (bootstrap router) | `3cca4137d2368152bcd4dadaa0ab9e47` | entry |
-| FCF Documentation Governance L0 | `3cca4137d23681599731d974a9cd4f89` | hard rules |
-| 中鱼0.3.4.0-B｜中鱼因子聚合逻辑化（Fixed Template Bake） | `3dda4137d236812e89b5cf846c528b6c` | branch root |
-| 中鱼0.3.4.0-B｜开发需求 | `3dda4137d23681c68ec3fb1944573af4` | **canonical**: Role/Gate §3.3 §4.5, aggregation §3.4, goldens §7, validation §8 |
-| 0.3.4.0-B｜Bake Runtime Algorithm & Authoring Contract | `3dca4137d236815c88a0e56e15ceaf85` | W4B Current runtime spine (§ lines 1–61) |
-| 0.3.4.0-B｜Bake Authoring Schema & Validator Contract | `3dca4137d23681e28c5bc2f29c63dc16` | W4B Current schema, validator, trace §3.8 |
-| 0.3.4.0-B｜Authoring & Resolve Contract | `3dda4137d23681408e4fe0f35ced39d9` | W4B Current authoring / resolve / preview |
-| 0.3.4.0-B｜Bass NORMAL Fixed Template Vertical Slice | `3dda4137d236818c9b61e6bc7fc348a7` | P0 golden fixture, validator assertions V1–V13 |
-| 0.3.4.0-B｜Bake Authoring / 条件开关 Working | `3dca4137d236816ab0add70228a80d51` | role annotation method, profile names |
-| 0.3.4.0-B｜Executable Delta Spec | `3dca4137d236819e98e2eebf67aaae68` | migration delta package (delta 1–7) |
-| Checkpoint｜0.3.4.0-B Main Agent Control §25.6 / §26 | `3dda4137d2368109aa54ec4f7acbab26` | owner rulings: output name, 9 code deltas |
-| 0.3.4.0-B｜时辰模板数值调研（昼行型） | `3dea4137d23681de95ded1b7e05311c9` | time-period template values (not consumed by Bass) |
+| FCF Prototype Validation Router (bootstrap router) | id 已移除 | entry |
+| FCF Documentation Governance L0 | id 已移除 | hard rules |
+| 中鱼0.3.4.0-B｜中鱼因子聚合逻辑化（Fixed Template Bake） | id 已移除 | branch root |
+| 中鱼0.3.4.0-B｜开发需求 | id 已移除 | **canonical**: Role/Gate §3.3 §4.5, aggregation §3.4, goldens §7, validation §8 |
+| 0.3.4.0-B｜Bake Runtime Algorithm & Authoring Contract | id 已移除 | W4B Current runtime spine (§ lines 1–61) |
+| 0.3.4.0-B｜Bake Authoring Schema & Validator Contract | id 已移除 | W4B Current schema, validator, trace §3.8 |
+| 0.3.4.0-B｜Authoring & Resolve Contract | id 已移除 | W4B Current authoring / resolve / preview |
+| 0.3.4.0-B｜Bass NORMAL Fixed Template Vertical Slice | id 已移除 | P0 golden fixture, validator assertions V1–V13 |
+| 0.3.4.0-B｜Bake Authoring / 条件开关 Working | id 已移除 | role annotation method, profile names |
+| 0.3.4.0-B｜Executable Delta Spec | id 已移除 | migration delta package (delta 1–7) |
+| Checkpoint｜0.3.4.0-B Main Agent Control §25.6 / §26 | id 已移除 | owner rulings: output name, 9 code deltas |
+| 0.3.4.0-B｜时辰模板数值调研（昼行型） | id 已移除 | time-period template values (not consumed by Bass) |
 
 ### Prompt targets that are now Historical (authority drift)
 
 | Prompt said | Actual current title | Status |
 | --- | --- | --- |
-| `3dda4137d23681bc9bcbcf9ded8da0ee` = "0.3.4.0 Fixed Bake 当前入口" | `Historical｜0.3.4.0 Fixed Template Transition｜2026-09-16` | **HISTORICAL**; content superseded by the sibling `0.3.4.0-B` root |
-| `3dda4137d23681f5bc1ac72641c0597a` = "0.3.4.0 固定模板烘焙开发需求" | `Historical｜0.3.4.0 Fixed Template｜开发需求 R0` | **HISTORICAL** |
-| `3dda4137d2368197955be725038ca786` = "参数组件计算机制 R1｜Fixed Template" | `Historical｜0.3.4.0 Fixed Template｜参数组件计算机制 R1` | **HISTORICAL** |
+| id 已移除 = "0.3.4.0 Fixed Bake 当前入口" | `Historical｜0.3.4.0 Fixed Template Transition｜2026-09-16` | **HISTORICAL**; content superseded by the sibling `0.3.4.0-B` root |
+| id 已移除 = "0.3.4.0 固定模板烘焙开发需求" | `Historical｜0.3.4.0 Fixed Template｜开发需求 R0` | **HISTORICAL** |
+| id 已移除 = "参数组件计算机制 R1｜Fixed Template" | `Historical｜0.3.4.0 Fixed Template｜参数组件计算机制 R1` | **HISTORICAL** |
 
 ### Superseded premises carried by the prompt (deliberately NOT implemented)
 
@@ -284,12 +284,12 @@ back whole-page.
 
 | Page | Edit | Verified |
 | --- | --- | --- |
-| Schema & Validator (`3dca4137d23681e28c5bc2f29c63dc16`) | new §1.1 canonical `resolvedComponentProfiles` key table; §3.8 `BakeEvaluationTrace` rewritten to the post-2026-09-17 key set; 2026-09-17 field-name note replaced by the 2026-09-18 ruling + negative-knowledge warning | headings §1–§11 intact, new §1.1 present, no `****` corruption |
-| Bake Authoring / 条件开关 Working (`3dca4137d236816ab0add70228a80d51`) | §6.2 Feeding Layer keys and §6.3 Structure key → snake_case, plus a one-line ruling note; **page renamed** to `…｜AggregationRole 三态 · 门控随 CORE 自动存在` | §6.1–§6.4 and the historical tail intact; content unaffected by the rename |
-| Main Control (`3dda4137d2368109aa54ec4f7acbab26`) | new **§33** ruling section (four adjudications + §33.2 the three-page sweep + §33.3 implementation-side TODO); read-pointer callout updated from "§26 为准" to "§26 起…Fixed Bake 契约窄修见 §33" | §33 / §33.1 / §33.3 all present, `****` count 0, tail intact |
-| 开发需求 (`3dda4137d23681c68ec3fb1944573af4`) | §4.1 inline example block aligned to §4.0: `feeding_surface_affinity` → `foraging_surface_affinity`, `time_period_coefficient` → `time_period_activity_coefficient`; one-line ruling note added | §4.1 block and the note both present, page otherwise unchanged |
+| Schema & Validator (id 已移除) | new §1.1 canonical `resolvedComponentProfiles` key table; §3.8 `BakeEvaluationTrace` rewritten to the post-2026-09-17 key set; 2026-09-17 field-name note replaced by the 2026-09-18 ruling + negative-knowledge warning | headings §1–§11 intact, new §1.1 present, no `****` corruption |
+| Bake Authoring / 条件开关 Working (id 已移除) | §6.2 Feeding Layer keys and §6.3 Structure key → snake_case, plus a one-line ruling note; **page renamed** to `…｜AggregationRole 三态 · 门控随 CORE 自动存在` | §6.1–§6.4 and the historical tail intact; content unaffected by the rename |
+| Main Control (id 已移除) | new **§33** ruling section (four adjudications + §33.2 the three-page sweep + §33.3 implementation-side TODO); read-pointer callout updated from "§26 为准" to "§26 起…Fixed Bake 契约窄修见 §33" | §33 / §33.1 / §33.3 all present, `****` count 0, tail intact |
+| 开发需求 (id 已移除) | §4.1 inline example block aligned to §4.0: `feeding_surface_affinity` → `foraging_surface_affinity`, `time_period_coefficient` → `time_period_activity_coefficient`; one-line ruling note added | §4.1 block and the note both present, page otherwise unchanged |
 
-The 条件开关 rename keeps the page ID (`3dca4137d236816ab0add70228a80d51`), so every
+The 条件开关 rename keeps the page ID (id 已移除), so every
 `<mention-page>` / `<page url>` reference by ID still resolves; only the URL slug changed.
 
 **Remaining, and it is implementation-side only:** apply these four adjudications

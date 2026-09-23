@@ -5,9 +5,9 @@ Spec R0 evaluation semantics (range_fit LINEAR + SMOOTHSTEP), the
 AffinityTierScale anchors, and the 5-period TimePeriod catalog.
 
 Sources (Notion, read 2026-09-15):
-- Bake DSL Core Spec R0: 3d4a4137d236814d9455ce5be91f982f
-- 0.3.4.0 开发需求 (config table, tier scale): 3d4a4137d23681ca95f9d5861ad19729
-- 中鱼机制 0.3.4 main (5.2 / 5.4.8): 3cfa4137d23681cca208eaa97dfe7767
+- Bake DSL Core Spec R0: id 已移除
+- 0.3.4.0 开发需求 (config table, tier scale): id 已移除
+- 中鱼机制 0.3.4 main (5.2 / 5.4.8): id 已移除
 """
 from __future__ import annotations
 
