@@ -23,7 +23,6 @@
 | C3 | 组件卡 ×4（摘要/角标/覆盖计数） | 上下文总览 | ②/③ 分批 | 已规格（v2） |
 | C4 | roleBadge＋Role 三态 | 上下文总览 | ③（Policy） | 已规格（v2） |
 | C5 | 档案级字段块（fail_env_coeff） | 上下文总览 | ③（Policy ADD/SET 化） | 已规格（v2） |
-| C6 | 分群/占比块 | 上下文总览 | ③/④ | 已规格（v2＋缺口已转 Figma） |
 | C7 | Authoring boundary 块 | 上下文总览 | ④ | 已规格（v2） |
 | C8 | Operation Control（四动作） | 上下文总览/焦点编辑 | **①卡2** | [卡2](#operation-control) |
 | C9 | 档位控件（四档＋Custom） | 焦点编辑 | **①卡3 内含** | [卡3](#field-value-editor) |
@@ -224,20 +223,21 @@ Component: Validation·Diagnostic｜校验诊断（ERROR/WARNING）
 Reads:
   - editor-state ＋ current schema ＋ current validator——diagnostics 全量派生重算（重开即重算）
 Actions:
-  - 行定位：跳 owner 的 Context＋编辑栏聚焦该字段（跨 Context 跳转走「回到该 Context」、不销毁旧现场）
+  - 打开校验清单；每条展示可读 breadcrumb 与错误原因。已有局部 locate / focus 若可用可继续保留，但 V1 不要求跨 Context 精准跳转。
   - Publish 前全量校验（消费 durable revision）
 Durable mutation:
-  - 无——diagnostics 不作第二 durable truth；semantic ERROR 随 state 一同 durable 保存（「已保存·有错误」态）
+  - 无——diagnostics 不作第二 durable truth；semantic ERROR 随 state 一同 durable 保存（「编辑器已保存 · 有错误」态）
 Must show:
   - ERROR（＝Publish 阻断项）/ WARNING（如 Soft Fit>1）分级
-  - 顶栏「已保存·有错误」的「有错误」点击＝展开并定位首个 ERROR
-  - BROKEN_SOURCE_REF：owner/component/ref；可加载修复、Publish 阻断、不 fallback
+  - 顶栏「编辑器已保存 · 有错误」的「有错误」点击＝展开 ERROR 清单；不要求自动跨 Context 定位首个 ERROR
+  - BROKEN_SOURCE_REF：对象/component/ref；可加载修复、Publish 阻断、不 fallback
   - **Role 激活（CORE／SECONDARY）后立刻显示「缺 required Profile」校验态**（记录页 §199 ⑥③ 的附条件：不提示地让作者停在非法态，是那一条唯一风险面）
   - Preset→归档源不可 Apply 且指名哪个源已归档
-  - Publish blocker 定位到 owner/component/field/provenance（必要时含 before/after）
+  - Publish blocker 至少显示「对象 → 层/行 → 区域/组件 → 具体项」breadcrumb + message；跨字段不变量可定位到共同 Profile / 区域并在消息中列相关字段
 Must not:
   - 不把 ERROR 显示成「保存失败」；不伪造 0/默认值/静默补齐（不能解析＝Error/N-A，能解析区继续展示）
   - 不把 required 缺失当 autosave 阻断（durable-valid 与 publish-valid 分开）
+  - 不为 V1 新增统一 `Diagnostic.owner` / Context Router / EditorAddress 身份层；不因导航未统一而删除已有局部 locate
 依据: 记录页 §199 ⑥③（激活 Role 后须立刻把「缺 required Profile」做成可见校验态；**判级仍按上游**——界面 §1.4 已载「CORE / SECONDARY 缺必需 Profile 才阻断」，本条补的是**时点与可见性**，不是新的判级）；《编辑器界面》§1.4（三处校验分工：开发需求 §7 总则／条件开关 §10 编辑器静态／配置表 §5 Schema 不变量）＋§1.2（越界两侧；Validator ERROR 不是「保存失败」）；《开发需求》§7（发布阻断总则；发布前阻断≠authoring 持久化阻断）；《配置表与校验》§5；《编辑器持久层契约》§7.1（durable-valid 与 publish-valid 分开、durable 允许携带 ERROR）＋§6.5（诊断＝派生量、每次重算）＋§3.10（BROKEN_SOURCE_REF load-tolerant/publish-strict；Preset 引归档源 invalid-for-apply 且 UI 指名）
 ```
 
@@ -253,18 +253,18 @@ Reads:
 Actions:
   - 保存失败时：重试／显式 reload-reconcile（外部修改＝BLOCK＋报告，不 auto-merge）
   - 「丢弃未保存的改动」：仅清除真正尚未 durable 的本地态，包括输入临时字符串、未确认的 staged Source candidate 及其它明确 ephemeral UI 状态；防抖未提交与保存失败后仍未持久的编辑同在此范围。显示回到上次成功持久化 revision，不回退任何已成功 autosave 的语义编辑；不是 Undo。Source candidate 的确认协议见卡1。
-  - Publish 按钮：显式、批量、独立——消费 durable revision；持久化失败先修（Publish 不隐式执行不可见 Save）
+  - 顶栏 `发布到生产配置…`：只进入 / 聚焦 canonical Publish 区，不直接执行 writeback。唯一 Publish executor 在该区内；消费 durable revision，持久化失败先修（Publish 不隐式执行不可见 Save）。完整 preflight / generation 边界见[汇编 §15 Publish](component-contract-consolidated.md#publish-boundary)。
 Durable mutation:
   - 状态本身不入 durable（UI state）；semantic edit→debounce/coalesce→原子持久
   - **「丢弃未保存的改动」不改 durable** —— 它只丢弃未落盘的那一笔；盘上仍是上次成功的 revision（故它不产生新记录、也不删任何已持久记录）
 Must show:
-  - 四态：已保存 / 已保存·有错误 / 保存中… / 保存失败（I/O·revision 冲突）
+  - 四态：`编辑器已保存` / `编辑器已保存 · 有错误` / `编辑器保存中…` / `编辑器保存失败`（I/O·revision 冲突）；不得缩成会与 Production Publish 混淆的裸 `已保存`。
   - 「有错误」链接到卡6 校验节
 Must not:
   - 不常驻 Save 按钮；不把 Validator ERROR 当保存失败
   - 作者可见动作名为「丢弃未保存的改动」，不用工程词 Reset（命名裁定沿卡前固定历史）。
   - **「丢弃未保存的改动」不得读作「回到出厂 / 空态」**；它也不是 Publish 的一部分（不因它触发任何物化 / 发布）
-  - 不 silent last-write-wins；autosave ≠ Publish ≠ Git commit
+  - 不 silent last-write-wins；autosave ≠ Publish ≠ Git commit；Production generation mismatch / unverifiable 属 Publish preflight，不显示成 Autosave 保存失败。
 依据: 《编辑器界面》v20 §1.1／§1.2（保存状态、ERROR≠保存失败、外部改动阻断并显式重载／reconcile）、§9.1（丢弃真正未 durable 的本地态，明确含未确认 staged candidate；不是 Undo）；《编辑器持久层契约》v16 §6.3（语义编辑、乐观 revision 检测、禁止 silent last-write-wins；Autosave／Git commit／Publish 相互独立，Publish 不隐式 Save）。历史命名及修正依据见卡前固定版本链接，不以旧窗口概括当前射程。
 ```
 
@@ -437,46 +437,49 @@ Must not:
 
 ---
 
-### 补记｜`RoleControl`（Role 三态 × 两层）—— 主代理 2026-09-20 裁（记录页 §249／§250／§252）
+### `RoleControl`｜Role 三态 × 两层
 
 <a id="role-control"></a>
-**机制入口**：[汇编 §9](component-contract-consolidated.md#role-record-intent)定义 raw Role 与记录态／UI 派生，[§11](component-contract-consolidated.md#profile-lifecycle)定义 Profile 缺席、promotion、Setup及空底板投影；Policy CLEAR／词表仍见[§10](component-contract-consolidated.md#policy-clear)。本卡保留读取、交互、落盘字段和验收。旧 Setup 重复说明及 B1a／B1b 收口原文见[固定基线 RoleControl](https://github.com/futouyiba/HitFish-Up/blob/add09fdaa9c197740df6735160af45c1ebb32370/docs/review/ui-component-contract-r2/contract-cards.md#L386)，不复述已废的自动补档案规则。
+**机制入口**：[汇编 §9](component-contract-consolidated.md#role-record-intent)定义 raw Role 与记录态／UI 派生，[§11](component-contract-consolidated.md#profile-lifecycle)定义 Profile 缺席、promotion、Setup 与空底板投影；Policy CLEAR／词表见[§10](component-contract-consolidated.md#policy-clear)。本卡只保留读取、交互、落盘字段和验收。
 
 ```
 Component: RoleControl｜Role 三态（CORE / SECONDARY / IGNORED）
 Reads:
-  - Policy Authoring Truth（四个角色＋fail_env_coeff）：组件卡 Role 下拉与 Policy 区 Role 行读取同一份。
+  - Policy Authoring Truth（四个角色＋fail_env_coeff）：组件卡 Role 控件与 Policy 区读取同一份。Species 或单一 production-row owner 可直接编辑；multi-row Compat 的组件卡只显示摘要，Policy 区按 production row 展开逐行 mutation。
   - 当前物种默认 Role op／Policy Template raw Role、或当前生产行的 Role patch；显示从记录派生，按所引汇编 §9 判读。
   - 当前层／行、Profile presence、合法 Source 可用性及当前诊断；默认值／缺席矩阵按所引 §9／§11，不从最终值反推记录。
 Actions:
-  - 物种层选具体角色：写本层 SET（各行继承该默认）；回到 INHERIT：显式删除本层 Role op，不以选中同 raw 值代替。
-  - 行级设置：只改当前行的覆盖；CLEAR 与缺省支按所引 §10 分别执行，UI 区分两个动作。
+  - **物种层**作者动作：`沿用策略模板`（删除本层 Role op）或 `设置为 CORE / SECONDARY / IGNORED`（写本层 SET）。即使 SET 与模板 raw Role 同值，也保留显式 pin，不按结果值折叠。
+  - **生产行级**作者动作：`沿用物种角色`（absent）／`使用策略模板原始角色`（CLEAR）／`设置为 CORE / SECONDARY / IGNORED`（SET）。只改当前 `row_key`，不得把一个兼容覆盖里的多条行默认广播。
+  - **`fail_env_coeff`**：物种层＝`沿用策略模板值 / 调整 / 设置为`；生产行级＝`沿用物种配置 / 使用策略模板原始值 / 调整 / 设置为`（absent / CLEAR / ADD / SET）。与 Role 同表呈现时仍保持独立 op 词表，不把 Role 三态套给 coeff。
   - 显式 Setup：Structure／Feeding Layer／Temperature 空态提供进入合法 Shared Template Source 选择的可达路径；Temperature 若合法 Species Concrete 存在，另可走生态数据导入／建立来源，导入目标物种与缺值护栏仍按卡8。
     · TimePeriod 同样保留 Source／Setup 路径；三种预设只是 Setup 后／中的一次性填表便利，不能充当独有 Profile 创建语义。具体可用来源按汇编 §8 的层级 allowlist。
     · 不新增空 Profile 对象；UI exact shape 仍归 Species Role/UI 工作流。Setup 的完整机制与初值来源按汇编 §11。
 Durable mutation:
-  - **Role 的 durable 落点在 Policy**，**不另建卡级 state**
-  - **形状（裁决 `AR-FCF-CT-01/02/03/04`，2026-09-21；记录页 §342）**：
-    · **物种侧**：§3.1 那条整体记录**仍叫 `Species Base Record`／底板记录、不改名** —— **它不只装 Policy**（还装 `temperature`／`structure`／`feeding_layer`／`time_period`／`roles`／`name_cache`）⇒ `Species Policy Recipe` **不能当整条记录的名字**。记录**内部**分两层：`component recipes`（＝ `Species Recipe`：四个 Component 的 Source ＋ field operations）与 **`Species Policy Recipe`**（＝ **Policy 专属子结构**：`policy source binding` ＋ 四个 Role op ＋ `fail_env_coeff` op）。
-    · **row 侧两条独立 durable 记录**（**不用 `field`／`track` 判别列**）：**`AffinityRolePatch`** —— key ＝ **`(row_key, component)`**、`op ＝ CLEAR | SET`、`role`（**SET 时必携**）；**`AffinityFailEnvCoeffPatch`** —— key ＝ **`row_key`**、`op ＝ CLEAR | ADD | SET`、`value`（**ADD／SET 时必携**）。
-    · **与 `AffinityAuthoringPatch`（§3.3：`sourceOverride` ＋ numeric patches）并列 —— 不改名、不合并**（两者**粒度不同**：numeric ＝ bucket-level，Role ＝ row-level）。可以说「share the same Affinity owner」，**不能说「是同一条持久化记录」**。
-    ⇒ **没有 `layer`、没有 `"*"` 哨兵、没有 nullable scope、没有 `track` 判别列**；**Role 值不得参与唯一键**。
-  - ⚠️ **行级 patch 必须携 `op`**：不携 op 则 **`CLEAR` 与「`SET` 恰好等于模板 raw 值」不可区分** ⇒ **op 不得从值反推**。
-  - ⚠️ **`scope_key` 正式改名 `row_key`（不是简称）**：该记录**永远只有 row scope** —— 留一个泛化的 `scope_key` 没买到能力、**反而暗示还有别的 scope**。`species_key` **降为属性**（组织／查询／reconcile／诊断），**不参与 identity**；**唯一键 ＝ `(row_key, component)`**。
-  - 粒度：**两条 patch 轨道（`AffinityRolePatch` / `AffinityFailEnvCoeffPatch`）恒为 row-level**；**物种层的 Role op（`INHERIT` / `SET`）不是 override，而是决定该物种的 `Effective Default Role`**，住在 §3.1 的 `Species Base Record`／`Species Policy Recipe` —— **与本节两条 patch 轨道并存；不得为「统一粒度」把它删掉**。**物种层默认与行级覆盖分属不同记录，不得塞回同一张** —— 物种层默认的**唯一键 ＝ `(species_key, component)`**，**每个「物种 × 组件」恰好一个 Effective Default Role**（同 id 组合的不同行可以有不同 Role）。
+  - **Role / `fail_env_coeff` 的 durable truth 在 Policy 域**，组件卡不另建 durable state。
+  - **物种侧**：`Species Base Record` 是整体聚合记录；其中 `component recipes`（四个 Component 的 Source ＋ field operations）与 `Species Policy Recipe`（policy source binding ＋ 四个 Role op ＋ `fail_env_coeff` op）是不同子结构。
+  - **生产行侧**：
+    · `AffinityRolePatch`：key = `(row_key, component)`；`op = CLEAR | SET`；SET 时必须携 `role`。
+    · `AffinityFailEnvCoeffPatch`：key = `row_key`；`op = CLEAR | ADD | SET`；ADD / SET 时必须携 `value`。
+    · 两者都是 row-level，与 bucket-level numeric patch / Component Source authoring 保持独立物理记录；共同出现在 Compat UI context 不改变 owner、key 或粒度。
+  - 行级 patch 必须显式携 `op`；不得从最终值反推 CLEAR / SET / ADD。Role 值不参与唯一键。
+  - 行级 Policy patch 只使用 `row_key` 作为 scope identity；`species_key` 仅用于组织、查询、reconcile 与诊断，不参与行级 patch identity。
+  - 物种 Role op（`INHERIT / SET`）定义 `Effective Default Role`，位于 `Species Policy Recipe`；每个 `(species_key, component)` 恰好一个物种默认。生产行 patch 在此默认之上逐行覆盖，同一物种同一组件的不同行可以得到不同 Effective Role。
 Acceptance:
-  - 物种 raw Role=CORE：INHERIT（无记录）与 SET CORE 的 Effective Role 可相同，但记录态及“Role 已钉住”显示必须可区分；修改一处，另一入口直接读同一 Truth，不经同步代码。
+  - 物种 raw Role=CORE：INHERIT（无记录）与 SET CORE 的 Effective Role 可相同，但记录态及作者可见 provenance 必须可区分（例如「策略模板」vs「本层设置」）；修改一处，另一入口直接读同一 Truth，不经同步代码。
   - IGNORED＋缺 Profile 后选 CORE：只保存 Role，不自动建 Profile／选默认 Source；立即可见 required-Profile ERROR，Publish 阻断，作者可进入 Setup。四组件分别走通，Temperature 不套全1.00数值档案，TimePeriod 不靠预设替代 Source 建立。
   - 同一组合的两条生产行可有不同 Role，更新目标行不得影响另一行；粒度与键按上面的独立记录形状验收。
   - 空底板且 IGNORED 的组件按汇编 §11 不投影，主行／Role照写、refs空；改为 CORE／SECONDARY 且仍缺必需 Profile 必须阻断，不能一概按空态放行。
 Must show:
-  - 物种记录态标记按所引汇编 §9，从 Role op record 派生，不另存状态位。
-  - **必须显式说出「你在改哪一层 / 哪一行」**：物种层 ⇒「默认（各行继承）」；行级 ⇒ 当前那一行（如 `LAKE_A × LARGEMOUTH_BASS/Q3`）
-  - **不许**默认改整个 scope 却在 UI 上说成改一行
-  - **批量改多行 ⇒ 必须是显式的多选/批量动作，不是缺省**
+  - Role 展开态只表达 **Effective Role ＋ 当前 Authoring Intent ＋ 必要 provenance**；不把数值字段的 `仅使用来源 / 仅使用当前来源 / 调整` 词表套到 Role。
+  - 物种记录态标记按所引汇编 §9，从 Role op record 派生，不另存状态位。Species Context 只编辑 Species Role，Policy Template raw Role 只读解释。
+  - **必须显式说出「你在改哪一层 / 哪一行」**：物种层 ⇒「默认（各行继承）」；生产行级 ⇒ 行级编辑区中的明确 row identity（如 `LAKE_A × LARGEMOUTH_BASS/Q3`）。每行同时显示其 Species Effective Default / Policy Template provenance 所需信息，不要求为此新增独立“精确生产行 Context”。
+  - 若当前兼容覆盖聚合多条生产行：组件卡显示角色摘要（例如 `CORE · 4 行` 或 `多个角色 · 4 行`）；Policy 区按 production row 展开，逐行编辑四个 Role 与 `fail_env_coeff`，**不得提供单一 bucket-level Role / coeff 控件**。
+  - **不许**默认改整个 scope 却在 UI 上说成改一行。
+  - P0 不做跨行批量 Role / `fail_env_coeff`；以后若做，必须是显式多选 / 批量动作，不得作为兼容覆盖的缺省行为。
 Must not:
   - **不许两份 state** —— 不许「持久化一份 + UI 一份」／不许两处各存一份再同步／不许 UI 侧缓存。**判据：改一处之后，另一处不经过任何「同步代码」就变了。**
   - 不给组件卡另建 durable Role state
   - **永不允许 `ADD`**（契约 §3.4）
-依据: 契约 §3.4（Role 词表：物种层 `INHERIT / SET`、桶层 `absent / CLEAR / SET`、**永不 `ADD`**；粒度不变量）＋§3.10（Role 单独按生产行覆盖）＋§7／§9（双入口单 Truth；Policy payload ＝ 四角色 ＋ `fail_env_coeff`）＋**记录页 §342（裁决 `AR-FCF-CT-01`＝两条 sibling track／`-02`＝四个名字按层级拆开、整条记录不改名／`-03`＝两条并列 durable record／`-04`＝`species_key` 降属性 ＋ `scope_key` 改名 `row_key`、唯一键 `(row_key, component)`）** ＋记录页 §249／§250（Owner 澄清：**数据只有一份**，持久层与内存态都在 Policy；Policy 视觉须与习性组件明显不同）＋§252（裁 B）
+依据: 《编辑器持久层契约》§3.4／§3.10；[汇编 §7](component-contract-consolidated.md#component-card)／[§9](component-contract-consolidated.md#role-record-intent)／[§10](component-contract-consolidated.md#policy-clear)。
 ```

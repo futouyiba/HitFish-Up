@@ -5,7 +5,8 @@
 ## 1. 产品拓扑与三栏
 - 三栏＝对象导航 ｜ 上下文总览 ｜ 焦点编辑。几何：250 ＋ 890 ＋ 460 ＋ 边距 ＝ 1680。（《编辑器界面》§9.1；《编辑器心智模型与 IA》§3）
 - 左栏三类入口：FISH（Species → 习性 / 品质）／TEMPLATES（五类）／SPECIES PRESETS。物种预置＝一次性写五个来源绑定（四组件 ＋ Policy），**不是父节点**。（《编辑器心智模型与 IA》§3、§4）
-- **Quality Stable Data 与 Quality→习性档案归属分开**：`FISH QUALITY STABLE` 页面本期仍置灰，不开放品质自身字段；但习性档案 Authoring Surface 可编辑**既有** `FishQualityRef → FishEnvAffinityRef` 归属关系。这里编辑的是“哪个既有品质使用哪个习性档案”，不是创建/编辑 Quality，也不产生新的 Quality / Engagement Mode / tier / routing identity。（[#103 Owner adjudication](https://github.com/futouyiba/HitFish-Up/issues/103#issuecomment-5795214587)）
+- **Quality Stable Data 与 Production 习性引用分开**：`FISH QUALITY STABLE` 页面本期仍置灰，不开放品质自身字段。StockRelease / Production 中既有的 Quality＋`FishEnvAffinityRef` 引用由 Production / 数据迁移维护；习性档案 Authoring Surface 只读展示**当前 Editor 会话载入快照中，哪些既有 Production 引用指向该 Affinity**。UI 可按 Quality 聚合成人类可读摘要，但不得把聚合反推成新的全局 `Quality → Affinity` durable identity；同一 Quality 若在不同 Production 行引用不同 Affinity，可以同时出现在多个 Affinity 摘要中，这本身不是冲突。该摘要也不是实时 Routing 数据源。Production 后续外部变化由 drift / generation 诊断处理。Editor 本期不新增、删除或重分配这些引用，也不引入 Quality / Engagement Mode / tier / routing identity。
+- **本版习性层级＝物种底板 ＋ 兼容覆盖**：Species Base 是主要 Authoring Truth；`young / mature` 是当前版本的兼容 authoring scope，不是真正的 Engagement Mode。numeric patch 按 bucket；Component Source 仍沿既有 Affinity/sourceOverride 身份规则；Role 与 `fail_env_coeff` 按 production-row 粒度处理。UI 同处一个兼容覆盖 Context 不改变这些物理 owner。产品 UI 显示「物种底板」与「兼容覆盖 · 幼年 / 成年及以上」。只有当该 Compat 下**没有任何本地 authoring record**（包括 numeric patch、`sourceOverride`、所含 production rows 的 Role / `fail_env_coeff` patch）时才显示「沿用底板」；存在任一记录则显示「有本层调整」，不按 Effective 值是否相同反推。不得用「未存」暗示档案缺失，也不得把生产行名（如 `NORMAL`）冒充产品 Mode identity。
 - 中栏 Context 与右栏 Focus **不是同一个导航状态**：允许短暂 detached，但必须显式提示（右栏标题明确对象身份 ＋ 低成本「切回当前上下文」），不得让作者误以为右栏仍在编辑中栏对象。detached 只是 UI 导航状态，不产生新的 durable authoring entity。（《编辑器心智模型与 IA》§3 逐字「切换上下文不销毁编辑现场」）
 - 中栏与右栏不得形成两套重复编辑器。（《编辑器界面》§1 导语：逐字段值编辑在焦点编辑栏完成）
 - 控件名用现行页已经落下的 `FieldValueControl`（承载 Field ＋ Effective Value ＋ optional Tier ＋ Local Operation ＋ Diagnostic）。（裁定 f；《编辑器界面》§1。草稿另有叫法，见 §19）
@@ -87,13 +88,16 @@
 - `0` 不自动等于 Gate Fail：离散 Fit ＝ `0` 时，CORE 触发 Gate、SECONDARY 不触发、IGNORED 不消费 —— 同一个 `0` 的后果由 Role 决定。（《编辑器界面》§1.1 四档表 REJECT 行逐字；记录页 §199 ④ GAP-007）
 
 - 顶栏保存状态及其与 Validator ERROR 的区别按[卡7](contract-cards.md#autosave-status)展示；校验诊断不替代持久化结果。
-- 阻断 Publish 时提供可发现的出口：进入校验清单、逐条定位到组件 / 字段，执行仍被阻断。（《编辑器界面》§1.1 逐字「发布前全量校验，错误精确定位，不静默修复」；冻结卡 `A①-卡6`）
+- 阻断 Publish 时必须提供**可读位置**：进入校验清单，每条至少说明「对象 → 当前层 / 行 → 区域 / 组件 → 具体项」以及错误原因，使作者可沿现有稳定导航自行找到并修复。V1 **不要求**建立跨 Context 的精准跳转、Back stack、`EditorAddress / TargetRouter / RevealPlan` 或“最佳修复位置”系统。
+- Diagnostic producer 不得在生成过程中丢掉渲染位置所需的已有语义信息（如 species / row 或 scope、component、item / field）；这些信息只用于派生 breadcrumb / UI 展示，不新增第二份 durable truth，也不要求新增统一 `Diagnostic.owner` 身份层。
+- 已有的局部 locate / focus 能力可以保留为超集，但不是 V1 Freeze 的必要 Contract；不得为了统一导航而反向删除已有可用能力。
+- 跨字段不变量的诊断指向共同语义区域并在消息中列出相关字段，不强行把错误归罪给任意单字段（例如水温边界顺序错误定位到 Temperature Profile）。
 - 诊断是派生量，每次重算，不持久化为第二真相。（《编辑器持久层契约》§6.5）
 
 ## 7. 组件卡 ＋ 焦点编辑栏
-- 组件卡是**摘要 ＋ 快速编辑入口**，不是只读卡：可就地改 **Source / Template** 与 **Role 三态**；逐字段值仍在右侧 460px 焦点编辑栏完成。（《编辑器界面》§1 导语、§1.1）
+- 组件卡是**摘要 ＋ 快速编辑入口**，不是只读卡：可就地改 **Source / Template**；Role 在当前 Context 对应单一 Role owner 时可就地改，multi-row Compat 只显示 Role 摘要，实际行级 mutation 由 Policy 区的 production-row 行级编辑区承接。逐字段值仍在右侧 460px 焦点编辑栏完成。（《编辑器界面》§1 导语、§1.1）
 - 卡上展示：组件身份、当前 Source / Template、当前 Role 角标、继承 / 覆盖状态、诊断。（《编辑器界面》§1.1「卡片展示摘要、模板选择器、Role 角标与继承 / 覆盖状态」；冻结卡 `A①-卡1` 的「卡上 `templateName` 与闭值同源同名」「same-source pin 的『已显式固定』记号」）
-- **入口与 Truth 的对应**：**前层 Source Selector（顶部 `templateRow`，每组件一个）与组件卡的来源 / Source 下拉**（**卡上这一个入口同时覆盖 Template 与 Source** —— 换模板就是换 Source 绑定）指向**同一个**组件 Recipe Source binding；**卡的 Role 下拉与 Policy 区 Role 行**指向**同一个** Policy Authoring Truth。⇒ **各自「双入口、单 Truth」，不得改成单入口，也不得增设第三个 mutation 面。** ⚠️ **入口叫「来源 / Source」，不叫 Template** —— 合法来源里含 `SPECIES_CONCRETE`（**它不是模板**）；**当所选来源是共享模板时，卡上以该模板名显示它**（展示层才出现 Template 字样）。⚠️ **卡上这两样都是「就地可改」**（Template / Source 与 Role 三态）—— **卡不是只读卡**；卡上改 Source 写的是 **Component Recipe Source binding**、改 Role 写的是 **Policy Authoring Truth**，**两者都不是卡自己存一份副本**。⚠️ **两入口「同源」说的是 durable truth 同源**；**未确认的 Source 变更是 candidate（UI 态）** —— 两处可同时显示它，**但它还不是 truth**（见 §8 的 candidate → Rebase Preview → 显式确认 → 原子提交）。⚠️ **焦点编辑栏不提供 Source 下拉** —— 它只显示当前 Source 的上下文／来源说明（在那里再放一个 Source 选择器，就成了「Top Row ＋ Card ＋ Focus Editor」三个 mutation surface，**复杂度没有买到新能力**）。（《编辑器持久层契约》§8 首行「每组件一个**前层** Source 选择器」；《编辑器界面》§1 导语、§1.1、§7；《编辑器心智模型与 IA》§6、§7、§8；记录页 §172 二 KEEP、§331 裁 `R3-FIG-01`、§358 裁「入口不叫 Template」）
+- **入口与 Truth 的对应**：**前层 Source Selector（顶部 `templateRow`，每组件一个）与组件卡的来源 / Source 下拉**（**卡上这一个入口同时覆盖 Template 与 Source** —— 换模板就是换 Source 绑定）指向**同一个**组件 Recipe Source binding；**卡的 Role 控件与 Policy 区 Role 行**指向**同一个** Policy Authoring Truth。⇒ **各自「双入口、单 Truth」，不得增设第三个 mutation 面。** ⚠️ **入口叫「来源 / Source」，不叫 Template** —— 合法来源里含 `SPECIES_CONCRETE`（**它不是模板**）；**当所选来源是共享模板时，卡上以该模板名显示它**（展示层才出现 Template 字样）。⚠️ Source 在合法当前 owner 上可就地改；Role 只有在当前 Context 对应**单一 Role owner**时才提供卡上可编辑下拉。multi-row Compat 的卡上只显示 Role 摘要，Policy 区按 production row 展开逐行编辑，不得把 row-level Role 伪装成 bucket-level 控件。两入口都不另存 durable 副本。⚠️ **两入口「同源」说的是 durable truth 同源**；**未确认的 Source 变更是 candidate（UI 态）** —— 两处可同时显示它，**但它还不是 truth**（见 §8 的 candidate → Rebase Preview → 显式确认 → 原子提交）。⚠️ **焦点编辑栏不提供 Source 下拉** —— 它只显示当前 Source 的上下文／来源说明（在那里再放一个 Source 选择器，就成了「Top Row ＋ Card ＋ Focus Editor」三个 mutation surface，**复杂度没有买到新能力**）。（《编辑器持久层契约》§8 首行「每组件一个**前层** Source 选择器」；《编辑器界面》§1 导语、§1.1、§7；《编辑器心智模型与 IA》§6、§7、§8；记录页 §172 二 KEEP、§331 裁 `R3-FIG-01`、§358 裁「入口不叫 Template」）
 - 卡的 Source / Role 不得另建一套 durable state。（《编辑器界面》§7；《编辑器心智模型与 IA》§8）
 - 字段行**原地展开**，不设二级 drawer。（本轮裁定 g；页面只规定 2 列紧凑控件与折叠栏位）
 
@@ -116,32 +120,34 @@
 <a id="policy-profile"></a>
 ## 9. Profile × Spatial Opportunity Policy
 
-**本节保留 Policy 归属与 Role 记录态的完整机制投影**；Profile 缺席、promotion 与 Setup 的完整投影在[§11](#profile-lifecycle)，Policy 操作词表／CLEAR 来源仍在[§10](#policy-clear)，落盘形状与键见[RoleControl](contract-cards.md#role-control)。Owner 裁定决定产品语义；本节是 Git Markdown 的仓内规范承接位置。本批回读《编辑器持久层契约》v16（`Last Updated 2026-09-21 14:34 +08:00`）§3.1／§3.4／§3.7，以及《编辑器界面》v20（`Last Updated 2026-09-21 17:19 +08:00`）§1.2／§1.4，未重读实时裁定记录。
+**本节定义 Policy 归属与 Role 记录态**；Profile 缺席、promotion 与 Setup 见[§11](#profile-lifecycle)，Policy 操作词表／CLEAR 见[§10](#policy-clear)，落盘形状与键见[RoleControl](contract-cards.md#role-control)。
 
 - Profile 回答「这条鱼对这个环境轴是什么习性」；Role 回答「这份习性在聚合里如何被消费」。（《编辑器与 Resolve》§2.2；《编辑器心智模型与 IA》§7）
 - Role 与 Profile 的变更边界按[§11](#profile-lifecycle)，不能由改变消费角色推导创建／删除或改写 Profile。
 - 空间机会聚合策略有独立共享 Policy Template，payload ＝ 四个角色 ＋ `fail_env_coeff`；它是第五类 `TemplateKind`，**不是第五个 Component** —— 不扩 `ComponentType`、Runtime 仍四条件槽、不新建生产 Policy 子表。（《编辑器持久层契约》§3.6；记录页 §172 二 A）
 - Policy Source 只绑物种层；**桶层没有 `policySourceOverride`**，不得虚构这类直接引用。（《编辑器持久层契约》§3.10；记录页 §172 二 B）
-- 粒度必须分离：数值 override 按 **bucket**（`young / mature`，TimePeriod 不按规格 / row）；Role override 按 **生产行**。同一 id 组合的不同行可有不同 Role，Validator 不得因 Role 不同报错。（《编辑器持久层契约》§3.4、§3.7）
-- `fail_env_coeff` 属档案级、不挂在某个组件卡内部；`[0, 0.10]`，默认 `0.01`，越界 ERROR ＋ 阻断 Publish、不 silent clamp。（《编辑器界面》§1.1；《编辑器持久层契约》§3.4）
+- 粒度必须分离：数值 override 按 **bucket**（`young / mature`，TimePeriod 不按规格 / row）；Role override 与 `fail_env_coeff` patch 按 **生产行**。同一 bucket 内不同生产行可有不同 Role / `fail_env_coeff`，Validator 不得因这些行级值不同报错。（《编辑器持久层契约》§3.4、§3.7）
+- `fail_env_coeff` 不挂在某个组件卡内部；Species Context 编辑物种默认值，兼容覆盖 Context 若只有一条 production row 可直接编辑该行，若聚合多条 production rows 则在 **Policy 区的 production-row 行级编辑区**中逐行显示 / 编辑。`[0, 0.10]`，默认 `0.01`，越界 ERROR ＋ 阻断 Publish、不 silent clamp。（《编辑器界面》§1.1；《编辑器持久层契约》§3.4）
 - `fail_env_coeff` 的 `ADD` 是绝对数值增量，不是百分比 / 乘数。（《编辑器持久层契约》§3.4 逐字「ADD 为绝对数值增量」）
 - Editor 没有钓场上下文：不提供 Pond selector，不编辑 `baseOpportunityIntensity / isBackgroundFish / envCoeffMin`；`fail_env_coeff` 是本编辑器可编辑的习性档案字段，不是 `FishRelease` 的 `envCoeffMin`。（《编辑器界面》§6）
-- 诊断归属：字段 → 字段控件；Profile → 组件卡；Policy → 聚合策略区；全局 / Publish → 顶栏 ＋ 校验清单。（冻结卡 `A①-卡6`；《编辑器界面》§1.4）
+- 诊断展示位置：字段问题 → 字段控件；Profile 问题 → 组件卡；Policy 问题 → 聚合策略区；全局 / Publish 问题 → 顶栏 ＋ 校验清单。这里只规定 UI placement，不新增统一 `Diagnostic.owner` 身份层。（冻结卡 `A①-卡6`；《编辑器界面》§1.4）
 
 <a id="role-record-intent"></a>
 **Role 记录态与 UI 派生**：
 - Policy Template 的 raw Role 默认值为 `CORE`，不是 `IGNORED`，不能由实现自选缺省或留未定义；「初生默认」与作者从 IGNORED 提角色是不同事件。（《编辑器持久层契约》§3.1；记录页 §383 ADJ-07）
 - 物种 Role 的 `INHERIT` 用无本层 op record 表示；选中任何具体 Role（包括与当前 Policy Template raw Role 相同的值）仍写 `SET`。回到 INHERIT 要显式删除本层 Role op，不能用选同值代替；行级 patch 与物种默认仍按不同记录／键落盘。（《编辑器持久层契约》§3.1、§3.4；完整字段见 RoleControl）
-- 物种 UI 必须可区分无记录 INHERIT 与三值 SET。状态位从 Species Role durable op record 是否存在派生：无记录不显示“Role 已钉住”，有记录（含同 raw 值 SET）显示；不增加第二份 durable UI state。此显示裁定沿用[固定基线 ADJ-03 依据](https://github.com/futouyiba/HitFish-Up/blob/add09fdaa9c197740df6735160af45c1ebb32370/docs/review/ui-component-contract-r2/OPEN-ITEMS.md#L20)，本批未重读该实时 Owner 记录；卡片只承接显示／验收。设计证据与保存重载未核的区别见[问题台账](OPEN-ITEMS.md#species-role-ui)。
+- 物种 UI 必须可区分无记录 INHERIT 与三值 SET。显示从 Species Role durable op record 是否存在派生：无记录显示为「策略模板」，有记录（含同 raw 值 SET）显示为「本层设置」；不增加第二份 durable UI state。设计证据与保存重载未核的区别见[问题台账](OPEN-ITEMS.md#species-role-ui)。
 
 <a id="policy-clear"></a>
 ## 10. Role 与 Policy 的操作词表
-**本节是 Policy 域 CLEAR 的完整投影**，权威为《编辑器持久层契约》v16 §3.4（同 §3 的核对版本）；裁决依据为记录页 §265 `F-04`。仅负责此域的来源与词表，记录存在性、同值意图区分沿用 [§3](#component-clear)，无值动作的落盘例外见 [§4](#field-value-control)。
-- Role：物种层 `INHERIT / SET`；桶层 `absent / CLEAR / SET`；**永不允许 `ADD`**。（《编辑器持久层契约》§3.4）
-- `fail_env_coeff`：物种层 `INHERIT / ADD / SET`；桶层 `absent / CLEAR / ADD / SET`。（《编辑器持久层契约》§3.4）
+**本节定义 Policy 域的操作词表与 CLEAR 语义**。记录存在性、同值意图区分沿用 [§3](#component-clear)，无值动作的落盘例外见 [§4](#field-value-control)。
+- Role：物种层 `INHERIT / SET`；**生产行级** `absent / CLEAR / SET`；**永不允许 `ADD`**。（《编辑器持久层契约》§3.4）
+- `fail_env_coeff`：物种层 `INHERIT / ADD / SET`；**生产行级** `absent / CLEAR / ADD / SET`。（《编辑器持久层契约》§3.4）
+- `fail_env_coeff` 的作者语言按 Policy 数值字段表达：物种层＝`沿用策略模板值 / 调整 / 设置为`；生产行级＝`沿用物种配置 / 使用策略模板原始值 / 调整 / 设置为`，分别对应 absent / CLEAR / ADD / SET。它不使用 Role 的三态词表，也不虚构 row-level Policy Source。
 - Policy 侧的 `CLEAR` 语义：移除继承自物种层的操作，**回到物种当前 Policy Template 的 raw 值**。（《编辑器持久层契约》§3.4）
 - 该定义同时覆盖四个 Role 与 `fail_env_coeff`；`CLEAR` 不携值。**Affinity 没有 `policySourceOverride`**，不能把组件级来源 pin 的能力搬入 Policy。（《编辑器持久层契约》§3.4、§3.10）
-- 桶层缺省（继承物种层操作）与 `CLEAR`（回到 Policy Source 原值）是两个不同动作，UI 必须区分。（《编辑器持久层契约》§3.4；《编辑器与 Resolve》§11.2）
+- 行级缺省（继承物种层 Role 操作）与 `CLEAR`（回到 Policy Template raw Role）是两个不同动作，UI 必须区分：物种层作者词为「沿用策略模板 / 设置为 CORE|SECONDARY|IGNORED」；行级作者词为「沿用物种角色 / 使用策略模板原始角色 / 设置为 CORE|SECONDARY|IGNORED」。`INHERIT / absent / CLEAR / SET` 只作为 durable 令牌，不直接充当作者文案。
+- Role 控件显示 **Effective Role ＋ 当前 Authoring Intent ＋ 必要 provenance**。Species Context 只编辑 Species Role。兼容覆盖若只对应一条 production row，可直接编辑该行 Role；若对应多条 production rows，组件卡只显示摘要，**Policy 区按 production row 展开行级编辑区**（每行明确 row identity，逐行编辑四个 Role 与 `fail_env_coeff`），不得另造隐式广播的 bucket-level Role / coeff 控件。P0 不做跨行批量 Role / `fail_env_coeff`。
 - 不因最终值 / 枚举相等自动推断 inherit、CLEAR 或 SET。（《编辑器持久层契约》§3.5、§3.3）
 
 <a id="profile-lifecycle"></a>
@@ -232,7 +238,7 @@
 - 自动保存：一次有效语义编辑 → 内存 typed 状态 → 短 debounce 合并 → 原子持久化；无常驻 Save；预览缓冲是短命 UI 状态，不落成草稿实体。（《编辑器界面》§1.2、§7；《编辑器持久层契约》§3.10）
 
 <a id="transaction-model"></a>
-**事务分类**（《编辑器持久层契约》§6.3；记录页 §392；[#103 Owner adjudication](https://github.com/futouyiba/HitFish-Up/issues/103#issuecomment-5795214587)）：只有两层，不新增第三种 durable transaction type。① 普通 semantic edit（值 / op / Role）走上述 debounce autosave，通常无 staged preview；② **staged binding / propagated mutation**：Component Source binding、`FishQualityRef → FishEnvAffinityRef` reassignment、Shared / bulk 传播类，都必须先形成 ephemeral candidate，再 Preview、显式确认、revision 核验、原子提交。Quality reassignment **不是 Component Source mutation**，UI 不复用“Source Rebase Preview”的业务命名，但可复用同一 staged-confirm 基础设施；其 Preview 至少展示目标 FishQuality、原 FishEnvAffinity、新 FishEnvAffinity、关键 Resolve 差异与新增诊断。提交必须直接 old → new，**不得制造 `FishQualityRef → null` 的 durable 中间态**。
+**事务分类**（《编辑器持久层契约》§6.3；记录页 §392）：只有两层，不新增第三种 durable transaction type。① 普通 semantic edit（值 / op / Role）走上述 debounce autosave，通常无 staged preview；② **staged binding / propagated mutation**：Component Source binding 与 Shared / bulk 传播类，都必须先形成 ephemeral candidate，再 Preview、显式确认、revision 核验、原子提交。
 
 <a id="timeperiod-batch-guard"></a>
 **TimePeriod Batch Overwrite Guard**（Owner 2026-09-21 裁，沿用[固定基线 §15](https://github.com/futouyiba/HitFish-Up/blob/807cef92f75e660cae820ccd48996f7e0c922e18/docs/review/ui-component-contract-r2/component-contract-consolidated.md#15-跨层护栏)与[原能力裁定](https://github.com/futouyiba/HitFish-Up/blob/807cef92f75e660cae820ccd48996f7e0c922e18/docs/review/ui-component-contract-r2/OPEN-ITEMS.md#L122-L123)）：Preset 不是 Source mutation，不因 ADJ-09 自动要求 staged confirm；它属于普通 semantic edit。
@@ -240,11 +246,14 @@
 - 会覆盖已有 local ops：batch preview 列五字段 before/after、哪些 local ops 被替换、新增 Error·Warning，随后 explicit confirm ＋ atomic commit；不做 full-library impact scan。
 - 五个 `SET` 是同 owner／同 layer 的一个 atomic batch；target、Source 不变及不持久化 presetId 等边界见[§12](#component-specifics)。该护栏不是第三种 durable transaction type，也不是 Source Rebase Preview。
 
-- Publish 只读取已成功持久化的 revision；尚未成值的输入不参与 Publish；未确认的高影响候选不得被当成 durable truth。（《编辑器界面》§1.1；《编辑器持久层契约》§6.3）
-- revision 冲突＝乐观检测：commit 只在预期 revision 仍匹配时写入，禁止 last-write-wins、禁止静默 auto-merge，进入重载 / 对比 / 对账路径。（《编辑器界面》§1.2；《编辑器持久层契约》§6.3）
-- 「生产配置外部变化」与「Editor State revision 冲突」是两类不同问题，不得都显示成「保存失败」。（《编辑器持久层契约》§6.4、§6.5；《编辑器界面》§9.2）
-- 本版只有一次性 Bootstrap：`Production →（一次性 Bootstrap）→ 初始化 editor durable state → 此后 editor durable state 是 authoring truth`；持续的批量反向对账 / 采纳生产值**不在本版**，只给只读诊断。（《编辑器持久层契约》§6.5；《编辑器界面》§9.2）
-- 往返冒烟测试＝本版验收：Production → Bootstrap → Editor → 不做任何编辑 → Publish → Production，应逐位一致。（记录页 §164）
+<a id="publish-boundary"></a>
+**Publish 边界**：
+- 顶栏 `发布到生产配置…` **只作为入口**，进入 / 聚焦唯一 Publish 区；唯一 writeback executor 留在该区。Autosave 只表达 Editor durable state（`编辑器已保存 / 编辑器已保存 · 有错误 / 编辑器保存中… / 编辑器保存失败`），Publish 不隐式 Save，也不等同 Git commit。
+- Publish 只消费**最新成功持久化 revision**；尚未成值的输入、保存失败编辑、未确认 staged candidate 均不得进入 Publish。
+- Preflight 只看三项：① Editor state 已 durable；② full validation 无 blocking ERROR；③整组 Production generation 可验证且仍匹配 expected baseline。任一失败均 BLOCK。
+- Generation 只作并发安全 token：mismatch / unverifiable 都 BLOCK，不 silent overwrite / auto-merge / 自动采纳 Production。成功 writeback 后重新读取**整组 Production generation**作为下一次 baseline；partial failure 不得显示成功，也不得按 target 拼 baseline，必须先重读整组 generation。
+- V1 只展示本次 Publish 的 success / failure / partial failure；不维护 `已发布 / 有未发布修改 / 与上次发布一致` 或 durable Publish History。Editor revision 冲突与 Production generation mismatch 是两类问题，不得都显示成「保存失败」。
+- 本版只有一次性 Bootstrap：`Production → Bootstrap → Editor durable state`；持续反向对账 / 自动采纳 Production 不在本版。验收包含无编辑往返：Production → Bootstrap → Editor → Publish → Production 逐位一致。
 - 生产侧只保存物化后的完整值 / 枚举，不保存 Source / op / patch provenance；Runtime 不做 base ＋ delta 合并。（《编辑器与 Resolve》§11.1）
 - 生产投影按结构化 authoring lineage 复用，不按 payload 相等：物种层用共享模板且无有效操作 → 可复用该模板的生产 Profile；桶层完全继承物种 Recipe → 可复用物种投影；有显式 `sourceOverride` 但最终为「纯共享模板 ＋ 零操作」→ 仍可复用该模板的 Profile（显式 pin 只分叉继承关系，不强制复制行）；最终仍含任何有效操作 → 该桶自有投影。**同值 `SET` 与纯 source pin 必须区分**：同值 `SET` 阻断未来模板改值 ⇒ 自有投影；`sourceOverride` ＋ 零操作 ＝ 未来继续跟随 ⇒ 可安全复用。（《编辑器持久层契约》§3.7）
 - ★ **`name` 的射程要分两层写**（原文只写「只是人类可读标签，不作 identity / join / 复用键」—— **过宽**，独立复审于 `fa96900` 报出，2026-09-21 Owner 同向裁定）：**Editor / Materializer 内部定位 → 稳定 id / key**（`name` **不作** Editor identity）；**Production XLSX 跨子表引用 → 仍按现有物理 schema 写 `targetRow.name`**。⇒ **本期不得把 XLSX 引用单元格顺手迁成 id**（那是单独的**配置表 Schema Migration**；`TimePeriod` 连数字 group id 都没有）。因此 **新增／新建的 production row `name` 必须在对应 production lookup domain 内无歧义**，collision ⇒ **BLOCK**（不 silent suffix / fallback）。行名的三级形态＝模板级（作者填，不预填）/ 物种派生级 / 桶派生级（自动生成）。（《编辑器持久层契约》§4.4）
@@ -254,11 +263,11 @@
 ## 16. 负向清单
 不做（画进假图等于把作者引向不存在的能力）：
 - 程序开关；`if / else / return` 之类控制流编写；自定义聚合算子；自由编排 / 任意输入连线；Gate 控件 / `GatePolicy` 字段；模板共享面板的三档分级；不新增顶层空的 `Calculation Surfaces` 导航；不显示 Activity / Feeding Readiness 之类空壳；不新增第二套 Bake Editor、不新增脚本入口。（《编辑器界面》§5）
-- 占比 / 比例 与 分群逻辑两处只以禁用占位行呈现（字段位在、控件不在），不提供编辑控件；不得据此宣称本版已实现 Mode Share / Routing。（《编辑器界面》§5、§1.2）
+- 本版**不显示占比 / 分群的伪控件或预留字段**，也不提供对应编辑入口；若需要说明边界，只用普通说明文字表达「本版不实现 Mode Share / Routing」。未来 Routing 另行设计，不从当前 Compat UI 反推其参数形态。
 - 桶不是真正的 Engagement Mode；Runtime 无 EngagementMode identity，不得据 UI 名称另建 durable 的 Engagement Mode 身份 / 注册表 / 模式级 Concrete 来源。（《编辑器界面》§5；《编辑器与 Resolve》§11.1；记录页 §172 二 KEEP）
   - **业务概念与 durable identity 分离**（记录页 §385，ADJ-08＝`C_SPLIT_REGISTERS`）：`Engagement Mode`／中鱼习性模式是 Simplified Production V0 的正式业务概念；B P0 不实现 Mode Share／Routing。物理 durable key 为 `FishEnvAffinityRef`；`FishEngagementModeCompat` 是对 Affinity 的 mode-like authoring projection／兼容壳；Runtime／production 无独立 `EngagementMode` identity。业务概念不能充当另一套物理身份。
   - `sourceOverride` 的物理键写作 `(fishEnvAffinityRef, component)`；若 schema 字段名为 `owner_ref`，则 `owner_ref := FishEnvAffinityRef`。不留抽象的 `owner` 让实现猜身份；原页侧依据为 CT §1.1／§3.3、RS §11.1，Runtime 禁令与 UI §5／RS §7／IA §8 相容。逐页改写经过由 Git 保留。
-- **Quality Stable Data 页面本版不开放**（入口置灰、不展示/编辑品质自身字段）；**不新建品质模板库、不把品质当作第五个习性组件**。这条禁令**不包含**既有 `FishQualityRef → FishEnvAffinityRef` 归属关系：该关系可在习性档案 Authoring Surface 编辑，但只允许关联/重分配**已有 FishQuality**，不得把“+ 关联已有品质”解释为创建新 Quality。（[#103 Owner adjudication](https://github.com/futouyiba/HitFish-Up/issues/103#issuecomment-5795214587)）
+- **Quality Stable Data 页面本版不开放**（入口置灰、不展示/编辑品质自身字段）；**不新建品质模板库、不把品质当作第五个习性组件**。StockRelease / Production 中既有的 Quality＋`FishEnvAffinityRef` 引用仅作为当前 Editor 会话载入快照只读投影到习性档案上下文；可按 Quality 聚合显示，但不新增全局 Quality→Affinity identity。本版不提供关联、删除、重分配、占比或 Routing 编辑。
 - 组件卡不承担逐字段 `ADD / SET / CLEAR` 编辑（逐字段值在焦点编辑栏完成）；不给组件卡 Source / Role 另建 durable state；不把 Effective Value 当编辑真相存储；不为视觉一致强迫所有字段支持 `ADD`；不为结构对称给品质造模板；不按「当前数值相同」跨无关谱系合并生产行。（《编辑器界面》§1 导语、§7；《编辑器心智模型与 IA》§8）
 
 ---
