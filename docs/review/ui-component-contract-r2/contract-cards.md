@@ -445,7 +445,7 @@ Must not:
 ```
 Component: RoleControl｜Role 三态（CORE / SECONDARY / IGNORED）
 Reads:
-  - Policy Authoring Truth（四个角色＋fail_env_coeff）：组件卡 Role 下拉与 Policy 区 Role 行读取同一份。
+  - Policy Authoring Truth（四个角色＋fail_env_coeff）：组件卡 Role 控件与 Policy 区 Role 行读取同一份；仅当当前 Context 对应单一 Role owner 时提供下拉，multi-row Compat 只显示摘要并进入逐行编辑。
   - 当前物种默认 Role op／Policy Template raw Role、或当前生产行的 Role patch；显示从记录派生，按所引汇编 §9 判读。
   - 当前层／行、Profile presence、合法 Source 可用性及当前诊断；默认值／缺席矩阵按所引 §9／§11，不从最终值反推记录。
 Actions:
@@ -465,7 +465,7 @@ Durable mutation:
   - ⚠️ **`scope_key` 正式改名 `row_key`（不是简称）**：该记录**永远只有 row scope** —— 留一个泛化的 `scope_key` 没买到能力、**反而暗示还有别的 scope**。`species_key` **降为属性**（组织／查询／reconcile／诊断），**不参与 identity**；**唯一键 ＝ `(row_key, component)`**。
   - 粒度：**两条 patch 轨道（`AffinityRolePatch` / `AffinityFailEnvCoeffPatch`）恒为 row-level**；**物种层的 Role op（`INHERIT` / `SET`）不是 override，而是决定该物种的 `Effective Default Role`**，住在 §3.1 的 `Species Base Record`／`Species Policy Recipe` —— **与本节两条 patch 轨道并存；不得为「统一粒度」把它删掉**。**物种层默认与行级覆盖分属不同记录，不得塞回同一张** —— 物种层默认的**唯一键 ＝ `(species_key, component)`**，**每个「物种 × 组件」恰好一个 Effective Default Role**（同 id 组合的不同行可以有不同 Role）。
 Acceptance:
-  - 物种 raw Role=CORE：INHERIT（无记录）与 SET CORE 的 Effective Role 可相同，但记录态及“Role 已钉住”显示必须可区分；修改一处，另一入口直接读同一 Truth，不经同步代码。
+  - 物种 raw Role=CORE：INHERIT（无记录）与 SET CORE 的 Effective Role 可相同，但记录态及作者可见 provenance 必须可区分（例如「策略模板」vs「本层设置」）；修改一处，另一入口直接读同一 Truth，不经同步代码。
   - IGNORED＋缺 Profile 后选 CORE：只保存 Role，不自动建 Profile／选默认 Source；立即可见 required-Profile ERROR，Publish 阻断，作者可进入 Setup。四组件分别走通，Temperature 不套全1.00数值档案，TimePeriod 不靠预设替代 Source 建立。
   - 同一组合的两条生产行可有不同 Role，更新目标行不得影响另一行；粒度与键按上面的独立记录形状验收。
   - 空底板且 IGNORED 的组件按汇编 §11 不投影，主行／Role照写、refs空；改为 CORE／SECONDARY 且仍缺必需 Profile 必须阻断，不能一概按空态放行。
