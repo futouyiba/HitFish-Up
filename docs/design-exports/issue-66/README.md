@@ -39,6 +39,52 @@ Proof boundary: the PNG proves only static pixels at export time; it does not pr
 
 Previous evidence is not rewritten: old screenshot/report versions remain separately attributed. Missing, expired, or unreadable assets must be marked unproduced; never invent a size or hash.
 
+## Per-asset registration（实填）
+
+实填值取自被审头 `7474d1b157af91b2ab0e24d6392366453e4e1982` 的 exact-head DESIGN／REVIEW 判词与 `asset-manifest.json`；字段名沿用上方模板。判词时点对拍时画布 `observedVersion`／`lastModified` 前后同值。
+
+**批次级字段（16 资产共用，故不逐行重复）**
+
+- Source document version：批次源文档锚＝下表四件离线设计稿 blob；**逐资产的离线源文档绑定＝待核** —— 本批只提供批次级锚，未提供逐帧绑定，故不以猜测补齐。
+- Canvas read time and route：`2026-09-22T11:46:50Z`；路由＝Figma 只读盘点（inventory）＋逐帧 PNG 导出（3–4 帧批次）。
+- Canvas object description：`Document`／`editorType=figma`／page `Current｜0.3.4.0-B 编辑器假图（W4B B Current）`。
+- 画布文档版本（observed）：`2402018176087182650`。
+- Image/live consistency：`consistent`（16/16 @ `2402018176087182650`）。
+- Export time：`未落/待核` —— 本地无导出时点日志，不猜测。
+- Proof boundary：the PNG proves only static pixels at export time; it does not prove runtime behavior or persistence.
+
+**批次源文档锚（离线设计稿 blob 版本）**
+
+| 源文档 | blob |
+|---|---|
+| 0.3.4.0-B 共用N2 候选确认面板 | `124972455da74415d12ac02ff08a95a80c64f077` |
+| 0.3.4.0-B A②-卡10 模板完整值编辑 | `69c98a321d1881e5fbd84c98be93e2a625d80916` |
+| 0.3.4.0-B A②-卡11 Replace References | `ea55bd95374d064db6a0259de19e0965143bc350` |
+| 0.3.4.0-B 冲突清单／待裁 | `d013f917c94997028d6213766861254c3859e323` |
+
+**逐资产**
+
+| Group（组／层） | Frame（帧名） | Label（画布标签） | Frame range | Image dimensions | PNG SHA-256 | Export time | Image/live | UNIMPL/UNVERIFIED boundary |
+|---|---|---|---|---|---|---|---|---|
+| A①-卡5 Provenance Display | `proj_pv_1` | 待核 | 单帧 | 890×150 | `a35444a37f0a26ed09fa663fbcb8bcd09073a60d501b940d932c56567e63f247` | 未落/待核 | consistent | 无标记 |
+| A①-卡5 Provenance Display | `proj_pv_2` | 待核 | 单帧 | 890×150 | `47f502271fb07525c7e34fb50dcc33fa5c735561e74f3f89ff346b9f39db0242` | 未落/待核 | consistent | `⚑UNIMPL` |
+| A①-卡5 Provenance Display | `proj_pv_3` | 待核 | 单帧 | 890×150 | `f651a7f1eb5ff77271cc7211a80991fbb944f9ad07b5deb3f2374f84c85f89a8` | 未落/待核 | consistent | `⚑UNIMPL` |
+| A①-卡5 Provenance Display | `proj_pv_4` | 待核 | 单帧 | 890×204 | `5174d94c19464d3a616fb44c308acd507ede571b8f772b36b4ed1643d2d8a37a` | 未落/待核 | consistent | `⚐UNVERIFIED` |
+| A①-卡5 Provenance Display | `proj_pv_5` | 待核 | 单帧 | 890×150 | `425700cabd2a8d8b71e8c241076fff585d207f0a26294fc28e94552ec0c9aa04` | 未落/待核 | consistent | 无标记 |
+| A②-卡8 Template Library List | `proj_tl_1` | 待核 | 单帧 | 890×150 | `85c5d2ad1e39be2d876f8cbc833449a3591e4aba22708faf5d27f9dbf41fbe72` | 未落/待核 | consistent | 无标记 |
+| A②-卡8 Template Library List | `proj_tl_2` | 待核 | 单帧 | 890×150 | `9b7b6c9fa7d4ad9d92f50539773f307661daed762d491ade6005058c0830a5e5` | 未落/待核 | consistent | 无标记 |
+| A②-卡8 Template Library List | `proj_tl_3` | 待核 | 单帧 | 890×150 | `8c46918bf0445955076d787680c92ccd6cc76560e9d5ba22bb8bd5dd678df931` | 未落/待核 | consistent | 无标记 |
+| A②-卡8 Template Library List | `proj_tl_4` | 待核 | 单帧 | 890×188 | `9de07b4f93a20b4666efbf596657782475795eadf15326a207e11e76af6b11e8` | 未落/待核 | consistent | 无标记 |
+| A②-卡12 Reference List | `proj_rl_1` | 待核 | 单帧 | 890×150 | `c8cb511e76ffcf290c53dae31617dab2a4c0489d353eefb7796175f7e7fa856c` | 未落/待核 | consistent | 无标记 |
+| A②-卡12 Reference List | `proj_rl_2` | 待核 | 单帧 | 890×150 | `a39f42060cee7a4c427c4f8a99774408804363e48f2c0e5aed21a5d0c366e478` | 未落/待核 | consistent | 无标记 |
+| A②-卡12 Reference List | `proj_rl_3` | 待核 | 单帧 | 890×150 | `560c3706ca0b999f47e28c344684717fd201cebd1220adf8b5b95ce5de7bfb92` | 未落/待核 | consistent | 无标记 |
+| A①-RoleControl 两入口／记录态／行级操作 | `proj_role_1` | 待核 | 单帧 | 890×176 | `dc04725b027a1e37eab48635c2cfd2ba8fa5aadb53f681a1ec522df32853f9c3` | 未落/待核 | consistent | `⚑UNIMPL` |
+| A①-RoleControl 两入口／记录态／行级操作 | `proj_role_2` | 待核 | 单帧 | 890×176 | `1edc439857fe6284b562cf9a77bb1c5e0dcdb56d7c9ba8f5a3a017dbde8c54c9` | 未落/待核 | consistent | `⚑UNIMPL` |
+| A①-RoleControl 两入口／记录态／行级操作 | `proj_role_3` | 待核 | 单帧 | 890×176 | `d9e015de87e568ae67a573ca85838398c73518d6fb0cb708cc14909f7c36e587` | 未落/待核 | consistent | `⚑UNIMPL` |
+| A①-RoleControl 两入口／记录态／行级操作 | `proj_role_4` | 待核 | 单帧 | 890×176 | `053917b5097d1cdaebc085dfdd3dbd0603adc7a2e343128ad85f4ae70d344612` | 未落/待核 | consistent | `⚑UNIMPL` |
+
+覆盖自检：16 行＝16 资产，无重复、无遗漏；尺寸多重集 = {150×10, 176×4, 188×1, 204×1}，与 `asset-manifest.json` 逐条一致；标记分布 `⚑UNIMPL`×6（`proj_pv_2`／`proj_pv_3`／`proj_role_1`–`4`）＋`⚐UNVERIFIED`×1（`proj_pv_4`）＋无标记×9。`Label` 为画布标签文本节点、不在 PNG 像素内，本批未提供逐帧标签串，故记 `待核`。
+
 ## Current local evidence
 
 `asset-manifest.json` records the 16 downloaded PNG dimensions and SHA-256 hashes. The PNGs are local export evidence, not runtime proof. The initial 16-at-once URL batch expired for 11 assets; the assets in this commit were recovered through 3–4-frame batches with immediate download and image-open validation.
