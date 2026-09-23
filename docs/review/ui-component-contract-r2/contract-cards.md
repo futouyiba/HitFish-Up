@@ -224,20 +224,21 @@ Component: Validation·Diagnostic｜校验诊断（ERROR/WARNING）
 Reads:
   - editor-state ＋ current schema ＋ current validator——diagnostics 全量派生重算（重开即重算）
 Actions:
-  - 行定位：跳 owner 的 Context＋编辑栏聚焦该字段（跨 Context 跳转走「回到该 Context」、不销毁旧现场）
+  - 打开校验清单；每条展示可读 breadcrumb 与错误原因。已有局部 locate / focus 若可用可继续保留，但 V1 不要求跨 Context 精准跳转。
   - Publish 前全量校验（消费 durable revision）
 Durable mutation:
   - 无——diagnostics 不作第二 durable truth；semantic ERROR 随 state 一同 durable 保存（「已保存·有错误」态）
 Must show:
   - ERROR（＝Publish 阻断项）/ WARNING（如 Soft Fit>1）分级
-  - 顶栏「已保存·有错误」的「有错误」点击＝展开并定位首个 ERROR
+  - 顶栏「编辑器已保存 · 有错误」的「有错误」点击＝展开 ERROR 清单；不要求自动跨 Context 定位首个 ERROR
   - BROKEN_SOURCE_REF：owner/component/ref；可加载修复、Publish 阻断、不 fallback
   - **Role 激活（CORE／SECONDARY）后立刻显示「缺 required Profile」校验态**（记录页 §199 ⑥③ 的附条件：不提示地让作者停在非法态，是那一条唯一风险面）
   - Preset→归档源不可 Apply 且指名哪个源已归档
-  - Publish blocker 定位到 owner/component/field/provenance（必要时含 before/after）
+  - Publish blocker 至少显示「对象 → 层/行 → 区域/组件 → 具体项」breadcrumb + message；跨字段不变量可定位到共同 Profile / 区域并在消息中列相关字段
 Must not:
   - 不把 ERROR 显示成「保存失败」；不伪造 0/默认值/静默补齐（不能解析＝Error/N-A，能解析区继续展示）
   - 不把 required 缺失当 autosave 阻断（durable-valid 与 publish-valid 分开）
+  - 不为 V1 新增统一 `Diagnostic.owner` / Context Router / EditorAddress 身份层；不因导航未统一而删除已有局部 locate
 依据: 记录页 §199 ⑥③（激活 Role 后须立刻把「缺 required Profile」做成可见校验态；**判级仍按上游**——界面 §1.4 已载「CORE / SECONDARY 缺必需 Profile 才阻断」，本条补的是**时点与可见性**，不是新的判级）；《编辑器界面》§1.4（三处校验分工：开发需求 §7 总则／条件开关 §10 编辑器静态／配置表 §5 Schema 不变量）＋§1.2（越界两侧；Validator ERROR 不是「保存失败」）；《开发需求》§7（发布阻断总则；发布前阻断≠authoring 持久化阻断）；《配置表与校验》§5；《编辑器持久层契约》§7.1（durable-valid 与 publish-valid 分开、durable 允许携带 ERROR）＋§6.5（诊断＝派生量、每次重算）＋§3.10（BROKEN_SOURCE_REF load-tolerant/publish-strict；Preset 引归档源 invalid-for-apply 且 UI 指名）
 ```
 
