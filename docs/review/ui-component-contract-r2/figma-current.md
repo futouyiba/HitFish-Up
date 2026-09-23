@@ -16,16 +16,16 @@
 
 | 帧名 | node | 尺寸 | 是什么 |
 |---|---|---|---|
-| `01 Affinity Compat Mode Authoring` | `8:2` | 1680×1220 | 主编辑面（空态：未选中任何组件卡） |
-| `10 Authoring · 编辑（水温）` | `104:269` | 1680×1220 | 同一作者面的**选中态**（水温） |
-| `11 Authoring · 编辑（结构）` | `108:311` | 1680×1220 | 同一作者面的**选中态**（结构） |
-| `04 Resolve Preview · Subject + Seed` | `9:2` | 1680×1080 | 只读 |
-| `05 Bake Preview · ConditionGroup Trace` | `9:39` | 1680×1080 | 只读 |
-| `07 Component Template Workspace` | `22:2` | 1680×1080 | 第二工作区 |
-| `08 Fish List · CN / EN / ID` | `22:36` | 1680×1080 | 鱼列表 |
+| `01 Affinity Compat Mode Authoring` | `01` | 1680×1220 | 主编辑面（空态：未选中任何组件卡） |
+| `10 Authoring · 编辑（水温）` | `10` | 1680×1220 | 同一作者面的**选中态**（水温） |
+| `11 Authoring · 编辑（结构）` | `11` | 1680×1220 | 同一作者面的**选中态**（结构） |
+| `04 Resolve Preview · Subject + Seed` | `04` | 1680×1080 | 只读 |
+| `05 Bake Preview · ConditionGroup Trace` | `05` | 1680×1080 | 只读 |
+| `07 Component Template Workspace` | `07` | 1680×1080 | 第二工作区 |
+| `08 Fish List · CN / EN / ID` | `08` | 1680×1080 | 鱼列表 |
 
-**Structure 的表示**：选中 Structure 后在**右侧 460px 焦点编辑栏**、以**2 列紧凑字段控件**编辑（`108:311`；`structureList2Col` 实测两列 x≈1227/1446，**12 行双列 ＋ 1 行单列 ＝ 25 个 `FieldValueControl`** —— **末行只有一列，不要按「13 行 × 2」算成 26**）。
-**旧帧 `47:2`（`Component Value Controls · tier & empty state`，形态是 5×5 卡阵）已移出 Current、进归档页**，带 `[FCF-ARCHIVE:v1]` annotation。
+**Structure 的表示**：选中 Structure 后在**右侧 460px 焦点编辑栏**、以**2 列紧凑字段控件**编辑（editor-structure 帧；`structureList2Col` 实测两列 x≈1227/1446，**12 行双列 ＋ 1 行单列 ＝ 25 个 `FieldValueControl`** —— **末行只有一列，不要按「13 行 × 2」算成 26**）。
+**旧帧 `Component Value Controls · tier & empty state`（形态是 5×5 卡阵）已移出 Current、进归档页**，带 `[FCF-ARCHIVE:v1]` annotation。
 
 **三栏几何**：对象导航 `250` ＋ 上下文总览 `890` ＋ 焦点编辑 `460` ＋ 边距 ＝ `1680`。
 
@@ -37,18 +37,18 @@
 
 | 组 | 卡 | node | 态数 |
 |---|---|---|---|
-| `A①-卡1 Source Selector` | Source 选择器 | `153:282` | 七态 |
-| `A①-卡2 Operation Control` | 字段操作控件 | `163:275` | **十态**（2026-09-20 由八态增至十态） |
-| `A①-卡3 Field Value Editor` | 值输入控件 | `166:275` | 八态 |
-| `A①-卡6 Validation·Diagnostic` | 校验诊断 | `170:275` | 八态 |
-| `A①-卡4 Effective Value Display` | 有效值展示 | `206:704` | 六态 |
-| `A①-卡5 Provenance Display` | provenance 展示 | `206:770` | 五态 |
-| `A①-卡7 Autosave Status` | 保存状态 | `206:835` | 七态 |
-| `A②-卡8 Template Library List` | 模板清单与别名 | `232:670` | 四态 |
-| `A②-卡9 Template Lifecycle` | 生命周期两态 | `232:724` | 三态 |
-| `A②-卡12 Reference List` | 引用者列表 | `232:746` | 三态 |
+| `A①-卡1 Source Selector` | Source 选择器 | `A①-卡1` | 七态 |
+| `A①-卡2 Operation Control` | 字段操作控件 | `A①-卡2` | **十态**（2026-09-20 由八态增至十态） |
+| `A①-卡3 Field Value Editor` | 值输入控件 | `A①-卡3` | 八态 |
+| `A①-卡6 Validation·Diagnostic` | 校验诊断 | `A①-卡6` | 八态 |
+| `A①-卡4 Effective Value Display` | 有效值展示 | `A①-卡4` | 六态 |
+| `A①-卡5 Provenance Display` | provenance 展示 | `A①-卡5` | 五态 |
+| `A①-卡7 Autosave Status` | 保存状态 | `A①-卡7` | 七态 |
+| `A②-卡8 Template Library List` | 模板清单与别名 | `A②-卡8` | 四态 |
+| `A②-卡9 Template Lifecycle` | 生命周期两态 | `A②-卡9` | 三态 |
+| `A②-卡12 Reference List` | 引用者列表 | `A②-卡12` | 三态 |
 
-**GPT 线（另一套并行投影，与本清单不是同一批）**：`178:291` 卡4 ComponentCard ／ `178:399` 卡5 Impact Preview ／ `183:484` 卡7 FieldValueControl。
+**GPT 线（另一套并行投影，与本清单不是同一批）**：卡4 ComponentCard ／ 卡5 Impact Preview ／ 卡7 FieldValueControl。
 
 **原快照未登记投影**：`A②-卡10`（模板改值·高影响）／`A②-卡11`（批量换绑）；工作状态见[问题台账 §6](OPEN-ITEMS.md#other-material-items)。
 
@@ -58,7 +58,7 @@
 
 旧用户语言、态9／10与颜色修正见[固定 §三](https://github.com/futouyiba/HitFish-Up/blob/e26af091bf90a049ed2f83ebe6642af240aa5c82/docs/review/ui-component-contract-r2/figma-current.md#三2026-09-20-的历史回读)；早于 `[04]` 的几何／分隔线与未补操作见[原 §九](https://github.com/futouyiba/HitFish-Up/blob/e26af091bf90a049ed2f83ebe6642af240aa5c82/docs/review/ui-component-contract-r2/figma-current.md#九r4-fig-02-的历史回读早于-04)；早于 Role badge 与作者词修正的 `[04]` 中间形态、annotation 校验与导出过程见[原 §十](https://github.com/futouyiba/HitFish-Up/blob/e26af091bf90a049ed2f83ebe6642af240aa5c82/docs/review/ui-component-contract-r2/figma-current.md#十04-的操作入口回读早于-role-badge-与作者词汇修正)。这些旧快照不承担当前缺口判断，也不把历史示意值当产品规定；现行交互见[卡2／卡3](contract-cards.md#operation-control)，实际资产按[§六](#image-evidence)读取。
 
-导出试验、RGBA 比较失效、MCP／REST 管线差异、母件与作者面混拍、未随包 `141:283` 和高倍导出过程见[固定导出记录](https://github.com/futouyiba/HitFish-Up/blob/db97e9bb4784a8eaf2421cf88894c6d4e4beef2c/docs/review/ui-component-contract-r2/figma-current.md#L140)。**旧 REST 缓存归因已撤回**；原实验本轮未复现，不扩为通用机制结论。
+导出试验、RGBA 比较失效、MCP／REST 管线差异、母件与作者面混拍、未随包的局部帧和高倍导出过程见[固定导出记录](https://github.com/futouyiba/HitFish-Up/blob/db97e9bb4784a8eaf2421cf88894c6d4e4beef2c/docs/review/ui-component-contract-r2/figma-current.md#L140)。**旧 REST 缓存归因已撤回**；原实验本轮未复现，不扩为通用机制结论。
 
 ---
 
@@ -69,7 +69,7 @@
   - **作者面（Current 页那 3 帧 `1680×1220` 一族）** —— 画面里出现的串是**作者会读到的串** ⇒ **必须用作者词汇**（《编辑器界面》§1.2「操作的用户语言」＋《编辑器心智模型与 IA》§2 的作者词表）；`INHERIT`／`absent`／`CLEAR`／`SET` **不作作者可见串、也不加括注**。
   - **投影区（`PROJECTION｜…` 各组，`1680×1080` 一族）** —— 画面里出现的串是**给读契约的人的记号** ⇒ **`CLEAR`／`INHERIT`／`SET`／`absent` 在这里是合法的**，且**「作者词（操作令牌）」这种绑定括注正是投影帧该有的东西**（把作者词钉到 op 上）。
   - ⇒ ★ **同一条 finding 落在哪一面，结论会相反**：「作者面出现 `INHERIT`」⇒ **要改**；「投影帧出现 `INHERIT`」⇒ **不是缺陷**。
-  - ⇒ **判帧靠 node 前缀 ＋ 尺寸两档**：`108:*`／`104:*`／`8:2` ＝ 作者面（1220 高）；`230:*`（`A①-卡2` 组）／`232:*`／`163:*`… ＝ 投影区（1080 高）。★ **不要只按 node 前缀猜** —— 以本文 §一／§二的登记为准。
+  - ⇒ **判帧靠帧名前缀 ＋ 尺寸两档**：`01`／`10`／`11` ＝ 作者面（1220 高）；`A①-卡2` 组等 §二登记的各投影组 ＝ 投影区（1080 高）。★ **不要只按帧名前缀猜** —— 以本文 §一／§二的登记为准。
 - 图上的说明**一律走 annotation，不写 comment**；**不把说明文字画进画面主体**。内容职责与清理承接按[投影维护边界](README.md#projection-maintenance)。
 - 已知残留：`A①-卡2` 与 `A①-卡3` 之间的**间隙现为 70px**（因卡2 增高所致，**非设计意图**；同列其余间隙 200–240px）。
 
@@ -79,7 +79,7 @@
 
 来源入口 overlay、Role chip／badge 与 annotation 的逐节点回读见[固定历史 §五](https://github.com/futouyiba/HitFish-Up/blob/db97e9bb4784a8eaf2421cf88894c6d4e4beef2c/docs/review/ui-component-contract-r2/figma-current.md#L83)，不再内嵌过程数据。仍须保留原快照的三条保护约束：
 
-1. Policy 控制条 `108:364` 高122、内容到 y=121；原登记未裁切，容器高度有意保持，加高会占用与 `108:373` 的12px间隔。
+1. Policy 控制条高122、内容到 y=121；原登记未裁切，容器高度有意保持，加高会占用与相邻节点的12px间隔。
 2. 卡侧只显示物种层；行级操作在 Policy 控制条，不能把物种层缺少 CLEAR 当漏项。
 3. 卡内四个 `SourceLabel` 已从实例移除；对该实例 `resetOverrides` 会使母件标签返回并重影。
 
@@ -94,11 +94,11 @@
 
 | 文件 | node | 像素／字节／作者登记比例 | SHA256 | 版本与可证明范围 |
 |---|---|---|---|---|
-| [0.3.4.0-B-editor-structure-108-311.png](img/0.3.4.0-B-editor-structure-108-311.png) | `108:311` | 1680×1220／182906／1× | `3221057b4b0a12f04e13b15e372d66ded643bbdfa57cee3d387ca755953b472f` | 整帧：`ef2a0c0c…` 重导，时段两处来源均为“未选”，摘要“未配（空态）”；Role badge 可见。原核对亲看，仅证明所拍画面。 |
-| [0.3.4.0-B-card2-state10-230-673.png](img/0.3.4.0-B-card2-state10-230-673.png) | `230:673` | 890×150／24410／1× | `96aac32ea7ccbad882697b14a7be54e0b222bdd9a250535d6770b266e9c3ae58` | 态10 投影图，后续补图未改；不承担 Species Role 记录态对照。 |
-| [0.3.4.0-B-policy-176-283.png](img/0.3.4.0-B-policy-176-283.png) | `176:283` | 820×92／13485／1× | `39bff36334e63e93cb70244e6be42b6d18e65e339789db314229bcca8050312c` | Policy 母件图，后续补图未改；不是作者面控制条。 |
-| [0.3.4.0-B-policy-block-108-364.png](img/0.3.4.0-B-policy-block-108-364.png) | `108:364` | 854×122／22574／1× | `e174d1e798ab724746d7d4888ba72459bc75a1095e1b4538aa6c8c2e76985cac` | 局部 SET 图，`386ad383…` 重导为 1×，可见 Role badge；替代 21871 字节旧画面及 51787 字节的 2×中间版本。 |
-| [0.3.4.0-B-policy-block-108-364-INHERIT.png](img/0.3.4.0-B-policy-block-108-364-INHERIT.png) | `108:364` | 854×122／21871／1× | `b1c0d2a55f89bd0aa27fd3143724bfb0da1349193d01f04b1b7130abd6be9dc1` | 局部 INHERIT 图，#17 @ `8d4523c…` 换为 1×；无 Role badge、整排收拢，无预留槽位。作者登记与 SET 同为 REST／scale=1；同管线同参数不等于同轮导出，不能单凭图证明 durable 读写。 |
+| [0.3.4.0-B-editor-structure.png](img/0.3.4.0-B-editor-structure.png) | `editor-structure 帧` | 1680×1220／182906／1× | `3221057b4b0a12f04e13b15e372d66ded643bbdfa57cee3d387ca755953b472f` | 整帧：`ef2a0c0c…` 重导，时段两处来源均为“未选”，摘要“未配（空态）”；Role badge 可见。原核对亲看，仅证明所拍画面。 |
+| [0.3.4.0-B-card2-state10.png](img/0.3.4.0-B-card2-state10.png) | `card2-state10 帧` | 890×150／24410／1× | `96aac32ea7ccbad882697b14a7be54e0b222bdd9a250535d6770b266e9c3ae58` | 态10 投影图，后续补图未改；不承担 Species Role 记录态对照。 |
+| [0.3.4.0-B-policy.png](img/0.3.4.0-B-policy.png) | `policy 母件` | 820×92／13485／1× | `39bff36334e63e93cb70244e6be42b6d18e65e339789db314229bcca8050312c` | Policy 母件图，后续补图未改；不是作者面控制条。 |
+| [0.3.4.0-B-policy-block.png](img/0.3.4.0-B-policy-block.png) | `policy-block 帧（SET）` | 854×122／22574／1× | `e174d1e798ab724746d7d4888ba72459bc75a1095e1b4538aa6c8c2e76985cac` | 局部 SET 图，`386ad383…` 重导为 1×，可见 Role badge；替代 21871 字节旧画面及 51787 字节的 2×中间版本。 |
+| [0.3.4.0-B-policy-block-INHERIT.png](img/0.3.4.0-B-policy-block-INHERIT.png) | `policy-block 帧（INHERIT）` | 854×122／21871／1× | `b1c0d2a55f89bd0aa27fd3143724bfb0da1349193d01f04b1b7130abd6be9dc1` | 局部 INHERIT 图，#17 @ `8d4523c…` 换为 1×；无 Role badge、整排收拢，无预留槽位。作者登记与 SET 同为 REST／scale=1；同管线同参数不等于同轮导出，不能单凭图证明 durable 读写。 |
 
 **旧版与引用边界**：旧 2.5× INHERIT 的指纹、尺寸和重导经过见[固定登记](https://github.com/futouyiba/HitFish-Up/blob/e26af091bf90a049ed2f83ebe6642af240aa5c82/docs/review/ui-component-contract-r2/figma-current.md#image-evidence)，不属于上表当前资产。整帧／SET 的落地提交与固定被审 PR head 是两种锚：历史 blob URL 指定的是被审快照，不能为了与 main 对齐而换成 merge SHA。
 
@@ -119,7 +119,7 @@
 
 annotation 不在 PNG 内。原组总则与 chip 逐字见[固定历史 §七](https://github.com/futouyiba/HitFish-Up/blob/db97e9bb4784a8eaf2421cf88894c6d4e4beef2c/docs/review/ui-component-contract-r2/figma-current.md#L179)；其中旧操作词和9-chip形态不当作较晚图片的当前文案。
 
-保留的来源入口摘要：`108:311`／`108:335` 顶部 `templateRow` 的四个前层来源选择器与卡内快速编辑入口读取同一 Component Recipe Source truth；不是两个编辑器。该帧是物种上下文，卡上 Role 角标／层签／继承状态分别表达结果值、所在层与记录态。Policy区Role行与卡上Role入口读同一Policy truth。具体产品规则见[汇编 §7](component-contract-consolidated.md#7-组件卡--焦点编辑栏)；时段来源实际画面及关闭证据分别见 §六与[问题台账](OPEN-ITEMS.md#source-sync)。
+保留的来源入口摘要：editor-structure 帧顶部 `templateRow` 的四个前层来源选择器与卡内快速编辑入口读取同一 Component Recipe Source truth；不是两个编辑器。该帧是物种上下文，卡上 Role 角标／层签／继承状态分别表达结果值、所在层与记录态。Policy区Role行与卡上Role入口读同一Policy truth。具体产品规则见[汇编 §7](component-contract-consolidated.md#7-组件卡--焦点编辑栏)；时段来源实际画面及关闭证据分别见 §六与[问题台账](OPEN-ITEMS.md#source-sync)。
 
 ---
 
@@ -129,11 +129,11 @@ annotation 不在 PNG 内。原组总则与 chip 逐字见[固定历史 §七](h
 
 ---
 
-## 十一、已知漂移：共享母件 `93:54` 的作者可见串修正 → 顶栏右移 53px
+## 十一、已知漂移：共享母件的作者可见串修正 → 顶栏右移 53px
 
 **裁定：`ADJ-FIG-ARCHIVE-01` ＝ C_NARROW（Owner 2026-09-21）。**
 
-【漂移已知】**顶栏 strip 的 10 个 chrome 节点**因共享母件 `93:54` 的作者可见串修正而右移 **53px**（按钮宽 `47 → 100`、徽标 x `+53`）—— 涉及 **Current 页 4 个实例 ＋ 归档 2 个实例**（`93:215` ⊂ `47:2`；`180:493` ⊂ `180:392`）。
+【漂移已知】**顶栏 strip 的 10 个 chrome 节点**因共享母件的作者可见串修正而右移 **53px**（按钮宽 `47 → 100`、徽标 x `+53`）—— 涉及 **Current 页 4 个实例 ＋ 归档 2 个实例**（其一位于归档帧 `Component Value Controls · tier & empty state`，其二位于另一归档帧）。
 
 **保护性证据未受影响**（裁定明列）：**5×5 legacy 控制拓扑** ／ **标签·状态·交互语义** ／ **结构关系** ／ **可行性证据** ／ **既有 node id 与按 id 的引用**。
 
