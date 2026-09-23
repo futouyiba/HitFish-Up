@@ -147,7 +147,7 @@
 - Policy 侧的 `CLEAR` 语义：移除继承自物种层的操作，**回到物种当前 Policy Template 的 raw 值**。（《编辑器持久层契约》§3.4）
 - 该定义同时覆盖四个 Role 与 `fail_env_coeff`；`CLEAR` 不携值。**Affinity 没有 `policySourceOverride`**，不能把组件级来源 pin 的能力搬入 Policy。（《编辑器持久层契约》§3.4、§3.10）
 - 行级缺省（继承物种层 Role 操作）与 `CLEAR`（回到 Policy Template raw Role）是两个不同动作，UI 必须区分：物种层作者词为「沿用策略模板 / 设置为 CORE|SECONDARY|IGNORED」；行级作者词为「沿用物种角色 / 使用策略模板原始角色 / 设置为 CORE|SECONDARY|IGNORED」。`INHERIT / absent / CLEAR / SET` 只作为 durable 令牌，不直接充当作者文案。
-- Role 控件显示 **Effective Role ＋ 当前 Authoring Intent ＋ 必要 provenance**。Species Context 只编辑 Species Role。兼容覆盖若只对应一条 production row，可直接编辑该行 Role；若对应多条 production rows，组件卡只显示摘要，**Policy 区直接展开行级表**（每行明确 row identity，逐行编辑四个 Role 与 `fail_env_coeff`），不得另造隐式广播的 bucket-level Role / coeff 控件。P0 不做批量 Role。
+- Role 控件显示 **Effective Role ＋ 当前 Authoring Intent ＋ 必要 provenance**。Species Context 只编辑 Species Role。兼容覆盖若只对应一条 production row，可直接编辑该行 Role；若对应多条 production rows，组件卡只显示摘要，**Policy 区直接展开行级表**（每行明确 row identity，逐行编辑四个 Role 与 `fail_env_coeff`），不得另造隐式广播的 bucket-level Role / coeff 控件。P0 不做跨行批量 Role / `fail_env_coeff`。
 - 不因最终值 / 枚举相等自动推断 inherit、CLEAR 或 SET。（《编辑器持久层契约》§3.5、§3.3）
 
 <a id="profile-lifecycle"></a>
