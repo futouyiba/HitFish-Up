@@ -89,7 +89,7 @@
 
 - 顶栏保存状态及其与 Validator ERROR 的区别按[卡7](contract-cards.md#autosave-status)展示；校验诊断不替代持久化结果。
 
-以下四条为 #109 带来的语义变化，共同出处＝冻结卡 `A①-卡6`。
+以下四条共同出处＝冻结卡 `A①-卡6`。
 
 - 阻断 Publish 时必须提供**可读位置**：进入校验清单，每条至少说明「对象 → 当前层 / 行 → 区域 / 组件 → 具体项」以及错误原因，使作者可沿现有稳定导航自行找到并修复。V1 **不要求**建立跨 Context 的精准跳转、Back stack、`EditorAddress / TargetRouter / RevealPlan` 或“最佳修复位置”系统。
 - Diagnostic producer 不得在生成过程中丢掉渲染位置所需的已有语义信息（如 species / row 或 scope、component、item / field）；这些信息只用于派生 breadcrumb / UI 展示，不新增第二份 durable truth，也不要求新增统一 `Diagnostic.owner` 身份层。
@@ -251,7 +251,7 @@
 
 <a id="publish-boundary"></a>
 **Publish 边界**：
-本节六条为 #109 带来的语义变化，保留为现行。Owner 2026-09-24 指示（经主代理转达）：「关注 109PR 当中带来的语义变化，它是非常关键的。他应该指导我们的开发和 figma 的设计。」
+Owner 2026-09-24 指示（经主代理转达）：「关注 109PR 当中带来的语义变化，它是非常关键的。」
 
 - 顶栏 `发布到生产配置…` **只作为入口**，进入 / 聚焦唯一 Publish 区；唯一 writeback executor 留在该区。Autosave 只表达 Editor durable state（`编辑器已保存 / 编辑器已保存 · 有错误 / 编辑器保存中… / 编辑器保存失败`），Publish 不隐式 Save，也不等同 Git commit。
 - Publish 只消费**最新成功持久化 revision**；尚未成值的输入、保存失败编辑、未确认 staged candidate 均不得进入 Publish。
