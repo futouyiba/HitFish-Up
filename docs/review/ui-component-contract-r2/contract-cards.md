@@ -460,7 +460,7 @@ Durable mutation:
   - **持久化形状**：
     · **物种侧**：§3.1 那条整体记录**仍叫 `Species Base Record`／底板记录、不改名** —— **它不只装 Policy**（还装 `temperature`／`structure`／`feeding_layer`／`time_period`／`roles`／`name_cache`）⇒ `Species Policy Recipe` **不能当整条记录的名字**。记录**内部**分两层：`component recipes`（＝ `Species Recipe`：四个 Component 的 Source ＋ field operations）与 **`Species Policy Recipe`**（＝ **Policy 专属子结构**：`policy source binding` ＋ 四个 Role op ＋ `fail_env_coeff` op）。
     · **row 侧两条独立 durable 记录**（**不用 `field`／`track` 判别列**）：**`AffinityRolePatch`** —— key ＝ **`(row_key, component)`**、`op ＝ CLEAR | SET`、`role`（**SET 时必携**）；**`AffinityFailEnvCoeffPatch`** —— key ＝ **`row_key`**、`op ＝ CLEAR | ADD | SET`、`value`（**ADD／SET 时必携**）。
-    · **与 `AffinityAuthoringPatch`（§3.3：`sourceOverride` ＋ numeric patches）并列 —— 不改名、不合并**（两者**粒度不同**：numeric ＝ bucket-level，Role ＝ row-level）。可以说「share the same Affinity owner」，**不能说「是同一条持久化记录」**。
+    · **与 `AffinityAuthoringPatch`（§3.3：`sourceOverride` ＋ numeric patches）并列 —— 不改名、不合并**。它们可在同一个 Compat UI context 中被作者看到，但**物理 owner / key 与粒度不同**：numeric ＝ bucket-level，Role / `fail_env_coeff` ＝ row-level；不得据共同 UI context 合并成同一条持久化记录。
     ⇒ **没有 `layer`、没有 `"*"` 哨兵、没有 nullable scope、没有 `track` 判别列**；**Role 值不得参与唯一键**。
   - ⚠️ **行级 patch 必须携 `op`**：不携 op 则 **`CLEAR` 与「`SET` 恰好等于模板 raw 值」不可区分** ⇒ **op 不得从值反推**。
   - ⚠️ **`scope_key` 正式改名 `row_key`（不是简称）**：该记录**永远只有 row scope** —— 留一个泛化的 `scope_key` 没买到能力、**反而暗示还有别的 scope**。`species_key` **降为属性**（组织／查询／reconcile／诊断），**不参与 identity**；**唯一键 ＝ `(row_key, component)`**。
