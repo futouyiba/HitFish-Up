@@ -130,7 +130,7 @@
 - `fail_env_coeff` 不挂在某个组件卡内部；Species Context 编辑物种默认值，兼容覆盖 Context 若只有一条 production row 可直接编辑该行，若聚合多条 production rows 则在 **Policy 区的 production-row 行级编辑区**中逐行显示 / 编辑。`[0, 0.10]`，默认 `0.01`，越界 ERROR ＋ 阻断 Publish、不 silent clamp。（《编辑器界面》§1.1；《编辑器持久层契约》§3.4）
 - `fail_env_coeff` 的 `ADD` 是绝对数值增量，不是百分比 / 乘数。（《编辑器持久层契约》§3.4 逐字「ADD 为绝对数值增量」）
 - Editor 没有钓场上下文：不提供 Pond selector，不编辑 `baseOpportunityIntensity / isBackgroundFish / envCoeffMin`；`fail_env_coeff` 是本编辑器可编辑的习性档案字段，不是 `FishRelease` 的 `envCoeffMin`。（《编辑器界面》§6）
-- 诊断归属：字段 → 字段控件；Profile → 组件卡；Policy → 聚合策略区；全局 / Publish → 顶栏 ＋ 校验清单。（冻结卡 `A①-卡6`；《编辑器界面》§1.4）
+- 诊断展示位置：字段问题 → 字段控件；Profile 问题 → 组件卡；Policy 问题 → 聚合策略区；全局 / Publish 问题 → 顶栏 ＋ 校验清单。这里只规定 UI placement，不新增统一 `Diagnostic.owner` 身份层。（冻结卡 `A①-卡6`；《编辑器界面》§1.4）
 
 <a id="role-record-intent"></a>
 **Role 记录态与 UI 派生**：
