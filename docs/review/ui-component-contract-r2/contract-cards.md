@@ -227,11 +227,11 @@ Actions:
   - 打开校验清单；每条展示可读 breadcrumb 与错误原因。已有局部 locate / focus 若可用可继续保留，但 V1 不要求跨 Context 精准跳转。
   - Publish 前全量校验（消费 durable revision）
 Durable mutation:
-  - 无——diagnostics 不作第二 durable truth；semantic ERROR 随 state 一同 durable 保存（「已保存·有错误」态）
+  - 无——diagnostics 不作第二 durable truth；semantic ERROR 随 state 一同 durable 保存（「编辑器已保存 · 有错误」态）
 Must show:
   - ERROR（＝Publish 阻断项）/ WARNING（如 Soft Fit>1）分级
   - 顶栏「编辑器已保存 · 有错误」的「有错误」点击＝展开 ERROR 清单；不要求自动跨 Context 定位首个 ERROR
-  - BROKEN_SOURCE_REF：owner/component/ref；可加载修复、Publish 阻断、不 fallback
+  - BROKEN_SOURCE_REF：对象/component/ref；可加载修复、Publish 阻断、不 fallback
   - **Role 激活（CORE／SECONDARY）后立刻显示「缺 required Profile」校验态**（记录页 §199 ⑥③ 的附条件：不提示地让作者停在非法态，是那一条唯一风险面）
   - Preset→归档源不可 Apply 且指名哪个源已归档
   - Publish blocker 至少显示「对象 → 层/行 → 区域/组件 → 具体项」breadcrumb + message；跨字段不变量可定位到共同 Profile / 区域并在消息中列相关字段
