@@ -120,7 +120,7 @@
 <a id="policy-profile"></a>
 ## 9. Profile × Spatial Opportunity Policy
 
-**本节保留 Policy 归属与 Role 记录态的完整机制投影**；Profile 缺席、promotion 与 Setup 的完整投影在[§11](#profile-lifecycle)，Policy 操作词表／CLEAR 来源仍在[§10](#policy-clear)，落盘形状与键见[RoleControl](contract-cards.md#role-control)。Owner 裁定决定产品语义；本节是 Git Markdown 的仓内规范承接位置。本批回读《编辑器持久层契约》v16（`Last Updated 2026-09-21 14:34 +08:00`）§3.1／§3.4／§3.7，以及《编辑器界面》v20（`Last Updated 2026-09-21 17:19 +08:00`）§1.2／§1.4，未重读实时裁定记录。
+**本节定义 Policy 归属与 Role 记录态**；Profile 缺席、promotion 与 Setup 见[§11](#profile-lifecycle)，Policy 操作词表／CLEAR 见[§10](#policy-clear)，落盘形状与键见[RoleControl](contract-cards.md#role-control)。
 
 - Profile 回答「这条鱼对这个环境轴是什么习性」；Role 回答「这份习性在聚合里如何被消费」。（《编辑器与 Resolve》§2.2；《编辑器心智模型与 IA》§7）
 - Role 与 Profile 的变更边界按[§11](#profile-lifecycle)，不能由改变消费角色推导创建／删除或改写 Profile。
@@ -140,7 +140,7 @@
 
 <a id="policy-clear"></a>
 ## 10. Role 与 Policy 的操作词表
-**本节是 Policy 域 CLEAR 的完整投影**，权威为《编辑器持久层契约》v16 §3.4（同 §3 的核对版本）；裁决依据为记录页 §265 `F-04`。仅负责此域的来源与词表，记录存在性、同值意图区分沿用 [§3](#component-clear)，无值动作的落盘例外见 [§4](#field-value-control)。
+**本节定义 Policy 域的操作词表与 CLEAR 语义**。记录存在性、同值意图区分沿用 [§3](#component-clear)，无值动作的落盘例外见 [§4](#field-value-control)。
 - Role：物种层 `INHERIT / SET`；**生产行级** `absent / CLEAR / SET`；**永不允许 `ADD`**。（《编辑器持久层契约》§3.4）
 - `fail_env_coeff`：物种层 `INHERIT / ADD / SET`；**生产行级** `absent / CLEAR / ADD / SET`。（《编辑器持久层契约》§3.4）
 - `fail_env_coeff` 的作者语言按 Policy 数值字段表达：物种层＝`沿用策略模板值 / 调整 / 设置为`；生产行级＝`沿用物种配置 / 使用策略模板原始值 / 调整 / 设置为`，分别对应 absent / CLEAR / ADD / SET。它不使用 Role 的三态词表，也不虚构 row-level Policy Source。
