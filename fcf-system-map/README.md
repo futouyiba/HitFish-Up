@@ -5,8 +5,8 @@
 **版面是怎么定的、为什么这么定，见 [LAYOUT.md](LAYOUT.md)。** 那里记着实测出来的
 引擎行为（水平容器是"高度汇"、宽度只能有一个来源且只撑**直接**子块）、折叠语义、
 "横向=类别并列 / 竖向=执行顺序"这条语汇、以及**边的走位规则**（层级关系不画线；
-出入口约束对平行四边形无效，跨行长边走左右空白走廊）。内容语义不在本页也不在
-LAYOUT.md，在 Notion 的《FCF R0 Canonical Map Content Ledger》。
+出入口约束对平行四边形无效，跨行长边走左右空白走廊）。已承接图内容的 source 是本目录 JSON；
+内容来源与未承接边界见下方「内容语义的仓内承接与外部输入」，不是先读 Notion 的要求。
 
 ```bash
 python3 build/build_diagram.py     # 5 个 source JSON -> generated/fcf-system-map.drawio
@@ -79,21 +79,21 @@ python3 build/test_roundtrip.py     # 该抓的 8 类 / 该忽略的 2 类，逐
 
 ---
 
-## 内容语义的权威在 Notion
+## 内容语义的仓内承接与外部输入
 
-**版面在这里迭代，含义在 Notion 固化。** 每个节点「要表达的意思」以
-**《FCF 总图｜内容语义清单 R0｜Canonical Map Content Ledger》**为准
-（挂 `Fish-Centric Conditional Funnel｜Design Branch Index` 下，
-page id 已移除）。
+**版面在这里迭代，含义按已审核合并的仓内 Markdown 承接内容固化。** `graph.json`、`contracts.json` 等是图的声明式 source 与外部来源引用，不声称算法、产品 Contract 或所有 Notion 内容已经迁入本仓。未在 Markdown 中承接的内容仍是缺口或外部输入，不能由图、节点标签或 `status` 字样补造。
+
+当前可直接核对的图语义与版面约束见本 README、[LAYOUT.md](LAYOUT.md) 及 source JSON；Owner 裁定仍决定产品语义。需要仓内尚未承接的设计上下文时，按 `contracts.json` 的来源名与状态核对外部载体；读取 Notion 不是日常设计或实现的前置条件。
 
 分工：
 
 | | 归谁 |
 |---|---|
-| **含义** —— 每一层/每一块表达什么、流与边界、命名约定、待定项 | **Notion 清单**（权威） |
+| **已在仓内承接的含义** —— 节点、流与边界、命名约定及已登记范围 | **本 repo 的已审核 Markdown / source JSON**（按各自 Owner 入口） |
+| **尚未承接的含义、Owner 裁定与外部设计上下文** | **对应 Owner / 外部载体**；仓内只登记缺口或来源，不冒称已合并 Contract |
 | **版面** —— 行带高度、横向展开 vs 纵向堆叠、是否接容器动态布局 | **本 repo**（自由迭代） |
 
-两者冲突时：**改本 repo 去对齐 Notion**，不要反过来悄悄改含义。
+两者冲突时：已承接的仓内规范按其 Owner 入口修订 source；未承接部分先报告缺口／外部输入并回到 Owner，不悄悄改含义。
 
 ---
 

@@ -1,6 +1,6 @@
 {
   "format": 3,
-  "description": "Diagram node -> external authority links. References only; authority content is never copied into this repo. Editing any authority source (Notion / Feishu) is out of scope for the map pipeline. status: linked = authority read and matched; pending = authority not yet identified/confirmed (an assumption, not a claim).",
+  "description": "Diagram node -> external source references. This file stores references, not a second copy of the referenced Contract. Editing external sources (Notion / Feishu) is out of scope for the map pipeline. `linked` records that the external source was read and matched when the entry was authored; it does not prove current freshness or that the full algorithm or Contract has been migrated into Markdown. `pending` records an unregistered source or unresolved boundary, not a product claim.",
   "contracts": [
     {
       "semanticId": "R2",
