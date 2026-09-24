@@ -13,10 +13,10 @@
 
 | # | 控件 | 层·面 | 批次 | 状态／入口 |
 |---|---|---|---|---|
-| A1 | 顶栏（对象标题/动作/保存状态/Publish） | 框架 | ①（保存状态）＋④（系统面） | 保存区及「丢弃未保存的改动」动作按[卡7](#autosave-status)；本行仅作入口索引 |
+| A1 | 顶栏（Editor Global Shell：工具身份/全局状态/Publish） | 框架 | ①（保存状态）＋④（系统面） | 不承担鱼/Mode导航；保存区及「丢弃未保存的改动」按[卡7](#autosave-status)，Publish 按汇编 §15 |
 | A2 | 面包屑 | 框架 | ④ | 已规格（v2） |
 | A3 | dirtyDot（按层待写盘） | 框架 | ④ | 语义已拍＝记录页 §167 六（随卡7 落地） |
-| A4 | drawer 导航 ×4 变体 | 对象导航 | ④ | 已规格（v2） |
+| A4 | Subject Navigation Rail（FISH / 共享资产） | 主体导航 | ④ | 当前规则见[汇编 §1](component-contract-consolidated.md#subject-navigation)：顶层可达、单 Section 展开、鱼→基础习性/中鱼习性模式 |
 | C1 | Source Selector·物种层 | 上下文总览 | **①卡1** | [卡1](#source-selector) |
 | C2b | Source Selector·覆盖层变体 | 上下文总览 | **①卡1** | [卡1](#source-selector) |
 | N1 | 卡上 templateName 显示 | 上下文总览 | ①（随卡1） | 通则=同源同名 |
@@ -34,7 +34,7 @@
 | D4 | 结构/水层/时段编辑面 | 焦点编辑 | ①载体（slice C 首线=Structure） | 载体形态=卡1/2/3 |
 | D5 | 时段空态路径＋三预设 | 焦点编辑 | ③ | 已规格（v2） |
 | E1 | 鱼列表 | 独立面 | ④ | 已规格（v2） |
-| E2 | 模板工作区（清单/别名/生命周期/Replace） | 独立面 | ② | 已规格（v2） |
+| E2 | 共享资产 → 习性模板（清单/别名/生命周期/Replace） | 独立面 | ② | 已规格（v2）；Species Presets 为共享资产 sibling view |
 | E3 | 引用者列表（两集两数） | 独立面 | ② | 已规格（v2） |
 | E4 | Resolve Preview | 独立面 | ④（slice C 含一角） | 已规格（v2） |
 | E5 | Bake Preview | 独立面 | ④ | 已规格（v2） |
@@ -286,7 +286,7 @@ Structure 竖切的实现依赖见[汇编 §2](component-contract-consolidated.m
 ### A②-卡8｜Template Library List（模板清单与别名）
 
 ```
-Component: Template Library List｜模板清单与别名（模板工作区 22:2；对象导航 TEMPLATES 入口同源）
+Component: Template Library List｜模板清单与别名（共享资产 → 习性模板；Subject Navigation 入口同源）
 Reads:
   - 模板清单（按组件过滤；平铺、默认按引用量排序）
   - 每模板：templateId / stableKey（只读）、displayName、中文别名 name_zh / 英文别名 name_en（别名不是生产行 name）、extracted_from（只作追溯、不作关联依据）
