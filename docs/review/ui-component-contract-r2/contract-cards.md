@@ -13,10 +13,10 @@
 
 | # | 控件 | 层·面 | 批次 | 状态／入口 |
 |---|---|---|---|---|
-| A1 | 顶栏（对象标题/动作/保存状态/Publish） | 框架 | ①（保存状态）＋④（系统面） | 保存区及「丢弃未保存的改动」动作按[卡7](#autosave-status)；本行仅作入口索引 |
-| A2 | 面包屑 | 框架 | ④ | 已规格（v2） |
+| A1 | 顶栏（Editor Global Shell：工具身份/工具级视图/全局状态/Publish） | 框架 | ①（保存状态）＋④（系统面） | 可承载 Resolve/Bake/Fish List 等工具级视图入口；不承担 Fish/Mode Subject 导航。保存区及「丢弃未保存的改动」按[卡7](#autosave-status)，Publish 按汇编 §15 |
+| A2 | 当前 Subject 标题 / 路径 | 上下文总览 | ④ | 放在中栏 Context Header：至少显示 Fish + 基础习性/Mode（含必要 `[兼容]`）；不是 Topbar 第二套导航，也不要求做可点击 breadcrumb |
 | A3 | dirtyDot（按层待写盘） | 框架 | ④ | 语义已拍＝记录页 §167 六（随卡7 落地） |
-| A4 | drawer 导航 ×4 变体 | 对象导航 | ④ | 已规格（v2） |
+| A4 | Subject Navigation Rail（FISH / 共享资产） | 主体导航 | ④ | 当前规则见[汇编 §1](component-contract-consolidated.md#subject-navigation)：顶层可达、单 Section 展开、鱼→基础习性/中鱼习性模式 |
 | C1 | Source Selector·物种层 | 上下文总览 | **①卡1** | [卡1](#source-selector) |
 | C2b | Source Selector·覆盖层变体 | 上下文总览 | **①卡1** | [卡1](#source-selector) |
 | N1 | 卡上 templateName 显示 | 上下文总览 | ①（随卡1） | 通则=同源同名 |
@@ -34,7 +34,7 @@
 | D4 | 结构/水层/时段编辑面 | 焦点编辑 | ①载体（slice C 首线=Structure） | 载体形态=卡1/2/3 |
 | D5 | 时段空态路径＋三预设 | 焦点编辑 | ③ | 已规格（v2） |
 | E1 | 鱼列表 | 独立面 | ④ | 已规格（v2） |
-| E2 | 模板工作区（清单/别名/生命周期/Replace） | 独立面 | ② | 已规格（v2） |
+| E2 | 共享资产 → 习性模板（清单/别名/生命周期/Replace） | 独立面 | ② | 已规格（v2）；Species Presets 为共享资产 sibling view |
 | E3 | 引用者列表（两集两数） | 独立面 | ② | 已规格（v2） |
 | E4 | Resolve Preview | 独立面 | ④（slice C 含一角） | 已规格（v2） |
 | E5 | Bake Preview | 独立面 | ④ | 已规格（v2） |
@@ -286,7 +286,7 @@ Structure 竖切的实现依赖见[汇编 §2](component-contract-consolidated.m
 ### A②-卡8｜Template Library List（模板清单与别名）
 
 ```
-Component: Template Library List｜模板清单与别名（模板工作区 22:2；对象导航 TEMPLATES 入口同源）
+Component: Template Library List｜模板清单与别名（共享资产 → 习性模板；Subject Navigation 入口同源）
 Reads:
   - 模板清单（按组件过滤；平铺、默认按引用量排序）
   - 每模板：templateId / stableKey（只读）、displayName、中文别名 name_zh / 英文别名 name_en（别名不是生产行 name）、extracted_from（只作追溯、不作关联依据）
@@ -450,7 +450,7 @@ Reads:
   - 当前层／行、Profile presence、合法 Source 可用性及当前诊断；默认值／缺席矩阵按所引 §9／§11，不从最终值反推记录。
 Actions:
   - **物种层**作者动作：`沿用策略模板`（删除本层 Role op）或 `设置为 CORE / SECONDARY / IGNORED`（写本层 SET）。即使 SET 与模板 raw Role 同值，也保留显式 pin，不按结果值折叠。
-  - **生产行级**作者动作：`沿用物种角色`（absent）／`使用策略模板原始角色`（CLEAR）／`设置为 CORE / SECONDARY / IGNORED`（SET）。只改当前 `row_key`，不得把一个兼容覆盖里的多条行默认广播。
+  - **生产行级**作者动作：`沿用物种角色`（absent）／`使用策略模板原始角色`（CLEAR）／`设置为 CORE / SECONDARY / IGNORED`（SET）。只改当前 `row_key`，不得把一个 `[兼容]` Mode 当前 authoring scope 内的多条行默认广播。
   - **`fail_env_coeff`**：物种层＝`沿用策略模板值 / 调整 / 设置为`；生产行级＝`沿用物种配置 / 使用策略模板原始值 / 调整 / 设置为`（absent / CLEAR / ADD / SET）。与 Role 同表呈现时仍保持独立 op 词表，不把 Role 三态套给 coeff。
   - 显式 Setup：Structure／Feeding Layer／Temperature 空态提供进入合法 Shared Template Source 选择的可达路径；Temperature 若合法 Species Concrete 存在，另可走生态数据导入／建立来源，导入目标物种与缺值护栏仍按卡8。
     · TimePeriod 同样保留 Source／Setup 路径；三种预设只是 Setup 后／中的一次性填表便利，不能充当独有 Profile 创建语义。具体可用来源按汇编 §8 的层级 allowlist。
@@ -474,9 +474,9 @@ Must show:
   - Role 展开态只表达 **Effective Role ＋ 当前 Authoring Intent ＋ 必要 provenance**；不把数值字段的 `仅使用来源 / 仅使用当前来源 / 调整` 词表套到 Role。
   - 物种记录态标记按所引汇编 §9，从 Role op record 派生，不另存状态位。Species Context 只编辑 Species Role，Policy Template raw Role 只读解释。
   - **必须显式说出「你在改哪一层 / 哪一行」**：物种层 ⇒「默认（各行继承）」；生产行级 ⇒ 行级编辑区中的明确 row identity（如 `LAKE_A × LARGEMOUTH_BASS/Q3`）。每行同时显示其 Species Effective Default / Policy Template provenance 所需信息，不要求为此新增独立“精确生产行 Context”。
-  - 若当前兼容覆盖聚合多条生产行：组件卡显示角色摘要（例如 `CORE · 4 行` 或 `多个角色 · 4 行`）；Policy 区按 production row 展开，逐行编辑四个 Role 与 `fail_env_coeff`，**不得提供单一 bucket-level Role / coeff 控件**。
+  - 若当前 `[兼容]` Mode 的 authoring scope 聚合多条生产行：组件卡显示角色摘要（例如 `CORE · 4 行` 或 `多个角色 · 4 行`）；Policy 区按 production row 展开，逐行编辑四个 Role 与 `fail_env_coeff`，**不得提供单一 bucket-level Role / coeff 控件**。
   - **不许**默认改整个 scope 却在 UI 上说成改一行。
-  - P0 不做跨行批量 Role / `fail_env_coeff`；以后若做，必须是显式多选 / 批量动作，不得作为兼容覆盖的缺省行为。
+  - P0 不做跨行批量 Role / `fail_env_coeff`；以后若做，必须是显式多选 / 批量动作，不得作为 `[兼容]` Mode 的缺省行为。
 Must not:
   - **不许两份 state** —— 不许「持久化一份 + UI 一份」／不许两处各存一份再同步／不许 UI 侧缓存。**判据：改一处之后，另一处不经过任何「同步代码」就变了。**
   - 不给组件卡另建 durable Role state
