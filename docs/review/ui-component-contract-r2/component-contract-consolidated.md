@@ -132,6 +132,8 @@
 - 粒度必须分离：数值 override 按 **bucket**（`young / mature`，TimePeriod 不按规格 / row）；Role override 与 `fail_env_coeff` patch 按 **生产行**。同一 bucket 内不同生产行可有不同 Role / `fail_env_coeff`，Validator 不得因这些行级值不同报错。（《编辑器持久层契约》§3.4、§3.7）
 - `fail_env_coeff` 不挂在某个组件卡内部；Species Context 编辑物种默认值，兼容覆盖 Context 若只有一条 production row 可直接编辑该行，若聚合多条 production rows 则在 **Policy 区的 production-row 行级编辑区**中逐行显示 / 编辑。`[0, 0.10]`，默认 `0.01`，越界 ERROR ＋ 阻断 Publish、不 silent clamp。（《编辑器界面》§1.1；《编辑器持久层契约》§3.4）
 - `fail_env_coeff` 的 `ADD` 是绝对数值增量，不是百分比 / 乘数。（《编辑器持久层契约》§3.4 逐字「ADD 为绝对数值增量」）
+- **Authoring 与生产投影分层**：Species Context 编辑的是 editor-state 中的 Species Base / Species Policy Recipe（物种默认 authoring truth）；Compat / bucket Context 通过当前 representative row 定位要编辑的 Compat 对象及其行级 `row_key`，编辑该对象在 editor-state 中的继承／覆盖／CLEAR 意图。两者都不是用户直接编辑 `FishEnvAffinity` 表；Resolve / materialize / writeback 才把有效值生成或更新生产投影。Species Base 不作为生产表行直接写入，但其继承后的有效值可以出现在对应生产行的物化结果中。
+- `bucket` 是生产行的属性及数值 patch 粒度，不是独立的第三 durable 层；Role 与 `fail_env_coeff` 的 row-level patch 以当前 `row_key` 为目标。生产行级动作可以修改该对象允许的 authoring intent，但不得改变目标 `row_key`、重定向到其他行、提升为 Species 默认或向其他生产行广播。
 - Editor 没有钓场上下文：不提供 Pond selector，不编辑 `baseOpportunityIntensity / isBackgroundFish / envCoeffMin`；`fail_env_coeff` 是本编辑器可编辑的习性档案字段，不是 `FishRelease` 的 `envCoeffMin`。（《编辑器界面》§6）
 - 诊断展示位置：字段问题 → 字段控件；Profile 问题 → 组件卡；Policy 问题 → 聚合策略区；全局 / Publish 问题 → 顶栏 ＋ 校验清单。这里只规定 UI placement，不新增统一 `Diagnostic.owner` 身份层。（冻结卡 `A①-卡6`；《编辑器界面》§1.4）
 
@@ -147,6 +149,7 @@
 - Role：物种层 `INHERIT / SET`；**生产行级** `absent / CLEAR / SET`；**永不允许 `ADD`**。（《编辑器持久层契约》§3.4）
 - `fail_env_coeff`：物种层 `INHERIT / ADD / SET`；**生产行级** `absent / CLEAR / ADD / SET`。（《编辑器持久层契约》§3.4）
 - `fail_env_coeff` 的作者语言按 Policy 数值字段表达：物种层＝`沿用策略模板值 / 调整 / 设置为`；生产行级＝`沿用物种配置 / 使用策略模板原始值 / 调整 / 设置为`，分别对应 absent / CLEAR / ADD / SET。它不使用 Role 的三态词表，也不虚构 row-level Policy Source。
+- 这里的 `absent` 表示当前生产行没有该字段的本层记录，不是一个可持久化的 op；生产行级动作的目标是当前 `row_key` 绑定的 Compat 对象，不能因代表行存在就直接编辑生产表或改写 Species Base。
 - Policy 侧的 `CLEAR` 语义：移除继承自物种层的操作，**回到物种当前 Policy Template 的 raw 值**。（《编辑器持久层契约》§3.4）
 - 该定义同时覆盖四个 Role 与 `fail_env_coeff`；`CLEAR` 不携值。**Affinity 没有 `policySourceOverride`**，不能把组件级来源 pin 的能力搬入 Policy。（《编辑器持久层契约》§3.4、§3.10）
 - 行级缺省（继承物种层 Role 操作）与 `CLEAR`（回到 Policy Template raw Role）是两个不同动作，UI 必须区分：物种层作者词为「沿用策略模板 / 设置为 CORE|SECONDARY|IGNORED」；行级作者词为「沿用物种角色 / 使用策略模板原始角色 / 设置为 CORE|SECONDARY|IGNORED」。`INHERIT / absent / CLEAR / SET` 只作为 durable 令牌，不直接充当作者文案。
@@ -261,6 +264,7 @@ Owner 2026-09-24 指示（经主代理转达）：「关注 109PR 当中带来�
 - 本版只有一次性 Bootstrap：`Production → Bootstrap → Editor durable state`；持续反向对账 / 自动采纳 Production 不在本版。验收包含无编辑往返：Production → Bootstrap → Editor → Publish → Production 逐位一致。
 - 生产侧只保存物化后的完整值 / 枚举，不保存 Source / op / patch provenance；Runtime 不做 base ＋ delta 合并。（《编辑器与 Resolve》§11.1）
 - 生产投影按结构化 authoring lineage 复用，不按 payload 相等：物种层用共享模板且无有效操作 → 可复用该模板的生产 Profile；桶层完全继承物种 Recipe → 可复用物种投影；有显式 `sourceOverride` 但最终为「纯共享模板 ＋ 零操作」→ 仍可复用该模板的 Profile（显式 pin 只分叉继承关系，不强制复制行）；最终仍含任何有效操作 → 该桶自有投影。**同值 `SET` 与纯 source pin 必须区分**：同值 `SET` 阻断未来模板改值 ⇒ 自有投影；`sourceOverride` ＋ 零操作 ＝ 未来继续跟随 ⇒ 可安全复用。（《编辑器持久层契约》§3.7）
+- **代表行不是直接编辑载体**：一次性 Bootstrap 可用代表行作为种子来源；Compat / bucket authoring 也可通过当前代表行定位编辑对象和 `row_key`。这两种用途都不把编辑器动作变成直接编辑生产表；用户编辑的是 editor-state 中的 authoring intent，随后由 Resolve / materialize / writeback 生成生产投影。具体代表行 tie-break、零行物种处置和未写回稳定键形态若未另有现行裁定，不由本条补造。
 - ★ **`name` 的射程要分两层写**（原文只写「只是人类可读标签，不作 identity / join / 复用键」—— **过宽**，独立复审于 `fa96900` 报出，2026-09-21 Owner 同向裁定）：**Editor / Materializer 内部定位 → 稳定 id / key**（`name` **不作** Editor identity）；**Production XLSX 跨子表引用 → 仍按现有物理 schema 写 `targetRow.name`**。⇒ **本期不得把 XLSX 引用单元格顺手迁成 id**（那是单独的**配置表 Schema Migration**；`TimePeriod` 连数字 group id 都没有）。因此 **新增／新建的 production row `name` 必须在对应 production lookup domain 内无歧义**，collision ⇒ **BLOCK**（不 silent suffix / fallback）。行名的三级形态＝模板级（作者填，不预填）/ 物种派生级 / 桶派生级（自动生成）。（《编辑器持久层契约》§4.4）
 - 不隐藏耦合：换来源不自动改 Role；改 Role 不自动换来源；Role 置 IGNORED 不自动删 Profile；重导 / 生态数据更新不自动切 Recipe Source；预设应用不产生长期预设 identity；值相等不自动转继承；同源不自动删 `sourceOverride`；payload 相等不自动合并 authoring owner；归档 / 断链来源不自动 fallback。（《编辑器持久层契约》§3.3、§3.5、§3.7、§3.10）
 
