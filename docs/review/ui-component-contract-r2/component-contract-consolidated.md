@@ -220,7 +220,7 @@
 - 五类 Live Template：Temperature / Structure / Feeding Layer / Time Period / Spatial Opportunity Policy。（《编辑器心智模型与 IA》§4；《编辑器持久层契约》§3.6）
 - 模板是**完整值资产**：operation 只存在于物种 Recipe 与桶 patch 上。（《编辑器持久层契约》§3.3、§3.7）
 - 两个入口、一个焦点编辑器：从组件卡钻入（中栏保持鱼上下文）与从模板库进入（中栏切到模板上下文）复用同一个模板值编辑器。（《编辑器心智模型与 IA》§4；《编辑器界面》§7）
-- 模板工作区位于左栏 **共享资产 → 习性模板**；Species Presets 是同一共享资产 Section 下的 sibling asset view。模板清单平铺、可滚动、默认按引用量排序；中文 / 英文别名可编辑；source name 只读且不作键。（《编辑器界面》§7）
+- 模板库管理入口位于左栏 **共享资产 → 习性模板**；Species Presets 是同一共享资产 Section 下的 sibling asset view。**从 Fish 组件卡查看 / 编辑当前 Shared Template 仍沿用 contextual drill-in：可保持 FISH Section 与鱼的中栏 Context，不要求为了打开模板 Focus 强制切到共享资产。**只有作者主动进入模板库管理时，才切换到共享资产 Section / 模板上下文。模板清单平铺、可滚动、默认按引用量排序；中文 / 英文别名可编辑；source name 只读且不作键。（《编辑器界面》§7）
 - 关联一律按 id；别名属 editor-state；不把 inheritance lineage 编进生产行 name。（《编辑器持久层契约》§3.6、§4.4；《编辑器界面》§1.2）
 - 「从当前鱼提取模板」**只创建 Template Asset**：不改当前鱼 Source、不清既有操作、不把 Recipe 折成新模板引用（即使 payload 完全相同）；要改 Source 须另走 Source Change ＋ Rebase Preview。（《编辑器界面》§7 逐字；记录页 §172 二 APPLY DELTA ⑤）
 <a id="template-lifecycle-guards"></a>
