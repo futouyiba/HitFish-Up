@@ -13,8 +13,8 @@
 
 | # | 控件 | 层·面 | 批次 | 状态／入口 |
 |---|---|---|---|---|
-| A1 | 顶栏（Editor Global Shell：工具身份/全局状态/Publish） | 框架 | ①（保存状态）＋④（系统面） | 不承担鱼/Mode导航；保存区及「丢弃未保存的改动」按[卡7](#autosave-status)，Publish 按汇编 §15 |
-| A2 | 面包屑 | 框架 | ④ | 已规格（v2） |
+| A1 | 顶栏（Editor Global Shell：工具身份/工具级视图/全局状态/Publish） | 框架 | ①（保存状态）＋④（系统面） | 可承载 Resolve/Bake/Fish List 等工具级视图入口；不承担 Fish/Mode Subject 导航。保存区及「丢弃未保存的改动」按[卡7](#autosave-status)，Publish 按汇编 §15 |
+| A2 | 当前 Subject 标题 / 路径 | 上下文总览 | ④ | 放在中栏 Context Header：至少显示 Fish + 基础习性/Mode（含必要 `[兼容]`）；不是 Topbar 第二套导航，也不要求做可点击 breadcrumb |
 | A3 | dirtyDot（按层待写盘） | 框架 | ④ | 语义已拍＝记录页 §167 六（随卡7 落地） |
 | A4 | Subject Navigation Rail（FISH / 共享资产） | 主体导航 | ④ | 当前规则见[汇编 §1](component-contract-consolidated.md#subject-navigation)：顶层可达、单 Section 展开、鱼→基础习性/中鱼习性模式 |
 | C1 | Source Selector·物种层 | 上下文总览 | **①卡1** | [卡1](#source-selector) |
