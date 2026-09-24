@@ -277,7 +277,7 @@ Owner 2026-09-24 指示（经主代理转达）：「关注 109PR 当中带来�
 不做（画进假图等于把作者引向不存在的能力）：
 - 程序开关；`if / else / return` 之类控制流编写；自定义聚合算子；自由编排 / 任意输入连线；Gate 控件 / `GatePolicy` 字段；模板共享面板的三档分级；不新增顶层空的 `Calculation Surfaces` 导航；不显示 Activity / Feeding Readiness 之类空壳；不新增第二套 Bake Editor、不新增脚本入口。（《编辑器界面》§5）
 - 本版**不显示占比 / 分群的伪控件或预留字段**，也不提供对应编辑入口；若需要说明边界，只用普通说明文字表达「本版不实现 Mode Share / Routing」。未来 Routing 另行设计，不从当前 Compat UI 反推其参数形态。
-- 桶不是真正的 Engagement Mode；Runtime 无 EngagementMode identity，不得据 UI 名称另建 durable 的 Engagement Mode 身份 / 注册表 / 模式级 Concrete 来源。（《编辑器界面》§5；《编辑器与 Resolve》§11.1；记录页 §172 二 KEEP）
+- 当前 bucket / compat projection **不是独立的 durable / Runtime EngagementMode identity**；但 Editor 可以把 `young / mature` 作为业务上的「中鱼习性模式」呈现，并用 `[兼容]` 标示当前承载方式。不得因为 UI 使用 Mode 业务命名就另建 Engagement Mode 身份 / 注册表 / 模式级 Concrete 来源。（《编辑器界面》§5；《编辑器与 Resolve》§11.1；记录页 §172 二 KEEP）
   - **业务概念与 durable identity 分离**（记录页 §385，ADJ-08＝`C_SPLIT_REGISTERS`）：`Engagement Mode`／中鱼习性模式是 Simplified Production V0 的正式业务概念；B P0 不实现 Mode Share／Routing。物理 durable key 为 `FishEnvAffinityRef`；`FishEngagementModeCompat` 是对 Affinity 的 mode-like authoring projection／兼容壳；Runtime／production 无独立 `EngagementMode` identity。业务概念不能充当另一套物理身份。
   - `sourceOverride` 的物理键写作 `(fishEnvAffinityRef, component)`；若 schema 字段名为 `owner_ref`，则 `owner_ref := FishEnvAffinityRef`。不留抽象的 `owner` 让实现猜身份；原页侧依据为 CT §1.1／§3.3、RS §11.1，Runtime 禁令与 UI §5／RS §7／IA §8 相容。逐页改写经过由 Git 保留。
 - **Quality Stable Data 页面本版不开放**（入口置灰、不展示/编辑品质自身字段）；**不新建品质模板库、不把品质当作第五个习性组件**。StockRelease / Production 中既有的 Quality＋`FishEnvAffinityRef` 引用仅作为当前 Editor 会话载入快照只读投影到习性档案上下文；可按 Quality 聚合显示，但不新增全局 Quality→Affinity identity。本版不提供关联、删除、重分配、占比或 Routing 编辑。（Owner 2026-09-24 指示（经主代理转达）：「关注 109PR 当中带来的语义变化，它是非常关键的。」）
