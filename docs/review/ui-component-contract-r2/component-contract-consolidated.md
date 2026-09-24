@@ -6,7 +6,7 @@
 
 <a id="subject-navigation"></a>
 - 三栏＝**Subject Navigation｜主体导航** ｜ 上下文总览 ｜ 焦点编辑。几何：250 ＋ 890 ＋ 460 ＋ 边距 ＝ 1680。左栏负责回答「现在编辑谁」，中栏只展示当前 Subject 的 Context Overview，右栏编辑具体 Component / Field；中栏不再重复一套鱼 / 模式选择器。
-- 左栏顶层只保留两类 Section：**FISH** 与 **共享资产**。同一时刻只展开一个顶层 Section；两个 Section header 必须始终可达，只有当前 Section body 承担垂直滚动，不能靠加高 Rail、压缩字号或让整个页面滚动来解决内容溢出。
+- **Authoring Surface 的 Subject Rail** 顶层只保留两类 Section：**FISH** 与 **共享资产**。同一时刻只展开一个顶层 Section；两个 Section header 必须始终可达，只有当前 Section body 承担垂直滚动，不能靠加高 Rail、压缩字号或让整个页面滚动来解决内容溢出。Resolve Preview / Bake Preview / Fish List 属工具级独立视图，不要求复制这套 Authoring Rail。
 - FISH 下的 Species 是**导航父节点**，不是额外的一层独立 Authoring Subject；真正可选的 Authoring Subject 是其下的「基础习性」或某个「中鱼习性模式」。Fish 使用标准 disclosure，可由作者自由展开 / 折叠，多条非当前鱼可同时展开；不设置“最多额外一条”的特殊自动折叠规则。选择某个 child Subject 时，其 Fish 自动展开并对 active body 做最小必要 reveal。
 - 每条鱼内部固定分为：**基础习性** ＋ **中鱼习性模式**。`中鱼习性模式` 只是不可点击的 group label；本版 `幼年` / `成年及以上` 作为模式行展示，并带中性的 **[兼容]** badge，表示「业务上按中鱼习性模式编辑，但当前仍由兼容 authoring scope / Affinity 结构承载」。`[兼容]` 不是警告、不是名字的一部分，也**不新增独立 durable EngagementMode identity**；badge 应提供短 Tooltip / accessible description 解释其含义，不在每个 Mode 旁常驻重复长说明。
 - `基础习性` 不放进「中鱼习性模式」group；它仍对应 Species Base。Mode / Compat 行被选中后，中栏直接展示该 Subject 的 Context Overview；不在中栏再画 Mode Tabs / Selector。
