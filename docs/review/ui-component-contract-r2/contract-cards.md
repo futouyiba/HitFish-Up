@@ -442,6 +442,8 @@ Must not:
 <a id="role-control"></a>
 **机制入口**：[汇编 §9](component-contract-consolidated.md#role-record-intent)定义 raw Role 与记录态／UI 派生，[§11](component-contract-consolidated.md#profile-lifecycle)定义 Profile 缺席、promotion、Setup 与空底板投影；Policy CLEAR／词表见[§10](component-contract-consolidated.md#policy-clear)。本卡只保留读取、交互、落盘字段和验收。
 
+**Authoring / production projection boundary**：Species Context 编辑 Species Base / Species Policy Recipe 中的物种默认 authoring；Compat / bucket Context 通过 representative row 定位当前 Compat 对象与 `row_key`，编辑该对象在 editor-state 中的继承／覆盖／CLEAR 意图。生产表不是用户直接编辑载体；Resolve / materialize / writeback 才生成或更新 FishEnvAffinity 生产投影。底板不直接成为生产表行，但其继承后的有效值可以进入对应生产行。
+
 ```
 Component: RoleControl｜Role 三态（CORE / SECONDARY / IGNORED）
 Reads:

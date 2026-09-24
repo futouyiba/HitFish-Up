@@ -30,7 +30,7 @@
 | Numeric patch 与 Source binding | 《编辑器持久层契约》§3.3；[汇编 §3](review/ui-component-contract-r2/component-contract-consolidated.md#component-clear)、[身份边界 §16](review/ui-component-contract-r2/component-contract-consolidated.md#identity-boundaries) | numeric 的 `scope_kind` 恒为 literal `bucket`，带 `scope_kind=row` 必须由 Validator 按不合 Current Schema 报错，不静默接受。组件级 `sourceOverride` 的物理键与 authoring 粒度按 §16 分开，不把它当逐字段 patch 字段。 |
 | 模板清单与别名 | 《编辑器持久层契约》§3.6；[卡8](review/ui-component-contract-r2/contract-cards.md#template-list) | `kind = TemplateKind = TEMPERATURE / STRUCTURE / FEEDING_LAYER / TIME_PERIOD / SPATIAL_OPPORTUNITY_POLICY`。`template_key` 为生产子表行标识（时段为组名）；唯一约束分别为 `kind + template_key` 或 `kind + editor_key`。别名、追溯及未物化记录的交互／展示按所引卡8。 |
 
-底板不进生产表，Species Base Record 不含任何子表行引用。其初值导入时取配置表中该物种最频繁画像的代表行，不能初始为空；这是一次性种子，此后以编辑器为准，不是持续 Production → Editor 覆盖（《编辑器持久层契约》§3.1）。它与作者随后将某组件配置为空是两件事。
+底板不进生产表，Species Base Record 不含任何子表行引用。其初值导入时取配置表中该物种最频繁画像的代表行，不能初始为空；这是一次性种子，此后以编辑器为准，不是持续 Production → Editor 覆盖（完整的 authoring → Resolve/materialize → production projection 边界见[汇编 §9](review/ui-component-contract-r2/component-contract-consolidated.md#policy-profile)与[§15](review/ui-component-contract-r2/component-contract-consolidated.md#cross-layer-guards)）。它与作者随后将某组件配置为空是两件事。
 
 第五类模板的边界按所引定义；实现落点仍为 `FishEnvAffinity` 角色列及 `fail_env_coeff`。完整机制见[汇编 §9](review/ui-component-contract-r2/component-contract-consolidated.md#policy-profile)；identity／生命周期规则对五类一并适用（《编辑器持久层契约》§3.6、§3.10）。
 
