@@ -86,6 +86,7 @@ ADJ-01…13 的关闭裁定、原出处与投影定位见[固定裁决索引](ht
 
 此处只导航，不另存规则或几何事实：
 - 容器高度、卡侧层级与SourceLabel恢复风险：[图像登记 §五](figma-current.md#五2026-09-21-节点与-annotation-回读记录)。
+- 左栏 Subject Navigation 的顶层可达性、单一 scroll owner、当前鱼／额外浏览鱼展开规则，以及 `中鱼习性模式 [兼容]`：看[汇编 §1](component-contract-consolidated.md#subject-navigation)与[差异清单 D0-D2 / D8](../0.3.4.0-B-ui-vs-figma-current-delta-backlog.md#左栏-drawer)。**图像登记 §五的 122px Policy 控制条高度不是 Rail 设计依据。**
 - 物种／行级 CLEAR、操作概念名与行内显示：[汇编 §4](component-contract-consolidated.md#field-value-control)及[§10](component-contract-consolidated.md#policy-clear)。
 - Role角标为何保留角色色：[图像登记 §八](figma-current.md#八原快照的卡上-role-角标--为什么它是三态下拉以及为什么它不做成白场)。
 - 图上“示意／空态”及“未标不等于已实现”的取证边界：[图像登记 §三／四](figma-current.md#三2026-09-20-的历史回读)。“类型名（示意）”不声称真实对象存在。
