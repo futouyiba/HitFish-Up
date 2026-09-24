@@ -3,8 +3,16 @@
 本文只写现行规定。出处写作《页名》§N、记录页 §N 或 冻结卡 `A①-卡N` / `A②-卡N`；查不到出处的条目列在 §18 的未核边界与 §19 的命名边界，不进正文。标（本轮裁定）的条目＝本轮已定口径，其依据随条给出。
 
 ## 1. 产品拓扑与三栏
-- 三栏＝对象导航 ｜ 上下文总览 ｜ 焦点编辑。几何：250 ＋ 890 ＋ 460 ＋ 边距 ＝ 1680。（《编辑器界面》§9.1；《编辑器心智模型与 IA》§3）
-- 左栏三类入口：FISH（Species → 习性 / 品质）／TEMPLATES（五类）／SPECIES PRESETS。物种预置＝一次性写五个来源绑定（四组件 ＋ Policy），**不是父节点**。（《编辑器心智模型与 IA》§3、§4）
+
+<a id="subject-navigation"></a>
+- 三栏＝**Subject Navigation｜主体导航** ｜ 上下文总览 ｜ 焦点编辑。几何：250 ＋ 890 ＋ 460 ＋ 边距 ＝ 1680。左栏负责回答「现在编辑谁」，中栏只展示当前 Subject 的 Context Overview，右栏编辑具体 Component / Field；中栏不再重复一套鱼 / 模式选择器。
+- 左栏顶层只保留两类 Section：**FISH** 与 **共享资产**。同一时刻只展开一个顶层 Section；两个 Section header 必须始终可达，只有当前 Section body 承担垂直滚动，不能靠加高 Rail、压缩字号或让整个页面滚动来解决内容溢出。
+- FISH 下的 Species 是一级 Subject；当前鱼必须保持展开，当前选中的 Subject 路径必须始终可见。允许额外展开**最多一条**非当前鱼作浏览；再展开另一条非当前鱼时，上一条浏览鱼自动折叠。点击浏览鱼下的 Subject 后，该鱼成为当前鱼。
+- 每条鱼内部固定分为：**基础习性** ＋ **中鱼习性模式**。`中鱼习性模式` 只是不可点击的 group label；本版 `幼年` / `成年及以上` 作为模式行展示，并带中性的 **[兼容]** badge，表示「业务上按中鱼习性模式编辑，但当前仍由兼容 authoring scope / Affinity 结构承载」。`[兼容]` 不是警告、不是名字的一部分，也**不新增独立 durable EngagementMode identity**。
+- `基础习性` 不放进「中鱼习性模式」group；它仍对应 Species Base。Mode / Compat 行被选中后，中栏直接展示该 Subject 的 Context Overview；不在中栏再画 Mode Tabs / Selector。
+- Rail 的展开 / 折叠只是 session UI state，不产生 durable authoring entity。当前鱼不能被折叠到使当前 Subject 消失；非当前浏览鱼可以折叠。
+- **共享资产**承载可复用 Authoring Assets：习性模板（五类 TemplateKind）与 Species Presets。Species Preset 是一次性写五个来源绑定（四组件 ＋ Policy）的 authoring convenience asset，**不是 Fish 的父节点，也不是第三个顶层 Workspace**。Preset 的管理在共享资产中；“应用物种预设”从当前 Fish Context 直接可达。
+- 顶栏是 **Editor Global Shell**：只承载工具身份、全局 ephemeral candidate / Autosave / Diagnostic 状态与 Publish 等全局动作；**不重复 FISH / 共享资产导航，不显示鱼 / Mode 作为第二套 breadcrumb，也不承担局部字段编辑**。
 - **Quality Stable Data 与 Production 习性引用分开**：`FISH QUALITY STABLE` 页面本期仍置灰，不开放品质自身字段。StockRelease / Production 中既有的 Quality＋`FishEnvAffinityRef` 引用由 Production / 数据迁移维护；习性档案 Authoring Surface 只读展示**当前 Editor 会话载入快照中，哪些既有 Production 引用指向该 Affinity**。UI 可按 Quality 聚合成人类可读摘要，但不得把聚合反推成新的全局 `Quality → Affinity` durable identity；同一 Quality 若在不同 Production 行引用不同 Affinity，可以同时出现在多个 Affinity 摘要中，这本身不是冲突。该摘要也不是实时 Routing 数据源。Production 后续外部变化由 drift / generation 诊断处理。Editor 本期不新增、删除或重分配这些引用，也不引入 Quality / Engagement Mode / tier / routing identity。（Owner 2026-09-24 指示（经主代理转达）：「关注 109PR 当中带来的语义变化，它是非常关键的。」）
 - **本版习性层级＝物种底板 ＋ 兼容覆盖**：Species Base 是主要 Authoring Truth；`young / mature` 是当前版本的兼容 authoring scope，不是真正的 Engagement Mode。numeric patch 按 bucket；Component Source 仍沿既有 Affinity/sourceOverride 身份规则；Role 与 `fail_env_coeff` 按 production-row 粒度处理。UI 同处一个兼容覆盖 Context 不改变这些物理 owner。产品 UI 显示「物种底板」与「兼容覆盖 · 幼年 / 成年及以上」。只有当该 Compat 下**没有任何本地 authoring record**（包括 numeric patch、`sourceOverride`、所含 production rows 的 Role / `fail_env_coeff` patch）时才显示「沿用底板」；存在任一记录则显示「有本层调整」，不按 Effective 值是否相同反推。不得用「未存」暗示档案缺失，也不得把生产行名（如 `NORMAL`）冒充产品 Mode identity。
 - 中栏 Context 与右栏 Focus **不是同一个导航状态**：允许短暂 detached，但必须显式提示（右栏标题明确对象身份 ＋ 低成本「切回当前上下文」），不得让作者误以为右栏仍在编辑中栏对象。detached 只是 UI 导航状态，不产生新的 durable authoring entity。（《编辑器心智模型与 IA》§3 逐字「切换上下文不销毁编辑现场」）
@@ -205,14 +213,14 @@
 - 层决定有无 `CLEAR`，字段类型决定有无 `ADD`；不可把桶层选项暴露给物种层。对应四格用户语言见 [卡2](contract-cards.md#operation-control)。（记录页 §312 裁 `XR-F-03`）
 
 <a id="template-lifecycle"></a>
-## 14. 模板工作区与模板生命周期
+## 14. 共享资产中的模板工作区与模板生命周期
 
 **本节是模板生命周期、两引用集及 Replace 边界在本包的完整机制投影**；卡9／11／12保留交互、记录与验收。权威为《编辑器持久层契约》v16（`Last Updated 2026-09-21 14:34 +08:00`）§3.6／§3.10；本批同时回读《编辑器界面》v20（`Last Updated 2026-09-21 17:19 +08:00`）§7。其余历史出处沿用基线，未重读实时 Owner 记录，也不声明实现已通过。Source staged 协议仍按[§8](#source-transaction)，不在本节重定义。
 
 - 五类 Live Template：Temperature / Structure / Feeding Layer / Time Period / Spatial Opportunity Policy。（《编辑器心智模型与 IA》§4；《编辑器持久层契约》§3.6）
 - 模板是**完整值资产**：operation 只存在于物种 Recipe 与桶 patch 上。（《编辑器持久层契约》§3.3、§3.7）
 - 两个入口、一个焦点编辑器：从组件卡钻入（中栏保持鱼上下文）与从模板库进入（中栏切到模板上下文）复用同一个模板值编辑器。（《编辑器心智模型与 IA》§4；《编辑器界面》§7）
-- 平铺、可滚动、默认按引用量排序；中文 / 英文别名可编辑；source name 只读且不作键。（《编辑器界面》§7）
+- 模板工作区位于左栏 **共享资产 → 习性模板**；Species Presets 是同一共享资产 Section 下的 sibling asset view。模板清单平铺、可滚动、默认按引用量排序；中文 / 英文别名可编辑；source name 只读且不作键。（《编辑器界面》§7）
 - 关联一律按 id；别名属 editor-state；不把 inheritance lineage 编进生产行 name。（《编辑器持久层契约》§3.6、§4.4；《编辑器界面》§1.2）
 - 「从当前鱼提取模板」**只创建 Template Asset**：不改当前鱼 Source、不清既有操作、不把 Recipe 折成新模板引用（即使 payload 完全相同）；要改 Source 须另走 Source Change ＋ Rebase Preview。（《编辑器界面》§7 逐字；记录页 §172 二 APPLY DELTA ⑤）
 <a id="template-lifecycle-guards"></a>
