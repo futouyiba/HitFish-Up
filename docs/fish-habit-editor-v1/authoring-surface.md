@@ -91,6 +91,7 @@ Wood        设置为 0.60                 0.60
 - 点击某 field summary row → 选中 Component，并让 Focus Editor 定位该 field。
 - Source Selector → staged Source candidate。
 - Diagnostic badge → 选中该 Component 的相关诊断。
+- Role badge 只读显示 Effective Role；不提供 dropdown / toggle，也不作为第二个 Policy mutation entry。
 - Card 不直接编辑 field numeric value。
 
 ## 5. Focus Editor states
@@ -593,7 +594,7 @@ V1 推荐：
 
 ### 13.2 Policy Focus Editor
 
-点击 Policy Card 或其中任一 Role row，右栏进入统一 Policy Focus Editor；四个 Role 同时可见并直接编辑，因此不需要靠四个 Component Card 的 Role dropdown 来提高操作效率。
+点击 Policy Card 或其中任一 Role row，右栏进入统一 Policy Focus Editor；四个 Role 同时可见并直接编辑，因此不需要靠四个 Component Card 的 Role dropdown 来提高操作效率。Role row 可作为轻量 focus target，但不改变“Policy Focus Editor 是唯一 Role mutation surface”的原则。
 
 Species Base：
 
