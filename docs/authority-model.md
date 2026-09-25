@@ -36,6 +36,7 @@ Current 入口：`docs/fish-habit-editor-v1/`。
 - `authoring-surface.md`：Fish Subject 核心编辑屏、Species Habit initialization、导航、Context Header、Component / Policy Overview、Focus Editor 与交互。
 - `shared-assets.md`：Shared Template 创建、提取、传播影响、引用与生命周期维护。
 - `secondary-surfaces.md`：Resolve Preview、Publish 以及后续真正闭合的 V1 次级 Surface。
+- `implementation-brief.md`：V1 当前工程落点、实现顺序与尚需确认的窄实现细节；不重新定义产品语义。
 - `docs/review/fish-habit-editor-version-scope.md`：V1 范围与后续阶段边界。
 
 Current Authority 关系：
