@@ -93,7 +93,20 @@ Policy Template
 
 全部选择完成后 atomic create 完整 Species Base，并直接进入普通 Authoring。
 
-Habit Editor 不创建或编辑 Fish Basic 基础数据、模型、图鉴、Quality，也不创建 StockRelease / FishRelease 的 Quality ↔ FishEnvAffinity 关联。
+初始化页只做 **Source / Policy binding selection**：
+
+- 不在这里编辑 ADD / SET / CLEAR；
+- 不在这里改 Role / fail_env_coeff；
+- 不在这里创建 Template；
+- 若缺少合适 Template，先到 Shared Assets 创建，再回来开始配置；
+- 创建成功后的细调全部复用正常 Authoring Surface。
+
+Species Base 可以合法存在而没有任何 FishEnvAffinity。此时 UI 表达为“基础习性已配置 · 尚无中鱼习性模式”：
+
+- 不是 Validator ERROR；
+- 不代表已经可被 StockRelease 使用；
+- Publish 不自动创建 Affinity row；
+- Habit Editor 不创建或编辑 Fish Basic 基础数据、模型、图鉴、Quality，也不创建 StockRelease / FishRelease 的 Quality ↔ FishEnvAffinity 关联。
 
 ## 3. Workspace / IA
 
