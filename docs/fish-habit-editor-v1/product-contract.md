@@ -91,14 +91,14 @@ Policy Template
 [开始配置]
 ```
 
-全部选择完成后 atomic create **完整 Species Base + 一个系统默认 FishEnvAffinity 投影壳**，并直接进入普通 Authoring。
+五项选择完成且 resulting Species Base **没有 blocking validation error** 后，atomic create **完整 Species Base + 一个系统默认 FishEnvAffinity 投影壳**，并直接进入普通 Authoring。
 
 初始化页只做 **Source / Policy binding selection**：
 
 - 不在这里编辑 ADD / SET / CLEAR；
 - 不在这里改 Role / fail_env_coeff；
 - 不在这里创建 Template；
-- 若缺少合适 Template，先到 Shared Assets 创建，再回来开始配置；
+- 若缺少合适 Template，可从当前 Source picker 进入 Shared Assets 创建；初始化表单只在当前 UI 会话内保留已选 Species / binding，创建完成后返回并刷新候选。该保留是 ephemeral return state，不是 durable Draft；reload / 退出工作区可以丢弃；
 - 创建成功后的细调全部复用正常 Authoring Surface。
 
 Species Base 仍是唯一默认习性 Authoring Truth；系统默认 FishEnvAffinity 只是它的运行时 / Production 投影壳，不作为第二个可编辑 Subject。
@@ -181,6 +181,7 @@ V1 不采用 Bounded Coverage。
 - Species identity 来自 Fish Basic / authoritative Species Catalog；
 - 默认 Fish List 可以只展示已配置 Habit 的 Species，保持工作列表简洁；
 - “开始配置其他鱼种”搜索尚未建立 Habit 的 Fish Basic Species；
+- 若 Editor 尚无 Species Base、但 Production 已存在该 Species 的 FishEnvAffinity footprint，则显示“存在旧习性数据 · 需迁移”，不得进入 fresh create；
 - 创建完成后得到完整 Species Base + 系统默认 Affinity projection；
 - Golden Seed 只用于 demo / regression / migration evidence，不决定其它 Species 是否可配置。
 
@@ -281,6 +282,7 @@ V1 的 staged candidate 是**短事务**，不是可跨页面长期挂起的 Dra
 - 新建 Species identity
 - 用户创建额外 Engagement Mode / Compat FishEnvAffinity row（系统默认 Affinity projection 除外）
 - Family / Preset-assisted Species initialization
+- Species Base / system default Affinity Archive / Delete
 - 鱼家族预设 / Species Preset
 - 钓鱼元素周期表 Import / Lux CLI
 - Bake Preview
