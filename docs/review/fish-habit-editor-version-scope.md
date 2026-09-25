@@ -7,7 +7,7 @@
 
 ## 1. 总体产品边界
 
-Fish Habit Editor 的职责是维护“鱼的中鱼习性 Authoring Truth”，并将其通过 Resolve / Bake / Publish 投影到生产配置。
+Fish Habit Editor 的职责是维护“鱼的中鱼习性 Authoring Truth”，并将其通过 Resolve / Publish 投影到生产配置。
 
 长期边界：
 
@@ -30,7 +30,6 @@ V1 证明一条完整生产闭环：
 → 手工 Authoring
 → Validation
 → Resolve Preview
-→ Bake Preview
 → Publish
 → 更新既有 Habit Production projection
 ```
@@ -95,7 +94,6 @@ Temperature V1 以**手工 Authoring**为主，不承诺外部生态数据库自
 
 - Validation。
 - Resolve Preview。
-- Bake Preview。
 - staged Candidate / Rebase / Impact Preview（只用于现行需要 staged confirm 的变更）。
 - Publish Preflight。
 - 单一 canonical Publish executor。
@@ -108,7 +106,7 @@ V1 不要求全量自动迁移，但应提供一份**小而真实、人工复核
 
 - 展示真实 Fish Habit Authoring；
 - 验证已有 Production 数据能够被 bounded bootstrap 到 Editor；
-- 覆盖 Template fan-out、Species override、兼容 scope、Policy、Resolve、Bake、Publish 等关键路径；
+- 覆盖 Template fan-out、Species override、兼容 scope、Policy、Resolve、Publish 等关键路径；
 - 作为 demo / regression / roundtrip evidence。
 
 Golden Seed 可以由一次性脚本 + 人工整理生成；该脚本**不构成 V1 产品能力承诺**。
@@ -146,6 +144,10 @@ V1 不承诺：
 - 全量 reconcile / semantic recovery。
 
 ## 3. V1.1｜Authoring Efficiency
+
+> Bake Preview / 条件组求值预览不属于 V1 承诺。是否在 V1.1 或更后阶段进入，以预览输入、基础权重、条件组来源与验收口径闭合为前提。
+
+
 
 V1.1 的目标是提升生产效率，不改变 V1 已验证的 Authoring Truth 边界。
 
