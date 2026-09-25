@@ -15,7 +15,7 @@
 2. [authoring-surface.md](authoring-surface.md)  
    Fish Subject 的核心一屏：Subject Navigation、Context Header、Component Overview、Focus Editor、Inline Field Authoring、Source Change。
 3. [secondary-surfaces.md](secondary-surfaces.md)  
-   V1 的次级产品面；当前已闭合 Resolve Preview，后续 Publish / Shared Assets 在真正进入收敛时追加。
+   V1 的次级产品面；当前已闭合 Resolve Preview 与 Publish，Shared Assets 在真正进入收敛时追加。
 
 ## Authority relationship
 
