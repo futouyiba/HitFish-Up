@@ -1,7 +1,7 @@
 # Fish Habit Editor V1｜Secondary Surfaces
 
-> Status: Working Candidate  
-> 本文收敛 Fish Subject 主 Authoring 之外的 V1 产品面。当前已闭合 Resolve Preview 与 Publish；Shared Assets 等在真正进入收敛时追加，不预先制造空章节。
+> Status: Current Surface Contract for V1  
+> 本文收敛 Fish Subject 主 Authoring 之外的 V1 产品面：Resolve Preview 与 Publish。Shared Template 独立由 [shared-assets.md](shared-assets.md) 承担。
 
 ## 1. Resolve Preview｜解析预览
 
