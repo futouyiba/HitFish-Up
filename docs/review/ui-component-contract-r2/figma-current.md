@@ -1,5 +1,7 @@
 # Figma 画面与图像证据登记
 
+> **Historical V0.2 — 非 Current Authority。** 本文件保留 R2 当时的设计 / Review / evidence 状态，用于版本考古与来源追踪。Fish Habit Editor 当前产品与公共语义以 [`docs/fish-habit-editor-v1/`](../../fish-habit-editor-v1/README.md) 为准；历史内容不得覆盖 V1 Current。
+
 **范围与版本**：节点、annotation 和几何记录的历史部分继承自 [#7 固定版本](https://github.com/futouyiba/HitFish-Up/blob/1409a13fde46dcb8d10bae039c26f6a0090bf497/docs/review/ui-component-contract-r2/figma-current.md)，包含多轮历史回读；#7 的图片与导出更正见[固定证据版本](https://github.com/futouyiba/HitFish-Up/blob/ca17a2306b3c567e6fe7bc2eedcc6ed43ed3a2e5/docs/review/ui-component-contract-r2/figma-current.md)；后续 INHERIT 1×图与对应记录继承自 [#17 固定版本](https://github.com/futouyiba/HitFish-Up/blob/8d4523c0372c12cbf1aad14ec652159c2782e5ad/docs/review/ui-component-contract-r2/figma-current.md)。本次整理只核仓内 PNG 指纹、尺寸与元数据，未重读实时 Figma；既有画面判读沿原取证。较早回读不代表较晚图片仍如此。**本文件登记实物与证明范围；处置、剩余工作及关闭证据统一见[问题台账](OPEN-ITEMS.md#active-review-items)。**
 
 **这是一份按取证版本记录画面的清单**，供你比对契约。**不含文件链接**（按本项目的对外规则，内部链接一律不进仓）。
