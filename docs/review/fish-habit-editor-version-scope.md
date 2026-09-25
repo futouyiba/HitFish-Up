@@ -40,8 +40,8 @@ V1 的核心成果不是覆盖所有 Runtime / StockRelease 拓扑，而是证�
 1. Species identity 继续由 Fish Basic 提供，Habit Editor 只创建自己拥有的 Species Base；
 2. 新建 Species Base 与既有 Species Base 使用同一套 Authoring / Resolve / Publish；
 3. 已有兼容 Mode 可以继续编辑；
-4. 新建 Species Base 若尚无 `FishEnvAffinity`，属于完整且合法的 Authoring Base，但**尚未产生可被 StockRelease / FishRelease 引用的运行时习性行**；
-5. V1 Publish 不因缺少 Mode 偷偷创建 `FishEnvAffinity`；固定 Mode 创建由 V1.0.1 补齐。
+4. 新建 Species Base 同时得到一个系统默认 FishEnvAffinity 投影，使其具备最小运行时引用入口；
+5. V1.0.1 只负责在默认 Affinity 之外再补固定 Compat Mode（幼年 / 成年及以上）。
 
 ### 2.2 V1 Included
 
@@ -52,7 +52,7 @@ V1 的核心成果不是覆盖所有 Runtime / StockRelease 拓扑，而是证�
 - 尚无 Habit 的 Species 可以通过“开始配置习性”创建完整 Species Base；Species 只能从 Fish Basic 已有条目中选择。
 - 编辑已经存在的兼容习性 Scope；产品 UI 可用“中鱼习性模式”表达业务心智，并以中性 `[兼容]` badge 标识当前承载方式。
 - **V1 当前兼容拓扑中，一个可编辑中鱼习性模式对应一条既有 `FishEnvAffinity` 行。** 不在一个 Mode Context 下聚合多条 Affinity 行，也不建立额外的 Mode→Quality 解释层。
-- V1 不创建新的中鱼习性 Mode / FishEnvAffinity row；只编辑已经存在的兼容 Mode。
+- V1 不允许用户创建新的业务中鱼习性 Mode；新 Species 只自动建立一个系统默认 FishEnvAffinity 投影。已有兼容 Mode 继续编辑。
 - StockRelease / FishRelease 继续负责 Quality / stocking row 与 FishEnvAffinity 的关联，Habit Editor 不创建或维护该关系。
 
 #### Component Authoring
@@ -114,7 +114,7 @@ V1 直接读取 Fish Basic / authoritative Species Catalog，不要求所有 Spe
 - Habit Editor 不创建 Fish Basic Species，也不维护基础数据、模型、图鉴或 Quality；
 - 默认 Fish List 可以只展示已配置 Habit 的短列表；
 - “开始配置其他鱼种”通过搜索 Fish Basic 选择尚未配置 Habit 的 Species；
-- V1 为该 Species 创建的是 Habit Editor 自己拥有的 Species Base，不创建新的 Mode / FishEnvAffinity row。
+- V1 为该 Species 创建 Habit Editor 自己拥有的 Species Base，并同时建立一个**系统默认 FishEnvAffinity 投影壳**；该默认 Affinity 不是新的业务 Mode，也不是第二套 Authoring Subject。
 
 新 Species Habit 的正常创建态要求一次性选择：
 
@@ -126,15 +126,21 @@ Time Period Source
 Policy Template
 ```
 
-全部完成后 atomic create Species Base。产品上不把缺 Component Profile 的半完成 Species Base 作为正常创建结果。
+全部完成后 atomic create：
 
-创建完成后：
+1. 完整 Species Base；
+2. 一个系统默认 `FishEnvAffinity` / ProductionRowLedger 投影壳。
 
-- Species Base 立即成为可继续 Authoring / Resolve 的 durable truth；
-- 如果该 Species 尚无任何 `FishEnvAffinity`，UI 应明确表达“基础习性已配置，尚无中鱼习性模式”；
-- 这不是 Validator ERROR，也不阻断保存 Species Base；
-- Publish 不为此自动创建 Affinity row，也不自动创建 StockRelease / FishRelease 关联；
-- 在尚无 Affinity consumer 时，不要求为了“看起来已发布”强行生成无人引用的 Production projection。
+默认 Affinity 的初始语义固定为：
+
+- 四个 Component 全部跟随 Species Base；
+- numeric operation 全部 absent；
+- Role / `fail_env_coeff` 全部 inherit Species；
+- 不作为左栏额外 Mode Subject 展示，避免与“基础习性”形成重复编辑入口；
+- Editor 使用稳定 `row_key`，Production `row_id` 在 Publish 后获得；
+- human-readable production name 由系统生成并做 collision validation。
+
+因此新 Species 创建完成后已经有一份可被 StockRelease / FishRelease 在其自身配置表中引用的默认 EnvAffinity；Habit Editor **不创建或维护那条 StockRelease 引用关系本身**。
 
 Golden Seed / Snapshot 继续用于 demo / regression / migration / roundtrip evidence，但不决定其它 Fish Basic Species 是否可以开始配置。
 
