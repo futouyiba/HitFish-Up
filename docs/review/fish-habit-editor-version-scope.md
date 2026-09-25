@@ -16,7 +16,7 @@ Fish Habit Editor 的职责是维护“鱼的中鱼习性 Authoring Truth”，�
 - **Production 是 Habit Editor-owned domain 的 materialized output，不是并行 Authoring Truth。**
 - Bootstrap 之后，Habit Editor 不承诺持续 `Production → Editor` 自动反向同步；检测到外部 Production 变化时应阻断 Publish，并交给后续显式 reconcile / migration 流程处理。
 - Materialized Production 数值不能无损反推出 Template / Source / ADD / SET / CLEAR 等作者意图，因此不把“自动双向同步”作为目标。
-- 已有 Habit owner 内部可以按既有 Materializer 规则创建必要 projection row；“不创建 topology”特指本阶段不创建新的 Fish / Engagement Mode 等业务身份和跨域生产拓扑。
+- Habit Editor 可以创建自己拥有的 Species Base 与系统默认 Affinity projection，但不创建新的 Species identity，也不接管 StockRelease / FishRelease 等跨域生产拓扑；任意 Engagement Mode identity 仍属于后续阶段。
 
 ## 2. V1｜Species Habit Authoring Minimum Loop
 
@@ -254,11 +254,11 @@ JSON canonical persistence
 - 聚类 / Family 初始化研究（只作后续 Topology Creation 输入，不进入 V1 Shared Assets）；
 - Golden Seed / migration tooling 的工程化增强。
 
-V1.1 不默认等同于“正式创建新 Fish / 新 Mode”；是否进入 Topology Creation 以相关机制 Contract 是否闭合为准。
+V1.1 不扩展任意 Engagement Mode / Routing；Species Base initialization 已属于 V1，固定 Compat Mode creation 已属于 V1.0.1。
 
-## 5. V1.2｜Topology Creation & Data Integration
+## 5. V1.2｜Advanced Mode & Data Integration
 
-这一阶段开始解决“新的鱼可以从 Editor 出生”。
+这一阶段不再解决 Species Base 是否能从 Editor 创建——该闭环已经在 V1 完成。这里开始处理更高级的初始化效率、任意 Engagement Mode 与外部数据接入。
 
 ### 5.1 Advanced Fish Initialization
 
