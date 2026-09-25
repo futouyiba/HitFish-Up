@@ -838,6 +838,27 @@ Mode 的 durable authoring 只有：
 
 不得为了 UI 对称新增 `policySourceOverride`。
 
+### 13.10 从当前 Component 提取模板
+
+Fish Component Focus 提供低频资产动作：
+
+```text
+[提取为共享模板…]
+```
+
+它从当前 Component 的完整 Effective Profile 创建同 Kind Shared Template。
+
+- 提取前只需填写 / 确认新模板名称等必要 metadata；
+- Profile absent 或无法完整 Resolve 时禁用，并明确原因；
+- 提取成功后当前 Fish 完全不变；
+- 可提供“查看新模板”；
+- 如需让当前 Fish 改用新模板，另行执行 Source Change Candidate；
+- 不提供“提取并自动改绑”的合并动作。
+
+原则：
+
+> Create Source ≠ Bind Source。
+
 ## 14. Persistence details hidden from author
 
 Component Card / Focus Editor 不提示 `将存为 cover_largemouth_bass` 或其它 production/materialization row name。
