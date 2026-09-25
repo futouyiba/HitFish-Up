@@ -116,7 +116,7 @@ fail_env_coeff   0.015
 Resolve 不强迫四个 Component 都长成同一张数值表。
 
 - **Structure / Feeding Layer / Time Period**：按稳定业务字段顺序展示最终值。
-- **Temperature**：展示最终六参数；可同时显示只读曲线作为结果理解辅助，但曲线不能 author，也不能演变成 Bake。
+- **Temperature**：展示最终六参数；当参数满足曲线定义所需不变量时，可同时显示只读曲线作为结果理解辅助。若参数非法到无法形成合法曲线，则保留真实参数与诊断，不绘制自动修正后的假曲线。曲线不能 author，也不能演变成 Bake。
 - **Policy**：展示四个 Effective Role + Effective fail_env_coeff。
 
 Resolved representation 只解释当前最终配置，不引入天气、时段 snapshot、Base Opportunity 或任何 Bake input。
@@ -376,14 +376,11 @@ Profile 不删除，也不禁用查看。
 
 ### 3.6 Broken Source
 
-显示：
+显示明确的“来源缺失”与 blocking diagnostic；**展示 Resolver 实际仍能产出的部分结果，但 UI 不自行推导或补算。**
 
-```text
-无法解析
-来源缺失
-```
+若 Resolver 无法给出该字段 / Component 的 Effective 结果，则显示“无法解析”；不得因为某个字段看起来存在 SET 就由 UI 自己假设它可以绕过 broken source。
 
-并保留诊断；不 fallback 到基础习性 / 默认 Template / 最近似 Source。
+不 fallback 到基础习性 / 默认 Template / 最近似 Source。
 
 ### 3.7 Cross-field invalid but numerically resolvable
 
