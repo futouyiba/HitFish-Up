@@ -297,11 +297,7 @@ Reads:
 Actions:
   - 浏览 / 按组件筛选；编辑 name_zh / name_en
   - 「从当前鱼提取模板」（创建）＝**`A①-卡1` 的 EXTRACT_TEMPLATE 在本工作区的入口**——**同一动作、两个入口**，不另实现一套
-  - 水温「从钓鱼元素周期表导入」：按现行契约走 **Concrete Source 更新**（**不是直接造模板**）—— ⚠️ **它是高影响重导**：**prepare → Preview → 显式确认 → 一次原子提交**（汇编 §15 已把「重导」列为高影响动作）；**Concrete Source 已被 Recipe／继承行消费时，重导会改变多个 Effective Value** ⇒ **不得写成「直接更新 Source」**。（记录页 §312 裁 `XR-F-05`）；本工作区入口按「导入 → 可提取为模板」两步读（**收口已确认**）。**不承诺导入后四值齐备**。★ **此处先前有内部不闭合，收口如下**（同一份文件另处已写「周期表导入的字段级 provenance 差异：**前四项＝生态数据**；`temp_threshold`/`falloff_shape`＝游戏参数」）：**「四值齐备与否」是「源里有没有」的事实，不是口径未定** ——
-  · **来源边界**：下条推导是设计值、非实测，原交付物为水温调研包 `final/`；原登记未落 Current，本次未核上游是否已落页，不把这一历史状态当今天的实测。
-  · ★ **该子情形已裁（Owner 2026-09-21）：取「按既定口径推导」。** 规则收窄为 —— `favMin` / `favMax` **有效时**：`acceptMin = max(0, favMin − 2℃)`、`acceptMax = favMax + 2℃`；`acceptMin` / `acceptMax` **属设计推导值，不要求周期表提供实测值**；**若连推导前提 `favMin` / `favMax` 都缺失或非法 ⇒ Reject Import**。
-  · ★ **不得「保留旧 `accept`」** —— 理由（Owner 逐字）：保留旧值会形成「**新 `fav` ＋ 旧 `accept`**」的**历史依赖与混合 provenance**，使 **Reimport 非幂等**；既定推导则**确定、可解释、可重复**。  处置与来源索引见 `OPEN-ITEMS` §2。
-  · ★ **目标物种护栏（独立条件，不因上述缺值裁定而删除）**：**⚠️ 导入必须带显式目标物种**：该动作更新的是 `SPECIES_CONCRETE` 的 identity ＝ `(speciesId, componentType)`，**而本工作区（`22:2`）的 Reads 里没有 current species、也没有 species selector** ⇒ **入口必须显式选目标物种**（有当前物种时可默认为它），**不得用隐式/未知物种执行**；**未选物种 ＝ 该动作不可执行**，不是「就用当前物种」。替代方案（等价）：把该入口限定到**已有明确 species context** 处。（记录页 §328 裁 `R3-F-06`）
+  - **V1 不提供“从钓鱼元素周期表导入 / Reimport”动作，也不暴露 Lux CLI。** 该能力已移出 V1；其既有 Concrete Source / provenance / reimport 低层语义仅作为 Post-V1 参考保留，不构成当前 Template Library UI action。
 Durable mutation:
   - 别名写编辑器持久层模板记录（template_key 空＝未物化，editor_key 必填）；抽取创建模板资产
   - displayName 改名 ≠ identity rename
@@ -310,7 +306,7 @@ Must show:
 Must not:
   - source name 不作键；不提供 stableKey identity rename（错名处置＝新建＋Replace＋归档旧）
   - 不引入分组 / 族折叠（平铺）；不因结构对称给 Quality 预造 Template
-  - **不承诺「导入即得四值」**（按本卡 Actions 的已裁缺值规则执行）；**不因 Role 激活自动创建模板／Profile**（记录页 §199 ⑥③：创建永远显式）
+  - **V1 不显示周期表导入入口**；**不因 Role 激活自动创建模板／Profile**（记录页 §199 ⑥③：创建永远显式）
 依据: 《编辑器持久层契约》§3.6（模板清单与别名记录表）＋§3.10（identity immutable；displayName 可改）；《编辑器界面》§7（平铺可滚动、按引用量排序、别名可编辑、source name 只读）
 ```
 
