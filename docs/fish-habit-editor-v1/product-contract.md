@@ -91,7 +91,7 @@ Global Topbar 只承载：
 - 工具身份
 - Autosave / save failure
 - global blocking diagnostics
-- staged candidate entry
+- staged candidate status
 - Publish entry
 
 不承载 Fish / Mode breadcrumb，不重复 Subject Navigation。
