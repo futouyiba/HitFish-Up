@@ -47,6 +47,7 @@ V1 的核心成果不是“覆盖所有生产操作”，而是证明：
 - 浏览已有可编辑 Fish。
 - 编辑 Species Base / 基础习性。
 - 编辑 Bootstrap 已经存在的兼容习性 Scope；产品 UI 可用“中鱼习性模式”表达业务心智，并以中性 `[兼容]` badge 标识当前承载方式。
+- **V1 当前兼容拓扑中，一个可编辑中鱼习性模式对应一条既有 `FishEnvAffinity` 行。** 不在一个 Mode Context 下聚合多条 Affinity 行，也不建立额外的 Mode→Quality 解释层。
 - 不要求现有 Fish 必然同时拥有所有兼容 Scope；只编辑当前 durable state 中已经存在的 Habit topology。
 
 #### Component Authoring
@@ -75,8 +76,8 @@ Temperature V1 以**手工 Authoring**为主，不承诺外部生态数据库自
 
 - Species-level Policy Template binding。
 - Species-level Role / `fail_env_coeff` Authoring。
-- 对已有兼容 topology 中已经存在的 row-level owner，按当前 Contract 编辑 row-level Role / `fail_env_coeff` patch。
-- 不把 row-level Policy 解释成 Quality-owned 数据。
+- 对已有兼容 topology，每个兼容中鱼习性模式直接编辑其对应的单条 `FishEnvAffinity` row-level Role / `fail_env_coeff` patch。
+- 不把 row-level Policy 解释成 Quality-owned 数据，也不在 V1 引入 multi-row Compat 聚合 UI。
 
 #### Shared Assets
 
