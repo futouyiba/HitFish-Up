@@ -14,7 +14,6 @@ V1 唯一长期 Authoring Truth 是 Editor durable state。
 - **兼容中鱼习性模式**：V1 每个可编辑 Mode 对应一条既有 `FishEnvAffinity`；物理 durable identity 仍使用既有 Affinity / row key。
 - **Shared Template**：持续共享 Source，具有稳定 template identity。
 - **Policy Template**：Species Base 的 Policy Source。
-- **Species Preset / 鱼家族预设**：一次性 Authoring convenience，不形成长期 parent relation。
 - **Production materialization**：Authoring Truth 的输出，不是第二个可编辑真相。
 
 V1 不创建新的 durable EngagementMode identity，也不把 Quality / FishPond / StockRelease / FishRelease 拉回 Habit Editor ownership。
@@ -394,18 +393,59 @@ Replace A → B：
 
 两者不能互代。
 
-## 10. Species Preset / 鱼家族预设
+## 10. Shared Template Creation
 
-Species Preset 是一次性 Authoring convenience：
+V1 虽不创建新的 Fish Habit Entry，但必须允许创建 Shared Template。两者属于不同 topology：Template 是 Source asset，不创建 Fish / Mode identity。
 
-- 保存一组 Source / Policy binding intent；
-- Apply 后不保留持续 parent / presetId relation；
-- 之后修改 Preset 不传播到过去 Apply 的 Fish；
-- Apply 只修改目标 Authoring State，不创造 Runtime identity。
+### 10.1 Blank Create
 
-Preset Apply 若会覆盖已有 local ops，应给出 batch overwrite preview；没有覆盖时可作为 ordinary semantic edit。
+按 Template Kind 创建完整值资产：
 
-V1 不通过 Preset 创建新 Fish；新 Fish initialization 属后续版本。
+- 先确定 Kind；创建后 Kind 不可改；
+- 创建表单为 ephemeral，不建立 durable DRAFT_TEMPLATE；
+- 只有形成该 Kind 的完整 typed value 与必要 metadata 后，才 atomic create；
+- 创建成功后 lifecycle = ACTIVE；
+- 创建本身没有 consumer，不需要 Impact Preview。
+
+### 10.2 Extract from Fish Component
+
+从当前 Fish Component 提取模板时，提取的是该 Component 的**当前完整 Effective Profile**，并 flatten 成新的 Template complete value。
+
+它不复制：
+
+- Source binding；
+- ADD / SET / CLEAR；
+- Species / Mode lineage；
+- provenance；
+- production row identity。
+
+规则：
+
+- Component 必须能产出完整 typed Effective Profile；Profile absent 或无法 Resolve 时不能 Extract；
+- 如果完整 Effective Profile 存在但带 Validator diagnostic，可允许创建，但新 Template 继承同样的 current-value diagnostic；不会因创建动作影响任何既有 consumer；
+- Extract 只创建 Template Asset，**不修改当前 Fish Source、不清 local operation、不自动 rebind**；
+- 创建后若作者希望当前 Fish 改用新模板，必须另走 Source Change Candidate。
+
+### 10.3 Clone / Save As
+
+Clone / Save As 从现有 Template complete value 创建新的独立 Template：
+
+- 新 identity；
+- 无 Template → Template inheritance；
+- 后续修改互不传播；
+- 创建动作本身不改任何 existing binding。
+
+### 10.4 Template Kind
+
+V1 Template Kind 固定为：
+
+- Temperature
+- Structure
+- Feeding Layer
+- Time Period
+- Spatial Opportunity Policy
+
+Kind 决定字段 schema；创建后不可跨 Kind 修改。
 
 ## 11. Broken / Archived Source
 
