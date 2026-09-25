@@ -9,7 +9,8 @@
 | Fish Habit Editor V1 的产品范围、Mental Model、IA 与核心交互 | [V1 Product Current](fish-habit-editor-v1/README.md) |
 | Source / Operation / Policy / Validation / Template lifecycle / Publish materialization 等当前共用语义 | [V1 Common Semantics](fish-habit-editor-v1/common-semantics.md) |
 | V0.2 历史设计、旧审阅结论与证据 | [UI Component Contract R2](review/ui-component-contract-r2/README.md)；只作历史版本 / evidence，不作 Current semantic authority |
-| 实现顺序、依赖及独有实现限定 | [开发 brief](implementation-brief-0.3.4.0-B.md) |
+| Fish Habit Editor V1 实现顺序、依赖与工程落点 | [V1 Implementation Brief](fish-habit-editor-v1/implementation-brief.md) |
+| 0.3.4.0-B / V0.2-era 历史实现 brief | [Historical implementation brief](implementation-brief-0.3.4.0-B.md) |
 | V0.2 审阅问题处置、关闭依据及剩余取证 | [问题台账](review/ui-component-contract-r2/OPEN-ITEMS.md#active-review-items) |
 | V0.2 随包画面版本、指纹及证明范围 | [图像登记](review/ui-component-contract-r2/figma-current.md#image-evidence) |
 
