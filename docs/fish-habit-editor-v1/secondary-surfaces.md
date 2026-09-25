@@ -485,7 +485,7 @@ Publish 永远只消费最近一次成功持久化的 durable revision，因此�
 - **staged candidate active**：Publish 已被 Candidate 短事务锁住，不能进入。
 - **Autosave pending**：进入 Publish 时先 flush / 等待该 typed edit 的 durable write 结果，再形成 Preflight snapshot。
 - **Autosave failure**：可以进入 Publish 查看 blocker，但 executor 禁用。
-- **incomplete raw input**：不 silent discard、不纳入 Publish；Preflight 的“编辑器状态”显示 blocker，并提供“返回编辑处理”。返回后恢复该 transient input。
+- **incomplete raw input**：Publish entry 在离开当前编辑位前直接 BLOCK；不进入 Publish Surface、不 silent discard，也不把半完成输入纳入 durable revision。作者留在当前 field 完成或取消输入后再进入 Publish。
 - **Validator ERROR**：允许进入 Publish Surface；由全量发布校验 Gate 明确阻断。
 - **WARNING**：允许发布，不要求逐条勾选确认。
 
