@@ -50,7 +50,7 @@ V1 的核心成果不是覆盖所有 Runtime / StockRelease 拓扑，而是证�
 - Fish List 读取 Fish Basic / authoritative Species Catalog；Habit Editor 不创建新的 Species identity，也不维护鱼类基础数据、模型、图鉴或 Quality。
 - 已有 Habit 的 Species 直接编辑 Species Base / 基础习性。
 - 尚无 Habit 的 Species 可以通过“开始配置习性”创建完整 Species Base；Species 只能从 Fish Basic 已有条目中选择。
-- 编辑 Bootstrap 已经存在的兼容习性 Scope；产品 UI 可用“中鱼习性模式”表达业务心智，并以中性 `[兼容]` badge 标识当前承载方式。
+- 编辑已经存在的兼容习性 Scope；产品 UI 可用“中鱼习性模式”表达业务心智，并以中性 `[兼容]` badge 标识当前承载方式。
 - **V1 当前兼容拓扑中，一个可编辑中鱼习性模式对应一条既有 `FishEnvAffinity` 行。** 不在一个 Mode Context 下聚合多条 Affinity 行，也不建立额外的 Mode→Quality 解释层。
 - V1 不允许用户创建新的业务中鱼习性 Mode；新 Species 只自动建立一个系统默认 FishEnvAffinity 投影。已有兼容 Mode 继续编辑。
 - StockRelease / FishRelease 继续负责 Quality / stocking row 与 FishEnvAffinity 的关联，Habit Editor 不创建或维护该关系。
