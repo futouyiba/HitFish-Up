@@ -655,6 +655,189 @@ Compat Mode 不提供 Policy Source Selector；只读显示：
 
 Mode 只编辑 Role / fail_env_coeff patch，不虚构 policySourceOverride。
 
+### 13.5 Role 行直接编辑
+
+Role 在 Policy Focus Editor 中直接完成，不再打开二级 Drawer / Modal。
+
+Species Base 每行的 dropdown 直接包含完整作者意图：
+
+```text
+沿用策略模板
+设置为 CORE
+设置为 SECONDARY
+设置为 IGNORED
+```
+
+Compat Mode：
+
+```text
+沿用基础习性角色
+使用策略模板原始角色
+设置为 CORE
+设置为 SECONDARY
+设置为 IGNORED
+```
+
+这些都是无参数动作；选择后立即形成 ordinary durable edit 并 Autosave。
+
+重要语义：
+
+- “沿用基础习性角色”＝本 Mode 没有 row-level Role patch；
+- “使用策略模板原始角色”＝显式 CLEAR Species Role override，回到当前 Policy Template raw Role；
+- “设置为 X”＝显式 SET，即使 X 与当前 Effective Role / Template raw Role 相同也保留作者 intent；
+- 不根据最终 Role 相同就自动折叠成 inherit / CLEAR。
+
+Role row 同时显示 Effective Role 与当前 intent；必要 provenance 用弱文字解释，不再开第三列复杂状态机。
+
+### 13.6 fail_env_coeff 行式编辑
+
+`fail_env_coeff` 复用数值 Field 的行式 Authoring 模型，不建立 Policy 专属数值编辑器。
+
+Species Base：
+
+```text
+fail_env_coeff
+
+策略模板值   0.010
+本层操作     [调整 ▾]   [+0.005]
+有效值       0.015
+```
+
+可选动作：
+
+```text
+沿用策略模板值
+调整
+设置为
+```
+
+Compat Mode：
+
+```text
+fail_env_coeff
+
+基础习性配置       0.015
+策略模板原始值     0.010
+本模式操作         [使用策略模板原始值 ▾]
+有效值             0.010
+```
+
+可选动作：
+
+```text
+沿用基础习性配置
+使用策略模板原始值
+调整
+设置为
+```
+
+其中：
+
+- Mode absent＝沿用基础习性配置；
+- Mode CLEAR＝使用策略模板原始值；
+- ADD＝绝对数值增量，不是百分比；
+- SET＝绝对值。
+
+ADD / SET 切换后沿用 §9 的 transient-input 规则：没有完整合法数字前不改 durable state；切离时丢弃 transient 并恢复最近一次 durable 表达。
+
+可解析数字即允许 Autosave；若最终值超出 `[0, 0.10]`，不 silent clamp，保存后显示 Validator ERROR 并阻断 Publish。
+
+### 13.7 Policy Card 与 Focus 的操作效率
+
+Policy Card 是四个 Role + `fail_env_coeff` 的 Overview，也是进入 Policy Focus 的唯一主要入口。
+
+- 点击 Card body → Focus 到整个 Policy；
+- 点击某个 Role row → Focus Policy，并在右栏高亮 / 定位对应 Role；
+- 点击 `fail_env_coeff` row → Focus 并定位 coeff；
+- 中栏这些 row 不直接 mutation，避免 Overview 和 Focus 两套编辑入口。
+
+进入右栏后四个 Role **同时可见且可直接编辑**。因此“快速切四个 Role”的效率由右栏统一表格解决，而不是把四个 dropdown 分散到四张 Component Card。
+
+### 13.8 Policy Template Source Change
+
+Policy Template Source 只属于 Species Base，并且只有 Species Base Policy Card 提供策略来源选择器。
+
+例如：
+
+```text
+策略来源
+[ Predator Policy ▾ ]
+```
+
+选择新模板不是 ordinary autosave，而是 staged mutation。
+
+原因是一次换源可能同时改变：
+
+- 四个 Policy Template raw Role；
+- `fail_env_coeff` raw baseline；
+- Species 层尚未被 SET / ADD 遮罩的 Effective Policy；
+- 跟随 Species 或显式 CLEAR 到 Template raw 的兼容 Mode；
+- 因 Role 变化而新增 / 解除的 required-Profile diagnostics。
+
+V1 复用 §12 的**短事务 Candidate Review**，不建立 Policy 专属 Candidate 系统。
+
+右栏临时切换示例：
+
+```text
+策略来源变更预览
+大口黑鲈 · 基础习性
+
+当前      Predator Policy
+候选      Generalist Policy
+
+项目             当前      候选      说明
+────────────────────────────────────────────
+温度 Role         CORE      CORE
+结构 Role         CORE      CORE      本层 SET 遮罩
+觅食水层 Role     SECONDARY CORE
+时段 Role         IGNORED   SECONDARY
+fail_env_coeff    0.015     0.015     本层 ADD 后结果不变
+
+同时影响
+幼年 [兼容]          2 项变化
+成年及以上 [兼容]    1 项变化 · 1 Error
+
+[取消更换]                  [确认更换策略]
+```
+
+Preview 必须区分：
+
+1. Policy Template binding intent；
+2. 五个 Policy baseline / Effective 的 before-after；
+3. 被 Species / Mode operation 遮罩但未来依赖关系改变的项目；
+4. 跟随受到影响的 Mode；
+5. diagnostic delta。
+
+选择与当前 durable Policy Template binding 完全相同的模板是 exact no-op，不建立 Candidate。
+
+只要候选 binding 本身 schema-valid，即使 after-state 有 publish-blocking ERROR，仍允许确认保存；Confirm 不是 Publish。
+
+确认成功后：
+
+- Candidate 清空；
+- 返回 Policy Focus；
+- Policy Card / Role badge / coeff 从新的 durable state 重算；
+- 不自动改写任何 Species / Mode Role op 或 coeff op；
+- 不为了保持旧 Effective Policy 生成 SET / ADD。
+
+### 13.9 Compat Mode 不存在 Policy Source mutation
+
+Compat Mode 只读显示：
+
+```text
+策略来源
+沿用基础习性 → Predator Policy
+```
+
+不提供 Policy Source Selector。
+
+Mode 的 durable authoring 只有：
+
+- 四个 row-level Role patch；
+- `fail_env_coeff` row-level patch。
+
+不得为了 UI 对称新增 `policySourceOverride`。
+
 ## 14. Persistence details hidden from author
 
 Component Card / Focus Editor 不提示 `将存为 cover_largemouth_bass` 或其它 production/materialization row name。
