@@ -58,7 +58,10 @@ FISH 主列表默认可以只展示已有 Habit 的 Species，保持工作列表
 [ + 开始配置其他鱼种 ]
 ```
 
-点击后搜索 Fish Basic / authoritative Species Catalog 中**尚未建立 Habit**的 Species。
+点击后搜索 Fish Basic / authoritative Species Catalog 中尚未建立 Editor Species Base 的 Species，并先区分是否已有 Production Habit footprint：
+
+- 无 Editor Base + 无 Production FishEnvAffinity → 可开始配置；
+- 无 Editor Base + 已有 Production FishEnvAffinity → 显示“存在旧习性数据 · 需迁移”，不可 fresh create。
 
 选择 Species 后进入单屏初始化：
 
@@ -74,7 +77,7 @@ Policy Template       [ ... ]
 [开始配置]
 ```
 
-五项全部有效后一次 atomic create **Species Base + 系统默认 FishEnvAffinity 投影壳**；成功后直接进入该 Species 的基础习性 Authoring。
+五项全部有效、且 resulting Species Base 没有 blocking validation error 后，一次 atomic create **Species Base + 系统默认 FishEnvAffinity 投影壳**；成功后直接进入该 Species 的基础习性 Authoring。
 
 初始化页只负责选择已有合法 Source / Policy Template，不提供字段 Operation、Role 或 coeff 编辑；这些在创建后的正常 Authoring 中完成。
 
@@ -83,6 +86,7 @@ Policy Template       [ ... ]
 - 不保存半完成 draft；
 - 不要求 Family / Preset；
 - 不在初始化页创建 Template；Template creation 走 Shared Assets；
+- Source picker 若需要新 Template，可进入 Shared Assets；当前初始化表单只以内存态保留 Species 与已选 binding，创建/取消后返回。这个 return state 不持久化，reload / 退出工作区可丢弃；
 - 不编辑 Fish Basic 基础字段、Quality 或 StockRelease 关系。
 
 创建后即使当前 Species 尚无任何 Compat Mode，基础习性仍可正常 Author；系统默认 Affinity 不作为左栏 Mode child 重复显示。
@@ -95,6 +99,8 @@ Policy Template       [ ... ]
 ```
 
 不显示“尚无中鱼习性模式”错误态，也不把系统默认 Affinity 伪装成业务 Mode。
+
+V1 不提供 Species Base / system default Affinity 的 Archive / Delete。误建对象不通过 Habit Editor 做跨域删除；后续只有在具备 StockRelease / FishRelease 安全引用检查后才讨论生命周期动作。
 
 ## 3. Context Header
 
