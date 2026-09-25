@@ -103,41 +103,37 @@ V1 Shared Assets **只包含 Shared Template**；Species Preset / 鱼家族预�
 - Production generation mismatch / unverifiable 时 BLOCK。
 - Publish success / failure / partial failure 的明确事务状态。
 
-### 2.3 V1 Data / Coverage Baseline
+### 2.3 V1 Data / Species Catalog Baseline
 
-V1 明确采用 **Bounded Coverage**：它是“编辑已预置 Habit topology 的鱼”的生产工具，不是 Fish onboarding 工具。
-
-#### V1 Coverage Set
-
-每次部署必须显式定义一个 `V1 Coverage Set`：
-
-> 本次 V1 承诺可在 Editor 中编辑的 Species 集合。
-
-Coverage Set 中的每条 Species 必须在部署前已经拥有可加载的 Habit Entry / 既有兼容 topology。其来源可以是 bounded bootstrap、一次性 migration script 或人工复核后的 seed preparation；这些都是**部署准备 / migration 工作**，不是 Editor 内的“新建鱼”产品能力。
+V1 直接读取 Fish Basic / authoritative Species Catalog，不要求所有 Species 预先拥有 Habit Entry。
 
 规则：
 
-- Coverage Set 内缺少 Habit Entry ⇒ **V1 deployment blocker**，不能运行时隐式 auto-create；
-- Species Catalog 中不在 Coverage Set 的 Species 可以被 Coverage Browser 看见，但不成为可编辑 Subject；
-- V1 不为缺失 Entry 自动制造 Species Base、默认 Source、默认 Role 或兼容 Mode；
-- Coverage Set 可以是当前里程碑需要的子集，不要求为了 V1 一次性承诺所有未来 Species；
-- 若产品目标要求“整个当前 Species Catalog 都可编辑”，则部署前 Coverage Set 就必须覆盖整个目标 Catalog，这属于数据准备成本，不应伪装成 UI 免费能力。
+- Species identity / `species_key` 只能来自 Fish Basic 既有条目；
+- Habit Editor 不创建 Fish Basic Species，也不维护基础数据、模型、图鉴或 Quality；
+- 默认 Fish List 可以只展示已配置 Habit 的短列表；
+- “开始配置其他鱼种”通过搜索 Fish Basic 选择尚未配置 Habit 的 Species；
+- V1 为该 Species 创建的是 Habit Editor 自己拥有的 Species Base，不创建新的 Mode / FishEnvAffinity row。
 
-#### Golden Seed / Snapshot
+新 Species Habit 的正常创建态要求一次性选择：
 
-除部署 Coverage 外，V1 仍应提供一份**小而真实、人工复核过的 Golden Seed / Snapshot**，用于：
+```text
+Temperature Source
+Structure Source
+Feeding Layer Source
+Time Period Source
+Policy Template
+```
 
-- 展示真实 Fish Habit Authoring；
-- 验证已有 Production 数据能够被 bounded bootstrap 到 Editor；
-- 覆盖 Template fan-out、Species override、兼容 scope、Policy、Resolve、Publish 等关键路径；
-- 作为 demo / regression / roundtrip evidence。
+全部完成后 atomic create Species Base。产品上不把缺 Component Profile 的半完成 Species Base 作为正常创建结果。
 
-Golden Seed 不等于完整 Coverage Set；它可以只是其中有代表性的少量对象。
+Golden Seed / Snapshot 继续用于 demo / regression / migration / roundtrip evidence，但不决定其它 Fish Basic Species 是否可以开始配置。
 
-Migration 与 Semantic Consolidation 分开：
+已有 Production migration 与新 Species initialization 分开：
 
-- Migration 负责尽量保真地承接 legacy data；
-- Shared Template 语义整理、聚类和业务命名属于后续 Authoring / Consolidation，不要求 Bootstrap 自动推断。
+- Migration 负责承接已有习性数据；
+- 新 Species initialization 由作者显式选择 Source / Policy；
+- Shared Template 整理、聚类和业务命名不要求 Bootstrap 自动推断。
 
 ### 2.4 V1 Persistence
 
@@ -150,7 +146,6 @@ Migration 与 Semantic Consolidation 分开：
 V1 不承诺：
 
 - 创建新的 Species identity；
-- 初始化全新的 Fish Habit aggregate；
 - Family / 鱼家族初始化；
 - Species Preset / 鱼家族预设；
 - 新建 Engagement Mode；
