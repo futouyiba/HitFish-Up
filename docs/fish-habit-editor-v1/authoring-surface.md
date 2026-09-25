@@ -48,6 +48,40 @@ FISH                  鱼习性 › 大口黑鲈 › 中鱼习性模式         
 
 中栏不重复 Fish / Mode selector。
 
+### 2.1 开始配置其他鱼种
+
+FISH 主列表默认可以只展示已有 Habit 的 Species，保持工作列表简洁。
+
+提供：
+
+```text
+[ + 开始配置其他鱼种 ]
+```
+
+点击后搜索 Fish Basic / authoritative Species Catalog 中**尚未建立 Habit**的 Species。
+
+选择 Species 后进入单屏初始化：
+
+```text
+开始配置 Atlantic Salmon
+
+Temperature Source    [ ... ]
+Structure Source      [ ... ]
+Feeding Layer Source  [ ... ]
+Time Period Source    [ ... ]
+Policy Template       [ ... ]
+
+[开始配置]
+```
+
+五项全部有效后一次 atomic create Species Base；成功后直接进入该 Species 的基础习性 Authoring。
+
+- 不创建 Species identity；
+- 不创建 Mode / FishEnvAffinity row；
+- 不保存半完成 draft；
+- 不要求 Family / Preset；
+- 不编辑 Fish Basic 基础字段、Quality 或 StockRelease 关系。
+
 ## 3. Context Header
 
 Header 仅一行 identity breadcrumb：
