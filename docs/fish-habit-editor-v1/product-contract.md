@@ -1,6 +1,6 @@
 # Fish Habit Editor V1｜Product Contract
 
-> Status: Working Candidate  
+> Status: Current Product Contract for V1  
 > Scope: Species Habit Authoring Minimum Loop。V1 不创建新的 Species identity / Engagement Mode，不 Author Quality / FishPond / StockRelease / FishRelease，不承诺外部生态数据自动导入，也不包含 Bake Preview。
 
 ## 1. 一句话产品模型
