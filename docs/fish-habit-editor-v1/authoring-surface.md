@@ -72,7 +72,7 @@ Card 职责是“摘要 + Focus 入口 + Source mutation”，不是完整字段
 示例：
 
 ```text
-结构习性                                           ⛔
+结构习性                                角色·CORE  ⛔
 
 来源
 [ Heavy Cover ▾ ]
@@ -530,7 +530,131 @@ Candidate Review
 ```
 
 没有 Draft Source、没有先 Apply 再 Save、没有第二个 Source Selector、没有跨页面长期挂起 Candidate。
-## 13. Persistence details hidden from author
+## 13. Policy Authoring
+
+空间机会策略是独立 Authoring 区，不是第五个 Component。
+
+中栏使用一张全宽 Policy Card，同时展示四个 Effective Role 与 fail_env_coeff；Role mutation 不分散到四张 Component Card。
+
+Species Base 示例：
+
+```text
+空间机会策略
+
+策略来源
+Predator Policy
+
+温度          CORE        沿用策略模板
+结构          CORE        本层设置
+觅食水层      SECONDARY   沿用策略模板
+时段          IGNORED     本层设置
+
+fail_env_coeff   0.01     沿用策略模板值
+```
+
+Compat Mode 示例：
+
+```text
+空间机会策略
+
+策略来源
+沿用基础习性 → Predator Policy
+
+温度          CORE        沿用基础习性角色
+结构          SECONDARY   本模式设置
+觅食水层      CORE        使用策略模板原始角色
+时段          IGNORED     沿用基础习性角色
+
+fail_env_coeff   0.015    本模式调整
+```
+
+### 13.1 Component Card Role badge
+
+每张 Component Card 显示一个**只读 Effective Role badge**，用于 Overview 扫描：
+
+```text
+结构习性                         角色·CORE
+温度习性                         角色·SECONDARY
+时段习性                         角色·IGNORED
+```
+
+Role badge 不提供 dropdown / toggle，不是 mutation entry。
+
+保留它的理由是：Role 决定该 Component 当前是否、以及以何种角色参与空间机会计算；如果完全隐藏到 Policy 区，作者在浏览 Component Overview 时会缺失一条关键“是否被消费”的信息。
+
+不把 badge 做成编辑入口的理由是：Profile 与 Policy 是两个正交概念；把 Role dropdown 放进 Component Card 会重新形成第二个 Policy mutation surface。
+
+V1 推荐：
+
+- badge 只读；
+- 视觉权重弱于 Component title / diagnostic；
+- IGNORED 仍应可见，不通过把整个 Component disabled 来表达；
+- 如需解释，可用 tooltip / helper text 指向“在空间机会策略中编辑”，不要求点击 badge 本身承担导航。
+
+### 13.2 Policy Focus Editor
+
+点击 Policy Card 或其中任一 Role row，右栏进入统一 Policy Focus Editor；四个 Role 同时可见并直接编辑，因此不需要靠四个 Component Card 的 Role dropdown 来提高操作效率。
+
+Species Base：
+
+```text
+空间机会策略
+大口黑鲈 · 基础习性
+
+组件            有效角色       本层意图
+────────────────────────────────────────
+温度            CORE          [沿用策略模板 ▾]
+结构            CORE          [设置为 CORE ▾]
+觅食水层        SECONDARY     [设置为 SECONDARY ▾]
+时段            IGNORED       [设置为 IGNORED ▾]
+
+fail_env_coeff
+来源值 0.01     [调整 ▾] [+0.005]     → 0.015
+```
+
+Compat Mode：
+
+```text
+组件            有效角色       本模式意图
+──────────────────────────────────────────────
+温度            CORE          [沿用基础习性角色 ▾]
+结构            CORE          [设置为 CORE ▾]
+觅食水层        SECONDARY     [使用策略模板原始角色 ▾]
+时段            IGNORED       [沿用基础习性角色 ▾]
+```
+
+V1 一个兼容 Mode 对应一条既有 FishEnvAffinity 行，因此普通 UI 不显示 row_key / Quality / production row identity，也不保留 multi-row Compat 展开。
+
+### 13.3 Role 与 Profile 正交
+
+Role ordinary edit 走 Autosave。
+
+- IGNORED + Profile absent → 改 CORE / SECONDARY：保存 Role，随后显示 required-Profile ERROR；不自动建 Profile、不自动选 Source、不回滚 Role。
+- CORE / SECONDARY → IGNORED：已有 Profile 保留，仍可编辑；仅表示当前计算不消费该 Profile。
+- Role 的 Validator ERROR 与 save I/O failure 分开；可 durable 保存但可阻断 Publish。
+
+### 13.4 Policy Template Source
+
+Policy Template Source 只属于 Species Base。
+
+Species Base Policy Card 可提供唯一策略来源选择器：
+
+```text
+策略来源
+[ Predator Policy ▾ ]
+```
+
+更换 Policy Template 会同时影响四个 raw Role baseline 与 fail_env_coeff baseline，因此按 staged mutation 处理，并复用 V1 的短事务 Candidate Review 语义。
+
+Compat Mode 不提供 Policy Source Selector；只读显示：
+
+```text
+沿用基础习性 → Predator Policy
+```
+
+Mode 只编辑 Role / fail_env_coeff patch，不虚构 policySourceOverride。
+
+## 14. Persistence details hidden from author
 
 Component Card / Focus Editor 不提示 `将存为 cover_largemouth_bass` 或其它 production/materialization row name。
 
