@@ -1,7 +1,7 @@
 # Fish Habit Editor V1｜Common Semantics
 
 > Status: Current Semantic Baseline for V1  
-> Scope: 只承接 Fish Habit Editor V1 实际消费的公共语义。本文暂时与 V1 共址；当这些语义稳定跨越 V1 / V1.1 / V1.2 后，再提取到独立 common 目录。  
+> Scope: 只承接 Fish Habit Editor V1 实际消费的公共语义。本文暂时与 V1 共址；当这些语义稳定跨越 V1 / V1.0.1 / V1.1+ 后，再提取到独立 common 目录。  
 > Historical evidence: `docs/review/ui-component-contract-r2/` 作为 V0.2 历史版本包与证据来源，不再承担 Current semantic authority。
 
 ## 1. Authoring Truth 与物理 Owner
@@ -597,7 +597,7 @@ V1 common semantics 不定义或承诺：
 - Mode Share / Routing；
 - 新 durable EngagementMode identity；
 - Species Preset / 鱼家族预设；
-- Family / Species Preset；
+- Family / 聚类辅助初始化；
 - Bake / condition evaluation；
 - 外部生态数据库 Import / Lux CLI；
 - Production reverse import / auto-merge；
