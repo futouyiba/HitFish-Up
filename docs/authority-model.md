@@ -25,7 +25,7 @@ V1    = docs/fish-habit-editor-v1/ Current
 - 当前仓树中存在 R2 目录，不存在独立 R1 目录；因此 V0.1 只作为历史 lineage 说明，不为补齐编号而伪造一套 R1 文件。
 - R2 保留原目录名 `docs/review/ui-component-contract-r2/`，避免破坏历史链接、证据锚点与 PR 对照；其语义角色改为 **V0.2 historical design / review evidence**。
 - V1 是当前产品与语义 Authority。
-- 后续若 V1 中的公共语义稳定跨越 V1 / V1.1 / V1.2，再把 `common-semantics.md` 提取到独立 common 目录；在此之前不提前制造跨版本抽象层。
+- 后续若 V1 中的公共语义稳定跨越 V1 / V1.0.1 / V1.1+，再把 `common-semantics.md` 提取到独立 common 目录；在此之前不提前制造跨版本抽象层。
 
 ## Fish Habit Editor V1 Current
 
@@ -33,7 +33,8 @@ Current 入口：`docs/fish-habit-editor-v1/`。
 
 - `product-contract.md`：V1 Mental Model、产品 IA、Workspace、Truth / Derived 边界、interaction taxonomy 与产品负向边界。
 - `common-semantics.md`：V1 当前消费的 Source / Operation / Resolve / Policy / Validation / staged mutation / Template lifecycle / Publish materialization 公共语义。
-- `authoring-surface.md`：Fish Subject 核心编辑屏、导航、Context Header、Component / Policy Overview、Focus Editor 与交互。
+- `authoring-surface.md`：Fish Subject 核心编辑屏、Species Habit initialization、导航、Context Header、Component / Policy Overview、Focus Editor 与交互。
+- `shared-assets.md`：Shared Template 创建、提取、传播影响、引用与生命周期维护。
 - `secondary-surfaces.md`：Resolve Preview、Publish 以及后续真正闭合的 V1 次级 Surface。
 - `docs/review/fish-habit-editor-version-scope.md`：V1 范围与后续阶段边界。
 
