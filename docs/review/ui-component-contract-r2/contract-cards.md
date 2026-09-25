@@ -13,7 +13,7 @@
 
 | # | 控件 | 层·面 | 批次 | 状态／入口 |
 |---|---|---|---|---|
-| A1 | 顶栏（Editor Global Shell：工具身份/工具级视图/全局状态/Publish） | 框架 | ①（保存状态）＋④（系统面） | 可承载 Resolve/Bake/Fish List 等工具级视图入口；不承担 Fish/Mode Subject 导航。保存区及「丢弃未保存的改动」按[卡7](#autosave-status)，Publish 按汇编 §15 |
+| A1 | 顶栏（Editor Global Shell：工具身份/全局状态/Publish） | 框架 | ①（保存状态）＋④（系统面） | 不承载 Resolve/Bake 视图入口；Fish Subject 的编辑/解析预览位于 Context Header。保存区按[卡7](#autosave-status)，Publish 按汇编 §15 |
 | A2 | 当前 Subject 标题 / 路径 | 上下文总览 | ④ | 放在中栏 Context Header：至少显示 Fish + 基础习性/Mode（含必要 `[兼容]`）；不是 Topbar 第二套导航，也不要求做可点击 breadcrumb |
 | A3 | dirtyDot（按层待写盘） | 框架 | ④ | 语义已拍＝记录页 §167 六（随卡7 落地） |
 | A4 | Subject Navigation Rail（FISH / 共享资产） | 主体导航 | ④ | 当前规则见[汇编 §1](component-contract-consolidated.md#subject-navigation)：顶层可达、单 Section 展开、鱼→基础习性/中鱼习性模式 |
@@ -36,8 +36,8 @@
 | E1 | 鱼列表 | 独立面 | ④ | 已规格（v2） |
 | E2 | 共享资产 → 习性模板（清单/别名/生命周期/Replace） | 独立面 | ② | 已规格（v2）；Species Presets 为共享资产 sibling view |
 | E3 | 引用者列表（两集两数） | 独立面 | ② | 已规格（v2） |
-| E4 | Resolve Preview | 独立面 | ④（slice C 含一角） | 已规格（v2） |
-| E5 | Bake Preview | 独立面 | ④ | 已规格（v2） |
+| E4 | Resolve Preview | Fish Subject 只读工作视角 | ④ | V1 产品 Current 见 [Secondary Surfaces §1](../../fish-habit-editor-v1/secondary-surfaces.md#1-resolve-preview解析预览) |
+| E5 | Bake Preview | Post-V1 | — | 不属于 V1；待条件输入 / 基础权重等口径闭合后再设计 |
 | N2 | Rebase／Impact Preview 面板 | 编辑/工作区 | ②/④ | [共用交互与验收](#rebase-impact-preview)；事务机制按汇编 |
 
 ---
@@ -174,7 +174,7 @@ Component: Effective Value Display｜有效值展示（只读）
 Reads:
   - Effective Source ＋ per-field Effective Operation 的 Resolve 结果
 Actions:
-  - 只读；查看来源链→跳 Resolve Preview
+  - 只读；查看来源链→切换当前 Fish Subject 到“解析预览”并聚焦对应字段
 Durable mutation:
   - 无——Effective 是派生结果，可缓存/预览，不作 authoring truth 持久化
 Must show:
@@ -187,24 +187,33 @@ Must not:
 ```
 
 <a id="provenance-display"></a>
-### A①-卡5｜Provenance Display（来源与过程展示）
+### A①-卡5｜Provenance Display（解析说明）
 
-水温导入的推导、缺值与目标物种规则统一见[卡8](#template-list)；本卡只区分字段的来源性质，不复制推导公式。
+V1 产品层承载见 [Secondary Surfaces §2](../../fish-habit-editor-v1/secondary-surfaces.md#2-右栏解析说明)。本卡只保留当前 Effective Configuration 的最短充分来源解释；外部生态数据 Import / Reimport 不属于 V1。
 
 ```
-Component: Provenance Display｜provenance 展示（编辑器侧）
+Component: Resolve Explanation｜解析说明（只读）
 Reads:
-  - source binding、op 记录（含 tier）、导入 provenance（周期表导入挂 Concrete Source 更新与 diff）
+  - Effective Source relation
+  - per-field Effective Operation relation
+  - Effective Value
+  - Policy Template / Species / Mode 的 Role 与 fail_env_coeff 解析链
 Actions:
-  - 只读查看；跳 Resolve Preview 的 provenance 区
+  - 只读查看
+  - “在编辑中打开”切回同 Subject 的 Edit 并定位对应 Component / Field / Policy
 Durable mutation:
-  - 无（纯展示；provenance 数据随 op 记录/Concrete Source 携带）
+  - 无；全部为 derived projection
 Must show:
-  - 「这个值为什么是这样」：来源→操作→当前值 的链
-  - 周期表导入的字段级 provenance 分别显示：favMin / favMax 的输入来源及口径、acceptMin / acceptMax 的设计推导来源（规则按卡前卡8）、temp_threshold / falloff_shape 的游戏参数来源；不把来源输入笼统标成实测。
+  - Source 与 Operation 两条独立继承轴，不压成模糊“继承”
+  - 来源值 → 有效操作 → 最终值的最短充分解释
+  - Role / fail_env_coeff 的 Template → Species → Mode → Effective 链
+  - SET 当前态可说明 Source value 被本层设置覆盖；无 before/after 输入时不得声称“来源已变 / 结果未变”
 Must not:
-  - provenance 不进 Resolver/Runtime payload；不塞进 production name；不作为关联/复用判据
-依据: 《编辑器持久层契约》§3.3（周期表重新导入更新 Concrete Source 本身、不落 tuning operation；研究事实修正走更新 Source、游戏调参保持 Source 写 Species operation；SPECIES_CONCRETE identity＝(speciesId, componentType)）；《编辑器与 Resolve》§3（Resolve Preview provenance 区）＋§11.3（Template/档位/delta 不进 Runtime）；《编辑器界面》§1.3（别名与微调 provenance 留 editor-state）；fav/accept 的来源性质与推导规则见卡前卡8入口
+  - 不显示 row_key / production row name / materializer trace
+  - 不把 Resolve 做成第二套只读 Editor
+  - 不引入 Bake / condition snapshot / evaluator trace
+  - 不把 derived provenance 持久化为第二份 truth
+依据: Effective Source + Effective Operation → Effective Value 的低层语义见汇编 §3；Policy 语义见 §9–§10；V1 产品承载见 V1 Product Current。
 ```
 
 <a id="validation-diagnostic"></a>
