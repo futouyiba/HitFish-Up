@@ -275,7 +275,7 @@ Compat Mode 的 `沿用物种设置` 就是删除本层 operation record。
 
 保持一个 mutation path，避免“下拉操作 + 恢复按钮”两套 mutation entry。
 
-## 12. Source Change
+## 12. Source Change Candidate
 
 Source Selector 只在 Component Card 提供。
 
@@ -288,23 +288,248 @@ Heavy Cover
 
 Source change 不走 ordinary autosave，因为它改变整个 Component 的计算基准。
 
-统一流程：
+### 12.1 启动前提
+
+Source Candidate 只能从**最近一次成功持久化的 durable state**启动。
+
+若当前存在：
+
+- incomplete raw input；
+- Autosave 尚未完成；
+- durable save failure；
+
+则不直接建立 Source Candidate。UI 先要求完成/恢复当前普通编辑，使 Preview 的 before-state 有唯一依据。
+
+### 12.2 Exact binding no-op 与 same-effective real mutation
+
+若作者选择的候选与当前 durable **binding intent 完全相同**，不建立 Candidate。
+
+但下列情况即使当前 Effective Source / Effective Value 相同，仍属于真实 Source mutation：
 
 ```text
-选择候选 Source
-→ 形成唯一 staged candidate
-→ Local Rebase / Impact Preview
-→ 显式 Confirm
-→ revision check
-→ atomic durable commit
+跟随基础习性 → 显式固定 Heavy Cover
+显式固定 Heavy Cover → 跟随基础习性
 ```
 
-Field ordinary edit 与 Source staged mutation 的重量故意不同：
+因为未来传播行为不同，不能按 value diff = 0 折成 no-op。
 
-> 改字段是轻操作；换整套来源是重操作。
+Compat Mode 的 Source 展示必须区分：
 
-具体 Candidate Preview 的布局、锁定规则与失败状态将在下一阶段继续收敛。
+```text
+跟随基础习性 → Heavy Cover
+Heavy Cover · 本模式设置
+```
 
+普通 UI 不显示底层 sourceOverride token。
+
+### 12.3 Candidate 是短事务，不是第三种长期工作视角
+
+正常 Fish Subject 只有：
+
+```text
+[ 编辑 ] [ 解析预览 ]
+```
+
+建立 Source Candidate 后，不新增“候选预览”Tab，也不允许作者带着候选离开当前事务继续浏览。
+
+Candidate active 期间：
+
+- 左栏与中栏继续保持当前 Subject / Component 的空间上下文，但其它导航与 ordinary mutation 暂停；
+- Publish 暂不可进入；
+- Topbar 只需提示“来源变更待确认”，不需要额外的 `[查看候选]` 回返入口；
+- Candidate 不写 durable state，不形成 Draft entity；
+- Reload / 离开 Editor 会丢弃 Candidate，并应使用普通未确认变更离开警告。
+
+原则：
+
+> Source Candidate 是“选来源 → 当场看清 → 确认或取消”的短事务，不是可跨页面长期挂起的 Draft。
+
+### 12.4 Review 承载：右侧 Focus Editor 临时切换
+
+V1 不为 Local Rebase / Propagated Impact 新建独立 Workspace。
+
+建立 Candidate 后：
+
+- 左栏保持当前 Subject；
+- 中栏仍显示当前 **durable** Overview，不把 candidate after-state 混入普通 Card；
+- 右侧 Focus Editor 临时切换为 **来源变更预览**；
+- 该 Component Card 可显示轻量“正在预览来源变更”状态，但 Source 仍显示 durable current，避免未确认值冒充 Truth。
+
+示例：
+
+```text
+来源变更预览
+大口黑鲈 · 成年及以上 · 结构习性
+
+来源关系
+当前      跟随基础习性 → Heavy Cover
+候选      Heavy Cover · 本模式设置
+
+字段结果
+Rock      0.80 → 0.80
+Weed      1.20 → 1.20
+Wood      0.60 → 0.60
+
+当前数值无变化
+但来源关系将从“跟随”变为“显式固定”。
+以后基础习性更换来源时，本模式将不再跟随。
+
+[取消更换]                    [确认更换来源]
+```
+
+### 12.5 Preview 必须回答四件事
+
+#### A. Binding intent 怎么变
+
+必须先显示当前 binding、候选 binding，并在必要时显示当前/候选 Effective Source。不能只显示数值 diff。
+
+#### B. 字段结果怎么变
+
+按该 Component 的稳定字段顺序展示 before / after。字段没有变化也可保留，但视觉降级。
+
+#### C. 为什么某些字段没变
+
+如果结果未变是因为本层 SET / 其它既有 operation 遮罩 Source 变化，应明确说明，例如：
+
+```text
+Wood   0.60 → 0.60
+本层 SET 0.60，来源变化被遮罩
+```
+
+“被遮罩”不是“无影响”。
+
+#### D. Diagnostic 怎么变
+
+只强调 Candidate 带来的诊断变化：新增 Error、新增 Warning，以及必要时被解除的现有诊断。已有且完全不受本 Candidate 影响的诊断不需要在 Review Panel 重复堆叠。
+
+### 12.6 Local 与 Propagated 使用同一 Review Panel
+
+两者不是两套页面。
+
+**Local Rebase** 只影响当前 owner 时，右栏只显示：binding before / after、当前 Component field before / after、operation masking、diagnostic delta。不要显示伪造的全局引用量 / changed consumers 等统计。
+
+**Propagated Impact** 当 Species Base Source 变化会传播到当前 owner 之外的 follower 时，在同一右栏 Review Panel 追加：
+
+```text
+同时影响
+
+幼年 [兼容]          3 项变化   0 Error
+成年及以上 [兼容]    2 项变化   1 Warning
+```
+
+受影响对象可在 Review Panel 内展开看只读明细；不通过左栏导航离开 Candidate 事务。
+
+产品语言优先说“直接修改 / 跟随受到影响”，不要求作者理解 DirectReferenceSet / EffectiveConsumerSet。
+
+### 12.7 Operation 保留
+
+换 Source 时既有 field operations / patches 原样保留。
+
+Preview 展示的是：
+
+```text
+新 Source
++
+原有 Operation
+=
+Candidate Effective
+```
+
+不得自动清空 ADD / SET / CLEAR；不得为保持旧 Effective Value 自动生成新的 SET；不得因 before/after 数值相同自动改写 operation intent。
+
+### 12.8 Candidate 有 Validation Error 时仍可确认
+
+如果候选 Source 本身是合法 durable binding，但 Candidate Resolve 后出现 publish-blocking validation error：
+
+```text
+可保存到 Editor
+但会产生 1 个发布阻断错误
+```
+
+`确认更换来源` 仍可执行。
+
+确认后：
+
+```text
+atomic durable commit
+→ Editor 已保存 · 有错误
+→ Publish blocked
+```
+
+Candidate Confirm 不是 Publish。
+
+### 12.9 真正禁止 Confirm 的情况
+
+只有 Source mutation 本身已经不能形成合法 durable commit 时，才禁用确认，例如：
+
+- candidate source 已删除 / 已不再是合法 selectable source；
+- candidate binding 不满足 schema；
+- revision stale 且尚未重新计算 Preview。
+
+这与“结果有 Validator ERROR”必须区分。
+
+### 12.10 Revision stale
+
+Confirm 前必须做 optimistic revision check。
+
+若 Preview 基于 revision 104，而 durable state 已变成 105：
+
+```text
+候选预览已过期
+
+这笔来源变更尚未保存。
+[重新计算预览]
+[取消更换]
+```
+
+- 不 silent auto-rebase；
+- “重新计算预览”保留本次候选 Source intent，以最新 durable revision 重算 before/after；
+- 重算后仍需再次显式 Confirm；
+- 若候选 Source 本身已失效，则不能继续确认，作者取消后回 Card 重新选择。
+
+### 12.11 Confirm / Cancel
+
+**确认更换来源**
+
+```text
+revision check
+→ atomic durable commit
+→ candidate cleared
+→ 回到原 Authoring Surface
+→ 原 Component 保持 selected
+→ Focus Editor 继续停在该 Component
+→ Card / Field 读取新的 durable truth
+```
+
+无需成功 Modal；轻量状态反馈即可。
+
+**取消更换**
+
+只丢弃 ephemeral candidate，不回滚任何已 durable 的普通编辑。
+
+用户文案用“取消更换”，不要求作者理解内部 candidate 术语。
+
+### 12.12 Source Change 状态机
+
+```text
+Durable Source
+      │
+      │ Card 选择新的 binding intent
+      ▼
+Candidate Review
+      │
+      ├── 取消更换 ───────→ Durable 不变
+      │
+      ├── stale ──────────→ 重新计算 Preview
+      │
+      └── 确认更换来源
+                 ↓
+           atomic commit
+                 ↓
+          New Durable Source
+```
+
+没有 Draft Source、没有先 Apply 再 Save、没有第二个 Source Selector、没有跨页面长期挂起 Candidate。
 ## 13. Persistence details hidden from author
 
 Component Card / Focus Editor 不提示 `将存为 cover_largemouth_bass` 或其它 production/materialization row name。
