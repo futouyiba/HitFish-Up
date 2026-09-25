@@ -128,13 +128,29 @@ FISH：
 ├─ 觅食水层
 ├─ 时段
 └─ 空间机会策略
-
-鱼家族预设
-├─ 温水掠食鱼
-└─ ...
 ```
 
-“鱼家族预设”是 Species Preset 的产品表达：一次性 Authoring convenience，不是 Fish 的长期父级，也不形成 Resolve inheritance。
+V1 Shared Assets 只包含 Shared Template。鱼家族预设 / Species Preset 与新 Fish initialization 一起后移，不作为 V1 资产类型。
+
+### 3.3 V1 Coverage
+
+V1 是 Bounded Coverage Editor。
+
+- 本次部署承诺可编辑的 Species 必须在部署前已经拥有可加载的 Habit Entry；
+- V1 不在运行时为缺失 Entry 的 Species 自动创建 Species Base / Mode topology；
+- 不在 Coverage Set 的 Species 可以在 Fish Coverage Browser 中出现，但不是可编辑 Subject；
+- Golden Seed 用于演示 / 回归，不等于完整 Coverage Set。
+
+V1 不创建 Fish Habit Entry，**但允许并要求创建 Shared Template**。Template 是可复用 Source asset，不是 Fish topology。
+
+Shared Template 必须支持：
+
+- 按 Template Kind 空白创建；
+- 从当前可解析的 Fish Component 提取为新模板；
+- Clone / Save As；
+- 编辑 / Archive / Restore / Replace References / Hard Delete guard。
+
+这些能力不要求新 Fish / Family 存在。
 
 ## 4. Context Header
 
@@ -237,6 +253,7 @@ V1 的 staged candidate 是**短事务**，不是可跨页面长期挂起的 Dra
 - 新建 Fish
 - 新建 Engagement Mode
 - Family 初始化新 Fish
+- 鱼家族预设 / Species Preset
 - 钓鱼元素周期表 Import / Lux CLI
 - Bake Preview
 - CSV persistence controls
