@@ -214,12 +214,14 @@ UI 进入 local raw-input state：
 
 ### 9.1 Incomplete raw input
 
-例如 `-`、`1.` 等尚不能形成完整 typed value 的输入：
+例如 `-`、切换到 ADD / SET 后尚未填写参数，或其它尚不能形成完整 typed value 的输入：
 
 - 只存在 UI local raw state；
 - 不进入 durable state；
 - 不触发 Resolve input；
-- Publish 消费最近一次成功 durable revision。
+- Effective 区继续以最近一次 durable state 为准，并弱提示“未应用”；
+- Publish 消费最近一次成功 durable revision；
+- 若作者在输入完成前切离该 field / Component / Subject / Workspace，丢弃 transient input，并恢复该行最近一次 durable 表达；不为半完成操作弹保存确认。
 
 ### 9.2 Durable-valid but publish-invalid
 
