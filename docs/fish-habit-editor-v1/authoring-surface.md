@@ -838,18 +838,18 @@ Mode 的 durable authoring 只有：
 
 不得为了 UI 对称新增 `policySourceOverride`。
 
-### 13.10 从当前 Component 提取模板
+### 13.10 从当前 Component / Policy 提取模板
 
-Fish Component Focus 提供低频资产动作：
+Fish Component Focus 与 Policy Focus 都提供低频资产动作：
 
 ```text
 [提取为共享模板…]
 ```
 
-它从当前 Component 的完整 Effective Profile 创建同 Kind Shared Template。
+Component 路径从当前完整 Effective Profile 创建同 Kind Shared Template；Policy 路径从当前完整 Effective Policy 创建新的 Spatial Opportunity Policy Template。
 
 - 提取前只需填写 / 确认新模板名称等必要 metadata；
-- Profile absent 或无法完整 Resolve 时禁用，并明确原因；
+- Component Profile absent / 无法完整 Resolve，或 Policy 无法形成完整 Effective Policy 时禁用，并明确原因；
 - 提取成功后当前 Fish 完全不变；
 - 可提供“查看新模板”；
 - 如需让当前 Fish 改用新模板，另行执行 Source Change Candidate；
