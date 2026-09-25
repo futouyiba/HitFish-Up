@@ -1,6 +1,6 @@
 # OPEN-ITEMS — 审之前先读这个
 
-> **Historical V0.2 — 非 Current Authority。** 本文件保留 R2 当时的设计 / Review / evidence 状态，用于版本考古与来源追踪。Fish Habit Editor 当前产品与公共语义以 [`docs/fish-habit-editor-v1/`](../../fish-habit-editor-v1/README.md) 为准；历史内容不得覆盖 V1 Current。
+> **Historical V0.2 — 非 Current Authority。** 本文件正文冻结为 R2 / V0.2 当时的设计、Review 或 evidence 状态；下文出现的“现行 / Current”只表示 **V0.2 当时**。Fish Habit Editor 当前产品与公共语义以 [`docs/fish-habit-editor-v1/`](../../fish-habit-editor-v1/README.md) 为准。不得用本历史包覆盖 V1 Current。
 
 **用途**：本审阅包唯一的可变问题台账：记录处置、剩余工作与关闭依据。README／开发 brief 只导航；[图像登记](figma-current.md#image-evidence)负责画面事实、版本与指纹。**七页编辑器规范的收口文本来自 Git Markdown；Notion Current 是面向人和对话式阅读的发布投影；Owner 裁定决定产品语义。** 图像只能证明所拍状态；审查关闭必须引用对应 exact head 的独立 REVIEW。本台账不新增产品权威，也不以“已裁／已投影”替代复审结论。
 
