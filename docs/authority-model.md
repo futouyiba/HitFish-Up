@@ -1,6 +1,6 @@
 # 文档权威与发布投影
 
-本页定义本仓规范文档与外部阅读载体的职责，不定义产品机制。**职责矩阵是仓内承接入口，不是七页内容已逐项完整迁移的证明；未在 Markdown 中承接的内容仍以缺口或外部输入登记。**
+本页定义本仓规范文档、产品版本与外部阅读载体的职责，不定义产品机制。Current Authority 与历史版本必须分离；历史 Review 包可以保留完整证据，但不得因仍可阅读就自动获得 Current 解释权。
 
 ## 权威分层
 
@@ -96,4 +96,4 @@ V1 Common Semantics ──────┘
 3. 取得本批指定 canonical writer 的明确授权后，按现有 Notion 写入纪律执行：fresh read → exact delta 或受控整篇重建 → 结构与块级回读 → fresh readback；含镜像的页面再做对应对账。
 4. 发布后，Notion 只作为这份 Git 规范的阅读投影；人工在 Notion 发现的修正先回流 Markdown，不能在页面上形成第二份长期规范。
 
-本批只建立仓内 authority policy 和职责矩阵，不重建 Notion 页面、不创建发布工具、不修改主开发需求或产品 Contract。公开仓不保存外部页面 id、内网链接、凭据或同步状态。
+本页只维护仓内 Authority / versioning policy 与发布投影边界，不替代具体 Product Contract。公开仓不保存外部页面 id、内网链接、凭据或同步状态。
