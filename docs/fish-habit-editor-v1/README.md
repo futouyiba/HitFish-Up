@@ -7,6 +7,8 @@
 
 本目录承接 **Fish Habit Editor V1 的产品层 Current**：作者看到什么、如何理解对象、如何导航、哪些交互属于普通编辑、哪些需要候选预览，以及 V1 各 Surface 如何组成一个完整生产工具。
 
+V1 当前最小生产闭环包括：从 Fish Basic 选择已有 Species，为尚无 Habit 的 Species 原子创建完整 Species Base + 系统默认 Affinity projection，然后进入同一套 Authoring / Resolve / Publish；V1 不创建新的 Species identity，也不接管 StockRelease / FishRelease 关联。
+
 V1 当前需要的共用语义暂时与产品文档共址在 `common-semantics.md`。R2 只保留历史版本、裁定来源与证据，不再作为 V1 的最终语义解释入口。未来当这些语义稳定跨越多个版本后，再从 V1 提取到独立 common 目录。
 
 ## 阅读顺序
