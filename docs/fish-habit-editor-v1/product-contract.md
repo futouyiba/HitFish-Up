@@ -23,7 +23,7 @@ Fish
 
 - Subject 只在左侧 Subject Navigation 中选择。
 - `[兼容]` 是当前承载形态的中性状态，不是 Warning。
-- V1 一个可编辑兼容中鱼习性模式对应一条既有 `FishEnvAffinity` 行；V1 不创建新的 Mode / Affinity row。
+- V1 一个可编辑兼容中鱼习性模式对应一条既有 `FishEnvAffinity` 行；V1 不允许用户创建新的业务 Mode，但新 Species 创建时会自动建立一个系统默认 Affinity 投影。
 - 普通作者 UI 不要求理解 `FishEnvAffinityRef`、Production row naming 或 materialized row id。
 
 ### 2.2 一份习性由什么组成
@@ -91,7 +91,7 @@ Policy Template
 [开始配置]
 ```
 
-全部选择完成后 atomic create 完整 Species Base，并直接进入普通 Authoring。
+全部选择完成后 atomic create **完整 Species Base + 一个系统默认 FishEnvAffinity 投影壳**，并直接进入普通 Authoring。
 
 初始化页只做 **Source / Policy binding selection**：
 
@@ -101,12 +101,17 @@ Policy Template
 - 若缺少合适 Template，先到 Shared Assets 创建，再回来开始配置；
 - 创建成功后的细调全部复用正常 Authoring Surface。
 
-Species Base 可以合法存在而没有任何 FishEnvAffinity。此时 UI 表达为“基础习性已配置 · 尚无中鱼习性模式”：
+Species Base 仍是唯一默认习性 Authoring Truth；系统默认 FishEnvAffinity 只是它的运行时 / Production 投影壳，不作为第二个可编辑 Subject。
 
-- 不是 Validator ERROR；
-- 不代表已经可被 StockRelease 使用；
-- Publish 不自动创建 Affinity row；
-- Habit Editor 不创建或编辑 Fish Basic 基础数据、模型、图鉴、Quality，也不创建 StockRelease / FishRelease 的 Quality ↔ FishEnvAffinity 关联。
+默认 Affinity 固定：
+
+- 四个 Component 跟随 Species Base；
+- local operations 为空；
+- Role / fail_env_coeff 继承 Species；
+- 不在“中鱼习性模式”列表里重复显示成一个 Mode；
+- Publish 后形成可供 StockRelease / FishRelease 在其自身配置表中引用的 EnvAffinity row。
+
+Habit Editor 不创建或编辑 Fish Basic 基础数据、模型、图鉴、Quality，也不创建 StockRelease / FishRelease 的 Quality ↔ FishEnvAffinity 关联。
 
 ## 3. Workspace / IA
 
