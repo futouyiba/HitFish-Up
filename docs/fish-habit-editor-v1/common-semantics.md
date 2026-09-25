@@ -41,9 +41,38 @@ Fish Basic / authoritative Species Catalog
 
 创建为一个 atomic durable transaction；不建立 durable half-created wizard / draft。
 
+初始化 transaction 只写 Species Base 的五个 binding：
+
+- 四个 Component Source；
+- 一个 Policy Template Source。
+
+不在 initialization transaction 中写 ADD / SET / CLEAR、Role override 或 fail_env_coeff override；这些全部在创建成功后的普通 Authoring 中完成。初始化 Source 只从当前合法、已存在的 ACTIVE Source 选择；Template creation 使用独立 Shared Assets flow。
+
 Species Base **不是** FishEnvAffinity row，也不是默认 Engagement Mode。V1 新建 Species Base 时不创建 Affinity row。
 
-Quality / StockRelease / FishRelease 与 FishEnvAffinity 的关联继续由其各自 domain 维护，Habit Editor 不创建或同步该关系。
+### 1.2 Base-only Species
+
+完整 Species Base 可以在没有任何 FishEnvAffinity 的情况下合法存在。
+
+语义：
+
+```text
+Species Base complete
++
+0 FishEnvAffinity
+=
+Authoring-ready
+but not runtime-addressable by StockRelease
+```
+
+规则：
+
+- 不是 Validator ERROR；
+- Resolve 可以正常解释 Species Base；
+- V1 Publish 不因 Base-only 状态自动创建 Affinity；
+- 在没有 Affinity consumer 时，不要求为了“发布成功”强行生成无人引用的 Production Profile row；
+- 后续创建 Affinity 后，Materializer 再按真实 consumer / lineage 生成所需 Production projection；
+- Quality / StockRelease / FishRelease 与 FishEnvAffinity 的关联继续由其各自 domain 维护，Habit Editor 不创建或同步该关系。
 
 ## 2. Source Binding
 
