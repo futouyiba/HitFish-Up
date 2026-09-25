@@ -23,6 +23,8 @@ V1 当前需要的共用语义暂时与产品文档共址在 `common-semantics.m
    V1 Shared Template：创建、提取、值编辑传播、引用、Archive / Restore / Replace References。
 5. [secondary-surfaces.md](secondary-surfaces.md)  
    V1 的次级产品面；当前已闭合 Resolve Preview 与 Publish。
+6. [implementation-brief.md](implementation-brief.md)  
+   V1 最小生产闭环的实现顺序、Species Base + default Affinity 创建、Shared Template、Resolve 与 Publish 工程落点。
 
 ## Authority relationship
 
