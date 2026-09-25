@@ -488,7 +488,7 @@ Replace A → B：
 
 ## 10. Shared Template Creation
 
-V1 虽不创建新的 Fish Habit Entry，但必须允许创建 Shared Template。两者属于不同 topology：Template 是 Source asset，不创建 Fish / Mode identity。
+V1 可以从 Fish Basic 创建新的 Species Base + system default Affinity；Shared Template 是另一类独立 Source asset，Template 创建本身不创建或修改 Fish / Mode identity。
 
 ### 10.1 Blank Create
 
