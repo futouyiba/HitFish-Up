@@ -329,26 +329,32 @@ Must not:
 ```
 
 <a id="rebase-impact-preview"></a>
-### 共用N2｜Rebase／Impact Preview 交互
+### 共用N2｜Source / Propagation Candidate Review
 
-本段是卡1／10／11共用的 **UI交互 Owner**；N2沿用 Inventory 标识，不是新增schema或产品身份。事务与分档完整定义仍归[汇编 §8](component-contract-consolidated.md#source-transaction)，两引用集和候选统计归[§14](component-contract-consolidated.md#template-reference-sets)，普通编辑及TimePeriod独立护栏归[§15](component-contract-consolidated.md#transaction-model)，丢弃未durable状态归[卡7](#autosave-status)。本轮承载选择是可逆目标投影，不冒称Current逐字规定；候选、反方与来源范围见[设计提案](../../proposals/0.3.4.0-B-n2-ui-projection.md)。
+本段只保留 staged mutation 的共用语义护栏；Fish Habit Editor V1 的具体承载以 [Fish Authoring Surface §12](../../fish-habit-editor-v1/authoring-surface.md#12-source-change-candidate) 为产品层 Current。
 
-**承载与入口**：本次高影响 staged candidate 的完整正文及提交确认放在N2独立面板；C11影响节保留该候选的摘要和“查看影响”入口。这个限定只针对本次候选正文与确认，不限制C11日常影响、校验列表或待复核内容。Local Rebase可复用N2，不强制全屏或Modal；一个交互Owner不等于只能有一个面板实例。Resolve Preview／Bake Preview仍是各自的只读产品面，不能拿它们替代候选确认面。
+**V1 承载**：
+- Candidate 是短事务，不是可跨页面挂起的 Draft，也不新增第三个长期工作视角。
+- Fish Source Change 的 Review 复用当前右侧 Focus Editor 临时承载；不新建独立 N2 Workspace / Modal。
+- Candidate active 时暂停其它导航、ordinary mutation 与 Publish，直到确认或取消。
+- Local / Propagated 使用同一 Review Panel；是否传播只决定 Review 内容重量，不决定是否 staged confirm。
 
-**共用显示与动作**：
-- 标题明确对象、作用域和动作类型，标明“候选变更（未确认）”；“查看影响”进入该候选的预览正文。
-- “取消候选”只丢弃本次未确认候选，不进行durable写入，也不回滚已成功保存的普通编辑；“确认变更”按所引§8提交协议执行。确认不是Publish，不新增durable草稿实体。
-- Local正文按§8只展示本次作用域和意图；不为视觉整齐补伪零全局统计，不要求全库扫描。Propagated正文按§8／§14完整呈现候选影响及分类，四项统计分列，影响对象可滚动且不截断。
-- Replace候选将“直接改绑对象”与“有效影响对象”分区标识；模板改值保留其完整值编辑语义。字段/写集及其它独有动作仍由卡10／11定义，不在本段重定义。
-- after-state 的错误诊断醒目，并与Publish阻断关联；不可把诊断文字呈现成保存I/O失败，也不可暗示所有ERROR都禁止确认保存。具体可保存性与诊断判级仍按原Owner。
+**共用必须表达**：
+- 当前 binding intent 与候选 binding intent；
+- before / after Effective 结果；
+- value 不变但被 SET / operation 遮罩的情况；
+- same-effective explicit pin ↔ follow-parent 的未来传播差异；
+- Candidate 新增 / 解除的诊断；
+- Propagated 情况下区分“直接修改”与“跟随受到影响”。
 
-**代表验收**：
-1. 零value diff的同源pin／FOLLOW_PARENT候选仍能看见意图与未来传播区别；Local画面没有伪造的全局四统计，取消与确认入口可辨。
-2. 模板改值的传播预览能看见结果变化、受操作遮罩未变与新增诊断的区别；结构可表达的after ERROR可确认保存，Publish仍阻断，不能把确认按钮画成Publish。
-3. Replace的继承child显示为有效影响对象，不能标成新增直接写入目标；已有operations保留的验收仍按卡11。
-4. C11日常校验/待复核仍可使用，普通值/Role没有因新增面板而变成staged；TimePeriod预设仍只消费自己的条件护栏。
+**提交边界**：
+- Candidate 不先写盘；确认前做 revision check，确认后 atomic durable commit。
+- 取消只丢弃 Candidate，不回滚已 durable 的 ordinary edit。
+- Candidate after-state 有 publish-blocking ERROR 时，只要 mutation 本身 schema-valid，仍允许确认保存；确认不是 Publish。
+- exact binding intent no-op 不建立 Candidate。
+- 不为保持旧 Effective Value 自动制造 SET，不清已有 operation。
 
-目标设计的未实现状态与示例数据须在annotation／图像登记中明确标 `⚑UNIMPL`（缺GAP编号时标明待补）／示例，不混入作者控件文案；静态画面只证明该画面，不证明列表真实滚动、原子提交或保存重载已经实现。实时取证与写前快照仍按项目Figma技能，不能用本段免除。
+模板完整值编辑、Replace References 等其它 propagated mutation 可复用同一 staged transaction semantics；其各自对象、写集与影响集合仍由对应卡片和汇编 §14 定义。V1 不要求它们使用与 Fish Source Change 完全相同的屏幕几何，但不得重新引入先写盘后预览、长期 Draft 或第二套 durable truth。
 
 <a id="template-value-editor"></a>
 ### A②-卡10｜Edit Template Value（模板完整值编辑；高影响）
