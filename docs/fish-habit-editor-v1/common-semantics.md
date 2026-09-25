@@ -18,6 +18,33 @@ V1 唯一长期 Authoring Truth 是 Editor durable state。
 
 V1 不创建新的 durable EngagementMode identity，也不把 Quality / FishPond / StockRelease / FishRelease 拉回 Habit Editor ownership。
 
+## 1.1 Species Habit Creation
+
+V1 可以创建 Habit Editor 自己拥有的 **Species Base Record**，但不能创建 Species identity。
+
+Species 创建来源：
+
+```text
+Fish Basic / authoritative Species Catalog
+→ existing species_key
+→ Species Habit Base
+```
+
+新建 Species Base 的产品完成条件：
+
+- Temperature Source 已选择；
+- Structure Source 已选择；
+- Feeding Layer Source 已选择；
+- Time Period Source 已选择；
+- Policy Template 已选择；
+- 四个 Component Profile 与 Policy 均可 Resolve。
+
+创建为一个 atomic durable transaction；不建立 durable half-created wizard / draft。
+
+Species Base **不是** FishEnvAffinity row，也不是默认 Engagement Mode。V1 新建 Species Base 时不创建 Affinity row。
+
+Quality / StockRelease / FishRelease 与 FishEnvAffinity 的关联继续由其各自 domain 维护，Habit Editor 不创建或同步该关系。
+
 ## 2. Source Binding
 
 ### 2.1 Source 与 Operation 正交
@@ -533,7 +560,7 @@ V1 common semantics 不定义或承诺：
 - Mode Share / Routing；
 - 新 durable EngagementMode identity；
 - Species Preset / 鱼家族预设；
-- Family / 新 Fish Habit initialization；
+- Family / Species Preset；
 - Bake / condition evaluation；
 - 外部生态数据库 Import / Lux CLI；
 - Production reverse import / auto-merge；
