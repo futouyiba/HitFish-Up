@@ -92,6 +92,7 @@ Temperature V1 以**手工 Authoring**为主，不承诺外部生态数据库自
 - Replace References。
 - Hard Delete guard。
 - Direct Reference / Effective Consumer 可见性。
+
 V1 Shared Assets **只包含 Shared Template**；Species Preset / 鱼家族预设不进入 V1。
 
 #### Preview / Publish
@@ -202,7 +203,7 @@ V1.0.1 是紧随 V1 的窄增量，只补固定 Compat Mode 创建：
 - 四个 Component 初始 Source = 跟随 Species Base；
 - numeric operations 初始 absent；
 - Role / `fail_env_coeff` 初始 inherit Species；
-- 业务显示名固定为“幼年 / 成年及以上”，不要求用户填写 Mode name；Production human-readable row name 由实现按 Species + 固定 Compat type 自动生成并做 collision validation，具体字符串格式属于 implementation contract，不作为新的产品输入；
+- 业务显示名固定为“幼年 / 成年及以上”，不要求用户填写 Mode name；Production human-readable row name 由实现按 Species + 固定 Compat type 自动生成并做 collision validation，具体字符串格式属于 implementation contract，不作为新的产品输入。
 - StockRelease / FishRelease 是否让某个 Quality 使用该 Affinity，继续由其自己的配置表维护，不属于 Habit Editor。
 
 V1.0.1 的固定 Compat Mode creation 是 create-only 窄增量；不在该版本补 Mode Archive / Delete / rename。删除生命周期仍等待跨域引用边界闭合。
@@ -257,7 +258,7 @@ JSON canonical persistence
 
 - 更好的批量筛选 / Review；
 - Template consolidation 辅助；
-- Family / 聚类研究成果的产品化准备；
+- 聚类 / Family 初始化研究（只作后续 Topology Creation 输入，不进入 V1 Shared Assets）；
 - Golden Seed / migration tooling 的工程化增强。
 
 V1.1 不扩展任意 Engagement Mode / Routing；Species Base initialization 已属于 V1，固定 Compat Mode creation 已属于 V1.0.1。
