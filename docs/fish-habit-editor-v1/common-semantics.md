@@ -426,7 +426,17 @@ V1 虽不创建新的 Fish Habit Entry，但必须允许创建 Shared Template�
 - Extract 只创建 Template Asset，**不修改当前 Fish Source、不清 local operation、不自动 rebind**；
 - 创建后若作者希望当前 Fish 改用新模板，必须另走 Source Change Candidate。
 
-### 10.3 Clone / Save As
+### 10.3 Extract from Effective Policy
+
+Spatial Opportunity Policy Template 也支持对称提取：
+
+- 从当前 Fish Subject 的完整 Effective Policy 提取一个新的 Policy Template；
+- flatten 当前四个 Effective Role + Effective `fail_env_coeff`；
+- 不复制 Species / Mode Role patch provenance；
+- 不自动把当前 Fish 改绑到新 Policy Template；
+- 如需改绑，另走 Policy Template Source Change Candidate。
+
+### 10.4 Clone / Save As
 
 Clone / Save As 从现有 Template complete value 创建新的独立 Template：
 
@@ -435,7 +445,7 @@ Clone / Save As 从现有 Template complete value 创建新的独立 Template：
 - 后续修改互不传播；
 - 创建动作本身不改任何 existing binding。
 
-### 10.4 Template Kind
+### 10.5 Template Kind
 
 V1 Template Kind 固定为：
 
