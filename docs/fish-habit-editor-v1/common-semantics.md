@@ -52,7 +52,7 @@ Species Base **不是** FishEnvAffinity row，也不是默认 Engagement Mode。
 
 ### 1.2 Default Affinity Projection
 
-V1 新建 Species Base 时，同一个 atomic creation transaction 同时建立一个**系统默认 FishEnvAffinity 投影壳**。
+每个 Species Base 在 V1 durable state 中必须**恰好对应一个系统默认 FishEnvAffinity 投影壳**。新建 Species Base 时，两者由同一个 atomic creation transaction 建立；Bootstrap / migration 进入 V1 时也必须补齐这一 invariant。
 
 它不是第二份 Authoring Truth，也不是用户可编辑的 Mode。
 
@@ -76,11 +76,40 @@ Durable / Production identity：
 - Editor 创建稳定 `row_key`；
 - Production `row_id` 可在 Publish 后获得；
 - human-readable production name 系统生成并校验 collision；
-- 普通作者 UI 不要求编辑该 name，也不把默认 Affinity 显示为独立 Mode。
+- 普通作者 UI 不要求编辑该 name，也不把默认 Affinity 显示为独立 Mode；
+- 系统默认 Affinity **不得为了复用旧 schema 被伪装成 `young` 或 `mature` bucket**。其物理表示必须能与固定 Compat bucket 无歧义区分；若当前 ledger schema 无法表达，使用最小显式 schema delta，而不是污染 bucket 语义。
 
 Species Base 仍是作者编辑“默认习性”的唯一入口；默认 Affinity 只是让这套习性拥有一个可被 Runtime / StockRelease 域引用的具体 EnvAffinity projection。
 
 Quality / StockRelease / FishRelease 与 FishEnvAffinity 的关联继续由其各自 domain 维护，Habit Editor 不创建或同步该关系。
+
+V1 不提供 Species Base / system default Affinity 的 Archive / Delete。原因不是技术上不能删，而是 Habit Editor 不拥有完整的跨域 StockRelease / FishRelease 引用生命周期；在没有安全 cross-domain reference guard 前，删除不进入最小闭环。
+
+### 1.3 Species create eligibility
+
+“Editor 中没有 Species Base”不自动等于“可以 fresh create”。
+
+Fish Basic Species 分三类：
+
+```text
+CONFIGURED
+  Editor Species Base exists
+  → 正常编辑
+
+AVAILABLE_NEW
+  no Editor Species Base
+  + no existing Production FishEnvAffinity footprint for this species
+  → 可以“开始配置习性”
+
+LEGACY_UNIMPORTED
+  no Editor Species Base
+  + existing Production FishEnvAffinity footprint
+  → 禁止 fresh create
+```
+
+`LEGACY_UNIMPORTED` 必须提示存在旧生产习性数据，需要经过 bounded bootstrap / migration 后才能进入 V1 Editor。V1 不用一套新 Source/Policy 覆盖旧 Production，也不把 generation guard 当 migration 工具。
+
+若并发会话在提交前已经为同一 `species_key` 创建 Species Base，当前 create transaction 必须冲突失败并刷新为现有 Subject，不能生成第二份 Species Base。
 
 ## 2. Source Binding
 
@@ -453,7 +482,7 @@ Replace A → B：
 ### 9.4 Direct vs Effective Reference
 
 - `DirectReferenceSet(A)`：durable state 中显式引用 A 的 owner；
-- `EffectiveConsumerSet(A)`：Resolve 后最终消费 A 的 owner。
+- `EffectiveConsumerSet(A)`：Resolve 后最终消费 A 的**作者语义 owner**。系统默认 Affinity 这类隐藏 projection 不作为额外的人类 consumer 重复计数；它的 Production 更新属于所属 Species Base 的 materialization consequence。
 
 两者不能互代。
 
