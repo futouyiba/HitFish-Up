@@ -76,11 +76,23 @@ Policy Template       [ ... ]
 
 五项全部有效后一次 atomic create Species Base；成功后直接进入该 Species 的基础习性 Authoring。
 
+初始化页只负责选择已有合法 Source / Policy Template，不提供字段 Operation、Role 或 coeff 编辑；这些在创建后的正常 Authoring 中完成。
+
 - 不创建 Species identity；
 - 不创建 Mode / FishEnvAffinity row；
 - 不保存半完成 draft；
 - 不要求 Family / Preset；
+- 不在初始化页创建 Template；Template creation 走 Shared Assets；
 - 不编辑 Fish Basic 基础字段、Quality 或 StockRelease 关系。
+
+创建后若当前 Species 尚无任何 Compat Mode，左栏可弱显示：
+
+```text
+基础习性
+尚无中鱼习性模式
+```
+
+这不是 Error；只是说明当前还没有可被 StockRelease 引用的 FishEnvAffinity。
 
 ## 3. Context Header
 
