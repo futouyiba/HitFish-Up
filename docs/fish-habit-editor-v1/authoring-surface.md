@@ -1,7 +1,7 @@
 # Fish Habit Editor V1｜Fish Authoring Surface Contract
 
-> Status: Working Candidate  
-> 本文只定义 Fish Subject 的核心编辑屏。Shared Assets、Publish 等其它 Surface 后续单独收敛；公共 Source / Operation / Policy / Validation 语义由 [common-semantics.md](common-semantics.md) 维护。
+> Status: Current Surface Contract for V1  
+> 本文只定义 Fish Subject 的核心编辑屏与 Species Habit initialization。Shared Templates 见 [shared-assets.md](shared-assets.md)，Resolve / Publish 见 [secondary-surfaces.md](secondary-surfaces.md)；公共 Source / Operation / Policy / Validation 语义由 [common-semantics.md](common-semantics.md) 维护。
 
 ## 1. 核心一屏
 
