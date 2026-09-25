@@ -7,7 +7,7 @@
 
 ```text
 GLOBAL TOPBAR
-Fish Habit Editor              已保存   ⛔2   ● 未确认变更   [发布…]
+Fish Habit Editor          编辑器已保存   ⛔2   ● 未确认变更   [发布到生产配置…]
 
 ────────────────────────────────────────────────────────────────
 
@@ -684,7 +684,7 @@ V1 一个兼容 Mode 对应一条既有 FishEnvAffinity 行，因此普通 UI �
 
 Role ordinary edit 走 Autosave。
 
-- IGNORED + Profile absent → 改 CORE / SECONDARY：保存 Role，随后显示 required-Profile ERROR；不自动建 Profile、不自动选 Source、不回滚 Role。
+- IGNORED + Profile absent → 改 CORE / SECONDARY：先保存 Role，随后显示 required-Profile ERROR；不自动建 Profile、不自动选 Source、不回滚 Role。Diagnostic 提供“去配置习性”导航，定位到对应 Component 的普通 Authoring；作者仍通过该 Component Card 唯一 Source Selector 选择 Source，不新增 Setup transaction。
 - CORE / SECONDARY → IGNORED：已有 Profile 保留，仍可编辑；仅表示当前计算不消费该 Profile。
 - Role 的 Validator ERROR 与 save I/O failure 分开；可 durable 保存但可阻断 Publish。
 
@@ -824,7 +824,7 @@ Policy Template Source 只属于 Species Base，并且只有 Species Base Policy
 
 - 四个 Policy Template raw Role；
 - `fail_env_coeff` raw baseline；
-- Species 层尚未被 SET / ADD 遮罩的 Effective Policy；
+- Species 层尚未被 SET 遮罩的 Effective Policy；ADD 必须以候选 Template raw baseline 重新计算，不能当作遮罩；
 - 跟随 Species 或显式 CLEAR 到 Template raw 的兼容 Mode；
 - 因 Role 变化而新增 / 解除的 required-Profile diagnostics。
 
@@ -845,7 +845,7 @@ V1 复用 §12 的**短事务 Candidate Review**，不建立 Policy 专属 Candi
 结构 Role         CORE      CORE      本层 SET 遮罩
 觅食水层 Role     SECONDARY CORE
 时段 Role         IGNORED   SECONDARY
-fail_env_coeff    0.015     0.015     本层 ADD 后结果不变
+fail_env_coeff    0.015     0.025     本层 ADD +0.005，按候选 baseline 重算
 
 同时影响
 幼年 [兼容]          2 项变化
