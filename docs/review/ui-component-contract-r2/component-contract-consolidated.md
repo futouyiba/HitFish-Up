@@ -1,5 +1,7 @@
 # 组件契约｜编辑器 UI Component Contract（现行）
 
+> **Historical V0.2 — 非 Current Authority。** 本文件保留 R2 当时的设计 / Review / evidence 状态，用于版本考古与来源追踪。Fish Habit Editor 当前产品与公共语义以 [`docs/fish-habit-editor-v1/`](../../fish-habit-editor-v1/README.md) 为准；历史内容不得覆盖 V1 Current。
+
 本文只写现行规定。出处写作《页名》§N、记录页 §N 或 冻结卡 `A①-卡N` / `A②-卡N`；查不到出处的条目列在 §18 的未核边界与 §19 的命名边界，不进正文。标（本轮裁定）的条目＝本轮已定口径，其依据随条给出。
 
 ## 1. 产品拓扑与三栏
