@@ -261,3 +261,54 @@ V1 不以 arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为
 - Production generation drift 阻断 Publish；
 - create-from-absent default Affinity 的 `row_id` 回填失败不能被判为 Publish success。
 
+
+## 11. Closure Status
+
+### 11.1 Product / semantic closure
+
+以下内容对 V1 已有唯一 Contract，不应在落码时重新设计：
+
+- Species identity 来自 Fish Basic；
+- Species Base creation = 五 binding atomic create；
+- 每个 Species Base 恰好一个 hidden system default Affinity projection；
+- default Affinity 不是业务 Mode、不是第二个 Authoring Subject；
+- V1 只编辑既有 Compat Mode；V1.0.1 才补固定 young / mature create；
+- Shared Template create / extract / propagation / lifecycle；
+- Source / ADD / SET / CLEAR / Policy semantics；
+- Resolve Preview；
+- Global Publish / generation guard / reread verify；
+- StockRelease / FishRelease 关联不归 Habit Editor；
+- Species Base / default Affinity 在 V1 不提供 Archive / Delete。
+
+### 11.2 Remaining engineering gates
+
+以下是落码前需要确认的**物理实现 Gate**，不是新的产品设计分支：
+
+**G1｜Fish Basic adapter**
+
+- 确认 authoritative Fish Basic 的稳定 Species ID 字段；
+- 确认 UI display name / production naming 所需的 canonical English name 来源；
+- 只读接入，不向 Fish Basic 回写。
+
+**G2｜System default Affinity physical carrier**
+
+- 核当前 ProductionRowLedger/schema 是否能表达非 `young / mature` 的 system-default row；
+- 若不能，做最小 schema delta；不得把 default 伪装成 compat bucket。
+
+**G3｜Production naming / collision domain**
+
+- 固定 default Affinity deterministic human-readable name 生成规则；
+- 固定 lookup/collision domain；
+- name 只作 Production projection，不成为 Editor identity。
+
+**G4｜row_key → row_id create-from-absent handoff**
+
+- 固定 Production create 后 reread、唯一 row_id 识别、Editor durable backfill 的具体调用顺序；
+- backfill / verify 未完成时不得宣告 Publish success，也不得 blind recreate。
+
+**G5｜Initial legacy bootstrap**
+
+- 对首批已有 Production 的目标 Species 执行 bounded bootstrap / migration；
+- multi-row same-Compat 与 unmapped Affinity 必须进入人工 adjudication，不自动聚合或 silent drop。
+
+完成 G1–G5 后，V1 vertical slice 不需要再等待新的产品裁决即可进入实现。
