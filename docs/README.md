@@ -1,6 +1,6 @@
 # 文档阅读入口
 
-先按任务选择当前规范、发布投影或版本化证据。仓内规范的权威分层与七页职责见[文档权威与发布投影](authority-model.md)；审阅包是当前消费者与证据投影，职责见[审阅包入口](review/ui-component-contract-r2/README.md#projection-maintenance)，Markdown 改动的风险分级与审核收口见[审阅说明](review/ui-component-contract-r2/REVIEW-PROMPT.md#review-closure)；本页只导航，不另维护规则或问题状态。
+先按任务选择 Current 规范或历史版本证据。Fish Habit Editor 的版本关系与 Authority 见[文档权威与发布投影](authority-model.md)；V1 当前产品与公共语义从 [V1 Product Current](fish-habit-editor-v1/README.md) 进入，R2 只作为 V0.2 历史设计 / Review / evidence。普通修订过程由 Git / PR 保存；本页只导航，不另维护规则或问题状态。
 
 ## 当前工作入口
 
@@ -10,8 +10,8 @@
 | Source / Operation / Policy / Validation / Template lifecycle / Publish materialization 等当前共用语义 | [V1 Common Semantics](fish-habit-editor-v1/common-semantics.md) |
 | V0.2 历史设计、旧审阅结论与证据 | [UI Component Contract R2](review/ui-component-contract-r2/README.md)；只作历史版本 / evidence，不作 Current semantic authority |
 | 实现顺序、依赖及独有实现限定 | [开发 brief](implementation-brief-0.3.4.0-B.md) |
-| 审阅包问题处置、关闭依据及剩余取证 | [问题台账](review/ui-component-contract-r2/OPEN-ITEMS.md#active-review-items) |
-| 随包画面版本、指纹及证明范围 | [图像登记](review/ui-component-contract-r2/figma-current.md#image-evidence) |
+| V0.2 审阅问题处置、关闭依据及剩余取证 | [问题台账](review/ui-component-contract-r2/OPEN-ITEMS.md#active-review-items) |
+| V0.2 随包画面版本、指纹及证明范围 | [图像登记](review/ui-component-contract-r2/figma-current.md#image-evidence) |
 
 ## 历史验证与取证入口
 
