@@ -172,27 +172,19 @@ FISH：
 └─ 空间机会策略
 ```
 
-V1 Shared Assets 只包含 Shared Template。鱼家族预设 / Species Preset 与新 Fish initialization 一起后移，不作为 V1 资产类型。
+V1 Shared Assets 只包含 Shared Template。鱼家族预设 / Species Preset 不进入 V1；Species Base initialization 已属于 Fish Authoring Surface，而不是 Shared Assets。
 
-### 3.3 V1 Coverage
+### 3.3 Species Catalog-backed Creation
 
-V1 是 Bounded Coverage Editor。
+V1 不采用 Bounded Coverage。
 
-- 本次部署承诺可编辑的 Species 必须在部署前已经拥有可加载的 Habit Entry；
-- V1 不在运行时为缺失 Entry 的 Species 自动创建 Species Base / Mode topology；
-- 不在 Coverage Set 的 Species 可以在 Fish Coverage Browser 中出现，但不是可编辑 Subject；
-- Golden Seed 用于演示 / 回归，不等于完整 Coverage Set。
+- Species identity 来自 Fish Basic / authoritative Species Catalog；
+- 默认 Fish List 可以只展示已配置 Habit 的 Species，保持工作列表简洁；
+- “开始配置其他鱼种”搜索尚未建立 Habit 的 Fish Basic Species；
+- 创建完成后得到完整 Species Base + 系统默认 Affinity projection；
+- Golden Seed 只用于 demo / regression / migration evidence，不决定其它 Species 是否可配置。
 
-V1 不创建 Fish Habit Entry，**但允许并要求创建 Shared Template**。Template 是可复用 Source asset，不是 Fish topology。
-
-Shared Template 必须支持：
-
-- 按 Template Kind 空白创建；
-- 从当前可解析的 Fish Component 提取为新模板；
-- Clone / Save As；
-- 编辑 / Archive / Restore / Replace References / Hard Delete guard。
-
-这些能力不要求新 Fish / Family 存在。
+Shared Template 仍是 Species Base initialization 和后续 Authoring 的合法 Source，并支持空白创建、从 Fish / Policy 提取、Clone、编辑、Archive / Restore / Replace References。
 
 ## 4. Context Header
 
@@ -287,8 +279,8 @@ V1 的 staged candidate 是**短事务**，不是可跨页面长期挂起的 Dra
 - Mode Share / Routing
 - FishPond / StockRelease / FishRelease
 - 新建 Species identity
-- 新建 Engagement Mode / FishEnvAffinity row
-- Family 初始化新 Fish
+- 用户创建额外 Engagement Mode / Compat FishEnvAffinity row（系统默认 Affinity projection 除外）
+- Family / Preset-assisted Species initialization
 - 鱼家族预设 / Species Preset
 - 钓鱼元素周期表 Import / Lux CLI
 - Bake Preview
@@ -301,7 +293,10 @@ V1 的 staged candidate 是**短事务**，不是可跨页面长期挂起的 Dra
 
 ```text
 打开 Editor
-→ 在 FISH 找到已有 Fish
+→ 已有 Habit：直接选择 Fish
+→ 无 Habit：从 Fish Basic 选择 Species
+   → 选择四个 Component Source + Policy Template
+   → atomic create Species Base + system default Affinity projection
 → 左栏选择基础习性 / 已有中鱼习性模式
 → 中栏查看四个 Component + Policy
 → 选择 Component
@@ -316,4 +311,4 @@ V1 的 staged candidate 是**短事务**，不是可跨页面长期挂起的 Dra
 
 V1 Review 的核心问题：
 
-> 在不依赖后续能力的情况下，一个作者能否安全地理解、修改、验证并发布已有 Fish Habit topology？
+> 在不依赖后续能力的情况下，一个作者能否从 Fish Basic 选择已有 Species，创建或编辑完整 Species Base，并安全地验证、解析和发布；同时继续编辑已有 Compat Mode？
