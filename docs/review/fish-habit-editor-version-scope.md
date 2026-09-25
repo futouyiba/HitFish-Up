@@ -114,7 +114,8 @@ V1 直接读取 Fish Basic / authoritative Species Catalog，不要求所有 Spe
 - Species identity / `species_key` 只能来自 Fish Basic 既有条目；
 - Habit Editor 不创建 Fish Basic Species，也不维护基础数据、模型、图鉴或 Quality；
 - 默认 Fish List 可以只展示已配置 Habit 的短列表；
-- “开始配置其他鱼种”通过搜索 Fish Basic 选择尚未配置 Habit 的 Species；
+- “开始配置其他鱼种”只允许选择 `AVAILABLE_NEW`：无 Editor Species Base，且 Production 不存在该 Species 的 FishEnvAffinity footprint；
+- 无 Editor Species Base 但 Production 已存在 FishEnvAffinity 的 Species 标为 `LEGACY_UNIMPORTED`，不得 fresh create，先经过 bootstrap / migration；
 - V1 为该 Species 创建 Habit Editor 自己拥有的 Species Base，并同时建立一个**系统默认 FishEnvAffinity 投影壳**；该默认 Affinity 不是新的业务 Mode，也不是第二套 Authoring Subject。
 
 新 Species Habit 的正常创建态要求一次性选择：
@@ -130,7 +131,9 @@ Policy Template
 全部完成后 atomic create：
 
 1. 完整 Species Base；
-2. 一个系统默认 `FishEnvAffinity` / ProductionRowLedger 投影壳。
+2. **恰好一个**系统默认 `FishEnvAffinity` / ProductionRowLedger 投影壳。
+
+该“一 Base 一 default Affinity”也是 Bootstrap / migration 进入 V1 后必须满足的 invariant。
 
 默认 Affinity 的初始语义固定为：
 
@@ -139,7 +142,8 @@ Policy Template
 - Role / `fail_env_coeff` 全部 inherit Species；
 - 不作为左栏额外 Mode Subject 展示，避免与“基础习性”形成重复编辑入口；
 - Editor 使用稳定 `row_key`，Production `row_id` 在 Publish 后获得；
-- human-readable production name 由系统生成并做 collision validation。
+- human-readable production name 由系统生成并做 collision validation；
+- system default Affinity 不得伪装成 `young` / `mature` bucket；物理 schema 必须能无歧义区分 default 与 fixed Compat bucket。
 
 因此新 Species 创建完成后已经有一份可被 StockRelease / FishRelease 在其自身配置表中引用的默认 EnvAffinity；Habit Editor **不创建或维护那条 StockRelease 引用关系本身**。
 
@@ -176,7 +180,8 @@ V1 不承诺：
 - Production 外部修改的自动 reverse import；
 - Production ↔ Editor 自动双向同步；
 - CSV canonical persistence migration；
-- 全量 reconcile / semantic recovery。
+- 全量 reconcile / semantic recovery；
+- Species Base / system default Affinity Archive / Delete。
 
 ## 3. V1.0.1｜Fixed Compat Mode Creation
 
@@ -200,6 +205,8 @@ V1.0.1 是紧随 V1 的窄增量，只补固定 Compat Mode 创建：
 - Role / `fail_env_coeff` 初始 inherit Species；
 - 业务显示名固定为“幼年 / 成年及以上”，不要求用户填写 Mode name；Production human-readable row name 由实现按 Species + 固定 Compat type 自动生成并做 collision validation，具体字符串格式属于 implementation contract，不作为新的产品输入。
 - StockRelease / FishRelease 是否让某个 Quality 使用该 Affinity，继续由其自己的配置表维护，不属于 Habit Editor。
+
+V1.0.1 的固定 Compat Mode creation 是 create-only 窄增量；不在该版本补 Mode Archive / Delete / rename。删除生命周期仍等待跨域引用边界闭合。
 
 V1.0.1 不处理任意 Engagement Mode 与 bucket-scoped operation owner 的关系。
 
