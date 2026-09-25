@@ -754,29 +754,7 @@ V1 不提供 blind Retry。
 
 `重新检查` 不是“再次写入”，也不是“接受 Production 当前值”。
 
-### 7.12 Base-only Species
-
-完整 Species Base 但尚无任何 `FishEnvAffinity` 是 V1 合法状态。
-
-Publish Preflight 可以显示 informational notice：
-
-```text
-1 条 Fish 仅配置了基础习性
-当前没有中鱼习性模式，因此本次不会生成可被 StockRelease 使用的 FishEnvAffinity。
-```
-
-该状态：
-
-- 不是 ERROR；
-- 不是 WARNING acknowledgement；
-- 不阻断 Publish；
-- 不自动创建 Affinity；
-- 不自动创建 Quality / StockRelease 关联；
-- 不要求为了“有 Production delta”制造无人引用的 Profile row。
-
-后续 V1.0.1 创建固定 Compat Mode 后，Publish 再物化对应 Affinity 与所需 Profile projection。
-
-### 7.13 Warnings
+### 7.12 Warnings
 
 Warnings 在 Preflight 中集中展示，但：
 
@@ -787,7 +765,7 @@ Warnings 在 Preflight 中集中展示，但：
 
 Warning 仍然只是 current state derived diagnostic。
 
-### 7.14 不进入 V1 Publish 的能力
+### 7.13 不进入 V1 Publish 的能力
 
 明确不做：
 
