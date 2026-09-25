@@ -1,6 +1,6 @@
 # Fish Habit Editor V1｜Current Product Entry
 
-> Status: V1 Product Contract Candidate  
+> Status: Current Product Entry for V1  
 > Scope boundary: [版本范围与阶段路线](../review/fish-habit-editor-version-scope.md)  
 > Current shared semantics: [common-semantics.md](common-semantics.md)  
 > Historical predecessor / evidence: [UI Component Contract R2](../review/ui-component-contract-r2/README.md)（V0.2，非 Current Authority）。
