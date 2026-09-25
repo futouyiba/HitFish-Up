@@ -36,6 +36,7 @@ Fish Habit Editor 读取 authoritative Fish Basic：
 - `species_key` 使用 Fish Basic 稳定 ID；
 - display name 只用于 UI；
 - Habit Editor 不写 Fish Basic；
+- 已有 Species Base 的 `species_key` 若在当前 Fish Basic 中失效，产生 `BROKEN_SPECIES_REF`，允许 tolerant load 但 Publish BLOCK，不按名称自动 remap；
 - 已有 Editor Species Base → 进入正常左栏；
 - 无 Editor Species Base + 无 Production FishEnvAffinity footprint → 可通过“开始配置其他鱼种”创建；
 - 无 Editor Species Base + 已有 Production FishEnvAffinity footprint → 标记 `LEGACY_UNIMPORTED`，禁止 fresh create，先走 bounded bootstrap / migration。
@@ -229,6 +230,8 @@ Partial / unverifiable write 不自动建立新 baseline。
 9. reread / verify 成功；
 10. StockRelease 域可以使用默认 EnvAffinity identity，但 Habit Editor 本身没有创建任何 StockRelease 关联；
 11. system default Affinity 不被编码成 young / mature bucket；
-12. Species Base / default Affinity 在 V1 没有 Archive / Delete action。
+12. Species Base / default Affinity 在 V1 没有 Archive / Delete action；
+13. Fish Basic 删除 / 断开的 `species_key` 触发 `BROKEN_SPECIES_REF` 并阻断 Publish；
+14. create-from-absent row 只有在 Production reread + verify + `row_id` durable backfill 全部成功后才算 Publish success。
 
 V1 不以 arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为验收前提。
