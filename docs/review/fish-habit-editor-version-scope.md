@@ -162,6 +162,31 @@ V1 不承诺：
 - CSV canonical persistence migration；
 - 全量 reconcile / semantic recovery。
 
+## 3. V1.0.1｜Fixed Compat Mode Creation
+
+V1.0.1 是紧随 V1 的窄增量，只补固定 Compat Mode 创建：
+
+```text
+幼年
+成年及以上
+```
+
+不支持任意 Mode 名称，不引入正式 Engagement Mode registry / Routing / Share。
+
+创建规则：
+
+- 目标 Species 必须已经有 Species Base；
+- 只允许创建当前缺失的固定 Compat Mode；
+- 新建对应 `FishEnvAffinity` / ProductionRowLedger 记录；
+- Editor 先生成稳定 `row_key`，Production `row_id` 可在 Publish 后获得；
+- 四个 Component 初始 Source = 跟随 Species Base；
+- numeric operations 初始 absent；
+- Role / `fail_env_coeff` 初始 inherit Species；
+- Production human-readable naming 沿既有 Species + bucket 生成规则，并做 collision validation；
+- StockRelease / FishRelease 是否让某个 Quality 使用该 Affinity，继续由其自己的配置表维护，不属于 Habit Editor。
+
+V1.0.1 不处理任意 Engagement Mode 与 bucket-scoped operation owner 的关系。
+
 ## 3. V1.1｜Authoring Efficiency
 
 > Bake Preview / 条件组求值预览不属于 V1 承诺。是否在 V1.1 或更后阶段进入，以预览输入、基础权重、条件组来源与验收口径闭合为前提。
