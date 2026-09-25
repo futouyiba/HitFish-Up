@@ -106,18 +106,19 @@
 - 诊断是派生量，每次重算，不持久化为第二真相。（《编辑器持久层契约》§6.5）
 
 ## 7. 组件卡 ＋ 焦点编辑栏
-- 组件卡是**摘要 ＋ 快速编辑入口**，不是只读卡：可就地改 **Source / Template**；Role 在当前 Context 对应单一 Role owner 时可就地改，multi-row Compat 只显示 Role 摘要，实际行级 mutation 由 Policy 区的 production-row 行级编辑区承接。逐字段值仍在右侧 460px 焦点编辑栏完成。（《编辑器界面》§1 导语、§1.1）
-- 卡上展示：组件身份、当前 Source / Template、当前 Role 角标、继承 / 覆盖状态、诊断。（《编辑器界面》§1.1「卡片展示摘要、模板选择器、Role 角标与继承 / 覆盖状态」；冻结卡 `A①-卡1` 的「卡上 `templateName` 与闭值同源同名」「same-source pin 的『已显式固定』记号」）
-- **入口与 Truth 的对应**：**前层 Source Selector（顶部 `templateRow`，每组件一个）与组件卡的来源 / Source 下拉**（**卡上这一个入口同时覆盖 Template 与 Source** —— 换模板就是换 Source 绑定）指向**同一个**组件 Recipe Source binding；**卡的 Role 控件与 Policy 区 Role 行**指向**同一个** Policy Authoring Truth。⇒ **各自「双入口、单 Truth」，不得增设第三个 mutation 面。** ⚠️ **入口叫「来源 / Source」，不叫 Template** —— 合法来源里含 `SPECIES_CONCRETE`（**它不是模板**）；**当所选来源是共享模板时，卡上以该模板名显示它**（展示层才出现 Template 字样）。⚠️ Source 在合法当前 owner 上可就地改；Role 只有在当前 Context 对应**单一 Role owner**时才提供卡上可编辑下拉。multi-row Compat 的卡上只显示 Role 摘要，Policy 区按 production row 展开逐行编辑，不得把 row-level Role 伪装成 bucket-level 控件。两入口都不另存 durable 副本。⚠️ **两入口「同源」说的是 durable truth 同源**；**未确认的 Source 变更是 candidate（UI 态）** —— 两处可同时显示它，**但它还不是 truth**（见 §8 的 candidate → Rebase Preview → 显式确认 → 原子提交）。⚠️ **焦点编辑栏不提供 Source 下拉** —— 它只显示当前 Source 的上下文／来源说明（在那里再放一个 Source 选择器，就成了「Top Row ＋ Card ＋ Focus Editor」三个 mutation surface，**复杂度没有买到新能力**）。（《编辑器持久层契约》§8 首行「每组件一个**前层** Source 选择器」；《编辑器界面》§1 导语、§1.1、§7；《编辑器心智模型与 IA》§6、§7、§8；记录页 §172 二 KEEP、§331 裁 `R3-FIG-01`、§358 裁「入口不叫 Template」）
-- 卡的 Source / Role 不得另建一套 durable state。（《编辑器界面》§7；《编辑器心智模型与 IA》§8）
-- 字段行**原地展开**，不设二级 drawer。（本轮裁定 g；页面只规定 2 列紧凑控件与折叠栏位）
+- 组件卡是**摘要 ＋ Focus 入口 ＋ Source mutation 入口**，不是完整字段编辑器。逐字段值在右侧 Focus Editor 中做行式编辑；V1 不把焦点栏宽度固定为旧投影的 460px，产品目标是宽桌面 authoring layout。
+- 卡上展示：组件身份、当前 Source、当前 **Effective Role 只读 badge**、继承 / 覆盖状态、诊断，以及足够理解当前状态的字段摘要。
+- **Source mutation 只有一个主要入口：组件卡 Source Selector。** 旧的顶部 `templateRow` / 前层 Source Selector 不再属于 V1 产品 Contract；Focus Editor 也不提供 Source Selector。三处只保留一处 mutation surface，避免“双入口单 Truth”继续成为产品复杂度。
+- **Role mutation 不在组件卡发生。** 组件卡只读显示 Effective Role，用于 Overview 扫描；真正的 Role / `fail_env_coeff` 编辑统一由“空间机会策略”区域与其 Focus Editor 承担。组件卡不得另存或缓存 Role state。
+- V1 当前兼容拓扑中，一个中鱼习性模式对应一条既有 `FishEnvAffinity` 行，因此产品 UI 不保留 multi-row Compat 的 Role 摘要 / production-row 展开分支。
+- 字段行在 Focus Editor **直接平铺编辑**，不设二级 drawer / modal / 逐字段“编辑”按钮。
 
 <a id="source-transaction"></a>
 ## 8. Source 选择器 ＋ Rebase Preview
 
 **本节是 Source mutation、两档 Preview 及确认边界在本包的完整机制投影**；权威为《编辑器持久层契约》§3.10、§6.3 及记录页 §392 的 ADJ-09 裁定。本批回读持久层 v16（`Last Updated 2026-09-21 14:34 +08:00`），未重读记录页；其余历史出处沿用基线。具体动作／字段／验收见[卡1](contract-cards.md#source-selector)，事务分类与 TimePeriod 的独立护栏见[§15](#transaction-model)。
 
-- 每组件一个前层 Source 选择器；桶（覆盖层）另有「跟随物种」；温度多一项「当前物种生态数据」（存在时）。（《编辑器界面》§1.1；《编辑器与 Resolve》§11.3）
+- 每组件只有一个作者可见 Source mutation 入口，位于该 Component Card；兼容 Mode 另有「跟随基础习性」，Temperature 在合法 Species Concrete 已存在时可显示「当前物种生态数据」。Source allowlist 与持久化语义仍按本节下文；这里只收敛 V1 的 UI 入口 ownership。
 - 可选来源矩阵（**按层分写**）：**前层（物种层）** —— Temperature ＝ `SHARED_TEMPLATE | SPECIES_CONCRETE`，Structure / Feeding Layer / Time Period ＝ 仅 `SHARED_TEMPLATE`；**桶（覆盖层）** —— **所有组件都只有 `SHARED_TEMPLATE` ＋「跟随物种」**，**不列 `SPECIES_CONCRETE`**（**连当前物种的也不列** —— 要引用当前物种的 Concrete，走「跟随物种」）。**任何层都不得 pin 非当前物种的 Concrete。**（《编辑器持久层契约》§3.3；《编辑器与 Resolve》§11.3 逐字「桶层另有「跟随物种」选项，**不把任何物种的 Concrete 当通用可选项**」；冻结卡 `A①-卡1`）
 - `SPECIES_CONCRETE` 属当前物种：identity ＝ `(speciesId, componentType)`，不进模板清单、不可被其它物种引用；不得 pin 另一物种的 Concrete。（《编辑器持久层契约》§3.3；记录页 §172 二）
 - **每一笔 Source mutation 都要 staged confirm**：候选保持 ephemeral → before / after Resolve → 对应档位的 **Rebase / Impact Preview** → 显式确认 → 乐观 revision 核验 → 原子 durable 提交。禁止为保持旧 Effective Value 自动生成 `SET`。（《编辑器与 Resolve》§11.3；《编辑器界面》§1.1；《编辑器持久层契约》§3.10；记录页 §392 裁 ADJ-09）
@@ -137,8 +138,8 @@
 - Role 与 Profile 的变更边界按[§11](#profile-lifecycle)，不能由改变消费角色推导创建／删除或改写 Profile。
 - 空间机会聚合策略有独立共享 Policy Template，payload ＝ 四个角色 ＋ `fail_env_coeff`；它是第五类 `TemplateKind`，**不是第五个 Component** —— 不扩 `ComponentType`、Runtime 仍四条件槽、不新建生产 Policy 子表。（《编辑器持久层契约》§3.6；记录页 §172 二 A）
 - Policy Source 只绑物种层；**桶层没有 `policySourceOverride`**，不得虚构这类直接引用。（《编辑器持久层契约》§3.10；记录页 §172 二 B）
-- 粒度必须分离：数值 override 按 **bucket**（`young / mature`，TimePeriod 不按规格 / row）；Role override 与 `fail_env_coeff` patch 按 **生产行**。同一 bucket 内不同生产行可有不同 Role / `fail_env_coeff`，Validator 不得因这些行级值不同报错。（《编辑器持久层契约》§3.4、§3.7）
-- `fail_env_coeff` 不挂在某个组件卡内部；Species Context 编辑物种默认值，[兼容] Mode 的当前 authoring scope 若只有一条 production row 可直接编辑该行，若聚合多条 production rows 则在 **Policy 区的 production-row 行级编辑区**中逐行显示 / 编辑。`[0, 0.10]`，默认 `0.01`，越界 ERROR ＋ 阻断 Publish、不 silent clamp。（《编辑器界面》§1.1；《编辑器持久层契约》§3.4）
+- 粒度仍分离：Component 数值 override 与 Policy row patch 是不同持久化 owner。V1 产品层已冻结为**一个兼容中鱼习性模式对应一条既有 `FishEnvAffinity` 行**，因此当前 UI 可直接把该 Mode 的 Role / `fail_env_coeff` 作为这一条行级 Policy authoring 呈现；底层 row key / patch identity 保持不变。
+- `fail_env_coeff` 不挂在某个组件卡内部；Species Context 编辑物种默认值，V1 `[兼容]` Mode 直接编辑该 Mode 对应单条 `FishEnvAffinity` 行的 row-level patch。`[0, 0.10]`，默认 `0.01`，越界 ERROR ＋ 阻断 Publish、不 silent clamp。（《编辑器界面》§1.1；《编辑器持久层契约》§3.4）
 - `fail_env_coeff` 的 `ADD` 是绝对数值增量，不是百分比 / 乘数。（《编辑器持久层契约》§3.4 逐字「ADD 为绝对数值增量」）
 - Editor 没有钓场上下文：不提供 Pond selector，不编辑 `baseOpportunityIntensity / isBackgroundFish / envCoeffMin`；`fail_env_coeff` 是本编辑器可编辑的习性档案字段，不是 `FishRelease` 的 `envCoeffMin`。（《编辑器界面》§6）
 - 诊断展示位置：字段问题 → 字段控件；Profile 问题 → 组件卡；Policy 问题 → 聚合策略区；全局 / Publish 问题 → 顶栏 ＋ 校验清单。这里只规定 UI placement，不新增统一 `Diagnostic.owner` 身份层。（冻结卡 `A①-卡6`；《编辑器界面》§1.4）
@@ -158,7 +159,7 @@
 - Policy 侧的 `CLEAR` 语义：移除继承自物种层的操作，**回到物种当前 Policy Template 的 raw 值**。（《编辑器持久层契约》§3.4）
 - 该定义同时覆盖四个 Role 与 `fail_env_coeff`；`CLEAR` 不携值。**Affinity 没有 `policySourceOverride`**，不能把组件级来源 pin 的能力搬入 Policy。（《编辑器持久层契约》§3.4、§3.10）
 - 行级缺省（继承物种层 Role 操作）与 `CLEAR`（回到 Policy Template raw Role）是两个不同动作，UI 必须区分：物种层作者词为「沿用策略模板 / 设置为 CORE|SECONDARY|IGNORED」；行级作者词为「沿用物种角色 / 使用策略模板原始角色 / 设置为 CORE|SECONDARY|IGNORED」。`INHERIT / absent / CLEAR / SET` 只作为 durable 令牌，不直接充当作者文案。
-- Role 控件显示 **Effective Role ＋ 当前 Authoring Intent ＋ 必要 provenance**。Species Context 只编辑 Species Role。兼容覆盖若只对应一条 production row，可直接编辑该行 Role；若对应多条 production rows，组件卡只显示摘要，**Policy 区按 production row 展开行级编辑区**（每行明确 row identity，逐行编辑四个 Role 与 `fail_env_coeff`），不得另造隐式广播的 bucket-level Role / coeff 控件。P0 不做跨行批量 Role / `fail_env_coeff`。
+- Role 控件显示 **Effective Role ＋ 当前 Authoring Intent ＋ 必要 provenance**。Species Context 只编辑 Species Role；V1 兼容 Mode 直接编辑其对应单条 `FishEnvAffinity` 行的 Role patch。组件卡只显示 Effective Role badge，Role mutation 统一在 Policy Focus Editor。
 - 不因最终值 / 枚举相等自动推断 inherit、CLEAR 或 SET。（《编辑器持久层契约》§3.5、§3.3）
 
 <a id="profile-lifecycle"></a>
