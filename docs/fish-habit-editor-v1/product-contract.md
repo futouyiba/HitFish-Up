@@ -175,9 +175,9 @@ Preset 示例：
 
 **编辑**：唯一可改变 Authoring Truth 的主 Surface。
 
-**解析预览**：只读回答“按当前成功持久化的 Authoring Truth，把 Source、继承、Operation、Role 等解析完以后，最终配置是什么？”
+**解析预览**：只读回答“按当前成功持久化的 Authoring Truth，最终配置是什么；为什么会得到这个结果？”
 
-解析预览不提供 authoring controls，不形成第二份 Truth。
+解析预览不提供 authoring controls，不形成第二份 Truth。它复用左栏 Subject Navigation，并把中栏切为 Resolved Overview、右栏切为最短充分的“解析说明”；不进入 Bake / Runtime 条件求值。详细 Contract 见 [secondary-surfaces.md §1](secondary-surfaces.md#1-resolve-preview解析预览)。
 
 ## 6. Interaction taxonomy
 
