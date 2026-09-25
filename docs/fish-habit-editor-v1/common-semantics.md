@@ -111,6 +111,19 @@ LEGACY_UNIMPORTED
 
 若并发会话在提交前已经为同一 `species_key` 创建 Species Base，当前 create transaction 必须冲突失败并刷新为现有 Subject，不能生成第二份 Species Base。
 
+### 1.4 Broken Species Reference
+
+`species_key` 的 Authority 是 Fish Basic / Species Catalog。
+
+若 Editor 已存在 Species Base，但当前 Catalog 已找不到该 `species_key`：
+
+- Editor 可以 tolerant load 该 durable state，用稳定 key / 已有 cache 帮助定位；
+- 产生 `BROKEN_SPECIES_REF` ERROR；
+- Publish BLOCK；
+- 不自动按名称匹配到另一条 Species；
+- 不允许在 Habit Editor 中改写 Species identity；
+- 修复必须由 authoritative Catalog / migration 侧恢复原 identity 或完成受控迁移。
+
 ## 2. Source Binding
 
 ### 2.1 Source 与 Operation 正交
@@ -616,6 +629,17 @@ V1 不接受“成功一半”。
 - recovery / reconcile 不在 V1 内自动完成。
 
 具体产品交互见 [secondary-surfaces.md §7](secondary-surfaces.md#7-publish发布到生产配置)。
+
+### 12.6 Create-from-absent row identity
+
+对于 system default Affinity 或后续固定 Compat Mode 这类 `row_id = null` 的新 row：
+
+- `row_key` 是 Editor durable identity；
+- Production create 成功后，必须 reread 得到唯一 `row_id`；
+- `row_id` mapping 必须回填到 Editor durable metadata；
+- 只有 Production verify 与 mapping durable save 都成功，本次 create-from-absent 才可视为 Publish success。
+
+如果 Production row 已创建，但 `row_id` 回填或 final verification 失败，本次按 partial / unverifiable failure 处理；在恢复可信 `row_key ↔ row_id` 映射前，不允许下一次 blind create 同一语义 row。
 
 ## 13. V1 Semantic Negative List
 
