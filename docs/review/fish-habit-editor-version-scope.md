@@ -18,7 +18,7 @@ Fish Habit Editor 的职责是维护“鱼的中鱼习性 Authoring Truth”，�
 - Materialized Production 数值不能无损反推出 Template / Source / ADD / SET / CLEAR 等作者意图，因此不把“自动双向同步”作为目标。
 - 已有 Habit owner 内部可以按既有 Materializer 规则创建必要 projection row；“不创建 topology”特指本阶段不创建新的 Fish / Engagement Mode 等业务身份和跨域生产拓扑。
 
-## 2. V1｜Existing Habit Topology Authoring
+## 2. V1｜Species Habit Authoring Minimum Loop
 
 ### 2.1 阶段目标
 
@@ -45,11 +45,13 @@ V1 的核心成果不是“覆盖所有生产操作”，而是证明：
 
 #### Fish / Subject
 
-- 浏览已有可编辑 Fish。
-- 编辑 Species Base / 基础习性。
+- Fish List 读取 Fish Basic / authoritative Species Catalog；Habit Editor 不创建新的 Species identity，也不维护鱼类基础数据、模型、图鉴或 Quality。
+- 已有 Habit 的 Species 直接编辑 Species Base / 基础习性。
+- 尚无 Habit 的 Species 可以通过“开始配置习性”创建完整 Species Base；Species 只能从 Fish Basic 已有条目中选择。
 - 编辑 Bootstrap 已经存在的兼容习性 Scope；产品 UI 可用“中鱼习性模式”表达业务心智，并以中性 `[兼容]` badge 标识当前承载方式。
 - **V1 当前兼容拓扑中，一个可编辑中鱼习性模式对应一条既有 `FishEnvAffinity` 行。** 不在一个 Mode Context 下聚合多条 Affinity 行，也不建立额外的 Mode→Quality 解释层。
-- 不要求现有 Fish 必然同时拥有所有兼容 Scope；只编辑当前 durable state 中已经存在的 Habit topology。
+- V1 不创建新的中鱼习性 Mode / FishEnvAffinity row；只编辑已经存在的兼容 Mode。
+- StockRelease / FishRelease 继续负责 Quality / stocking row 与 FishEnvAffinity 的关联，Habit Editor 不创建或维护该关系。
 
 #### Component Authoring
 
