@@ -532,6 +532,8 @@ V1 common semantics 不定义或承诺：
 - FishPond / StockRelease / FishRelease authoring；
 - Mode Share / Routing；
 - 新 durable EngagementMode identity；
+- Species Preset / 鱼家族预设；
+- Family / 新 Fish Habit initialization；
 - Bake / condition evaluation；
 - 外部生态数据库 Import / Lux CLI；
 - Production reverse import / auto-merge；
