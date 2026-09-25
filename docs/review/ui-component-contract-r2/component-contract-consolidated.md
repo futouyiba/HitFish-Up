@@ -260,6 +260,7 @@
 
 <a id="publish-boundary"></a>
 **Publish 边界**：
+V1 的产品承载与 Preflight / success / failure / recovery 交互以 [V1 Secondary Surfaces §7](../../fish-habit-editor-v1/secondary-surfaces.md#7-publish发布到生产配置) 为产品层 Current；本节只保留低层 writeback / generation / materialization 护栏。
 Owner 2026-09-24 指示（经主代理转达）：「关注 109PR 当中带来的语义变化，它是非常关键的。」
 
 - 顶栏 `发布到生产配置…` **只作为入口**，进入 / 聚焦唯一 Publish 区；唯一 writeback executor 留在该区。Autosave 只表达 Editor durable state（`编辑器已保存 / 编辑器已保存 · 有错误 / 编辑器保存中… / 编辑器保存失败`），Publish 不隐式 Save，也不等同 Git commit。
