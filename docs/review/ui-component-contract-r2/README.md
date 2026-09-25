@@ -1,5 +1,7 @@
 # 0.3.4.0-B｜UI Component Contract — Review Target（R2，2026-09-21）
 
+> **Historical V0.2 — 非 Current Authority。** 本文件正文冻结为 R2 / V0.2 当时的设计、Review 或 evidence 状态；下文出现的“现行 / Current”只表示 **V0.2 当时**。Fish Habit Editor 当前产品与公共语义以 [`docs/fish-habit-editor-v1/`](../../fish-habit-editor-v1/README.md) 为准。不得用本历史包覆盖 V1 Current。
+
 **这是当前唯一的对外审阅面。** 它取代此前那个多轮修订容器；**本目标不含修订链**。
 
 ## 阅读目标

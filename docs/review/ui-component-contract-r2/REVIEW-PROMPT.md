@@ -1,5 +1,7 @@
 # REVIEW-PROMPT — 审什么、怎么报、什么算通过
 
+> **Historical V0.2 — 非 Current Authority。** 本文件正文冻结为 R2 / V0.2 当时的设计、Review 或 evidence 状态；下文出现的“现行 / Current”只表示 **V0.2 当时**。Fish Habit Editor 当前产品与公共语义以 [`docs/fish-habit-editor-v1/`](../../fish-habit-editor-v1/README.md) 为准。不得用本历史包覆盖 V1 Current。
+
 ## 一、这份材料要审的是什么
 
 **审「实现投影是否忠实于当前契约」，不是审机制设计本身。**

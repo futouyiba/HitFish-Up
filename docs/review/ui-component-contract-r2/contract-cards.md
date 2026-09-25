@@ -1,5 +1,7 @@
 # UI Component Inventory ＋ 第一批 Contract Cards（「编辑器具体设计」席 · A 线）
 
+> **Historical V0.2 — 非 Current Authority。** 本文件正文冻结为 R2 / V0.2 当时的设计、Review 或 evidence 状态；下文出现的“现行 / Current”只表示 **V0.2 当时**。Fish Habit Editor 当前产品与公共语义以 [`docs/fish-habit-editor-v1/`](../../fish-habit-editor-v1/README.md) 为准。不得用本历史包覆盖 V1 Current。
+
 <a id="batch-freeze-status"></a>
 **状态（两批各自唯一；改自记录页 §265 裁 `F-07`）**：**批次① ＝ 七张全部「已冻结 v1.1」**（`A①-卡1`／`卡2`／`卡3`／`卡4`／`卡5`／`卡6`／`卡7`）；**批次②（`A②-卡8`…`卡12`）＝ 已冻结**（记录页 §244，以该节为冻结留痕）。**本文件不再有任何「起草稿」状态。** 据记录页 §164（冻结接口，已回页核实）。铁律遵守：卡片＝执行投影，机制唯一载体仍是 Current 文档，「依据」行不空——引 Current § 或记录页 §。
 

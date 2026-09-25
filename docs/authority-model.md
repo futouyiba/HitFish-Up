@@ -1,6 +1,6 @@
 # 文档权威与发布投影
 
-本页定义本仓规范文档与外部阅读载体的职责，不定义产品机制。**职责矩阵是仓内承接入口，不是七页内容已逐项完整迁移的证明；未在 Markdown 中承接的内容仍以缺口或外部输入登记。**
+本页定义本仓规范文档、产品版本与外部阅读载体的职责，不定义产品机制。Current Authority 与历史版本必须分离；历史 Review 包可以保留完整证据，但不得因仍可阅读就自动获得 Current 解释权。
 
 ## 权威分层
 
@@ -12,25 +12,84 @@
 
 Notion 仍适合承载人工浏览、评论和不依赖仓库的阅读入口；没有对应 Git 仓库的设计资料可以继续以 Notion 为主要工作载体。对本仓已有 Markdown 投影的内容，规范变更以 Git 中最近一次已审核合并的版本为准。
 
-## 当前批次的范围
+## 当前版本关系
 
-本策略首先覆盖 0.3.4.0-B 编辑器七个 Current 页面及其仓内投影。**本批建立的是职责与承接入口，不宣称七页内容已完整迁移；**主开发需求页面不纳入本轮职责重划或瘦身；涉及它的产品语义仍按其现行 Owner 处理。
+Fish Habit Editor 文档按**产品版本**理解，不再把 Review Round 编号当成跨版本的永久语义层。
 
-仓内消费者可以保留足以独立阅读的短摘要、操作说明、验收场景和证据边界，但不得在摘要中新增阈值、例外、判定顺序或其它可独立演化的规范性 Contract。每项规范事实在仓内只保留一个人工维护的 Owner；其它位置链接或引用该 Owner。
+```text
+V0.1  ≈ R1 historical lineage
+V0.2  = R2 historical package
+V1    = docs/fish-habit-editor-v1/ Current
+```
 
-## 七页职责矩阵
+- 当前仓树中存在 R2 目录，不存在独立 R1 目录；因此 V0.1 只作为历史 lineage 说明，不为补齐编号而伪造一套 R1 文件。
+- R2 保留原目录名 `docs/review/ui-component-contract-r2/`，避免破坏历史链接、证据锚点与 PR 对照；其语义角色改为 **V0.2 historical design / review evidence**。
+- V1 是当前产品与语义 Authority。
+- 后续若 V1 中的公共语义稳定跨越 V1 / V1.0.1 / V1.1+，再把 `common-semantics.md` 提取到独立 common 目录；在此之前不提前制造跨版本抽象层。
 
-| Current 页面 | Git Markdown 承接章节（章节级唯一 Owner） | 该 Owner 维护什么 | 消费者可保留 | 不在该 Owner 内维护 |
-|---|---|---|---|---|
-| 编辑器与 Resolve | `docs/review/ui-component-contract-r2/component-contract-consolidated.md` §1 `产品拓扑与三栏`、§8 `Source 选择器 ＋ Rebase Preview`、§9 `Profile × Spatial Opportunity Policy`、§11 `Profile 生命周期`、§15 `跨层护栏` | 编辑器整体心智模型、编辑 → Resolve → Preview 工作流、resolved / bake 产品输出 | 面向操作的短流程、验收场景与结果字段摘要 | editor-state schema、逐字段持久化形状、生产表不变量、纯 UI 几何 |
-| 编辑器界面 | `docs/review/ui-component-contract-r2/contract-cards.md` Part 1 `控件总清单`、Part 2 `第一批 Contract Cards`、Part 3 `第二批 Contract Cards` 及其中的 A① / A② / 共用N2 卡片章节 | UI 元素、布局、交互、可见状态与控件行为 | 卡片操作步骤、显示文案、局部验收和画面证据边界 | durable operation 语义、完整 Source 事务、生产表 schema |
-| 编辑器心智模型与 IA | `docs/review/ui-component-contract-r2/component-contract-consolidated.md` §1 `产品拓扑与三栏`、§4 `字段控件（FieldValueControl）`、§7 `组件卡 ＋ 焦点编辑栏` | 作者词汇、对象组织方式、三栏 IA 与作者阅读模型 | 与具体操作相邻的短解释 | durable record shape、校验实现、生产写回规则 |
-| 编辑器条件开关 | `docs/review/ui-component-contract-r2/component-contract-consolidated.md` §9 `Profile × Spatial Opportunity Policy`、§10 `Role 与 Policy 的操作词表` | Role / Gate 的 authoring 语义、条件开关表现与相关校验边界 | 组件卡中的 Role 操作和结果提示 | editor-state 记录形状、完整 evaluator、生产列结构 |
-| Editor → Persistence 数据契约 | `docs/review/ui-component-contract-r2/component-contract-consolidated.md` §15 `跨层护栏`；实现组织见 `docs/implementation-brief-0.3.4.0-B.md` §二·2 `操作、引用与物化入口` | 编辑器到配置表的物理导出、写回链路与字段映射边界 | 实现顺序、依赖和任务限定 | editor-state schema 的完整定义、UI 交互、产品规则副本 |
-| 编辑器持久层契约 | `docs/review/ui-component-contract-r2/component-contract-consolidated.md` §3 `Source × Operation 正交`、§8 `Source 选择器 ＋ Rebase Preview`、§14 `模板工作区与模板生命周期` | editor-state schema、key、operation、bucket、Source、reconcile 与生命周期 | 面向消费者的持久化摘要和链接 | UI 布局、生产表字段不变量、历史实现快照 |
-| 配置表与校验 | `docs/review/ui-component-contract-r2/component-contract-consolidated.md` §6 `校验 × Autosave`、§13 `字段能力表`、§15 `跨层护栏`；实现组织与记录/Schema 入口见 `docs/implementation-brief-0.3.4.0-B.md` §二·1 `记录入口与保留字段`、§二·2 `操作、引用与物化入口`、§二·3 `Schema、版本与载体` | 生产表结构、字段不变量、Schema / Validator 规则在仓内的规范投影 | 受影响字段和阻断结果摘要 | editor-state 记录形状、UI 交互、历史验证状态 |
+## Fish Habit Editor V1 Current
 
-本矩阵把现有审阅包中的章节作为七页的 Git 承接入口；**章节被列入矩阵只表示目标 Owner 与阅读入口已登记，不证明对应页面的全部定义、条件、例外、来源与消费者已经逐项核对并承接。**同一文件内的其它章节不因共用文件而获得该页的 Owner 权限。后续若需要让每页独立发布，可在单独批次把这些章节拆成七个文件，但本批不复制正文。若一个主题横跨多个 Owner，应把交叉点拆成各自的输入、输出和引用关系；不能在两个页面各维护一份完整行为。
+Current 入口：`docs/fish-habit-editor-v1/`。
+
+- `product-contract.md`：V1 Mental Model、产品 IA、Workspace、Truth / Derived 边界、interaction taxonomy 与产品负向边界。
+- `common-semantics.md`：V1 当前消费的 Source / Operation / Resolve / Policy / Validation / staged mutation / Template lifecycle / Publish materialization 公共语义。
+- `authoring-surface.md`：Fish Subject 核心编辑屏、Species Habit initialization、导航、Context Header、Component / Policy Overview、Focus Editor 与交互。
+- `shared-assets.md`：Shared Template 创建、提取、传播影响、引用与生命周期维护。
+- `secondary-surfaces.md`：Resolve Preview、Publish 以及后续真正闭合的 V1 次级 Surface。
+- `implementation-brief.md`：V1 当前工程落点、实现顺序与尚需确认的窄实现细节；不重新定义产品语义。
+- `docs/review/fish-habit-editor-version-scope.md`：V1 范围与后续阶段边界。
+
+Current Authority 关系：
+
+```text
+Version Scope
+    ↓
+V1 Product Contract ───────┐
+                          ├→ V1 Surface Contracts
+V1 Common Semantics ──────┘
+                          ↓
+              Implementation / Figma projection
+```
+
+每项规范事实仍只维护一个 Current Owner。V1 Surface 可以为可读性保留短摘要，但 Source / Operation / Policy / Validation 等公共规则以 `common-semantics.md` 为 V1 当前解释入口。
+
+## V0.2 / R2 历史版本包
+
+`docs/review/ui-component-contract-r2/` 现在只承担：
+
+- V0.2 当时的设计状态；
+- Review Target / OPEN-ITEMS / Figma snapshot；
+- 历史裁定、固定 SHA 与证据链；
+- V1 规则的历史来源参考。
+
+它**不再承担**：
+
+- V1 的最终产品 IA；
+- V1 的 Source / Operation / Policy / Validation 最终语义解释；
+- V1 的 Publish / Resolve 产品交互；
+- “因为 R2 曾经写过，所以可以把已被 V1 裁掉的能力重新带回 Current”。
+
+当 V1 与 R2 冲突时：
+
+> **对 V1 范围内的产品与语义，读 V1；R2 只解释历史，不参与 Current arbitration。**
+
+若需要追查某条 V1 规则如何形成，可以从 V1 的 Git blame / PR / 历史引用回看 R2；不能反过来让历史包成为隐藏上游。
+
+## V0.2 历史承接矩阵（非 Current）
+
+下表保留 R2 当时对七页投影的组织方式，只用于版本考古 / evidence lookup，**不是当前 Owner Matrix**。
+
+| V0.2 页面主题 | R2 历史承接位置 | 当前 V1 入口 |
+|---|---|---|
+| 编辑器与 Resolve | `component-contract-consolidated.md` | `product-contract.md` + `secondary-surfaces.md` |
+| 编辑器界面 | `contract-cards.md` | `authoring-surface.md` + `secondary-surfaces.md` |
+| 编辑器心智模型与 IA | R2 汇编 §1/§4/§7 | `product-contract.md` |
+| 编辑器条件开关 / Policy | R2 汇编 §9/§10 | `common-semantics.md` + `authoring-surface.md` |
+| Editor → Persistence | R2 汇编 §15 | `common-semantics.md`；实现细节再读 implementation brief |
+| 编辑器持久层语义 | R2 汇编 §3/§8/§14 | `common-semantics.md` |
+| 配置表与校验 | R2 汇编 §6/§13/§15 | `common-semantics.md`；具体实现 / schema 再读 implementation brief |
+
+这张历史矩阵不得被新文档引用为 Current semantic owner。
 
 ## 发布到 Notion 的规则
 
@@ -39,4 +98,4 @@ Notion 仍适合承载人工浏览、评论和不依赖仓库的阅读入口；�
 3. 取得本批指定 canonical writer 的明确授权后，按现有 Notion 写入纪律执行：fresh read → exact delta 或受控整篇重建 → 结构与块级回读 → fresh readback；含镜像的页面再做对应对账。
 4. 发布后，Notion 只作为这份 Git 规范的阅读投影；人工在 Notion 发现的修正先回流 Markdown，不能在页面上形成第二份长期规范。
 
-本批只建立仓内 authority policy 和职责矩阵，不重建 Notion 页面、不创建发布工具、不修改主开发需求或产品 Contract。公开仓不保存外部页面 id、内网链接、凭据或同步状态。
+本页只维护仓内 Authority / versioning policy 与发布投影边界，不替代具体 Product Contract。公开仓不保存外部页面 id、内网链接、凭据或同步状态。
