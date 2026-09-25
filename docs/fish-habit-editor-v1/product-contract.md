@@ -1,11 +1,11 @@
 # Fish Habit Editor V1｜Product Contract
 
 > Status: Working Candidate  
-> Scope: Existing Habit Topology Authoring。V1 不创建新 Fish / 新 Engagement Mode，不 Author Quality / FishPond / StockRelease / FishRelease，不承诺外部生态数据自动导入，也不包含 Bake Preview。
+> Scope: Species Habit Authoring Minimum Loop。V1 不创建新的 Species identity / Engagement Mode，不 Author Quality / FishPond / StockRelease / FishRelease，不承诺外部生态数据自动导入，也不包含 Bake Preview。
 
 ## 1. 一句话产品模型
 
-作者选择一条已有的鱼，在其基础习性或已有中鱼习性模式中，通过 **Source + 当前层 Authoring Operation** 编辑四类习性与空间机会策略；Editor 保存作者意图，解析预览展示派生结果，Publish 将已验证的 durable state 物化到已有 Habit Production topology。
+作者从 Fish Basic 中选择已有 Species；若已有 Habit 则直接编辑，若尚无 Habit 则先选择四个 Component Source + Policy Template 原子创建 Species Base。随后通过 **Source + 当前层 Authoring Operation** 编辑四类习性与空间机会策略；Resolve 展示派生结果，Publish 物化到 Habit Production。
 
 ## 2. Mental Model
 
@@ -23,7 +23,7 @@ Fish
 
 - Subject 只在左侧 Subject Navigation 中选择。
 - `[兼容]` 是当前承载形态的中性状态，不是 Warning。
-- V1 一个可编辑兼容中鱼习性模式对应一条既有 `FishEnvAffinity` 行。
+- V1 一个可编辑兼容中鱼习性模式对应一条既有 `FishEnvAffinity` 行；V1 不创建新的 Mode / Affinity row。
 - 普通作者 UI 不要求理解 `FishEnvAffinityRef`、Production row naming 或 materialized row id。
 
 ### 2.2 一份习性由什么组成
@@ -70,6 +70,30 @@ V1 不包含 Bake Preview。
 Durable authoring intent 包括 Source binding / override、field operation / patch、Role / fail_env_coeff intent、Shared Template content/lifecycle。
 
 Effective Value、Resolve result/provenance、current selection、raw incomplete input、未确认 candidate、validation projection、Publish preflight result 都是 derived / ephemeral，不成为第二份 Truth。
+
+### 2.5 开始配置习性
+
+Fish List 的 Species identity 来自 Fish Basic / authoritative Species Catalog。
+
+默认主列表可以只展示已配置 Habit 的 Species；作者通过“开始配置其他鱼种”搜索 Fish Basic 中尚未配置 Habit 的 Species。
+
+创建 Species Base 采用单屏初始化，不做 Wizard：
+
+```text
+Species（只读，来自 Fish Basic）
+
+Temperature Source
+Structure Source
+Feeding Layer Source
+Time Period Source
+Policy Template
+
+[开始配置]
+```
+
+全部选择完成后 atomic create 完整 Species Base，并直接进入普通 Authoring。
+
+Habit Editor 不创建或编辑 Fish Basic 基础数据、模型、图鉴、Quality，也不创建 StockRelease / FishRelease 的 Quality ↔ FishEnvAffinity 关联。
 
 ## 3. Workspace / IA
 
@@ -244,8 +268,8 @@ V1 的 staged candidate 是**短事务**，不是可跨页面长期挂起的 Dra
 - Quality
 - Mode Share / Routing
 - FishPond / StockRelease / FishRelease
-- 新建 Fish
-- 新建 Engagement Mode
+- 新建 Species identity
+- 新建 Engagement Mode / FishEnvAffinity row
 - Family 初始化新 Fish
 - 鱼家族预设 / Species Preset
 - 钓鱼元素周期表 Import / Lux CLI
