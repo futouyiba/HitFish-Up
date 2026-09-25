@@ -11,6 +11,24 @@ V1 当前最小生产闭环包括：从 Fish Basic 选择已有 Species，为尚
 
 V1 当前需要的共用语义暂时与产品文档共址在 `common-semantics.md`。R2 只保留历史版本、裁定来源与证据，不再作为 V1 的最终语义解释入口。未来当这些语义稳定跨越多个版本后，再从 V1 提取到独立 common 目录。
 
+## Closure status
+
+V1 的 **Product / Semantic / Surface Contract 已闭合为 Current**。
+
+当前没有需要继续产品裁决的 V1 OPEN ITEM。实现前仍有 G1–G5 五个**物理实现 Gate**，集中记录在 [implementation-brief.md §11.2](implementation-brief.md#112-remaining-engineering-gates)：
+
+- Fish Basic adapter；
+- system default Affinity physical carrier；
+- Production naming / collision domain；
+- `row_key → row_id` create-from-absent handoff；
+- initial legacy bootstrap。
+
+这些 Gate 用于确认既定产品语义如何落到现有 schema / Production；**不是继续探索产品形态的入口**。
+
+若 Gate 可以通过现有 schema 或最小实现 delta 满足，直接实现；只有当证据表明必须改变 V1 已冻结的业务语义时，才停止并回到 Owner / Review 边界。
+
+V1.0.1 的固定 Compat Mode 创建不阻塞 V1 验收。
+
 ## 阅读顺序
 
 1. [product-contract.md](product-contract.md)  
