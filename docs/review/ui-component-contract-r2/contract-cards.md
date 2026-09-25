@@ -1,6 +1,6 @@
 # UI Component Inventory ＋ 第一批 Contract Cards（「编辑器具体设计」席 · A 线）
 
-> **Historical V0.2 — 非 Current Authority。** 本文件保留 R2 当时的设计 / Review / evidence 状态，用于版本考古与来源追踪。Fish Habit Editor 当前产品与公共语义以 [`docs/fish-habit-editor-v1/`](../../fish-habit-editor-v1/README.md) 为准；历史内容不得覆盖 V1 Current。
+> **Historical V0.2 — 非 Current Authority。** 本文件正文冻结为 R2 / V0.2 当时的设计、Review 或 evidence 状态；下文出现的“现行 / Current”只表示 **V0.2 当时**。Fish Habit Editor 当前产品与公共语义以 [`docs/fish-habit-editor-v1/`](../../fish-habit-editor-v1/README.md) 为准。不得用本历史包覆盖 V1 Current。
 
 <a id="batch-freeze-status"></a>
 **状态（两批各自唯一；改自记录页 §265 裁 `F-07`）**：**批次① ＝ 七张全部「已冻结 v1.1」**（`A①-卡1`／`卡2`／`卡3`／`卡4`／`卡5`／`卡6`／`卡7`）；**批次②（`A②-卡8`…`卡12`）＝ 已冻结**（记录页 §244，以该节为冻结留痕）。**本文件不再有任何「起草稿」状态。** 据记录页 §164（冻结接口，已回页核实）。铁律遵守：卡片＝执行投影，机制唯一载体仍是 Current 文档，「依据」行不空——引 Current § 或记录页 §。
@@ -15,7 +15,7 @@
 
 | # | 控件 | 层·面 | 批次 | 状态／入口 |
 |---|---|---|---|---|
-| A1 | 顶栏（Editor Global Shell：工具身份/全局状态/Publish） | 框架 | ①（保存状态）＋④（系统面） | 不承载 Resolve/Bake 视图入口；Fish Subject 的编辑/解析预览位于 Context Header。保存区按[卡7](#autosave-status)，Publish 按汇编 §15 |
+| A1 | 顶栏（Editor Global Shell：工具身份/工具级视图/全局状态/Publish） | 框架 | ①（保存状态）＋④（系统面） | 可承载 Resolve/Bake/Fish List 等工具级视图入口；不承担 Fish/Mode Subject 导航。保存区及「丢弃未保存的改动」按[卡7](#autosave-status)，Publish 按汇编 §15 |
 | A2 | 当前 Subject 标题 / 路径 | 上下文总览 | ④ | 放在中栏 Context Header：至少显示 Fish + 基础习性/Mode（含必要 `[兼容]`）；不是 Topbar 第二套导航，也不要求做可点击 breadcrumb |
 | A3 | dirtyDot（按层待写盘） | 框架 | ④ | 语义已拍＝记录页 §167 六（随卡7 落地） |
 | A4 | Subject Navigation Rail（FISH / 共享资产） | 主体导航 | ④ | 当前规则见[汇编 §1](component-contract-consolidated.md#subject-navigation)：顶层可达、单 Section 展开、鱼→基础习性/中鱼习性模式 |
@@ -38,8 +38,8 @@
 | E1 | 鱼列表 | 独立面 | ④ | 已规格（v2） |
 | E2 | 共享资产 → 习性模板（清单/别名/生命周期/Replace） | 独立面 | ② | 已规格（v2）；Species Presets 为共享资产 sibling view |
 | E3 | 引用者列表（两集两数） | 独立面 | ② | 已规格（v2） |
-| E4 | Resolve Preview | Fish Subject 只读工作视角 | ④ | V1 产品 Current 见 [Secondary Surfaces §1](../../fish-habit-editor-v1/secondary-surfaces.md#1-resolve-preview解析预览) |
-| E5 | Bake Preview | Post-V1 | — | 不属于 V1；待条件输入 / 基础权重等口径闭合后再设计 |
+| E4 | Resolve Preview | 独立面 | ④（slice C 含一角） | 已规格（v2） |
+| E5 | Bake Preview | 独立面 | ④ | 已规格（v2） |
 | N2 | Rebase／Impact Preview 面板 | 编辑/工作区 | ②/④ | [共用交互与验收](#rebase-impact-preview)；事务机制按汇编 |
 
 ---
@@ -51,38 +51,40 @@
 **编号口径（防撞车）**：本席编号＝**A 线批次编号**，标题带前缀（`A①-卡1`…`A①-卡7`、`A②-卡8`…`A②-卡12`）。**GPT 清单另有一套「卡4 ComponentCard／卡5 Impact Preview」，与本席 `A①-卡4`（Effective Value Display）／`A①-卡5`（Provenance Display）不是同一批** —— 引用务必带前缀。
 
 <a id="source-selector"></a>
-### A①-卡1｜Source Selector（来源选择器；物种层＋兼容 Mode）
+### A①-卡1｜Source Selector（来源选择器；物种层＋覆盖层两变体）
 
-**机制入口**：[汇编 §8](component-contract-consolidated.md#source-transaction) 定义 Source staged 协议、fan-out 与同值意图边界；V1 的产品承载见 [Fish Authoring Surface §12](../../fish-habit-editor-v1/authoring-surface.md#12-source-change-candidate)。
+**机制入口**：[汇编 §8](component-contract-consolidated.md#source-transaction) 完整定义 Source staged 协议、fan-out 分档和同值意图边界；[§15](component-contract-consolidated.md#transaction-model) 区分事务类别。本卡保留动作、落盘字段、展示与验收，不另定义分档机制；候选预览的共用交互见[共享N2](#rebase-impact-preview)。原长引文和裁定链见[固定基线卡1](https://github.com/futouyiba/HitFish-Up/blob/807cef92f75e660cae820ccd48996f7e0c922e18/docs/review/ui-component-contract-r2/contract-cards.md#L54-L90)。
 
 ```
-Component: Source Selector｜组件卡唯一 Source mutation 入口
+Component: Source Selector｜来源选择器（模板行每格；物种层与兼容壳·覆盖层两变体）
 Reads:
-  - 当前 source binding（Species recipe source；兼容 Mode 的 sourceOverride / follow-parent）
-  - 按汇编 §8 的层级 Source allowlist 生成合法候选
-  - Shared Template 清单；Temperature 在合法 Species Concrete 已存在时可显示“当前物种生态数据”
+  - 该组件当前 source binding（物种层 recipe source；覆盖层 patch sourceOverride）
+  - 按所引汇编 §8 的层级 Source allowlist 生成可选项；本卡不另维护矩阵。
+  - 模板清单（平铺、作者命名、默认按引用量排序；ARCHIVED 降级不列）
+  - 水温额外读「当前物种生态数据存在与否」
 Actions:
-  - SELECT_SOURCE：建立 ephemeral candidate，不立即写盘；确认后物种层写 recipe source，Mode 写 sourceOverride。
-  - FOLLOW_PARENT：Mode 选择“跟随基础习性”；按同一 staged 协议确认后删除 sourceOverride。
-  - 换源后既有 operations / patches 原样保留，在 candidate 上重 Resolve。
+  - SELECT_SOURCE：先选 candidate；确认提交时物种层改 recipe source，覆盖层写 sourceOverride（桶可换模板）。按所引汇编 §8 执行，不一选即写盘。
+  - FOLLOW_PARENT：覆盖层选择「跟随物种」；按同一协议确认提交时删除 sourceOverride，不另开解除即落盘通路。（记录页 §312 XR-F-01；§328 R3-F-01）
+  - EXTRACT_TEMPLATE：从当前组件提取为模板；与 A②-卡8 工作区入口是同一创建动作，不是第二套动作。
+  - 换源后既有 ops 原样保留，在 candidate 上重 Resolve；高影响批量换绑交 A②-卡11，只改直接引用集。
 Durable mutation:
-  - candidate 不写持久；Preview + 显式确认 + revision 核验后原子提交。
-  - 换源不清 operation，不生成保值 SET。
+  - candidate 不写持久；确认并通过 revision 核验后原子写 source binding / patch。FOLLOW_PARENT 在此步删除 sourceOverride。
+  - 换源不生成保值 SET；EXTRACT_TEMPLATE 只创建模板资产。
 Acceptance:
-  - Local / Propagated 由 fan-out 决定，但两者都使用同一个 V1 Review Panel，不出现先写盘后预览。
-  - explicit pin ↔ follow-parent 即使当前 Effective Source / values 相同也是真实 durable change，必须显示 binding intent 与未来传播差异。
-  - 选择与当前 durable binding intent 完全相同的候选是 exact no-op，不建立 candidate。
+  - Local 或 Propagated 的选择由所引汇编 §8 判定；两档都先预览确认，不出现先写盘后预览。
+  - pin Template_A → FOLLOW_PARENT（父层当前也是 A）：即使 value diff 为零，也展示 Binding intent（PINNED → FOLLOW_PARENT）、Effective Source（可相同）、Future propagation（固定 → 跟随）；确认前不删记录，确认后父层改 B 应跟到 B。
+  - 反向创建与父层同 Source 的 explicit pin 仍是 durable change；不以当前值相同折成 no-op。（记录页 §392 ADJ-09）
 Must show:
-  - Component Card 上当前 Source 的作者可读名称。
-  - Mode 跟随时显示“跟随基础习性 → <Effective Source>”；显式 pin 显示“<Source> · 本模式设置”。
-  - same-effective explicit pin 与 follow-parent 必须可区分。
+  - 闭值按层级显示：水温=物种具体级 token（该组件独有形态，保留作主示意）；模板绑定=类型名；水温双来源带类别记号可区分
+  - same-source pin 的「已显式固定」记号（名字与物种相同也显示）
+  - 「来源已更换·待复核」轻量标记（挂受影响 ADD）
+  - 截断规则 (a)：值区右固定 ~16px ▾ 保留区＋超宽 ellipsis＋全名进 tooltip/下拉首项
+  - 卡上 templateName 与闭值同源同名（通则）
 Must not:
-  - 不保留顶部 templateRow / 前层 Source Selector 作为第二 mutation entry。
-  - Focus Editor 不提供 Source Selector。
-  - 不自动清 operations；不静默生成 SET；same-effective 不自动去 pin。
-  - Mode picker 不列 SpeciesConcrete；需要消费物种 Concrete 时走“跟随基础习性”。
-  - ARCHIVED Template 不作为新候选。
-依据: Source allowlist / durable shape / transaction 见汇编 §8；V1 UI entry ownership 见 V1 Product Current。
+  - 不自动清 operations；不静默生成 SET 保旧值；same-source 不自动去 pin
+  - 覆盖层 picker 不列 SpeciesConcrete（Mode 经「跟随物种」间接继承）
+  - 归档模板不出现在普通 picker；不做分组/族折叠（平铺）
+依据: Source矩阵与事务见汇编 §8（《编辑器界面》§1.1；《编辑器持久层契约》§3.3／§3.10）；生命周期／引用集见汇编 §14。显示层级（四格裁定）＝记录页 §160 四；截断 (a)＝记录页 §167 六。
 ```
 
 <a id="operation-control"></a>
@@ -98,15 +100,19 @@ Reads:
   - **字段类型**（数值项 / 枚举绝对值项）与**层**（物种层 / 桶·习性档案层）—— 决定出哪些选项（见 Actions 首条）
   - tier（作者档位，独立字段）
 Actions:
-  - UI 采用稳定作者词表，不根据上层当前 op 类型动态改动作名称：
-      · **Species Base × 数值**：沿用来源 / 调整 / 设置为；
-      · **Species Base × 枚举**：沿用来源 / 设置为；
-      · **Compat Mode × 数值**：沿用物种设置 / 仅用当前来源 / 调整 / 设置为；
-      · **Compat Mode × 枚举**：沿用物种设置 / 仅用当前来源 / 设置为。
-  - “沿用来源”＝物种层无本层 operation；“沿用物种设置”＝Mode absent；“仅用当前来源”＝Mode CLEAR；“调整”＝ADD；“设置为”＝SET。
-  - ADD / SET 需要参数；切到需要参数的 operation 时先进入 transient raw-input，不自动制造 ADD 0、不沿用旧 operation 参数、不自动保持 Effective Value。
-  - absent / CLEAR 属无值动作，可直接形成 ordinary durable edit。
-  - 调整（ADD）始终相对当前 Source value；设置为（SET）是绝对值。
+  - 操作选项按所引汇编 §13 allowlist；用户语言必须按「层 × 字段类型」四格展示：
+      · **物种层 × 数值**：仅使用来源 / 调整 / 设置为（**没有 `CLEAR`，也没有「沿用…」**）；
+      · **物种层 × 枚举**：仅使用来源 / 设置为；
+      · **桶层 × 数值**：沿用物种调整 / 沿用物种设置为（**按实际继承到的那个操作给串**；**物种层无操作时该缺省支显示「仅使用来源」**）/ 仅使用当前来源 / 调整 / 设置为；
+      · **桶层 × 枚举**：沿用物种设置为 / 仅使用当前来源 / 设置为（**物种层无操作时该缺省支同样显示「仅使用来源」**）。
+      ⇒ UI 四格出处：记录页 §312 裁 `XR-F-03`。
+  - 缺省支与「仅使用当前来源」是独立入口；执行所引汇编 §3 的 absent / CLEAR 分支。
+  - 调整（ADD）：输入相对当前来源值的带符号增量，按汇编 §3 解析；合法 SPECIES_CONCRETE 没有模板绑定，因此输入提示不得只写「模板值」。（记录页 §312／§316 CXR-04）
+  - 设置为（SET）：绝对值
+  - 每次编辑=替换当前格唯一 op（每层每字段至多一个最终 op）；**`SET` 之后下层仍可 `ADD`** —— **下层表达替换上层 operation，`ADD` 仍以下层当前来源值为基准**（记录页 §316 裁 `CXR-04`）
+  - 档位控件的可用性按汇编 §5 随当前 op 切换。
+  - Profile 缺席、Role promotion 与可见校验按汇编 §11 的统一机制；错误显示仍交 A①-卡6，不由本卡另定义空态矩阵。
+    - 原取证曾记录解析类型只有时段可空、其余三组件不可空，属于实现缺口而非时段特权；本批未重跑实现，不能用该历史读数判当前实现；固定记录见卡前链接。
 Durable mutation:
   - 按所引汇编 §3 写入／删除字段记录，不经值差合成；typed 值的提交要求和 INHERIT / CLEAR 例外按汇编 §4。
   - UI 计数沿用本卡冻结投影：CLEAR 计入本层操作数。来源核对由卡前所引汇编 §4 导航至 UI取证台账；不能借 durable 语义把它升级为上游已核规则。
@@ -176,7 +182,7 @@ Component: Effective Value Display｜有效值展示（只读）
 Reads:
   - Effective Source ＋ per-field Effective Operation 的 Resolve 结果
 Actions:
-  - 只读；查看来源链→切换当前 Fish Subject 到“解析预览”并聚焦对应字段
+  - 只读；查看来源链→跳 Resolve Preview
 Durable mutation:
   - 无——Effective 是派生结果，可缓存/预览，不作 authoring truth 持久化
 Must show:
@@ -189,33 +195,24 @@ Must not:
 ```
 
 <a id="provenance-display"></a>
-### A①-卡5｜Provenance Display（解析说明）
+### A①-卡5｜Provenance Display（来源与过程展示）
 
-V1 产品层承载见 [Secondary Surfaces §2](../../fish-habit-editor-v1/secondary-surfaces.md#2-右栏解析说明)。本卡只保留当前 Effective Configuration 的最短充分来源解释；外部生态数据 Import / Reimport 不属于 V1。
+水温导入的推导、缺值与目标物种规则统一见[卡8](#template-list)；本卡只区分字段的来源性质，不复制推导公式。
 
 ```
-Component: Resolve Explanation｜解析说明（只读）
+Component: Provenance Display｜provenance 展示（编辑器侧）
 Reads:
-  - Effective Source relation
-  - per-field Effective Operation relation
-  - Effective Value
-  - Policy Template / Species / Mode 的 Role 与 fail_env_coeff 解析链
+  - source binding、op 记录（含 tier）、导入 provenance（周期表导入挂 Concrete Source 更新与 diff）
 Actions:
-  - 只读查看
-  - “在编辑中打开”切回同 Subject 的 Edit 并定位对应 Component / Field / Policy
+  - 只读查看；跳 Resolve Preview 的 provenance 区
 Durable mutation:
-  - 无；全部为 derived projection
+  - 无（纯展示；provenance 数据随 op 记录/Concrete Source 携带）
 Must show:
-  - Source 与 Operation 两条独立继承轴，不压成模糊“继承”
-  - 来源值 → 有效操作 → 最终值的最短充分解释
-  - Role / fail_env_coeff 的 Template → Species → Mode → Effective 链
-  - SET 当前态可说明 Source value 被本层设置覆盖；无 before/after 输入时不得声称“来源已变 / 结果未变”
+  - 「这个值为什么是这样」：来源→操作→当前值 的链
+  - 周期表导入的字段级 provenance 分别显示：favMin / favMax 的输入来源及口径、acceptMin / acceptMax 的设计推导来源（规则按卡前卡8）、temp_threshold / falloff_shape 的游戏参数来源；不把来源输入笼统标成实测。
 Must not:
-  - 不显示 row_key / production row name / materializer trace
-  - 不把 Resolve 做成第二套只读 Editor
-  - 不引入 Bake / condition snapshot / evaluator trace
-  - 不把 derived provenance 持久化为第二份 truth
-依据: Effective Source + Effective Operation → Effective Value 的低层语义见汇编 §3；Policy 语义见 §9–§10；V1 产品承载见 V1 Product Current。
+  - provenance 不进 Resolver/Runtime payload；不塞进 production name；不作为关联/复用判据
+依据: 《编辑器持久层契约》§3.3（周期表重新导入更新 Concrete Source 本身、不落 tuning operation；研究事实修正走更新 Source、游戏调参保持 Source 写 Species operation；SPECIES_CONCRETE identity＝(speciesId, componentType)）；《编辑器与 Resolve》§3（Resolve Preview provenance 区）＋§11.3（Template/档位/delta 不进 Runtime）；《编辑器界面》§1.3（别名与微调 provenance 留 editor-state）；fav/accept 的来源性质与推导规则见卡前卡8入口
 ```
 
 <a id="validation-diagnostic"></a>
@@ -299,7 +296,11 @@ Reads:
 Actions:
   - 浏览 / 按组件筛选；编辑 name_zh / name_en
   - 「从当前鱼提取模板」（创建）＝**`A①-卡1` 的 EXTRACT_TEMPLATE 在本工作区的入口**——**同一动作、两个入口**，不另实现一套
-  - **V1 不提供“从钓鱼元素周期表导入 / Reimport”动作，也不暴露 Lux CLI。** 该能力已移出 V1；其既有 Concrete Source / provenance / reimport 低层语义仅作为 Post-V1 参考保留，不构成当前 Template Library UI action。
+  - 水温「从钓鱼元素周期表导入」：按现行契约走 **Concrete Source 更新**（**不是直接造模板**）—— ⚠️ **它是高影响重导**：**prepare → Preview → 显式确认 → 一次原子提交**（汇编 §15 已把「重导」列为高影响动作）；**Concrete Source 已被 Recipe／继承行消费时，重导会改变多个 Effective Value** ⇒ **不得写成「直接更新 Source」**。（记录页 §312 裁 `XR-F-05`）；本工作区入口按「导入 → 可提取为模板」两步读（**收口已确认**）。**不承诺导入后四值齐备**。★ **此处先前有内部不闭合，收口如下**（同一份文件另处已写「周期表导入的字段级 provenance 差异：**前四项＝生态数据**；`temp_threshold`/`falloff_shape`＝游戏参数」）：**「四值齐备与否」是「源里有没有」的事实，不是口径未定** ——
+  · **来源边界**：下条推导是设计值、非实测，原交付物为水温调研包 `final/`；原登记未落 Current，本次未核上游是否已落页，不把这一历史状态当今天的实测。
+  · ★ **该子情形已裁（Owner 2026-09-21）：取「按既定口径推导」。** 规则收窄为 —— `favMin` / `favMax` **有效时**：`acceptMin = max(0, favMin − 2℃)`、`acceptMax = favMax + 2℃`；`acceptMin` / `acceptMax` **属设计推导值，不要求周期表提供实测值**；**若连推导前提 `favMin` / `favMax` 都缺失或非法 ⇒ Reject Import**。
+  · ★ **不得「保留旧 `accept`」** —— 理由（Owner 逐字）：保留旧值会形成「**新 `fav` ＋ 旧 `accept`**」的**历史依赖与混合 provenance**，使 **Reimport 非幂等**；既定推导则**确定、可解释、可重复**。  处置与来源索引见 `OPEN-ITEMS` §2。
+  · ★ **目标物种护栏（独立条件，不因上述缺值裁定而删除）**：**⚠️ 导入必须带显式目标物种**：该动作更新的是 `SPECIES_CONCRETE` 的 identity ＝ `(speciesId, componentType)`，**而本工作区（`22:2`）的 Reads 里没有 current species、也没有 species selector** ⇒ **入口必须显式选目标物种**（有当前物种时可默认为它），**不得用隐式/未知物种执行**；**未选物种 ＝ 该动作不可执行**，不是「就用当前物种」。替代方案（等价）：把该入口限定到**已有明确 species context** 处。（记录页 §328 裁 `R3-F-06`）
 Durable mutation:
   - 别名写编辑器持久层模板记录（template_key 空＝未物化，editor_key 必填）；抽取创建模板资产
   - displayName 改名 ≠ identity rename
@@ -308,7 +309,7 @@ Must show:
 Must not:
   - source name 不作键；不提供 stableKey identity rename（错名处置＝新建＋Replace＋归档旧）
   - 不引入分组 / 族折叠（平铺）；不因结构对称给 Quality 预造 Template
-  - **V1 不显示周期表导入入口**；**不因 Role 激活自动创建模板／Profile**（记录页 §199 ⑥③：创建永远显式）
+  - **不承诺「导入即得四值」**（按本卡 Actions 的已裁缺值规则执行）；**不因 Role 激活自动创建模板／Profile**（记录页 §199 ⑥③：创建永远显式）
 依据: 《编辑器持久层契约》§3.6（模板清单与别名记录表）＋§3.10（identity immutable；displayName 可改）；《编辑器界面》§7（平铺可滚动、按引用量排序、别名可编辑、source name 只读）
 ```
 
@@ -336,32 +337,26 @@ Must not:
 ```
 
 <a id="rebase-impact-preview"></a>
-### 共用N2｜Source / Propagation Candidate Review
+### 共用N2｜Rebase／Impact Preview 交互
 
-本段只保留 staged mutation 的共用语义护栏；Fish Habit Editor V1 的具体承载以 [Fish Authoring Surface §12](../../fish-habit-editor-v1/authoring-surface.md#12-source-change-candidate) 为产品层 Current。
+本段是卡1／10／11共用的 **UI交互 Owner**；N2沿用 Inventory 标识，不是新增schema或产品身份。事务与分档完整定义仍归[汇编 §8](component-contract-consolidated.md#source-transaction)，两引用集和候选统计归[§14](component-contract-consolidated.md#template-reference-sets)，普通编辑及TimePeriod独立护栏归[§15](component-contract-consolidated.md#transaction-model)，丢弃未durable状态归[卡7](#autosave-status)。本轮承载选择是可逆目标投影，不冒称Current逐字规定；候选、反方与来源范围见[设计提案](../../proposals/0.3.4.0-B-n2-ui-projection.md)。
 
-**V1 承载**：
-- Candidate 是短事务，不是可跨页面挂起的 Draft，也不新增第三个长期工作视角。
-- Fish Source Change 的 Review 复用当前右侧 Focus Editor 临时承载；不新建独立 N2 Workspace / Modal。
-- Candidate active 时暂停其它导航、ordinary mutation 与 Publish，直到确认或取消。
-- Local / Propagated 使用同一 Review Panel；是否传播只决定 Review 内容重量，不决定是否 staged confirm。
+**承载与入口**：本次高影响 staged candidate 的完整正文及提交确认放在N2独立面板；C11影响节保留该候选的摘要和“查看影响”入口。这个限定只针对本次候选正文与确认，不限制C11日常影响、校验列表或待复核内容。Local Rebase可复用N2，不强制全屏或Modal；一个交互Owner不等于只能有一个面板实例。Resolve Preview／Bake Preview仍是各自的只读产品面，不能拿它们替代候选确认面。
 
-**共用必须表达**：
-- 当前 binding intent 与候选 binding intent；
-- before / after Effective 结果；
-- value 不变但被 SET / operation 遮罩的情况；
-- same-effective explicit pin ↔ follow-parent 的未来传播差异；
-- Candidate 新增 / 解除的诊断；
-- Propagated 情况下区分“直接修改”与“跟随受到影响”。
+**共用显示与动作**：
+- 标题明确对象、作用域和动作类型，标明“候选变更（未确认）”；“查看影响”进入该候选的预览正文。
+- “取消候选”只丢弃本次未确认候选，不进行durable写入，也不回滚已成功保存的普通编辑；“确认变更”按所引§8提交协议执行。确认不是Publish，不新增durable草稿实体。
+- Local正文按§8只展示本次作用域和意图；不为视觉整齐补伪零全局统计，不要求全库扫描。Propagated正文按§8／§14完整呈现候选影响及分类，四项统计分列，影响对象可滚动且不截断。
+- Replace候选将“直接改绑对象”与“有效影响对象”分区标识；模板改值保留其完整值编辑语义。字段/写集及其它独有动作仍由卡10／11定义，不在本段重定义。
+- after-state 的错误诊断醒目，并与Publish阻断关联；不可把诊断文字呈现成保存I/O失败，也不可暗示所有ERROR都禁止确认保存。具体可保存性与诊断判级仍按原Owner。
 
-**提交边界**：
-- Candidate 不先写盘；确认前做 revision check，确认后 atomic durable commit。
-- 取消只丢弃 Candidate，不回滚已 durable 的 ordinary edit。
-- Candidate after-state 有 publish-blocking ERROR 时，只要 mutation 本身 schema-valid，仍允许确认保存；确认不是 Publish。
-- exact binding intent no-op 不建立 Candidate。
-- 不为保持旧 Effective Value 自动制造 SET，不清已有 operation。
+**代表验收**：
+1. 零value diff的同源pin／FOLLOW_PARENT候选仍能看见意图与未来传播区别；Local画面没有伪造的全局四统计，取消与确认入口可辨。
+2. 模板改值的传播预览能看见结果变化、受操作遮罩未变与新增诊断的区别；结构可表达的after ERROR可确认保存，Publish仍阻断，不能把确认按钮画成Publish。
+3. Replace的继承child显示为有效影响对象，不能标成新增直接写入目标；已有operations保留的验收仍按卡11。
+4. C11日常校验/待复核仍可使用，普通值/Role没有因新增面板而变成staged；TimePeriod预设仍只消费自己的条件护栏。
 
-模板完整值编辑、Replace References 等其它 propagated mutation 可复用同一 staged transaction semantics；其各自对象、写集与影响集合仍由对应卡片和汇编 §14 定义。V1 不要求它们使用与 Fish Source Change 完全相同的屏幕几何，但不得重新引入先写盘后预览、长期 Draft 或第二套 durable truth。
+目标设计的未实现状态与示例数据须在annotation／图像登记中明确标 `⚑UNIMPL`（缺GAP编号时标明待补）／示例，不混入作者控件文案；静态画面只证明该画面，不证明列表真实滚动、原子提交或保存重载已经实现。实时取证与写前快照仍按项目Figma技能，不能用本段免除。
 
 <a id="template-value-editor"></a>
 ### A②-卡10｜Edit Template Value（模板完整值编辑；高影响）
@@ -444,42 +439,49 @@ Must not:
 
 ---
 
-### `RoleControl`｜Policy Role / fail_env_coeff
+### `RoleControl`｜Role 三态 × 两层
 
 <a id="role-control"></a>
-**机制入口**：[汇编 §9](component-contract-consolidated.md#role-record-intent) 定义 raw Role 与记录态，[§10](component-contract-consolidated.md#policy-clear) 定义 Policy CLEAR / 词表，[§11](component-contract-consolidated.md#profile-lifecycle) 定义 Role × Profile 校验。V1 产品投影按“一兼容 Mode = 一条既有 FishEnvAffinity 行”收敛。
+**机制入口**：[汇编 §9](component-contract-consolidated.md#role-record-intent)定义 raw Role 与记录态／UI 派生，[§11](component-contract-consolidated.md#profile-lifecycle)定义 Profile 缺席、promotion、Setup 与空底板投影；Policy CLEAR／词表见[§10](component-contract-consolidated.md#policy-clear)。本卡只保留读取、交互、落盘字段和验收。
 
 ```
-Component: Policy Focus Editor｜四个 Role + fail_env_coeff
+Component: RoleControl｜Role 三态（CORE / SECONDARY / IGNORED）
 Reads:
-  - Policy Authoring Truth：四个 Effective Role、各自当前 Authoring Intent、必要 provenance、fail_env_coeff。
-  - Component Card 只读取对应 Effective Role 形成只读 badge；不拥有 Role mutation。
-  - Species Context 读取 Policy Template raw values + Species Policy Recipe。
-  - Compat Mode 读取 Species Effective Policy + 当前单条 FishEnvAffinity row patch。
+  - Policy Authoring Truth（四个角色＋fail_env_coeff）：组件卡 Role 控件与 Policy 区读取同一份。Species 或单一 production-row owner 可直接编辑；multi-row Compat 的组件卡只显示摘要，Policy 区按 production row 展开逐行 mutation。
+  - 当前物种默认 Role op／Policy Template raw Role、或当前生产行的 Role patch；显示从记录派生，按所引汇编 §9 判读。
+  - 当前层／行、Profile presence、合法 Source 可用性及当前诊断；默认值／缺席矩阵按所引 §9／§11，不从最终值反推记录。
 Actions:
-  - **Species Role**：沿用策略模板 / 设置为 CORE / SECONDARY / IGNORED。
-  - **Mode Role**：沿用基础习性角色 / 使用策略模板原始角色 / 设置为 CORE / SECONDARY / IGNORED。
-  - **Species fail_env_coeff**：沿用策略模板值 / 调整 / 设置为。
-  - **Mode fail_env_coeff**：沿用基础习性配置 / 使用策略模板原始值 / 调整 / 设置为。
-  - 所有 Role / fail_env_coeff ordinary edits 走 autosave；不因 Role 变化自动创建、删除或改写 Profile。
+  - **物种层**作者动作：`沿用策略模板`（删除本层 Role op）或 `设置为 CORE / SECONDARY / IGNORED`（写本层 SET）。即使 SET 与模板 raw Role 同值，也保留显式 pin，不按结果值折叠。
+  - **生产行级**作者动作：`沿用物种角色`（absent）／`使用策略模板原始角色`（CLEAR）／`设置为 CORE / SECONDARY / IGNORED`（SET）。只改当前 `row_key`，不得把一个 `[兼容]` Mode 当前 authoring scope 内的多条行默认广播。
+  - **`fail_env_coeff`**：物种层＝`沿用策略模板值 / 调整 / 设置为`；生产行级＝`沿用物种配置 / 使用策略模板原始值 / 调整 / 设置为`（absent / CLEAR / ADD / SET）。与 Role 同表呈现时仍保持独立 op 词表，不把 Role 三态套给 coeff。
+  - 显式 Setup：Structure／Feeding Layer／Temperature 空态提供进入合法 Shared Template Source 选择的可达路径；Temperature 若合法 Species Concrete 存在，另可走生态数据导入／建立来源，导入目标物种与缺值护栏仍按卡8。
+    · TimePeriod 同样保留 Source／Setup 路径；三种预设只是 Setup 后／中的一次性填表便利，不能充当独有 Profile 创建语义。具体可用来源按汇编 §8 的层级 allowlist。
+    · 不新增空 Profile 对象；UI exact shape 仍归 Species Role/UI 工作流。Setup 的完整机制与初值来源按汇编 §11。
 Durable mutation:
-  - Role / fail_env_coeff durable truth 仍在 Policy 域，Component Card 不另建 state。
-  - Species：Species Policy Recipe 持有四个 Role op 与 fail_env_coeff op。
-  - Mode：AffinityRolePatch key=(row_key, component)，op=CLEAR|SET；AffinityFailEnvCoeffPatch key=row_key，op=CLEAR|ADD|SET。
-  - 行级 patch 仍显式携 op，不从 Effective Value 反推记录。
+  - **Role / `fail_env_coeff` 的 durable truth 在 Policy 域**，组件卡不另建 durable state。
+  - **物种侧**：`Species Base Record` 是整体聚合记录；其中 `component recipes`（四个 Component 的 Source ＋ field operations）与 `Species Policy Recipe`（policy source binding ＋ 四个 Role op ＋ `fail_env_coeff` op）是不同子结构。
+  - **生产行侧**：
+    · `AffinityRolePatch`：key = `(row_key, component)`；`op = CLEAR | SET`；SET 时必须携 `role`。
+    · `AffinityFailEnvCoeffPatch`：key = `row_key`；`op = CLEAR | ADD | SET`；ADD / SET 时必须携 `value`。
+    · 两者都是 row-level，与 bucket-level numeric patch / Component Source authoring 保持独立物理记录；共同出现在 Compat UI context 不改变 owner、key 或粒度。
+  - 行级 patch 必须显式携 `op`；不得从最终值反推 CLEAR / SET / ADD。Role 值不参与唯一键。
+  - 行级 Policy patch 只使用 `row_key` 作为 scope identity；`species_key` 仅用于组织、查询、reconcile 与诊断，不参与行级 patch identity。
+  - 物种 Role op（`INHERIT / SET`）定义 `Effective Default Role`，位于 `Species Policy Recipe`；每个 `(species_key, component)` 恰好一个物种默认。生产行 patch 在此默认之上逐行覆盖，同一物种同一组件的不同行可以得到不同 Effective Role。
 Acceptance:
-  - INHERIT/absent 与 same-value SET 必须可区分；CLEAR 与 absent 必须可区分。
-  - IGNORED + Profile absent → 改 CORE/SECONDARY：先保存 Role，随后产生 required-Profile ERROR 并阻断 Publish；不自动建 Profile、不自动选 Source、不回滚 Role。
-  - CORE/SECONDARY → IGNORED：已有 Profile 保留，可继续编辑。
-  - V1 Compat Mode 只对应一条既有 FishEnvAffinity 行；更新当前 Mode Policy 不广播到其它 Mode。
+  - 物种 raw Role=CORE：INHERIT（无记录）与 SET CORE 的 Effective Role 可相同，但记录态及作者可见 provenance 必须可区分（例如「策略模板」vs「本层设置」）；修改一处，另一入口直接读同一 Truth，不经同步代码。
+  - IGNORED＋缺 Profile 后选 CORE：只保存 Role，不自动建 Profile／选默认 Source；立即可见 required-Profile ERROR，Publish 阻断，作者可进入 Setup。四组件分别走通，Temperature 不套全1.00数值档案，TimePeriod 不靠预设替代 Source 建立。
+  - 同一组合的两条生产行可有不同 Role，更新目标行不得影响另一行；粒度与键按上面的独立记录形状验收。
+  - 空底板且 IGNORED 的组件按汇编 §11 不投影，主行／Role照写、refs空；改为 CORE／SECONDARY 且仍缺必需 Profile 必须阻断，不能一概按空态放行。
 Must show:
-  - Policy Focus Editor 统一显示 Effective Role + Authoring Intent + 必要 provenance。
-  - Species / Mode Context 由当前 Subject breadcrumb 决定；普通 UI 不要求作者看到 row_key、Quality 或 production row 名。
-  - Component Card 可显示 Effective Role 的只读 badge，用于 Overview 扫描。
+  - Role 展开态只表达 **Effective Role ＋ 当前 Authoring Intent ＋ 必要 provenance**；不把数值字段的 `仅使用来源 / 仅使用当前来源 / 调整` 词表套到 Role。
+  - 物种记录态标记按所引汇编 §9，从 Role op record 派生，不另存状态位。Species Context 只编辑 Species Role，Policy Template raw Role 只读解释。
+  - **必须显式说出「你在改哪一层 / 哪一行」**：物种层 ⇒「默认（各行继承）」；生产行级 ⇒ 行级编辑区中的明确 row identity（如 `LAKE_A × LARGEMOUTH_BASS/Q3`）。每行同时显示其 Species Effective Default / Policy Template provenance 所需信息，不要求为此新增独立“精确生产行 Context”。
+  - 若当前 `[兼容]` Mode 的 authoring scope 聚合多条生产行：组件卡显示角色摘要（例如 `CORE · 4 行` 或 `多个角色 · 4 行`）；Policy 区按 production row 展开，逐行编辑四个 Role 与 `fail_env_coeff`，**不得提供单一 bucket-level Role / coeff 控件**。
+  - **不许**默认改整个 scope 却在 UI 上说成改一行。
+  - P0 不做跨行批量 Role / `fail_env_coeff`；以后若做，必须是显式多选 / 批量动作，不得作为 `[兼容]` Mode 的缺省行为。
 Must not:
-  - Component Card 不提供 Role dropdown / toggle。
-  - 不保留 multi-row Compat 的 Role 聚合、production-row 展开或跨行批量编辑。
-  - 不给 Component Card 建 durable Role state。
-  - Role 永不允许 ADD。
-依据: durable tokens / keys 见持久层契约与汇编 §9–§11；V1 mutation surface ownership 见 V1 Product Current。
+  - **不许两份 state** —— 不许「持久化一份 + UI 一份」／不许两处各存一份再同步／不许 UI 侧缓存。**判据：改一处之后，另一处不经过任何「同步代码」就变了。**
+  - 不给组件卡另建 durable Role state
+  - **永不允许 `ADD`**（契约 §3.4）
+依据: 《编辑器持久层契约》§3.4／§3.10；[汇编 §7](component-contract-consolidated.md#component-card)／[§9](component-contract-consolidated.md#role-record-intent)／[§10](component-contract-consolidated.md#policy-clear)。
 ```
