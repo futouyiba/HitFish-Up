@@ -43,6 +43,19 @@ Fish Habit Editor 读取 authoritative Fish Basic：
 
 必须保证同一 `species_key` 不能重复创建 Species Base；create commit 前再次做 uniqueness / revision check，并发冲突时刷新为已经存在的 Subject。
 
+### 2.1 Existing Production ingress
+
+V1 产品不提供 migration UI，但已有 Production 进入 Editor 时必须经过 bounded bootstrap / migration，并满足以下 ingress 约束：
+
+- 一个 Species Base 最终必须恰好一个 system default Affinity projection；
+- 不因 Production row 名含 `NORMAL` / `Default` 就自动认定它是 system default；只有存在明确 migration mapping / evidence 时才复用既有 row，否则创建新的 default projection shell；
+- V1 Compat UI 只接受固定 `young / mature` 语义，并且每个 Species × Compat type 最多一条可编辑 `FishEnvAffinity`；
+- legacy 中同一 Compat type 有多条 rows 时，产生 `MULTIROW_COMPAT_UNSUPPORTED` migration blocker；不得自动聚合、任选一条或按 Quality 猜主行；
+- 无法映射到 system default / young / mature 的 legacy Affinity 产生 `UNMAPPED_AFFINITY` migration blocker；不得 silent drop；
+- migration 负责形成满足 V1 durable invariants 的 Editor state，之后 Authoring 才以 Editor state 为 Truth。
+
+这不是要求全量自动迁移；可以是目标 Species 集合上的一次性脚本 + 人工 adjudication。
+
 ## 3. Species Base creation transaction
 
 创建输入只有五个 binding：
@@ -235,3 +248,16 @@ Partial / unverifiable write 不自动建立新 baseline。
 14. create-from-absent row 只有在 Production reread + verify + `row_id` durable backfill 全部成功后才算 Publish success。
 
 V1 不以 arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为验收前提。
+
+### 10.1 还应覆盖的 Contract 验收
+
+除 Golden Path 外，至少再覆盖：
+
+- `LEGACY_UNIMPORTED` Species 不能 fresh create；
+- multi-row same-Compat legacy ingress 被 migration blocker 拒绝，而不是自动聚合；
+- Existing Compat Mode 的 inherit / ADD / SET / CLEAR 能正确 Resolve；
+- Shared Template 多字段 Candidate 只提交一次并正确传播；
+- referenced ARCHIVED Template 仍可 Resolve，Hard Delete guard 生效；
+- Production generation drift 阻断 Publish；
+- create-from-absent default Affinity 的 `row_id` 回填失败不能被判为 Publish success。
+
