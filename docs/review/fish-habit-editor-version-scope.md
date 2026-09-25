@@ -2,6 +2,8 @@
 
 > Status: Current Scope Baseline  
 > Purpose: 只定义 Fish Habit Editor 各阶段承诺的能力边界、明确不做项与后续进入条件。本文不记录决策历史，不替代具体 UI / Persistence / Runtime Contract。
+>
+> **Version commitment:** V1 是当前需要闭合与验收的交付范围；V1.1 / V1.2 / V1.3+ / V2 是后续阶段的能力分组与进入条件，不构成已经承诺的发布日期或固定顺序。V1 收口后的真实成本与依赖可以调整后续阶段编号，但不得把后续能力反向塞回 V1。
 
 ## 1. 总体产品边界
 
