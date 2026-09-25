@@ -48,31 +48,39 @@ Fish Basic / authoritative Species Catalog
 
 不在 initialization transaction 中写 ADD / SET / CLEAR、Role override 或 fail_env_coeff override；这些全部在创建成功后的普通 Authoring 中完成。初始化 Source 只从当前合法、已存在的 ACTIVE Source 选择；Template creation 使用独立 Shared Assets flow。
 
-Species Base **不是** FishEnvAffinity row，也不是默认 Engagement Mode。V1 新建 Species Base 时不创建 Affinity row。
+Species Base **不是** FishEnvAffinity row，也不是默认 Engagement Mode。
 
-### 1.2 Base-only Species
+### 1.2 Default Affinity Projection
 
-完整 Species Base 可以在没有任何 FishEnvAffinity 的情况下合法存在。
+V1 新建 Species Base 时，同一个 atomic creation transaction 同时建立一个**系统默认 FishEnvAffinity 投影壳**。
 
-语义：
+它不是第二份 Authoring Truth，也不是用户可编辑的 Mode。
+
+初始语义固定：
 
 ```text
-Species Base complete
-+
-0 FishEnvAffinity
-=
-Authoring-ready
-but not runtime-addressable by StockRelease
+Default Affinity
+├─ Temperature Source  = FOLLOW_SPECIES
+├─ Structure Source    = FOLLOW_SPECIES
+├─ Feeding Source      = FOLLOW_SPECIES
+├─ Time Source         = FOLLOW_SPECIES
+├─ numeric operations  = absent
+├─ Role patches        = absent
+└─ fail_env_coeff      = absent
 ```
 
-规则：
+因此它完整继承 Species Base 的四 Component 与 Policy。
 
-- 不是 Validator ERROR；
-- Resolve 可以正常解释 Species Base；
-- V1 Publish 不因 Base-only 状态自动创建 Affinity；
-- 在没有 Affinity consumer 时，不要求为了“发布成功”强行生成无人引用的 Production Profile row；
-- 后续创建 Affinity 后，Materializer 再按真实 consumer / lineage 生成所需 Production projection；
-- Quality / StockRelease / FishRelease 与 FishEnvAffinity 的关联继续由其各自 domain 维护，Habit Editor 不创建或同步该关系。
+Durable / Production identity：
+
+- Editor 创建稳定 `row_key`；
+- Production `row_id` 可在 Publish 后获得；
+- human-readable production name 系统生成并校验 collision；
+- 普通作者 UI 不要求编辑该 name，也不把默认 Affinity 显示为独立 Mode。
+
+Species Base 仍是作者编辑“默认习性”的唯一入口；默认 Affinity 只是让这套习性拥有一个可被 Runtime / StockRelease 域引用的具体 EnvAffinity projection。
+
+Quality / StockRelease / FishRelease 与 FishEnvAffinity 的关联继续由其各自 domain 维护，Habit Editor 不创建或同步该关系。
 
 ## 2. Source Binding
 
