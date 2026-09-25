@@ -1,6 +1,6 @@
 # 0.3.4.0-B｜UI Component Contract — Review Target（R2，2026-09-21）
 
-**这是当前唯一的对外审阅面。** 它取代此前那个多轮修订容器；**本目标不含修订链**。
+**本目录现在是低层语义 / 持久层 / 生命周期 Contract 与审阅证据入口，不再承担 Fish Habit Editor V1 的产品层 Current 入口。** V1 Mental Model、IA 与核心 Authoring Surface 先读 [V1 Product Current](../../fish-habit-editor-v1/README.md)。本目录仍取代此前那个多轮修订容器；**本目标不含修订链**。
 
 ## 阅读目标
 
