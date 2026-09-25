@@ -67,7 +67,7 @@ Production materialization
 
 V1 不包含 Bake Preview。
 
-Durable authoring intent 包括 Source binding / override、field operation / patch、Role / fail_env_coeff intent、Shared Template content/lifecycle、Species Preset binding。
+Durable authoring intent 包括 Source binding / override、field operation / patch、Role / fail_env_coeff intent、Shared Template content/lifecycle。
 
 Effective Value、Resolve result/provenance、current selection、raw incomplete input、未确认 candidate、validation projection、Publish preflight result 都是 derived / ephemeral，不成为第二份 Truth。
 
@@ -169,12 +169,6 @@ Template 示例：
 
 ```text
 共享资产 › 习性模板 › 水温 › 高温鱼
-```
-
-Preset 示例：
-
-```text
-共享资产 › 鱼家族预设 › 温水掠食鱼
 ```
 
 `有本层调整` 不常驻 Context Header；局部 authoring state 由 Component / Policy 自己显示。
