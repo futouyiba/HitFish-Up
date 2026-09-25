@@ -192,6 +192,20 @@ V1 只保留四类交互模型：
 
 不新增 Setup transaction、Import transaction、Preview draft 等平行事务类型。
 
+### 6.1 Staged Candidate 的 V1 交互边界
+
+V1 的 staged candidate 是**短事务**，不是可跨页面长期挂起的 Draft。
+
+以 Source Change 为代表：
+
+- Candidate 只能从最近一次成功持久化的 durable state 启动；
+- Candidate active 时保留当前 Subject 的空间上下文，但暂停其它导航、ordinary mutation 与 Publish；
+- Preview / Confirm / Cancel 在当前事务内闭合；
+- Candidate 不写 durable state，也不成为第三个长期工作视角；
+- 取消只丢弃 candidate，不回滚已经成功持久化的普通编辑。
+
+具体 Source Change Review 见 [authoring-surface.md §12](authoring-surface.md#12-source-change-candidate)。
+
 ## 7. Source Mutation Surface
 
 普通 Fish Authoring 中，**Component Card 上的 Source Selector 是主要且唯一的 Source mutation surface**。
