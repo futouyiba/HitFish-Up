@@ -83,7 +83,7 @@ Template Navigation | Template Overview | Template Editor
 
 “显式引用”＝ durable state 中直接绑定当前 Template 的 owner。
 
-“额外跟随使用”＝没有直接绑定，但 Resolve 后最终消费该 Template 的 follower。
+“额外跟随使用”＝没有直接绑定，但 Resolve 后最终消费该 Template 的**作者语义 follower**。系统默认 Affinity 这类隐藏 projection 不作为额外一条 consumer 重复显示或计数；它随所属 Species Base 的 materialization 自动更新。
 
 Hard Delete 看显式引用；Template complete-value Impact 看所有最终消费者。
 
@@ -161,7 +161,7 @@ Impact 必须区分：
 - 被 operation 遮罩；
 - diagnostic delta。
 
-不要把引用数当作结果变化数。
+不要把引用数当作结果变化数，也不要把隐藏 default Affinity projection 当成额外的人类影响对象重复计数。
 
 ## 8. Confirm / Cancel
 
