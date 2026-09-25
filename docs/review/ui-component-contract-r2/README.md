@@ -1,6 +1,8 @@
 # 0.3.4.0-B｜UI Component Contract — Review Target（R2，2026-09-21）
 
-**本目录现在是低层语义 / 持久层 / 生命周期 Contract 与审阅证据入口，不再承担 Fish Habit Editor V1 的产品层 Current 入口。** V1 Mental Model、IA 与核心 Authoring Surface 先读 [V1 Product Current](../../fish-habit-editor-v1/README.md)。本目录仍取代此前那个多轮修订容器；**本目标不含修订链**。
+> **Historical V0.2 — 非 Current Authority。** 本文件保留 R2 当时的设计 / Review / evidence 状态，用于版本考古与来源追踪。Fish Habit Editor 当前产品与公共语义以 [`docs/fish-habit-editor-v1/`](../../fish-habit-editor-v1/README.md) 为准；历史内容不得覆盖 V1 Current。
+
+**本目录是 Fish Habit Editor V0.2 / R2 的历史版本包。** 它保留当时的低层语义、持久层、生命周期、Review 与 Figma 证据，但不再承担 Current Contract。V1 先读 [V1 Product Current](../../fish-habit-editor-v1/README.md) 与 [V1 Common Semantics](../../fish-habit-editor-v1/common-semantics.md)。
 
 ## 阅读目标
 
@@ -64,7 +66,7 @@
 | 上游评审容器 | [PR #6](https://github.com/futouyiba/HitFish-Up/pull/6)（历史材料入口） |
 | 下游实现投影 | [programaticHitFish PR #16](https://github.com/futouyiba/programaticHitFish/pull/16)（实现线入口，状态以该 PR 为准） |
 
-**CLEAR 查阅入口**：组件解析与记录语义在[汇编 §3](component-contract-consolidated.md#component-clear)，Policy 域在[§10](component-contract-consolidated.md#policy-clear)，组件 allowlist 在[§13](component-contract-consolidated.md#component-operation-allowlist)，落盘例外在[§4](component-contract-consolidated.md#field-value-control)，四格 UI 在[卡2](contract-cards.md#operation-control)。这些是 Git Markdown 中的仓内规范章节；Notion Current 是其发布投影。历史比较与 Figma 文字按各处固定 SHA 保留。
+**V0.2 CLEAR 历史查阅入口**：组件解析与记录语义在[汇编 §3](component-contract-consolidated.md#component-clear)，Policy 域在[§10](component-contract-consolidated.md#policy-clear)，组件 allowlist 在[§13](component-contract-consolidated.md#component-operation-allowlist)，落盘例外在[§4](component-contract-consolidated.md#field-value-control)，四格 UI 在[卡2](contract-cards.md#operation-control)。当前 V1 语义读取 [V1 Common Semantics](../../fish-habit-editor-v1/common-semantics.md)；本段只用于追查 V0.2 历史。
 
 ## 怎么读
 
