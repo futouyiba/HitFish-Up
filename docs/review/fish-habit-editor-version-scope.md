@@ -88,7 +88,8 @@ Temperature V1 以**手工 Authoring**为主，不承诺外部生态数据库自
 - Replace References。
 - Hard Delete guard。
 - Direct Reference / Effective Consumer 可见性。
-- Species Preset 作为一次性 Authoring convenience；Preset apply 后不形成持续 parent relation。
+
+V1 Shared Assets **只包含 Shared Template**；Species Preset / 鱼家族预设不进入 V1。
 
 #### Preview / Publish
 
@@ -100,16 +101,36 @@ Temperature V1 以**手工 Authoring**为主，不承诺外部生态数据库自
 - Production generation mismatch / unverifiable 时 BLOCK。
 - Publish success / failure / partial failure 的明确事务状态。
 
-### 2.3 V1 Data / Demonstration Baseline
+### 2.3 V1 Data / Coverage Baseline
 
-V1 不要求全量自动迁移，但应提供一份**小而真实、人工复核过的 Golden Seed / Snapshot**，用于：
+V1 明确采用 **Bounded Coverage**：它是“编辑已预置 Habit topology 的鱼”的生产工具，不是 Fish onboarding 工具。
+
+#### V1 Coverage Set
+
+每次部署必须显式定义一个 `V1 Coverage Set`：
+
+> 本次 V1 承诺可在 Editor 中编辑的 Species 集合。
+
+Coverage Set 中的每条 Species 必须在部署前已经拥有可加载的 Habit Entry / 既有兼容 topology。其来源可以是 bounded bootstrap、一次性 migration script 或人工复核后的 seed preparation；这些都是**部署准备 / migration 工作**，不是 Editor 内的“新建鱼”产品能力。
+
+规则：
+
+- Coverage Set 内缺少 Habit Entry ⇒ **V1 deployment blocker**，不能运行时隐式 auto-create；
+- Species Catalog 中不在 Coverage Set 的 Species 可以被 Coverage Browser 看见，但不成为可编辑 Subject；
+- V1 不为缺失 Entry 自动制造 Species Base、默认 Source、默认 Role 或兼容 Mode；
+- Coverage Set 可以是当前里程碑需要的子集，不要求为了 V1 一次性承诺所有未来 Species；
+- 若产品目标要求“整个当前 Species Catalog 都可编辑”，则部署前 Coverage Set 就必须覆盖整个目标 Catalog，这属于数据准备成本，不应伪装成 UI 免费能力。
+
+#### Golden Seed / Snapshot
+
+除部署 Coverage 外，V1 仍应提供一份**小而真实、人工复核过的 Golden Seed / Snapshot**，用于：
 
 - 展示真实 Fish Habit Authoring；
 - 验证已有 Production 数据能够被 bounded bootstrap 到 Editor；
 - 覆盖 Template fan-out、Species override、兼容 scope、Policy、Resolve、Publish 等关键路径；
 - 作为 demo / regression / roundtrip evidence。
 
-Golden Seed 可以由一次性脚本 + 人工整理生成；该脚本**不构成 V1 产品能力承诺**。
+Golden Seed 不等于完整 Coverage Set；它可以只是其中有代表性的少量对象。
 
 Migration 与 Semantic Consolidation 分开：
 
@@ -129,6 +150,7 @@ V1 不承诺：
 - 创建新的 Species identity；
 - 初始化全新的 Fish Habit aggregate；
 - Family / 鱼家族初始化；
+- Species Preset / 鱼家族预设；
 - 新建 Engagement Mode；
 - Mode lifecycle；
 - Mode Routing / Share；
@@ -191,7 +213,7 @@ JSON canonical persistence
 
 - 更好的批量筛选 / Review；
 - Template consolidation 辅助；
-- Family / 聚类研究成果的产品化准备；
+- 聚类 / Family 初始化研究（只作后续 Topology Creation 输入，不进入 V1 Shared Assets）；
 - Golden Seed / migration tooling 的工程化增强。
 
 V1.1 不默认等同于“正式创建新 Fish / 新 Mode”；是否进入 Topology Creation 以相关机制 Contract 是否闭合为准。
