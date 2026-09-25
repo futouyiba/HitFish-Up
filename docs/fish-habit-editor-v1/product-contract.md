@@ -253,10 +253,10 @@ V1 的 staged candidate 是**短事务**，不是可跨页面长期挂起的 Dra
 
 ## 7. Source Mutation Surface
 
-普通 Fish Authoring 中，**Component Card 上的 Source Selector 是主要且唯一的 Source mutation surface**。
+普通 Fish Authoring 中，**每个 Component 的 Source binding 只在该 Component Card 的 Source Selector 修改**。Policy Template Source 属独立 Policy binding，只在 Species Base Policy Card 修改。
 
-- Focus Editor 只展示当前 Source / provenance，可提供“查看模板”等导航。
-- 不在 Focus Editor 再放 Source Selector。
+- Component Focus Editor 只展示当前 Source / provenance，可提供“查看模板”等导航，不再放第二个 Component Source Selector。
+- Policy Focus 同样不复制 Policy Template Source Selector。
 - 旧实现若仍存在顶部 Source Selector，不作为 V1 产品 Contract 要求，应在 projection / migration 中收敛，避免第二 mutation entry。
 
 换 Source 是 staged mutation；改字段是 ordinary edit。两者在交互重量上故意不同。
