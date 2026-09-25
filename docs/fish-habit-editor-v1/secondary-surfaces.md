@@ -638,7 +638,7 @@ Preflight 必须绑定一个 exact Editor durable revision 和 expected Producti
 
 ### 7.7 No-op Publish
 
-V1 不维护“已发布 / 有未发布修改”的 durable 状志，但可以在 Preflight 中比较：
+V1 不维护“已发布 / 有未发布修改”的 durable 状态，但可以在 Preflight 中比较：
 
 ```text
 materialize(current durable revision)
@@ -670,7 +670,7 @@ executor 不执行无意义 write。
   - `正在写入生产配置…`
   - `正在重新读取并验证…`
 
-实现内部可以涉及多表 / 多文件 materialization，但产品只存在**一个全局 Publish transaction**。
+实现内部可以涉及多表 / 多文件 materialization，但产品只存在**一个全局 Publish transaction**。实现应优先使用 staging + atomic replace / commit 等方式把“部分写入”降为异常恢复边界，而不是把 partial success 设计成正常产品状态。
 
 ### 7.9 Success 的必要条件
 
@@ -727,7 +727,7 @@ Publish Failure 不等于 Autosave Failure。
 生产配置可能处于部分更新或未验证状态
 ```
 
-必须重新读取**整组** Production generation / output 后再允许下一次 Publish；不得按 target 拼接 baseline，不允许“成功一半”。
+必须重新读取**整组** Production generation / output 以确定当前事实；不得按 target 拼接 baseline，不允许“成功一半”。**仅仅读回当前状态不足以自动恢复发布资格。** 如果无法证明 whole Production 已回到原 expected baseline 或已经由受控恢复流程建立新的可信 baseline，则后续 Publish 保持 BLOCK。V1 不自动采纳 partial-write 后的 Production。
 
 #### D. 写入完成但 reread / verification 失败
 
@@ -736,7 +736,7 @@ Publish Failure 不等于 Autosave Failure。
 本次不能判定为发布成功
 ```
 
-同样要求重新检查 whole Production；不可因为 write API 返回 success 就提前宣告成功。
+同样要求重新读取 whole Production；不可因为 write API 返回 success 就提前宣告成功。若验证能力仍不可恢复，保持 Publish BLOCK，进入外部恢复 / 重新 Bootstrap 边界。
 
 ### 7.11 失败后的 Retry
 
@@ -745,10 +745,12 @@ V1 不提供 blind Retry。
 失败后只有在重新获得：
 
 - exact durable Editor revision；
-- 可验证且匹配 expected baseline / failure recovery rules 的 whole Production state；
+- 可验证且可信的 whole Production baseline；
 - full Publish validation；
 
 以后，executor 才重新可用。
+
+对于普通 stale / generation mismatch，`重新检查` 只重新比较；对于 partial / unverifiable write，V1 不提供自动 recovery merge。若需要建立新的 baseline，走受控外部恢复 / 重新 Bootstrap / 后续 Reconcile 能力。
 
 `重新检查` 不是“再次写入”，也不是“接受 Production 当前值”。
 
