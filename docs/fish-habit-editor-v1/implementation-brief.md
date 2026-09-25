@@ -1,12 +1,14 @@
 # Fish Habit Editor V1｜Implementation Brief
 
-> Status: Working Implementation Baseline  
+> Status: Current Implementation Entry for V1 — G1–G5 physical gates pending  
 > Product Authority: [product-contract.md](product-contract.md)  
 > Semantic Authority: [common-semantics.md](common-semantics.md)  
 > Surface Contracts: [authoring-surface.md](authoring-surface.md), [shared-assets.md](shared-assets.md), [secondary-surfaces.md](secondary-surfaces.md)  
 > Scope: [版本范围与阶段路线](../review/fish-habit-editor-version-scope.md)
 
 本文只列 V1 最小生产闭环的实现切面与尚需工程落点，不重新定义产品语义。
+
+G1–G5 不表示 Product Contract 尚未闭合；它们只确认冻结语义如何映射到 Fish Basic、ProductionRowLedger、Production naming 与 legacy bootstrap。任何 Gate 若要求改变 Product / Semantic Current，必须停止实现并回到 Owner / Review，而不是在实现层自行改义。
 
 ## 1. V1 最小闭环
 
