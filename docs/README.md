@@ -6,7 +6,8 @@
 
 | 需要回答的问题 | 入口 |
 |---|---|
-| 编辑器共用规则、具体操作及验收场景 | [组件契约审阅包](review/ui-component-contract-r2/README.md)；按包内职责读取汇编与卡片 |
+| Fish Habit Editor V1 的产品范围、Mental Model、IA 与核心交互 | [V1 Product Current](fish-habit-editor-v1/README.md) |
+| 字段语义、Operation / Persistence / Template lifecycle 等低层 Contract 与审阅证据 | [组件契约审阅包](review/ui-component-contract-r2/README.md)；按包内职责读取汇编与卡片 |
 | 实现顺序、依赖及独有实现限定 | [开发 brief](implementation-brief-0.3.4.0-B.md) |
 | 审阅包问题处置、关闭依据及剩余取证 | [问题台账](review/ui-component-contract-r2/OPEN-ITEMS.md#active-review-items) |
 | 随包画面版本、指纹及证明范围 | [图像登记](review/ui-component-contract-r2/figma-current.md#image-evidence) |
