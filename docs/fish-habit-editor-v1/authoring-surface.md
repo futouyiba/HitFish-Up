@@ -1,7 +1,7 @@
 # Fish Habit Editor V1｜Fish Authoring Surface Contract
 
 > Status: Working Candidate  
-> 本文只定义 Fish Subject 的核心编辑屏。Shared Assets、Publish 等其它 Surface 后续单独收敛；低层 operation / persistence token 语义继续引用现有 canonical contract。
+> 本文只定义 Fish Subject 的核心编辑屏。Shared Assets、Publish 等其它 Surface 后续单独收敛；公共 Source / Operation / Policy / Validation 语义由 [common-semantics.md](common-semantics.md) 维护。
 
 ## 1. 核心一屏
 
@@ -127,7 +127,7 @@ Grass      0.30        [仅用当前来源 ▾]                     0.30
 
 ## 7. Operation vocabulary projection
 
-低层 token 语义仍由 canonical semantic contract 维护；V1 UI 采用作者语言。
+低层 token 与解析语义由 [common-semantics.md](common-semantics.md) 维护；V1 UI 采用作者语言。
 
 ### Species Base 数值字段
 
