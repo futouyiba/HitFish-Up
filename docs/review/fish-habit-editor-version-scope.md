@@ -3,7 +3,7 @@
 > Status: Current Scope Baseline  
 > Purpose: 只定义 Fish Habit Editor 各阶段承诺的能力边界、明确不做项与后续进入条件。本文不记录决策历史，不替代具体 UI / Persistence / Runtime Contract。
 >
-> **Version commitment:** V1 是当前需要闭合与验收的交付范围；V1.1 / V1.2 / V1.3+ / V2 是后续阶段的能力分组与进入条件，不构成已经承诺的发布日期或固定顺序。V1 收口后的真实成本与依赖可以调整后续阶段编号，但不得把后续能力反向塞回 V1。
+> **Version commitment:** V1 是当前需要闭合与验收的交付范围；V1.0.1 是紧随 V1 的窄增量，仅补固定 Compat Mode 创建；V1.1 / V1.2 / V1.3+ / V2 是后续能力分组与进入条件，不构成固定发布日期。不得把后续能力反向塞回 V1。
 
 ## 1. 总体产品边界
 
@@ -22,24 +22,26 @@ Fish Habit Editor 的职责是维护“鱼的中鱼习性 Authoring Truth”，�
 
 ### 2.1 阶段目标
 
-V1 证明一条完整生产闭环：
+V1 证明一条最小、可制作的 Authoring 闭环：
 
 ```text
-已有 Production / Bootstrap Seed
-→ Editor durable state
-→ 手工 Authoring
+Fish Basic / authoritative Species Catalog
+→ 已有 Habit：直接编辑
+→ 无 Habit：开始配置习性
+→ 原子创建完整 Species Base
+→ Authoring
 → Validation
 → Resolve Preview
 → Publish
-→ 更新既有 Habit Production projection
 ```
 
-V1 的核心成果不是“覆盖所有生产操作”，而是证明：
+V1 的核心成果不是覆盖所有 Runtime / StockRelease 拓扑，而是证明：
 
-1. 已有习性数据能够进入新的 Authoring Model；
-2. Editor State 可以成为 Habit Authoring Truth；
-3. 作者可以在一个因果清楚的工具里完成编辑、验证、预览和发布；
-4. Publish 可以安全物化到已有 Habit topology。
+1. Species identity 继续由 Fish Basic 提供，Habit Editor 只创建自己拥有的 Species Base；
+2. 新建 Species Base 与既有 Species Base 使用同一套 Authoring / Resolve / Publish；
+3. 已有兼容 Mode 可以继续编辑；
+4. 新建 Species Base 若尚无 `FishEnvAffinity`，属于完整且合法的 Authoring Base，但**尚未产生可被 StockRelease / FishRelease 引用的运行时习性行**；
+5. V1 Publish 不因缺少 Mode 偷偷创建 `FishEnvAffinity`；固定 Mode 创建由 V1.0.1 补齐。
 
 ### 2.2 V1 Included
 
@@ -127,6 +129,14 @@ Policy Template
 
 全部完成后 atomic create Species Base。产品上不把缺 Component Profile 的半完成 Species Base 作为正常创建结果。
 
+创建完成后：
+
+- Species Base 立即成为可继续 Authoring / Resolve 的 durable truth；
+- 如果该 Species 尚无任何 `FishEnvAffinity`，UI 应明确表达“基础习性已配置，尚无中鱼习性模式”；
+- 这不是 Validator ERROR，也不阻断保存 Species Base；
+- Publish 不为此自动创建 Affinity row，也不自动创建 StockRelease / FishRelease 关联；
+- 在尚无 Affinity consumer 时，不要求为了“看起来已发布”强行生成无人引用的 Production projection。
+
 Golden Seed / Snapshot 继续用于 demo / regression / migration / roundtrip evidence，但不决定其它 Fish Basic Species 是否可以开始配置。
 
 已有 Production migration 与新 Species initialization 分开：
@@ -182,12 +192,12 @@ V1.0.1 是紧随 V1 的窄增量，只补固定 Compat Mode 创建：
 - 四个 Component 初始 Source = 跟随 Species Base；
 - numeric operations 初始 absent；
 - Role / `fail_env_coeff` 初始 inherit Species；
-- Production human-readable naming 沿既有 Species + bucket 生成规则，并做 collision validation；
+- 业务显示名固定为“幼年 / 成年及以上”，不要求用户填写 Mode name；Production human-readable row name 由实现按 Species + 固定 Compat type 自动生成并做 collision validation，具体字符串格式属于 implementation contract，不作为新的产品输入。
 - StockRelease / FishRelease 是否让某个 Quality 使用该 Affinity，继续由其自己的配置表维护，不属于 Habit Editor。
 
 V1.0.1 不处理任意 Engagement Mode 与 bucket-scoped operation owner 的关系。
 
-## 3. V1.1｜Authoring Efficiency
+## 4. V1.1｜Authoring Efficiency
 
 > Bake Preview / 条件组求值预览不属于 V1 承诺。是否在 V1.1 或更后阶段进入，以预览输入、基础权重、条件组来源与验收口径闭合为前提。
 
@@ -197,7 +207,7 @@ V1.1 的目标是提升生产效率，不改变 V1 已验证的 Authoring Truth 
 
 优先候选：
 
-### 3.1 Multi-CSV Bulk Authoring
+### 4.1 Multi-CSV Bulk Authoring
 
 研究并实现**规范化多 CSV 套表**工作流，目标是让策划和脚本可以直接：
 
@@ -229,7 +239,7 @@ JSON canonical persistence
 
 允许保留轻量 manifest / metadata 文件；“业务数据主要采用 CSV”不要求目录内只能存在 CSV。
 
-### 3.2 Authoring Efficiency Enhancements
+### 4.2 Authoring Efficiency Enhancements
 
 可根据 V1 使用反馈进入：
 
@@ -240,38 +250,34 @@ JSON canonical persistence
 
 V1.1 不默认等同于“正式创建新 Fish / 新 Mode”；是否进入 Topology Creation 以相关机制 Contract 是否闭合为准。
 
-## 4. V1.2｜Topology Creation & Data Integration
+## 5. V1.2｜Topology Creation & Data Integration
 
 这一阶段开始解决“新的鱼可以从 Editor 出生”。
 
-### 4.1 Fish Habit Initialization
+### 5.1 Advanced Fish Initialization
 
-目标能力：
+V1 已支持从 authoritative Species Catalog 创建完整 Species Base。
 
-```text
-已有 Species Catalog identity
-→ 开始配置习性
-→ Family / Preset 初始化
-→ Species Base Authoring
-```
+这一阶段只研究更高级的初始化效率，例如：
 
-不在 Habit Editor 中创建任意新的 Species identity；Species identity 仍来自 authoritative Species Catalog。
+- Family / 聚类辅助；
+- Species Preset；
+- 批量初始化；
+- 外部生态数据辅助。
 
-Family 的主要产品角色是：
+Family / Preset 若进入，只作为初始化便利，不形成长期 parent relation。
 
-> 为新 Fish 提供一组可编辑的初始 Habit Authoring 组合，而不是长期 parent relation。
+### 5.2 Engagement Mode Creation
 
-### 4.2 Engagement Mode Creation
+在 V1.0.1 固定幼年 / 成年及以上创建之外，支持：
 
-支持：
-
-- 新建真正需要的 Engagement Mode；
+- 新建真正需要的任意 Engagement Mode；
 - Mode identity / lifecycle；
 - Mode 初始 Authoring state；
 - Mode-level Habit / Policy authoring；
 - Materializer 从 absent 创建所需 Habit production projection。
 
-新 Fish 初始化时**不要求自动创建固定的 young / mature 两个 Mode**；用户按需要建立 Mode。
+V1.0.1 已覆盖固定 young / mature Compat Mode 的按需创建；本阶段只处理超出固定 Compat 的任意 Mode。
 
 这一阶段开始前必须闭合：
 
@@ -282,7 +288,7 @@ Family 的主要产品角色是：
 - Publish create-from-absent；
 - Bootstrap / roundtrip symmetry。
 
-### 4.3 External Ecological Data Integration
+### 5.3 External Ecological Data Integration
 
 外部生态数据接入可在该阶段或之后进入，例如：
 
@@ -294,7 +300,7 @@ Family 的主要产品角色是：
 
 这类能力不作为 V1 承诺。
 
-### 4.4 Quality Boundary Remains
+### 5.4 Quality Boundary Remains
 
 即使进入 Mode Creation：
 
@@ -302,7 +308,7 @@ Family 的主要产品角色是：
 - Quality / stocking composition 继续属于 FishPond / StockRelease / FishRelease domain；
 - 不因创建 Mode 把 Release topology 拉回 Habit Editor。
 
-## 5. V1.3+｜Reconcile & Advanced Production Workflow
+## 6. V1.3+｜Reconcile & Advanced Production Workflow
 
 该阶段处理 Editor 之外发生的修改和更复杂的生产维护。
 
@@ -317,7 +323,7 @@ Family 的主要产品角色是：
 
 明确不以“自动双向同步”作为默认目标。
 
-## 6. V2｜Full Engagement Mode / Routing
+## 7. V2｜Full Engagement Mode / Routing
 
 V2 处理真正动态的 Engagement Mode 体系。
 
@@ -330,20 +336,21 @@ V2 处理真正动态的 Engagement Mode 体系。
 
 V1 的兼容 scope UI 不能被用来反推 V2 Routing 参数形态。
 
-## 7. 版本切分原则
+## 8. 版本切分原则
 
 每次升级只有在新增能力能形成完整因果闭环时才进入上一版本承诺。
 
 优先顺序：
 
-1. **先闭合 Existing Topology Authoring；**
-2. **再提升批量 Authoring / Persistence 效率；**
-3. **再创建新的 Habit topology；**
-4. **再接外部数据与 reconcile；**
-5. **最后进入完整 Engagement Mode / Routing。**
+1. **先闭合 Species Base Creation + Existing Compat Authoring；**
+2. **V1.0.1 只补固定幼年 / 成年及以上 Compat Mode Creation；**
+3. **再提升批量 Authoring / Persistence 效率；**
+4. **再进入任意 Engagement Mode / 高级初始化；**
+5. **再接外部数据与 reconcile；**
+6. **最后进入完整 Engagement Mode / Routing。**
 
 不为了展示“功能多”而提前暴露没有 durable semantics 的按钮、占位字段或伪控件。
 
 V1 Review 的核心问题应始终是：
 
-> **在不依赖后续能力的情况下，一个作者能否安全地理解、修改、验证并发布已有 Fish Habit topology？**
+> **在不依赖后续能力的情况下，一个作者能否从 Fish Basic 选择已有 Species，创建或编辑完整 Species Base，并安全地验证、解析和发布；同时继续编辑已有 Compat Mode？**
