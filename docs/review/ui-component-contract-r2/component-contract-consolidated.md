@@ -5,7 +5,7 @@
 ## 1. 产品拓扑与三栏
 
 <a id="subject-navigation"></a>
-- 三栏＝**Subject Navigation｜主体导航** ｜ 上下文总览 ｜ 焦点编辑。几何：250 ＋ 890 ＋ 460 ＋ 边距 ＝ 1680。左栏负责回答「现在编辑谁」，中栏只展示当前 Subject 的 Context Overview，右栏编辑具体 Component / Field；中栏不再重复一套鱼 / 模式选择器。
+- 三栏＝**Subject Navigation｜主体导航** ｜ 上下文总览 ｜ 焦点编辑。V1 是 desktop-first wide authoring layout：左栏保持窄导航，中栏承担最大整体视野，右栏必须足够宽以支持 Inline Field Authoring；不把旧投影的 250 / 890 / 460 固定像素当 semantic contract。左栏回答「现在编辑谁」，中栏展示当前 Subject 的 Context Overview，右栏编辑具体 Component / Field；中栏不再重复一套鱼 / 模式选择器。
 - **Subject Rail** 只保留两类**可展开的交互 Section**：**FISH** 与 **共享资产**。同一时刻只展开一个；两个 Section header 必须始终可达，只有当前 Section body 承担垂直滚动。Fish Subject 的 **编辑 / 解析预览** 共用这一套 Subject Navigation；Resolve Preview 不是顶栏独立 Workspace。Bake Preview 不属于 V1。
 - FISH 下的 Species 是**导航父节点**，不是额外的一层独立 Authoring Subject；真正可选的 Authoring Subject 是其下的「基础习性」或某个「中鱼习性模式」。Fish 使用标准 disclosure，可由作者自由展开 / 折叠，多条非当前鱼可同时展开；不设置“最多额外一条”的特殊自动折叠规则。选择某个 child Subject 时，其 Fish 自动展开并对 active body 做最小必要 reveal。
 - 每条鱼内部固定分为：**基础习性** ＋ **中鱼习性模式**。`中鱼习性模式` 只是不可点击的 group label；本版 `幼年` / `成年及以上` 作为模式行展示，并带中性的 **[兼容]** badge，表示「业务上按中鱼习性模式编辑，但当前仍由兼容 authoring scope / Affinity 结构承载」。`[兼容]` 不是警告、不是名字的一部分，也**不新增独立 durable EngagementMode identity**；badge 应提供短 Tooltip / accessible description 解释其含义，不在每个 Mode 旁常驻重复长说明。
