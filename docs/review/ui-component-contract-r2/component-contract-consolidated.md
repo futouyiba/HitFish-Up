@@ -1,20 +1,20 @@
 # 组件契约｜编辑器 UI Component Contract（现行）
 
-> **Historical V0.2 — 非 Current Authority。** 本文件保留 R2 当时的设计 / Review / evidence 状态，用于版本考古与来源追踪。Fish Habit Editor 当前产品与公共语义以 [`docs/fish-habit-editor-v1/`](../../fish-habit-editor-v1/README.md) 为准；历史内容不得覆盖 V1 Current。
+> **Historical V0.2 — 非 Current Authority。** 本文件正文冻结为 R2 / V0.2 当时的设计、Review 或 evidence 状态；下文出现的“现行 / Current”只表示 **V0.2 当时**。Fish Habit Editor 当前产品与公共语义以 [`docs/fish-habit-editor-v1/`](../../fish-habit-editor-v1/README.md) 为准。不得用本历史包覆盖 V1 Current。
 
 本文只写现行规定。出处写作《页名》§N、记录页 §N 或 冻结卡 `A①-卡N` / `A②-卡N`；查不到出处的条目列在 §18 的未核边界与 §19 的命名边界，不进正文。标（本轮裁定）的条目＝本轮已定口径，其依据随条给出。
 
 ## 1. 产品拓扑与三栏
 
 <a id="subject-navigation"></a>
-- 三栏＝**Subject Navigation｜主体导航** ｜ 上下文总览 ｜ 焦点编辑。V1 是 desktop-first wide authoring layout：左栏保持窄导航，中栏承担最大整体视野，右栏必须足够宽以支持 Inline Field Authoring；不把旧投影的 250 / 890 / 460 固定像素当 semantic contract。左栏回答「现在编辑谁」，中栏展示当前 Subject 的 Context Overview，右栏编辑具体 Component / Field；中栏不再重复一套鱼 / 模式选择器。
-- **Subject Rail** 只保留两类**可展开的交互 Section**：**FISH** 与 **共享资产**。同一时刻只展开一个；两个 Section header 必须始终可达，只有当前 Section body 承担垂直滚动。Fish Subject 的 **编辑 / 解析预览** 共用这一套 Subject Navigation；Resolve Preview 不是顶栏独立 Workspace。Bake Preview 不属于 V1。
+- 三栏＝**Subject Navigation｜主体导航** ｜ 上下文总览 ｜ 焦点编辑。几何：250 ＋ 890 ＋ 460 ＋ 边距 ＝ 1680。左栏负责回答「现在编辑谁」，中栏只展示当前 Subject 的 Context Overview，右栏编辑具体 Component / Field；中栏不再重复一套鱼 / 模式选择器。
+- **Authoring Surface 的 Subject Rail** 只保留两类**可展开的交互 Section**：**FISH** 与 **共享资产**。同一时刻只展开一个；两个 Section header 必须始终可达，只有当前 Section body 承担垂直滚动，不能靠加高 Rail、压缩字号或让整个页面滚动来解决内容溢出。现有 `FISH QUALITY STABLE / OPPORTUNITY · PRESENCE` 等置灰未来入口若保留，只是 disabled capability stubs，不参与 accordion Section 语义。Resolve Preview / Bake Preview / Fish List 属工具级独立视图，不要求复制这套 Authoring Rail。
 - FISH 下的 Species 是**导航父节点**，不是额外的一层独立 Authoring Subject；真正可选的 Authoring Subject 是其下的「基础习性」或某个「中鱼习性模式」。Fish 使用标准 disclosure，可由作者自由展开 / 折叠，多条非当前鱼可同时展开；不设置“最多额外一条”的特殊自动折叠规则。选择某个 child Subject 时，其 Fish 自动展开并对 active body 做最小必要 reveal。
 - 每条鱼内部固定分为：**基础习性** ＋ **中鱼习性模式**。`中鱼习性模式` 只是不可点击的 group label；本版 `幼年` / `成年及以上` 作为模式行展示，并带中性的 **[兼容]** badge，表示「业务上按中鱼习性模式编辑，但当前仍由兼容 authoring scope / Affinity 结构承载」。`[兼容]` 不是警告、不是名字的一部分，也**不新增独立 durable EngagementMode identity**；badge 应提供短 Tooltip / accessible description 解释其含义，不在每个 Mode 旁常驻重复长说明。
 - `基础习性` 不放进「中鱼习性模式」group；它仍对应 Species Base。Mode / Compat 行被选中后，中栏直接展示该 Subject 的 Context Overview；不在中栏再画 Mode Tabs / Selector。
 - Rail 的展开 / 折叠只是 session UI state，不产生 durable authoring entity。作者可以主动折叠当前 Fish；这不会改变当前 Subject，中栏标题仍持续显示当前 Fish + Subject。**若当前 Subject 被折叠祖先隐藏，最近的折叠祖先（Fish 行；必要时 FISH Section header）必须保留 active-descendant 视觉提示**，至少让作者知道当前编辑对象位于该分支内；精确 Subject 名仍由中栏 Context Header 表达。Fish 行的 disclosure arrow 只负责展开 / 折叠，不触发 Subject mutation；点击 Fish label 则展开该 Fish 并明确进入其「基础习性」。不维护 `lastSubjectByFish` 之类隐藏恢复状态。
 - **共享资产**承载可复用 Authoring Assets：习性模板（五类 TemplateKind）与 Species Presets。Species Preset 是一次性写五个来源绑定（四组件 ＋ Policy）的 authoring convenience asset，**不是 Fish 的父节点，也不是第三个顶层 Workspace**。Preset 的管理在共享资产中；“应用物种预设”从 Fish 作者面直接可达，但具体 target / owner 继续服从既有 Preset contract，**不得因为当前中栏正显示某个 `[兼容]` Mode 就把 Apply 默认为该 Mode mutation**。
-- 顶栏是 **Editor Global Shell**：承载工具身份、Autosave / Diagnostic 状态、短事务 Candidate 状态与 Publish；**不承载 Resolve / Bake 视图入口，不重复 FISH / 共享资产的 Subject Navigation，不显示鱼 / Mode 作为第二套 breadcrumb，也不承担局部字段编辑**。Fish Subject 的“编辑 / 解析预览”位于中栏 Context Header。
+- 顶栏是 **Editor Global Shell**：承载工具身份、全局 ephemeral candidate / Autosave / Diagnostic 状态、Publish，以及 Resolve Preview / Bake Preview / Fish List 这类**工具级视图入口**（若当前产品保留这些入口）；**不重复 FISH / 共享资产的 Subject Navigation，不显示鱼 / Mode 作为第二套 breadcrumb，也不承担局部字段编辑**。
 - **Quality Stable Data 与 Production 习性引用分开**：`FISH QUALITY STABLE` 页面本期仍置灰，不开放品质自身字段。StockRelease / Production 中既有的 Quality＋`FishEnvAffinityRef` 引用由 Production / 数据迁移维护；习性档案 Authoring Surface 只读展示**当前 Editor 会话载入快照中，哪些既有 Production 引用指向该 Affinity**。UI 可按 Quality 聚合成人类可读摘要，但不得把聚合反推成新的全局 `Quality → Affinity` durable identity；同一 Quality 若在不同 Production 行引用不同 Affinity，可以同时出现在多个 Affinity 摘要中，这本身不是冲突。该摘要也不是实时 Routing 数据源。Production 后续外部变化由 drift / generation 诊断处理。Editor 本期不新增、删除或重分配这些引用，也不引入新的 Quality / durable-runtime EngagementMode / tier / routing identity。（Owner 2026-09-24 指示（经主代理转达）：「关注 109PR 当中带来的语义变化，它是非常关键的。」）
 - **业务导航＝基础习性 ＋ 中鱼习性模式**：Species Base 在产品上显示为「基础习性」；本版 `young / mature` 在作者心智与 Subject Navigation 中直接作为 `幼年 / 成年及以上` 两个**中鱼习性模式**，并以 `[兼容]` 标示当前仍由 compat/Affinity authoring projection 承载。该业务命名不改变物理 owner：numeric patch 按 bucket；Component Source 沿既有 Affinity/sourceOverride 身份规则；Role 与 `fail_env_coeff` 按 production-row 粒度；Runtime / production 仍无独立 `EngagementMode` durable identity。只有当该 `[兼容]` Mode 下**没有任何本地 authoring record**（numeric patch、`sourceOverride`、所含 production rows 的 Role / `fail_env_coeff` patch）时才显示「沿用底板」；存在任一记录则显示「有本层调整」，不按 Effective 值相同反推，也不得把生产行名（如 `NORMAL`）冒充 Mode identity。
 - 中栏 Context 与右栏 Focus **不是同一个导航状态**：允许短暂 detached，但必须显式提示（右栏标题明确对象身份 ＋ 低成本「切回当前上下文」），不得让作者误以为右栏仍在编辑中栏对象。detached 只是 UI 导航状态，不产生新的 durable authoring entity。（《编辑器心智模型与 IA》§3 逐字「切换上下文不销毁编辑现场」）
@@ -108,19 +108,18 @@
 - 诊断是派生量，每次重算，不持久化为第二真相。（《编辑器持久层契约》§6.5）
 
 ## 7. 组件卡 ＋ 焦点编辑栏
-- 组件卡是**摘要 ＋ Focus 入口 ＋ Source mutation 入口**，不是完整字段编辑器。逐字段值在右侧 Focus Editor 中做行式编辑；V1 不把焦点栏宽度固定为旧投影的 460px，产品目标是宽桌面 authoring layout。
-- 卡上展示：组件身份、当前 Source、当前 **Effective Role 只读 badge**、继承 / 覆盖状态、诊断，以及足够理解当前状态的字段摘要。
-- **Source mutation 只有一个主要入口：组件卡 Source Selector。** 旧的顶部 `templateRow` / 前层 Source Selector 不再属于 V1 产品 Contract；Focus Editor 也不提供 Source Selector。三处只保留一处 mutation surface，避免“双入口单 Truth”继续成为产品复杂度。
-- **Role mutation 不在组件卡发生。** 组件卡只读显示 Effective Role，用于 Overview 扫描；真正的 Role / `fail_env_coeff` 编辑统一由“空间机会策略”区域与其 Focus Editor 承担。组件卡不得另存或缓存 Role state。
-- V1 当前兼容拓扑中，一个中鱼习性模式对应一条既有 `FishEnvAffinity` 行，因此产品 UI 不保留 multi-row Compat 的 Role 摘要 / production-row 展开分支。
-- 字段行在 Focus Editor **直接平铺编辑**，不设二级 drawer / modal / 逐字段“编辑”按钮。
+- 组件卡是**摘要 ＋ 快速编辑入口**，不是只读卡：可就地改 **Source / Template**；Role 在当前 Context 对应单一 Role owner 时可就地改，multi-row Compat 只显示 Role 摘要，实际行级 mutation 由 Policy 区的 production-row 行级编辑区承接。逐字段值仍在右侧 460px 焦点编辑栏完成。（《编辑器界面》§1 导语、§1.1）
+- 卡上展示：组件身份、当前 Source / Template、当前 Role 角标、继承 / 覆盖状态、诊断。（《编辑器界面》§1.1「卡片展示摘要、模板选择器、Role 角标与继承 / 覆盖状态」；冻结卡 `A①-卡1` 的「卡上 `templateName` 与闭值同源同名」「same-source pin 的『已显式固定』记号」）
+- **入口与 Truth 的对应**：**前层 Source Selector（顶部 `templateRow`，每组件一个）与组件卡的来源 / Source 下拉**（**卡上这一个入口同时覆盖 Template 与 Source** —— 换模板就是换 Source 绑定）指向**同一个**组件 Recipe Source binding；**卡的 Role 控件与 Policy 区 Role 行**指向**同一个** Policy Authoring Truth。⇒ **各自「双入口、单 Truth」，不得增设第三个 mutation 面。** ⚠️ **入口叫「来源 / Source」，不叫 Template** —— 合法来源里含 `SPECIES_CONCRETE`（**它不是模板**）；**当所选来源是共享模板时，卡上以该模板名显示它**（展示层才出现 Template 字样）。⚠️ Source 在合法当前 owner 上可就地改；Role 只有在当前 Context 对应**单一 Role owner**时才提供卡上可编辑下拉。multi-row Compat 的卡上只显示 Role 摘要，Policy 区按 production row 展开逐行编辑，不得把 row-level Role 伪装成 bucket-level 控件。两入口都不另存 durable 副本。⚠️ **两入口「同源」说的是 durable truth 同源**；**未确认的 Source 变更是 candidate（UI 态）** —— 两处可同时显示它，**但它还不是 truth**（见 §8 的 candidate → Rebase Preview → 显式确认 → 原子提交）。⚠️ **焦点编辑栏不提供 Source 下拉** —— 它只显示当前 Source 的上下文／来源说明（在那里再放一个 Source 选择器，就成了「Top Row ＋ Card ＋ Focus Editor」三个 mutation surface，**复杂度没有买到新能力**）。（《编辑器持久层契约》§8 首行「每组件一个**前层** Source 选择器」；《编辑器界面》§1 导语、§1.1、§7；《编辑器心智模型与 IA》§6、§7、§8；记录页 §172 二 KEEP、§331 裁 `R3-FIG-01`、§358 裁「入口不叫 Template」）
+- 卡的 Source / Role 不得另建一套 durable state。（《编辑器界面》§7；《编辑器心智模型与 IA》§8）
+- 字段行**原地展开**，不设二级 drawer。（本轮裁定 g；页面只规定 2 列紧凑控件与折叠栏位）
 
 <a id="source-transaction"></a>
 ## 8. Source 选择器 ＋ Rebase Preview
 
 **本节是 Source mutation、两档 Preview 及确认边界在本包的完整机制投影**；权威为《编辑器持久层契约》§3.10、§6.3 及记录页 §392 的 ADJ-09 裁定。本批回读持久层 v16（`Last Updated 2026-09-21 14:34 +08:00`），未重读记录页；其余历史出处沿用基线。具体动作／字段／验收见[卡1](contract-cards.md#source-selector)，事务分类与 TimePeriod 的独立护栏见[§15](#transaction-model)。
 
-- 每组件只有一个作者可见 Source mutation 入口，位于该 Component Card；兼容 Mode 另有「跟随基础习性」，Temperature 在合法 Species Concrete 已存在时可显示「当前物种生态数据」。Source allowlist 与持久化语义仍按本节下文；这里只收敛 V1 的 UI 入口 ownership。
+- 每组件一个前层 Source 选择器；桶（覆盖层）另有「跟随物种」；温度多一项「当前物种生态数据」（存在时）。（《编辑器界面》§1.1；《编辑器与 Resolve》§11.3）
 - 可选来源矩阵（**按层分写**）：**前层（物种层）** —— Temperature ＝ `SHARED_TEMPLATE | SPECIES_CONCRETE`，Structure / Feeding Layer / Time Period ＝ 仅 `SHARED_TEMPLATE`；**桶（覆盖层）** —— **所有组件都只有 `SHARED_TEMPLATE` ＋「跟随物种」**，**不列 `SPECIES_CONCRETE`**（**连当前物种的也不列** —— 要引用当前物种的 Concrete，走「跟随物种」）。**任何层都不得 pin 非当前物种的 Concrete。**（《编辑器持久层契约》§3.3；《编辑器与 Resolve》§11.3 逐字「桶层另有「跟随物种」选项，**不把任何物种的 Concrete 当通用可选项**」；冻结卡 `A①-卡1`）
 - `SPECIES_CONCRETE` 属当前物种：identity ＝ `(speciesId, componentType)`，不进模板清单、不可被其它物种引用；不得 pin 另一物种的 Concrete。（《编辑器持久层契约》§3.3；记录页 §172 二）
 - **每一笔 Source mutation 都要 staged confirm**：候选保持 ephemeral → before / after Resolve → 对应档位的 **Rebase / Impact Preview** → 显式确认 → 乐观 revision 核验 → 原子 durable 提交。禁止为保持旧 Effective Value 自动生成 `SET`。（《编辑器与 Resolve》§11.3；《编辑器界面》§1.1；《编辑器持久层契约》§3.10；记录页 §392 裁 ADJ-09）
@@ -140,8 +139,8 @@
 - Role 与 Profile 的变更边界按[§11](#profile-lifecycle)，不能由改变消费角色推导创建／删除或改写 Profile。
 - 空间机会聚合策略有独立共享 Policy Template，payload ＝ 四个角色 ＋ `fail_env_coeff`；它是第五类 `TemplateKind`，**不是第五个 Component** —— 不扩 `ComponentType`、Runtime 仍四条件槽、不新建生产 Policy 子表。（《编辑器持久层契约》§3.6；记录页 §172 二 A）
 - Policy Source 只绑物种层；**桶层没有 `policySourceOverride`**，不得虚构这类直接引用。（《编辑器持久层契约》§3.10；记录页 §172 二 B）
-- 粒度仍分离：Component 数值 override 与 Policy row patch 是不同持久化 owner。V1 产品层已冻结为**一个兼容中鱼习性模式对应一条既有 `FishEnvAffinity` 行**，因此当前 UI 可直接把该 Mode 的 Role / `fail_env_coeff` 作为这一条行级 Policy authoring 呈现；底层 row key / patch identity 保持不变。
-- `fail_env_coeff` 不挂在某个组件卡内部；Species Context 编辑物种默认值，V1 `[兼容]` Mode 直接编辑该 Mode 对应单条 `FishEnvAffinity` 行的 row-level patch。`[0, 0.10]`，默认 `0.01`，越界 ERROR ＋ 阻断 Publish、不 silent clamp。（《编辑器界面》§1.1；《编辑器持久层契约》§3.4）
+- 粒度必须分离：数值 override 按 **bucket**（`young / mature`，TimePeriod 不按规格 / row）；Role override 与 `fail_env_coeff` patch 按 **生产行**。同一 bucket 内不同生产行可有不同 Role / `fail_env_coeff`，Validator 不得因这些行级值不同报错。（《编辑器持久层契约》§3.4、§3.7）
+- `fail_env_coeff` 不挂在某个组件卡内部；Species Context 编辑物种默认值，[兼容] Mode 的当前 authoring scope 若只有一条 production row 可直接编辑该行，若聚合多条 production rows 则在 **Policy 区的 production-row 行级编辑区**中逐行显示 / 编辑。`[0, 0.10]`，默认 `0.01`，越界 ERROR ＋ 阻断 Publish、不 silent clamp。（《编辑器界面》§1.1；《编辑器持久层契约》§3.4）
 - `fail_env_coeff` 的 `ADD` 是绝对数值增量，不是百分比 / 乘数。（《编辑器持久层契约》§3.4 逐字「ADD 为绝对数值增量」）
 - Editor 没有钓场上下文：不提供 Pond selector，不编辑 `baseOpportunityIntensity / isBackgroundFish / envCoeffMin`；`fail_env_coeff` 是本编辑器可编辑的习性档案字段，不是 `FishRelease` 的 `envCoeffMin`。（《编辑器界面》§6）
 - 诊断展示位置：字段问题 → 字段控件；Profile 问题 → 组件卡；Policy 问题 → 聚合策略区；全局 / Publish 问题 → 顶栏 ＋ 校验清单。这里只规定 UI placement，不新增统一 `Diagnostic.owner` 身份层。（冻结卡 `A①-卡6`；《编辑器界面》§1.4）
@@ -161,7 +160,7 @@
 - Policy 侧的 `CLEAR` 语义：移除继承自物种层的操作，**回到物种当前 Policy Template 的 raw 值**。（《编辑器持久层契约》§3.4）
 - 该定义同时覆盖四个 Role 与 `fail_env_coeff`；`CLEAR` 不携值。**Affinity 没有 `policySourceOverride`**，不能把组件级来源 pin 的能力搬入 Policy。（《编辑器持久层契约》§3.4、§3.10）
 - 行级缺省（继承物种层 Role 操作）与 `CLEAR`（回到 Policy Template raw Role）是两个不同动作，UI 必须区分：物种层作者词为「沿用策略模板 / 设置为 CORE|SECONDARY|IGNORED」；行级作者词为「沿用物种角色 / 使用策略模板原始角色 / 设置为 CORE|SECONDARY|IGNORED」。`INHERIT / absent / CLEAR / SET` 只作为 durable 令牌，不直接充当作者文案。
-- Role 控件显示 **Effective Role ＋ 当前 Authoring Intent ＋ 必要 provenance**。Species Context 只编辑 Species Role；V1 兼容 Mode 直接编辑其对应单条 `FishEnvAffinity` 行的 Role patch。组件卡只显示 Effective Role badge，Role mutation 统一在 Policy Focus Editor。
+- Role 控件显示 **Effective Role ＋ 当前 Authoring Intent ＋ 必要 provenance**。Species Context 只编辑 Species Role。兼容覆盖若只对应一条 production row，可直接编辑该行 Role；若对应多条 production rows，组件卡只显示摘要，**Policy 区按 production row 展开行级编辑区**（每行明确 row identity，逐行编辑四个 Role 与 `fail_env_coeff`），不得另造隐式广播的 bucket-level Role / coeff 控件。P0 不做跨行批量 Role / `fail_env_coeff`。
 - 不因最终值 / 枚举相等自动推断 inherit、CLEAR 或 SET。（《编辑器持久层契约》§3.5、§3.3）
 
 <a id="profile-lifecycle"></a>
@@ -262,7 +261,6 @@
 
 <a id="publish-boundary"></a>
 **Publish 边界**：
-V1 的产品承载与 Preflight / success / failure / recovery 交互以 [V1 Secondary Surfaces §7](../../fish-habit-editor-v1/secondary-surfaces.md#7-publish发布到生产配置) 为产品层 Current；本节只保留低层 writeback / generation / materialization 护栏。
 Owner 2026-09-24 指示（经主代理转达）：「关注 109PR 当中带来的语义变化，它是非常关键的。」
 
 - 顶栏 `发布到生产配置…` **只作为入口**，进入 / 聚焦唯一 Publish 区；唯一 writeback executor 留在该区。Autosave 只表达 Editor durable state（`编辑器已保存 / 编辑器已保存 · 有错误 / 编辑器保存中… / 编辑器保存失败`），Publish 不隐式 Save，也不等同 Git commit。
