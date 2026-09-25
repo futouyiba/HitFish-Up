@@ -18,6 +18,16 @@ Notion 仍适合承载人工浏览、评论和不依赖仓库的阅读入口；�
 
 仓内消费者可以保留足以独立阅读的短摘要、操作说明、验收场景和证据边界，但不得在摘要中新增阈值、例外、判定顺序或其它可独立演化的规范性 Contract。每项规范事实在仓内只保留一个人工维护的 Owner；其它位置链接或引用该 Owner。
 
+## Fish Habit Editor V1 产品层 Current
+
+Fish Habit Editor V1 的产品层入口迁至 `docs/fish-habit-editor-v1/`：
+
+- `product-contract.md` 拥有 V1 的 Mental Model、产品 IA、Workspace、Truth / Derived 边界、V1 interaction taxonomy 与产品级负向边界；
+- `authoring-surface.md` 拥有 V1 Fish Subject 核心编辑屏的导航、Context Header、Component Overview、Focus Editor 与 Inline Field interaction；
+- `docs/review/fish-habit-editor-version-scope.md` 拥有版本范围与后续阶段边界。
+
+现有 `docs/review/ui-component-contract-r2/` 继续维护尚未迁移的低层 semantic / persistence / lifecycle / validation Contract 与审阅证据。**当旧审阅包中的产品层 IA / surface projection 与 V1 Product Current 冲突时，V1 产品层读取新目录；低层 token、记录形状、Source / Role / Template lifecycle 等仍读取其现有 canonical owner，除非后续显式迁移。** 这不是整包 supersede，也不允许新 V1 文档复制一份低层规则形成双 Owner。
+
 ## 七页职责矩阵
 
 | Current 页面 | Git Markdown 承接章节（章节级唯一 Owner） | 该 Owner 维护什么 | 消费者可保留 | 不在该 Owner 内维护 |
