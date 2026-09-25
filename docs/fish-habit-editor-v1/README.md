@@ -17,8 +17,10 @@ V1 当前需要的共用语义暂时与产品文档共址在 `common-semantics.m
    V1 当前消费的公共语义：Source / Operation / Resolve / Policy / Validation / staged mutation / Template / Publish materialization。
 3. [authoring-surface.md](authoring-surface.md)  
    Fish Subject 的核心一屏：Subject Navigation、Context Header、Component Overview、Focus Editor、Inline Field Authoring、Source Change。
-4. [secondary-surfaces.md](secondary-surfaces.md)  
-   V1 的次级产品面；当前已闭合 Resolve Preview 与 Publish，Shared Assets 在真正进入收敛时追加。
+4. [shared-assets.md](shared-assets.md)  
+   V1 Shared Template：创建、提取、值编辑传播、引用、Archive / Restore / Replace References。
+5. [secondary-surfaces.md](secondary-surfaces.md)  
+   V1 的次级产品面；当前已闭合 Resolve Preview 与 Publish。
 
 ## Authority relationship
 
