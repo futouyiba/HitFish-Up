@@ -14,7 +14,8 @@
    V1 Mental Model、IA、Workspace、Truth/Derived 边界、交互分类与 Golden Path。
 2. [authoring-surface.md](authoring-surface.md)  
    Fish Subject 的核心一屏：Subject Navigation、Context Header、Component Overview、Focus Editor、Inline Field Authoring、Source Change。
-3. 后续再按需要增加 secondary surfaces；不预先拆出空文件。
+3. [secondary-surfaces.md](secondary-surfaces.md)  
+   V1 的次级产品面；当前已闭合 Resolve Preview，后续 Publish / Shared Assets 在真正进入收敛时追加。
 
 ## Authority relationship
 
