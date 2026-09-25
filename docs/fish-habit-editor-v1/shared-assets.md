@@ -1,6 +1,6 @@
 # Fish Habit Editor V1｜Shared Templates
 
-> Status: Working Candidate  
+> Status: Current Surface Contract for V1  
 > V1 Shared Assets 只包含 Shared Template。Fish Family / Species Preset 不属于 V1；Species Base initialization 属于 Fish Authoring Surface，不属于 Shared Template Workspace。
 
 ## 1. 产品职责
