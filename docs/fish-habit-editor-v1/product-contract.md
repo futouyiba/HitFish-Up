@@ -275,11 +275,13 @@ V1 的 staged candidate 是**短事务**，不是可跨页面长期挂起的 Dra
 - 中文名：Editor primary display；
 - 英文名：作者可读英文语义名，Blank Create / Extract 时由工具先建议、作者可改。
 
-Template 的 stable identity 与名称分离。Materializer 可使用 `Kind qualifier + Template English Name` 派生**模板级 Production Profile name**，例如 `Struct Heavy Cover`、`Temp Warm Water`；含 local operation 的 owner-specific Profile 仍由系统生成自己的 projection name。
+Template 的 stable identity 与名称分离。对于直接复用 Shared Template 的模板级 Production Profile，Materializer 应从 **Template English Name + Component Kind 语义** 派生可读的 Production name；`Struct Heavy Cover`、`Temp Warm Water` 只是示例，不冻结具体前缀 / delimiter。含 local operation 的 owner-specific Profile 仍由系统生成自己的 projection name。
 
-`FishEnvAffinity` 自己的 row name 与 Component/Profile name 是两层不同命名：Affinity row name 由 Species 的 canonical English name + Affinity semantic suffix 系统生成，V1 不要求作者编辑。
+Template 英文名虽然在 Editor 中是可编辑 metadata，但它会影响下一次 Production projection；rename 的 collision、name-based reference rewrite 与 verify 属 Publish / Materializer 责任，无法证明安全时必须阻断 Publish。
 
-作者负责业务命名、Source、Operation、Role 等语义意图；稳定 identity、row id 与具体 naming normalization 仍属于 Persistence / Materializer Contract。
+`FishEnvAffinity` 自己的 row name 与 Component/Profile name 是两层不同命名：Affinity row name 由 Species canonical English name + Affinity semantic class 系统派生，V1 不要求作者编辑。Base / Juvenile / Mature 表达的是语义类别，不在 Product Contract 中冻结最终字符串格式。
+
+作者负责业务命名、Source、Operation、Role 等语义意图；稳定 identity、row id 与具体 naming normalization / collision domain 仍属于 Persistence / Materializer Contract。
 
 ## 9. Explicit V1 absences
 
