@@ -125,7 +125,7 @@ fail_env_coeff     = absent
 产品语义已经闭合；落码前只剩物理承载确认：
 
 - ProductionRowLedger 是否已经允许一个**非 young / mature** 的 system-default row；
-- 默认 Affinity 的 deterministic production human-readable name：逻辑规则固定为 `Species canonical English name + Base`；具体 delimiter / case / normalization 与 collision lookup domain 由 G3 固定；
+- 默认 Affinity 的 deterministic Production name：必须由 Species canonical English name + Base 语义派生；exact suffix token、delimiter / case / normalization 与 collision lookup domain 由 G3 固定；
 - 新 row 的 `row_key → row_id` 回填路径。
 
 硬规则：
@@ -299,16 +299,19 @@ V1 不以 arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为
 
 **G3｜Production naming / collision domain**
 
-产品层已经固定命名职责，G3 只完成物理 convention 与 collision domain：
+产品层已经固定“谁命名、谁不命名”和命名应携带的语义；G3 只完成真实 Production schema 下的物理 convention 与安全边界：
 
 - Shared Template 有作者可编辑中文名 / 英文名；stable template identity 不随改名变化；
-- 模板级 Component/Profile projection 使用 `Kind qualifier + Template English Name` 的逻辑命名，例如 `Struct Heavy Cover`、`Temp Warm Water`；
+- 模板级 Component/Profile projection 的 Production name 必须携带 **Component Kind 语义 + Template English Name**；`Struct Heavy Cover`、`Temp Warm Water` 只是示例，不能先于 schema evidence 冻结具体 prefix token；
+- 先核对每个 Component/Profile 是否实际落到独立具名 Production row，以及主表是否按 name 字符串引用该 row；Spatial Opportunity Policy 不因 UI 对称就预设同构命名；
 - 含 Species / Mode 有效 local operation 的 Profile 使用 owner-specific system-generated name；
-- system-default `FishEnvAffinity` 使用 `Species canonical English name + Base`；
-- V1.0.1 fixed Compat 使用 `Species canonical English name + Juvenile / Mature`；
+- system-default `FishEnvAffinity` 名称必须表达 Species canonical English name + Base 语义；
+- V1.0.1 fixed Compat 名称必须表达 Species canonical English name + Juvenile / Mature 语义；
 - `FishEnvAffinity` row name 在 V1 / V1.0.1 不作为作者输入；
-- G3 仍需固定 exact delimiter / case /合法字符 normalization、lookup/collision domain，以及 rename 后 materialization 的安全更新规则；
-- 所有 name 只作 Production projection / human-readable lookup，不成为 Editor durable identity。
+- 固定 exact prefix / suffix token、delimiter / case / 合法字符 normalization、各表 lookup/collision domain；
+- 核实 Production name 是否承担表内 string-reference key，以及这些引用是否全部处于 Habit Editor 全局 Publish 的重写范围；
+- 固定 Template English rename 的 materialization 行为：若可以完整重写并 reread/verify，则允许 Publish；若存在无法证明覆盖的外部 name-based reference、orphan / duplicate 风险，则 Publish BLOCK；
+- Production name 可以是物理 reference key，但永远不成为 Editor durable identity。
 
 **G4｜row_key → row_id create-from-absent handoff**
 
