@@ -111,15 +111,7 @@ Template Kind 创建后不可修改；不同 Kind schema 不同，跨 Kind 改�
 
 Template 英文名本身不是 Editor stable identity，也不是 `FishEnvAffinity` row name。
 
-当 Template 以**无有效 local operation**的形式直接 materialize 为对应 Component/Profile 子表 row 时，Production Profile name 从：
-
-```text
-Kind qualifier
-+
-Template English Name
-```
-
-派生。
+当 Template 以**无有效 local operation**的形式直接 materialize 为对应 Component/Profile 子表 row 时，Production Profile name 必须从 Template English Name **确定性派生**；是否额外加入 Kind qualifier 属 Production naming convention，不是 Template 的业务 identity。
 
 例如：
 
@@ -135,11 +127,11 @@ Temperature Template
 → Production Profile：Temp Warm Water
 ```
 
-Kind qualifier 的目的，是让 Production row 在脱离 Editor 上下文后仍保留最低限度的类型表意，并降低跨表查看 / 汇总场景中的撞名风险。**V1 只固定“Production Profile name 应携带 Kind 语义”，不冻结具体前缀 token。**
+优先 convention 是在需要时加入 Kind qualifier，例如 `Struct Heavy Cover`、`Temp Warm Water`：它能提高裸看 Production 时的表意性，并在共享 / 合并 namespace 中降低跨 Kind 撞名风险。但如果真实 schema 已按独立子表或独立 lookup domain 天然隔离 Kind，则不应为了形式统一强制增加无收益前缀。
 
-例如可以采用 `Struct Heavy Cover`、`Temp Warm Water` 这样的形式；实际使用 `Struct / Structure`、`Temp / Temperature`，以及 Feeding / Time 等具体短词、delimiter、空格/下划线、大小写与合法字符 normalization，全部由 G3 根据真实 Production schema 固定。作者不需要手工重复输入 Kind qualifier。
+因此 G3 必须先确认实际 lookup / collision domain，再决定是否使用 `Struct / Structure`、`Temp / Temperature` 等 qualifier，以及 delimiter、空格/下划线、大小写与合法字符 normalization。作者不需要手工输入 Kind qualifier。
 
-Spatial Opportunity Policy 只有在现有 Production schema 中确实 materialize 为独立具名 row 时才应用同类规则；不得仅为了 UI 对称预设一个并不存在的 `Policy` 子表命名约束。
+Spatial Opportunity Policy 只有在现有 Production schema 中确实 materialize 为独立具名 row 时才应用同类命名；不得仅为了 UI 对称预设一个并不存在的 `Policy` 子表。
 
 如果最终 Profile 含有 Species / Mode 的有效 ADD / SET / CLEAR 等 local operation，则它已经不是 Template complete value 本身，应按 owner-specific materialization 规则生成 Production name，而不是继续冒用 Template 的 Production Profile name。
 
