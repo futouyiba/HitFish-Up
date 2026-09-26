@@ -142,7 +142,7 @@ Policy Template
 - Role / `fail_env_coeff` 全部 inherit Species；
 - 不作为左栏额外 Mode Subject 展示，避免与“基础习性”形成重复编辑入口；
 - Editor 使用稳定 `row_key`，Production `row_id` 在 Publish 后获得；
-- human-readable production name 由系统生成并做 collision validation；
+- `FishEnvAffinity` human-readable production name 不作为作者输入；system default 的逻辑规则为 Species canonical English name + `Base`，由系统生成并做 collision validation；
 - system default Affinity 不得伪装成 `young` / `mature` bucket；物理 schema 必须能无歧义区分 default 与 fixed Compat bucket。
 
 因此新 Species 创建完成后已经有一份可被 StockRelease / FishRelease 在其自身配置表中引用的默认 EnvAffinity；Habit Editor **不创建或维护那条 StockRelease 引用关系本身**。
@@ -203,7 +203,7 @@ V1.0.1 是紧随 V1 的窄增量，只补固定 Compat Mode 创建：
 - 四个 Component 初始 Source = 跟随 Species Base；
 - numeric operations 初始 absent；
 - Role / `fail_env_coeff` 初始 inherit Species；
-- 业务显示名固定为“幼年 / 成年及以上”，不要求用户填写 Mode name；Production human-readable row name 由实现按 Species + 固定 Compat type 自动生成并做 collision validation，具体字符串格式属于 implementation contract，不作为新的产品输入。
+- 业务显示名固定为“幼年 / 成年及以上”，不要求用户填写 Mode name；Production `FishEnvAffinity` row name 同样不作为作者输入，逻辑规则固定为 Species canonical English name + `Juvenile / Mature`，具体 delimiter / case / normalization 与 collision domain 属 implementation contract。
 - StockRelease / FishRelease 是否让某个 Quality 使用该 Affinity，继续由其自己的配置表维护，不属于 Habit Editor。
 
 V1.0.1 的固定 Compat Mode creation 是 create-only 窄增量；不在该版本补 Mode Archive / Delete / rename。删除生命周期仍等待跨域引用边界闭合。
