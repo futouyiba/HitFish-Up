@@ -75,7 +75,7 @@ Durable / Production identity：
 
 - Editor 创建稳定 `row_key`；
 - Production `row_id` 可在 Publish 后获得；
-- `FishEnvAffinity` human-readable production name 由系统根据 Species canonical English name + Affinity semantic suffix 派生并校验 collision；system-default 的逻辑后缀为 `Base`，作者不直接编辑该 row name；具体 delimiter / normalization 留给 G3；
+- `FishEnvAffinity` production row name 由系统根据 Species canonical English name + Affinity semantic class 派生并校验 collision；system-default 的语义类别是 Base，作者不直接编辑该 row name；具体 suffix token、delimiter / normalization 与 lookup domain 留给 G3；
 - 普通作者 UI 不要求编辑该 name，也不把默认 Affinity 显示为独立 Mode；
 - 系统默认 Affinity **不得为了复用旧 schema 被伪装成 `young` 或 `mature` bucket**。其物理表示必须能与固定 Compat bucket 无歧义区分；若当前 ledger schema 无法表达，使用最小显式 schema delta，而不是污染 bucket 语义。
 
@@ -569,26 +569,27 @@ V1 明确区分三类命名 / identity：
 
 1. **Editor stable identity**：例如 `template_id`、Affinity `row_key`；用于 durable reference，不因显示名变化。
 2. **作者资产名**：Shared Template 有中文名与英文名。中文名是 Editor primary display；英文名是作者可读的 semantic stem，Blank Create / Extract 时可由工具建议、作者可改。
-3. **Production projection name**：由 Materializer 根据 owner / lineage 派生，不反向成为 Editor identity。
+3. **Production projection name**：由 Materializer 根据 owner / lineage 派生；它可能在 Production 内承担 name-based lookup / reference key 的物理职责，但不反向成为 Editor durable identity。
 
-对于 Shared Template 的模板级 Profile projection：
+对于 Shared Template 的模板级 Profile projection，V1 固定的是下面这条**语义规则**：
 
 ```text
 Production Profile Name
-= Kind qualifier + Template English Name
+= Component Kind 语义
++ Template English Name
 ```
 
-例如 `Struct Heavy Cover`、`Temp Warm Water`。Kind qualifier 的逻辑前缀由 V1 固定为 `Temp / Struct / Feed / Time / Policy`；具体空格、下划线、大小写和合法字符 normalization 属 implementation contract。
+例如可以得到 `Struct Heavy Cover`、`Temp Warm Water`。这些只是可读示例；V1 不在语义层冻结 `Struct / Temp / Feed / Time` 等具体 token，也不预设 Spatial Opportunity Policy 一定拥有同构的具名 Production 子表。exact token、delimiter、case、合法字符 normalization 与各表 collision domain 由 implementation G3 根据真实 schema 固定。
 
 对于含 Species / Mode 有效 local operation 的 Profile，使用 owner-specific system-generated projection name，不继续冒用 Template Profile name。
 
-`FishEnvAffinity` row name 与 Component/Profile row name 是不同层级。Affinity row name 不允许作者在 V1 / V1.0.1 手工命名：
+`FishEnvAffinity` row name 与 Component/Profile row name 是不同层级。Affinity row name 不允许作者在 V1 / V1.0.1 手工命名；系统命名必须表达对应的 Affinity semantic class：
 
-- system default → Species canonical English name + `Base`；
-- V1.0.1 fixed juvenile → Species canonical English name + `Juvenile`；
-- V1.0.1 fixed mature → Species canonical English name + `Mature`。
+- system default → Base 语义；
+- V1.0.1 fixed juvenile → Juvenile 语义；
+- V1.0.1 fixed mature → Mature 语义。
 
-这些是**逻辑命名规则**；确切 delimiter / case / collision lookup domain 仍由 implementation G3 固定。未来 arbitrary Engagement Mode 若需要作者命名，不从 V1 fixed Compat 反推。
+Species canonical English name 作为鱼种可读 stem；exact suffix token / delimiter / case / normalization 仍由 G3 固定。未来 arbitrary Engagement Mode 若需要作者命名，不从 V1 fixed Compat 反推。
 
 ## 11. Broken / Archived Source
 
@@ -638,7 +639,7 @@ Production projection 按 authoring lineage 决定，不按 payload 相等猜 ow
 
 至少保持：
 
-- Shared Template + 无有效 local operation：可复用模板级 projection，并按 §10.6 使用 `Kind qualifier + Template English Name` 派生 Production Profile name；
+- Shared Template + 无有效 local operation：可复用模板级 projection，并按 §10.6 从 Component Kind 语义 + Template English Name 派生 Production Profile name；
 - Mode 完全跟随 Species Recipe：可复用 Species projection；
 - explicit Source pin + 零 operation：只改变未来 binding relation，不因 pin 本身强制复制一个同值 production row；
 - 任何有效 ADD / SET / CLEAR 等 local operation：按对应 owner 的 materialization 规则投影；
