@@ -3,272 +3,504 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>水温数据采集｜调研过程与方法转折</title>
+<title>鱼种水温数据采集｜调研过程与决策速览</title>
 <style>
   :root{
-    --bg:#0f1115; --panel:#171a21; --panel2:#1e222b; --line:#2a2f3a;
-    --tx:#e7e9ee; --tx2:#a8b0bf; --tx3:#6f7889;
-    --acc:#5aa9ff; --warn:#ffb454; --bad:#ff6b6b; --ok:#4ade80; --pur:#b98cff;
+    --bg:#0e1014; --panel:#161a21; --panel2:#1d222b; --line:#2a303c;
+    --tx:#e8eaef; --tx2:#a4adbd; --tx3:#6d7787;
+    --acc:#5aa9ff; --ok:#4ade80; --warn:#ffb454; --bad:#ff6b6b; --pur:#b98cff; --cy:#38bdf8;
   }
   @media (prefers-color-scheme: light){
-    :root{--bg:#f6f7f9;--panel:#fff;--panel2:#f0f2f5;--line:#e0e3e9;--tx:#1a1d23;--tx2:#4a5160;--tx3:#858d9c;}
+    :root{--bg:#f5f7fa;--panel:#fff;--panel2:#eef1f5;--line:#dfe3ea;--tx:#171a1f;--tx2:#485061;--tx3:#848d9d;}
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--tx);
     font:16px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
     -webkit-font-smoothing:antialiased}
-  .wrap{max-width:900px;margin:0 auto;padding:56px 24px 96px}
-  h1{font-size:30px;line-height:1.35;margin:0 0 10px;letter-spacing:-.01em}
-  h2{font-size:21px;margin:56px 0 18px;padding-top:22px;border-top:1px solid var(--line);letter-spacing:-.01em}
-  h3{font-size:16px;margin:26px 0 10px;color:var(--tx)}
+  .wrap{max-width:960px;margin:0 auto;padding:56px 22px 100px}
+  h1{font-size:31px;line-height:1.32;margin:0 0 10px;letter-spacing:-.015em}
+  h2{font-size:22px;margin:62px 0 8px;letter-spacing:-.015em}
+  h2 .n{color:var(--acc);font-weight:700;margin-right:10px;font-variant-numeric:tabular-nums}
+  h3{font-size:16.5px;margin:30px 0 10px}
   p{margin:12px 0;color:var(--tx2)}
   strong{color:var(--tx);font-weight:600}
-  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.87em;
     background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:var(--tx)}
-  .lede{font-size:17px;color:var(--tx2);margin:0 0 6px}
-  .meta{color:var(--tx3);font-size:13.5px;margin-top:14px}
-  .num{display:inline-block;min-width:26px;height:26px;line-height:26px;text-align:center;
-    background:var(--acc);color:#04121f;border-radius:7px;font-weight:700;font-size:14px;margin-right:9px}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin:18px 0}
-  .card.turn{border-left:3px solid var(--pur)}
-  .card.hit{border-left:3px solid var(--ok)}
-  .card.risk{border-left:3px solid var(--warn)}
-  .tag{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:99px;
-    border:1px solid var(--line);color:var(--tx2);background:var(--panel2);margin-right:6px}
-  .tag.p{color:var(--pur);border-color:color-mix(in srgb,var(--pur) 40%,transparent)}
-  .tag.o{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 40%,transparent)}
-  .tag.w{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,transparent)}
-  .tag.b{color:var(--acc);border-color:color-mix(in srgb,var(--acc) 40%,transparent)}
-  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14.5px}
-  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
-  th{color:var(--tx3);font-weight:600;font-size:13px;text-transform:none}
-  td{color:var(--tx2)}
-  td strong{color:var(--tx)}
-  .flow{display:grid;gap:10px;margin:20px 0}
-  .step{display:flex;gap:14px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);
-    border-radius:12px;padding:16px 18px}
-  .step .n{flex:0 0 30px;height:30px;line-height:30px;text-align:center;border-radius:8px;
-    background:var(--panel2);border:1px solid var(--line);color:var(--tx3);font-weight:700;font-size:14px}
-  .step.kill .n{background:color-mix(in srgb,var(--bad) 18%,transparent);border-color:color-mix(in srgb,var(--bad) 45%,transparent);color:var(--bad)}
-  .step .b{flex:1;min-width:0}
-  .step .t{font-weight:600;color:var(--tx);font-size:15px;margin-bottom:3px}
-  .step .d{font-size:14.5px;color:var(--tx2)}
-  .vs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
-  @media(max-width:640px){.vs{grid-template-columns:1fr}}
-  .vs > div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
-  .vs .h{font-size:12.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px}
-  .vs .a .h{color:var(--tx3)} .vs .b .h{color:var(--acc)}
-  .vs ul{margin:0;padding-left:18px} .vs li{margin:5px 0;color:var(--tx2);font-size:14.5px}
-  .big{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
-  @media(max-width:640px){.big{grid-template-columns:repeat(2,1fr)}}
-  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
-  .kpi .v{font-size:26px;font-weight:700;letter-spacing:-.02em;color:var(--tx)}
-  .kpi .l{font-size:13px;color:var(--tx3);margin-top:4px}
+  .lede{font-size:17.5px;color:var(--tx2);margin:0}
+  .meta{color:var(--tx3);font-size:13.5px;margin-top:16px}
+  .rule{height:1px;background:var(--line);margin:22px 0 0}
+  .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}
+  @media(max-width:680px){.kpi{grid-template-columns:repeat(2,1fr)}}
+  .kpi>div{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:16px 17px}
+  .kpi .v{font-size:27px;font-weight:700;letter-spacing:-.02em;line-height:1.15}
+  .kpi .l{font-size:12.5px;color:var(--tx3);margin-top:5px;line-height:1.45}
   .kpi.a .v{color:var(--acc)} .kpi.g .v{color:var(--ok)} .kpi.p .v{color:var(--pur)} .kpi.w .v{color:var(--warn)}
-  .quote{border-left:3px solid var(--line);padding:2px 0 2px 16px;margin:16px 0;color:var(--tx2);font-size:15px}
-  .foot{margin-top:64px;padding-top:22px;border-top:1px solid var(--line);color:var(--tx3);font-size:13.5px}
-  .foot a{color:var(--tx3)}
+  .src{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:0;margin:14px 0;overflow:hidden}
+  .src-h{display:flex;align-items:center;gap:11px;padding:14px 18px;border-bottom:1px solid var(--line)}
+  .src-h .vd{flex:0 0 auto;width:26px;height:26px;line-height:26px;text-align:center;border-radius:8px;font-weight:800;font-size:15px}
+  .v-ok{background:color-mix(in srgb,var(--ok) 20%,transparent);color:var(--ok);border:1px solid color-mix(in srgb,var(--ok) 45%,transparent)}
+  .v-no{background:color-mix(in srgb,var(--bad) 18%,transparent);color:var(--bad);border:1px solid color-mix(in srgb,var(--bad) 42%,transparent)}
+  .v-qu{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 42%,transparent)}
+  .src-h .nm{font-weight:650;font-size:15.5px;flex:1;min-width:0}
+  .src-h .tag{font-size:12px;color:var(--tx3);white-space:nowrap}
+  .src-b{padding:14px 18px 17px;font-size:14.5px;color:var(--tx2)}
+  .src-b b{color:var(--tx)}
+  .src-b .warn{display:block;margin-top:9px;padding:9px 12px;border-radius:9px;
+    background:color-mix(in srgb,var(--warn) 11%,transparent);
+    border-left:3px solid color-mix(in srgb,var(--warn) 60%,transparent);font-size:13.5px}
+  .turn{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--pur);
+    border-radius:13px;padding:19px 22px;margin:16px 0}
+  .turn .h{font-weight:700;font-size:16.5px;margin-bottom:4px}
+  .turn .h .tn{color:var(--pur);margin-right:8px}
+  .turn .s{color:var(--tx3);font-size:13px;margin-bottom:9px}
+  .turn p{margin:8px 0;font-size:14.5px}
+  .box{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:17px 20px;margin:16px 0}
+  .box.ok{border-left:3px solid var(--ok)} .box.bad{border-left:3px solid var(--bad)}
+  .box.warn{border-left:3px solid var(--warn)} .box.acc{border-left:3px solid var(--acc)}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--tx3);font-weight:600;font-size:12.5px}
+  td{color:var(--tx2)} td strong{color:var(--tx)}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   svg{max-width:100%;height:auto;display:block}
   .fig{margin:22px 0;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
-  .fig figcaption{margin-top:12px;font-size:13px;color:var(--tx3);text-align:center}
+  .fig figcaption{margin-top:13px;font-size:13px;color:var(--tx3);text-align:center;line-height:1.6}
+  .flow{display:grid;gap:9px;margin:18px 0}
+  .st{display:flex;gap:13px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);
+    border-radius:11px;padding:14px 17px}
+  .st .n{flex:0 0 29px;height:29px;line-height:29px;text-align:center;border-radius:8px;
+    background:var(--panel2);border:1px solid var(--line);color:var(--tx3);font-weight:700;font-size:13.5px}
+  .st.kill .n{background:color-mix(in srgb,var(--bad) 16%,transparent);border-color:color-mix(in srgb,var(--bad) 42%,transparent);color:var(--bad)}
+  .st.go .n{background:color-mix(in srgb,var(--ok) 16%,transparent);border-color:color-mix(in srgb,var(--ok) 42%,transparent);color:var(--ok)}
+  .st .t{font-weight:620;color:var(--tx);font-size:15px}
+  .st .d{font-size:14px;color:var(--tx2);margin-top:2px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+  @media(max-width:680px){.two{grid-template-columns:1fr}}
+  .two>div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:15px 17px}
+  .two .hh{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;margin-bottom:9px;color:var(--tx3)}
+  .two ul{margin:0;padding-left:17px} .two li{margin:5px 0;font-size:14px;color:var(--tx2)}
+  .quote{border-left:3px solid var(--line);padding:2px 0 2px 16px;margin:18px 0;color:var(--tx2);font-size:15px}
+  .foot{margin-top:70px;padding-top:22px;border-top:1px solid var(--line);color:var(--tx3);font-size:13.5px}
+  .pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:99px;
+    border:1px solid var(--line);background:var(--panel2);color:var(--tx2);margin:0 5px 4px 0}
+  .pill.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 40%,transparent)}
+  .pill.bad{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 40%,transparent)}
+  .pill.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,transparent)}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <header>
-    <h1>水温数据采集｜调研过程与方法转折</h1>
-    <p class="lede">一个「加两列」的任务，怎么变成三次推翻前提、最后把任务本身取消掉。</p>
-    <p class="meta">2026-09-18 · 对象：飞书「V3鱼总表」267 行 · 交付：3 列已写入并核验</p>
-  </header>
+<header>
+  <h1>鱼种水温数据采集｜调研过程与决策速览</h1>
+  <p class="lede">一个「爬两个字段」的工单，怎么变成三次推翻前提、九个数据源、最后把其中一半任务取消掉。</p>
+  <p class="meta">飞书「V3鱼总表」267 行 · 2026-09-18 → 09-20 · 表终态 rev 5047</p>
+</header>
 
-  <h2>一、起点：它看起来是个小任务</h2>
-  <p>最初的工单只有一句话：给「V3鱼总表」补两个字段——<strong>偏好水温上下限</strong>，数据从 FishBase 爬。</p>
-  <p>预期路径很短：取鱼种清单 → 爬 FishBase → 写回表格。</p>
+<div class="kpi">
+  <div class="kpi a"><div class="v">5</div><div class="l">实际落表列数<br>（原计划 2 列）</div></div>
+  <div class="kpi p"><div class="v">3</div><div class="l">被推翻的<br>任务前提</div></div>
+  <div class="kpi w"><div class="v">9</div><div class="l">调研过的数据源<br>采用 2 · 排除 7</div></div>
+  <div class="kpi g"><div class="v">267</div><div class="l">行全部有值<br>0 空值</div></div>
+</div>
 
-  <div class="big">
-    <div class="kpi"><div class="v">267</div><div class="l">目标行数</div></div>
-    <div class="kpi a"><div class="v">2</div><div class="l">原始要加列数</div></div>
-    <div class="kpi g"><div class="v">3</div><div class="l">实际落表列数</div></div>
-    <div class="kpi p"><div class="v">3</div><div class="l">被推翻的前提</div></div>
+<h2><span class="n">01</span>起点：它看起来是个小任务</h2>
+<p>工单只有一句：给「V3鱼总表」补 <strong>偏好水温上下限</strong>两个字段，数据从 FishBase 爬。</p>
+<p>预期路径很短：取鱼种清单 → 爬 FishBase → 写回表格。</p>
+
+<div class="box acc">
+  <p style="margin:0"><strong>而这件事从头到尾，没有一次「取回一个事实」。</strong>
+  每个值最后都是「用一条明确规则把位置填上，并标注它是什么」——
+  找源失败不是执行问题，是这些量本来就不在源里。</p>
+</div>
+
+<h2><span class="n">02</span>数据源全景：九个源，逐个交代</h2>
+<p>这是最花时间的一段——<strong>找源、发现源不对、换源</strong>。九个源逐个说清。</p>
+
+<div class="src">
+  <div class="src-h"><span class="vd v-ok">✓</span><span class="nm">FishBase <code>Preferred temperature (Ref. 123201)</code></span><span class="tag">采用</span></div>
+  <div class="src-b">
+    出现在物种页 <b>「Estimates based on models」</b>区段，形如 <code>16.9 - 31.1, mean 26.7</code>。
+    <span class="warn">它是 <b>AquaMaps 模型推算的「海洋生态位」偏好水温</b>——海洋/溯河鱼有值，<b>纯淡水鱼系统性缺失</b>。取数必须走 <code>country/CountrySpeciesSummary.php</code>，<code>summary/&lt;属&gt;-&lt;种&gt;.html</code> 那个页面<b>不渲染这一行</b>。</span>
+    用于 <b>海洋模型 51 行 ＋ 淡水期缺 13 行</b>。
   </div>
+</div>
 
-  <h2>二、第一次转折：数据源的语义边界</h2>
-  <p>爬完第一轮就发现不对。FishBase 的 <code>Ref. 123201</code> 挂在物种页的
-     <strong>「Estimates based on models」</strong>区段下——它<strong>不是</strong>一条通用物种字段，
-     而是 AquaMaps 用<strong>海洋</strong>环境数据建模算出来的生态位适温。</p>
-
-  <div class="fig">
-    <svg viewBox="0 0 760 210" role="img" aria-label="AquaMaps 覆盖示意">
-      <rect x="0" y="0" width="760" height="210" fill="none"/>
-      <!-- bar -->
-      <rect x="40" y="86" width="680" height="42" rx="8" fill="#2a2f3a"/>
-      <rect x="40" y="86" width="196" height="42" rx="8" fill="#5aa9ff"/>
-      <rect x="236" y="86" width="484" height="42" fill="#ff6b6b" opacity=".22"/>
-      <text x="52" y="113" fill="#04121f" font-size="15" font-weight="700">77 有值</text>
-      <text x="256" y="113" fill="#ff8f8f" font-size="15" font-weight="600">190 无值</text>
-      <text x="40" y="72" fill="#a8b0bf" font-size="13.5">最初一轮：仅 28% 命中</text>
-      <text x="40" y="158" fill="#a8b0bf" font-size="13.5">海洋 / 溯河洄游鱼 ──────────────── 纯淡水鱼</text>
-      <text x="40" y="182" fill="#6f7889" font-size="12.5">AquaMaps 只覆盖海洋生态位 ⇒ 淡水鱼系统性缺失，不是抓取失败</text>
-    </svg>
+<div class="src">
+  <div class="src-h"><span class="vd v-no">✗</span><span class="nm">FishBase 气候带温度范围（<code>Ref. 12741</code> 等）</span><span class="tag">排除</span></div>
+  <div class="src-b">
+    <code>Environment:</code> 行里的 <code>Subtropical; 10°C - 28°C</code>。<b>逐字能对上</b>表内既有的 <code>资料水温下限/上限</code>。
+    <span class="warn">它是<b>按气候带查表</b>，不是物种属性：267 行只有 <b>141 个不同取值</b>，<code>17–27</code> 一个值被 26 种互不相关的鱼共用；还含 <b>−1.3℃</b> 这种水在 0℃ 就结冰的负值。ref 也不唯一（鲻鱼用的是 <code>4944</code>）。</span>
   </div>
+</div>
 
-  <p>这不是"再爬一遍"能解决的——<strong>是源本身没有这个数</strong>。于是引出淡水源（Hasnain 2010 的
-     <em>final preferendum</em>）与方法学退路（按水温带取模板）。</p>
-
-  <h2>三、第二次转折：从「找数据」改成「查用法」</h2>
-  <p>接着要处理「偏好区跑到可接受区外面」的异常——77 行里 55 行越界。按常规思路，该去找一个更准的可接受水温源。</p>
-  <p><strong>但先查了一下那列是怎么来的</strong>，结论完全变了：</p>
-
-  <div class="card risk">
-    <span class="tag w">查证</span><strong><code>资料水温下限/上限</code> 不是物种数据</strong>
-    <p>逐字核对 FishBase：白斑狗鱼 10–28、褐鳟 18–24、虹鳟 10–24——对应的是
-       <code>Ref. 12741</code> 的<strong>气候带温度范围</strong>（<code>Subtropical; 10°C - 28°C</code> 这种）。
-       267 行只有 <strong>141 个不同取值</strong>，<code>17–27</code> 一个值被 26 种互不相关的鱼共用。</p>
-    <p>⇒ 那个"倒置"于是被读懂为：<strong>两列本就不同源</strong>。倒置是<strong>证据</strong>，不是待修的病。</p>
+<div class="src">
+  <div class="src-h"><span class="vd v-no">✗</span><span class="nm">FishBase 的其他温度字段</span><span class="tag">不存在</span></div>
+  <div class="src-b">
+    扫描海洋物种页：<b>只有 AquaMaps 那一行是结构化的温度字段</b>。其余温度信息都是生物志正文的自由文本（“occurs where water temperature ranges 13°-29°C, optimum 17°-22°”这种），<b>逐种散落、无法批量取</b>。
+    <span class="warn">⇒ FishBase 侧<b>没有</b>物种特异的「可接受 / 耐受温度范围」字段。</span>
   </div>
+</div>
 
-  <h2>四、第三次转折：整个任务被取消</h2>
-  <p>顺着"可接受区要不要重做"往下，做了一件更省事的动作——<strong>去翻生产配置表，看这个字段到底被谁读</strong>。</p>
-
-  <div class="card hit">
-    <span class="tag o">关键发现</span><strong>生产水温模型是「单点 + 半宽」，根本没有区间</strong>
-    <p>现行模型是 <code>TempAffinity</code>，字段只有四个：</p>
-    <p><code>temperature_fav</code>（最喜欢的温度 ×10，<strong>单点</strong>）
-       ＋ <code>temp_affected_ratio</code>（<strong>半宽</strong>）
-       ＋ <code>temp_threshold</code>（门控）＋ <code>mark</code></p>
-    <p>⇒ <strong>没有任何下限/上限字段</strong>。<code>资料水温下限/上限</code>
-       <strong>不进入生产模型</strong>——它是「资料」参考列。</p>
-    <p>⇒ <strong>整个「找可接受水温源」的任务取消了。</strong>那个方向本来会白费一轮。</p>
+<div class="src">
+  <div class="src-h"><span class="vd v-ok">✓</span><span class="nm">Hasnain, Minns &amp; Shuter 2010（CCRR-17）</span><span class="tag">采用</span></div>
+  <div class="src-b">
+    安大略气候变化研究报告《Key Ecological Temperature Metrics for Canadian Freshwater Fishes》。
+    <b>FTP ＝ Final Temperature Preferendum</b>（“鱼最终选择停留的温度”）——<b>正是「偏好」语义、且是淡水口径</b>，补上 AquaMaps 的缺口。
+    <span class="warn">⚠️ 该表页<b>旋转 90°</b>（x＝物种，y＝字段），<b>必须按坐标解析</b>，平铺文本会错配。实测提取 80 种（报告称 87）。</span>
+    用于 <b>野外实测 41 行 ＋ UILT 作校验</b>。
   </div>
+</div>
 
-  <div class="vs">
-    <div class="a">
-      <div class="h">飞书四列水温</div>
-      <ul>
-        <li><code>最喜欢的温度(°C)</code></li>
-        <li><code>对温度变化的容忍系数</code></li>
-        <li><code>水温接受阈值</code></li>
-        <li><code>资料水温下限/上限</code></li>
-      </ul>
-    </div>
-    <div class="b">
-      <div class="h">→ 生产对应</div>
-      <ul>
-        <li><code>temperature_fav</code> ÷10 ✓</li>
-        <li><code>temp_affected_ratio</code> ✓</li>
-        <li><code>temp_threshold</code> ✓</li>
-        <li><strong>无对应物</strong> ← 不进模型</li>
-      </ul>
-    </div>
+<div class="src">
+  <div class="src-h"><span class="vd v-no">✗</span><span class="nm">USGS FishTraits（<code>10.5066/f7wd3zh8</code>）</span><span class="tag">排除 · 最险的坑</span></div>
+  <div class="src-b">
+    <b>看起来完全对</b>：809 种美国淡水鱼、有数值列 <code>MINTEMP</code>/<code>MAXTEMP</code>（℃、每种一对上下限）……
+    <span class="warn"><b>但语义完全不对</b>：<code>MINTEMP</code> ＝ 分布区质心的「30 年 1 月最低温」，<code>MAXTEMP</code> ＝ 「7 月最高温」，由 range map ＋ PRISM 400m 栅格读出 ⇒ <b>陆地气温气候位，不是鱼的适温</b>。<br>
+    <b>反证</b>：<code>MINTEMP</code> 低到 <b>−22.5℃</b>——水 0℃ 就结冰。<br>
+    <b>最险的地方</b>：源库自己把这组列放在 <b>「Temperature Tolerances」标题下</b> ⇒ <b>“去查文档”也救不了</b>。<br>
+    附带雷：缺失码 <code>-1</code> 不是「−1℃」而是「美国本土无分布图」。</span>
   </div>
+</div>
 
-  <h2>五、还有一次：钓场结构把问题换了形状</h2>
-  <p>「22 条洄游种该取淡水值还是海洋值」这个问题，被一次钓场数据核查改写了：</p>
-
-  <div class="flow">
-    <div class="step"><div class="n">原</div><div class="b">
-      <div class="t">22 条洄游种该换什么值？</div>
-      <div class="d">预期成本：为 20+ 个物种找淡水期水温源</div></div></div>
-    <div class="step kill"><div class="n">查</div><div class="b">
-      <div class="t">先查：这些鱼在游戏里投放到哪些钓场？</div>
-      <div class="d"><code>Noob_Sea</code>「新手海」存在但 <code>is_show=否</code>（未启用）；
-          22 条里<strong>只有 7 条真的进了钓场</strong>，其余 15 条<strong>没被投放到任何水域</strong></div></div></div>
-    <div class="step"><div class="n">新</div><div class="b">
-      <div class="t">问题变成：港口村是什么水体？</div>
-      <div class="d"><strong>成本从「找 20 个数据源」降到「问一句」</strong></div></div></div>
+<div class="src">
+  <div class="src-h"><span class="vd v-no">✗</span><span class="nm">USGS 的其他逐物种温度数据</span><span class="tag">不存在</span></div>
+  <div class="src-b">
+    直连 <code>sciencebase.gov</code>/<code>data.usgs.gov</code> <b>被 Cloudflare 403</b>，挂代理重试仍 403。
+    <span class="warn">绕路核法：改走 <b>DataCite REST API</b>（不受 CF 影响），按 USGS 的 DOI 前缀 <code>10.5066</code> <b>全库枚举</b> ＋ 十余组关键词 ——
+    <code>temperature preference marine fish</code> → <b>0</b>；<code>thermal tolerance marine fishes</code> → <b>0</b>；<code>preferendum</code> → <b>全库 0 命中</b>。
+    ⇒ USGS 的水温数据几乎全是<b>站点/课题级观测</b>，不是跨物种汇编。</span>
   </div>
+</div>
 
-  <h2>六、三次转折的共同形状</h2>
-  <div class="fig">
-    <svg viewBox="0 0 760 250" role="img" aria-label="方法转折">
-      <defs>
-        <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
-          <path d="M0,0 L9,4.5 L0,9 z" fill="#5aa9ff"/>
-        </marker>
-      </defs>
-      <text x="40" y="34" fill="#a8b0bf" font-size="13.5">常规路径</text>
-      <rect x="40" y="46" width="150" height="44" rx="9" fill="#1e222b" stroke="#2a2f3a"/>
-      <text x="115" y="73" fill="#e7e9ee" font-size="14" text-anchor="middle">接到「为 X 找源」</text>
-      <line x1="196" y1="68" x2="252" y2="68" stroke="#5aa9ff" stroke-width="2" marker-end="url(#ar)"/>
-      <rect x="258" y="46" width="150" height="44" rx="9" fill="#1e222b" stroke="#2a2f3a"/>
-      <text x="333" y="73" fill="#a8b0bf" font-size="14" text-anchor="middle">搜一圈数据源</text>
-      <line x1="414" y1="68" x2="470" y2="68" stroke="#5aa9ff" stroke-width="2" marker-end="url(#ar)"/>
-      <rect x="476" y="46" width="200" height="44" rx="9" fill="#1e222b" stroke="#ff6b6b" stroke-dasharray="4 3"/>
-      <text x="576" y="66" fill="#ff8f8f" font-size="14" text-anchor="middle">找完才发现</text>
-      <text x="576" y="83" fill="#ff8f8f" font-size="12.5" text-anchor="middle">这个源不该找</text>
-
-      <text x="40" y="150" fill="#b98cff" font-size="13.5">实际采用</text>
-      <rect x="40" y="162" width="150" height="44" rx="9" fill="#1e222b" stroke="#b98cff"/>
-      <text x="115" y="189" fill="#e7e9ee" font-size="14" text-anchor="middle">接到「为 X 找源」</text>
-      <line x1="196" y1="184" x2="252" y2="184" stroke="#b98cff" stroke-width="2" marker-end="url(#ar)"/>
-      <rect x="258" y="162" width="190" height="44" rx="9" fill="#1e222b" stroke="#b98cff"/>
-      <text x="353" y="182" fill="#e7e9ee" font-size="14" text-anchor="middle">先问：X 被谁读？</text>
-      <text x="353" y="199" fill="#a8b0bf" font-size="12.5" text-anchor="middle">读它的东西长什么样？</text>
-      <line x1="454" y1="184" x2="510" y2="184" stroke="#b98cff" stroke-width="2" marker-end="url(#ar)"/>
-      <rect x="516" y="162" width="160" height="44" rx="9" fill="#1e222b" stroke="#4ade80"/>
-      <text x="596" y="182" fill="#8ff0b0" font-size="14" text-anchor="middle">前提不成立</text>
-      <text x="596" y="199" fill="#8ff0b0" font-size="12.5" text-anchor="middle">⇒ 任务取消 / 改形</text>
-    </svg>
-    <figcaption>三次都靠「先搞清数据怎么用」终止，没有一次是靠继续搜源终止的</figcaption>
+<div class="src">
+  <div class="src-h"><span class="vd v-qu">? </span><span class="nm">Morley 2019（686 种）／ Dahlke 2020（&gt;600 种）</span><span class="tag">备查未采用</span></div>
+  <div class="src-b">
+    查 USGS 时顺带发现的、覆盖更大的海洋候选。
+    <span class="warn">未采用理由：性质与 AquaMaps <b>同类（建模值）</b>，并未解决「不是实测」的问题。</span>
   </div>
+</div>
 
-  <h2>七、路上顺手挖出的「列名骗人」</h2>
-  <p>这一路有五处字段名与实际内容不符，其中两处<strong>不会自己暴露</strong>：</p>
-
-  <table>
-    <tr><th>字段名看起来是</th><th>实际是</th><th>怎么露出来的</th></tr>
-    <tr><td><code>scientific_name</code> 拉丁学名</td><td><strong>英文俗名</strong>（Allied Kingfish）</td><td>拿它交叉核对时对不上</td></tr>
-    <tr><td><code>候选水温带</code> 精细水温带</td><td><strong>一个筐</strong>——138/267 挤在「温水」</td><td>拆开后发现冷/暖两极</td></tr>
-    <tr><td><code>Temperature Tolerances</code> 下的 <code>MINTEMP</code></td><td><strong>陆地气温气候位</strong></td><td>反证：值低到 <strong>−22.5℃</strong>，水 0℃ 就结冰</td></tr>
-    <tr><td><code>_copy</code> 规范副本标记</td><td><strong>后缀、中缀两种形态并存</strong></td><td>两个同名条目并存</td></tr>
-    <tr><td><code>mark</code> 成员清单</td><td><strong>多为空</strong></td><td>看填充率，不看字段在不在</td></tr>
-  </table>
-
-  <div class="card risk">
-    <span class="tag w">两种不会自曝的形态</span>
-    <p><strong>① 源对象的标题在骗你。</strong>FishTraits 那组温度列<strong>就挂在「Temperature Tolerances」标题下</strong>——
-       所以"去查文档"也救不了，只能拿物理常识反证。</p>
-    <p><strong>② 缺失码伪装成合法值。</strong>同一个库里 <code>-1</code> 不是「−1℃」，而是<strong>「美国本土无分布图」</strong>，
-       曾让约 90 种外来鱼报出"7 月最高 −1℃"。</p>
+<div class="src">
+  <div class="src-h"><span class="vd v-no">✗</span><span class="nm">生产配置表 <code>TempAffinity</code></span><span class="tag">无边界字段</span></div>
+  <div class="src-b">
+    字段只有 <code>temperature_fav</code>（最喜欢的温度 <b>×10</b>，<b>单点</b>）＋ <code>temp_affected_ratio</code>（<b>半宽</b>）＋ <code>temp_threshold</code>（门控）。
+    <span class="warn">⇒ <b>模型里没有任何「下限/上限」字段</b>——「可接受水温」在生产模型里<b>根本不存在这个概念</b>。</span>
   </div>
+</div>
 
-  <h2>八、最终交付</h2>
-
-  <div class="big">
-    <div class="kpi g"><div class="v">41</div><div class="l">野外实测（Hasnain）</div></div>
-    <div class="kpi a"><div class="v">51</div><div class="l">海洋模型（AquaMaps）</div></div>
-    <div class="kpi p"><div class="v">162</div><div class="l">模板（按水温带）</div></div>
-    <div class="kpi w"><div class="v">13</div><div class="l">海洋模型·淡水期缺</div></div>
+<div class="src">
+  <div class="src-h"><span class="vd v-no">✗</span><span class="nm">三个「看着像」的字段</span><span class="tag">空壳</span></div>
+  <div class="src-b">
+    查「可接受区有没有源」时另找到的三个近似物，<b>全是「字段建了但没填」</b>：
+    <table style="margin:10px 0 0">
+      <tr><td style="width:44%"><code>BasicFishHabitus.temperature_range</code></td><td>只有 2 行真实数据，且两行<b>值完全相同</b></td></tr>
+      <tr><td><code>FishWiki.water_temp</code></td><td><b>49 行，有值的 0 行</b></td></tr>
+      <tr><td><code>PondList.hypolimnion_t</code></td><td><b>13 个钓场全是 100</b>（同一常量）</td></tr>
+    </table>
+    <span class="warn">这三个比「搜索无结果」强得多：<b>「我没找到」是关于我的陈述；「字段建了但全空」是关于系统的陈述</b>——后者才证明“不是我查不到，是它不存在”。</span>
   </div>
+</div>
 
-  <p>267 行全部有值、0 空值，每行带 <code>水温数据口径</code> 逐行标注来源。
-     写入后均以回读逐行比对核验。</p>
+<h2><span class="n">03</span>第一次转折：28% 不是失败，是边界</h2>
+<p>首轮抓完 <strong>77/267（28%）</strong>。按常规该「再爬一遍」。查下去发现不是抓取问题——看<strong>按科的命中分布</strong>：</p>
 
-  <div class="card">
-    <span class="tag b">口径的诚实性</span>
-    <p>「偏好列已收口」收口的是<strong>「有值」</strong>，<strong>不是「口径全部到位」</strong>——
-       那 13 行标着「海洋模型·淡水期缺」，是明确登记的已知缺口，
-       表内筛这个口径即可一次拿到待办清单。</p>
+<div class="fig">
+  <svg viewBox="0 0 880 300" role="img" aria-label="按科命中分布">
+    <text x="10" y="18" fill="#a4adbd" font-size="13">各科「有值 / 总数」——海洋科几乎全中，纯淡水科全空</text>
+    <g font-size="12.5">
+      <!-- rows -->
+      <g transform="translate(0,36)">
+        <text x="0" y="13" fill="#e8eaef">Scombridae 鲭科</text>
+        <rect x="180" y="2" width="520" height="17" rx="4" fill="#2a303c"/>
+        <rect x="180" y="2" width="520" height="17" rx="4" fill="#4ade80"/>
+        <text x="712" y="15" fill="#4ade80" font-weight="700">10 / 10</text>
+      </g>
+      <g transform="translate(0,66)">
+        <text x="0" y="13" fill="#e8eaef">Salmonidae 鲑科</text>
+        <rect x="180" y="2" width="520" height="17" rx="4" fill="#2a303c"/>
+        <rect x="180" y="2" width="279" height="17" rx="4" fill="#4ade80"/>
+        <text x="712" y="15" fill="#4ade80">15 / 28</text>
+      </g>
+      <g transform="translate(0,96)">
+        <text x="0" y="13" fill="#e8eaef">Acipenseridae 鲟科</text>
+        <rect x="180" y="2" width="520" height="17" rx="4" fill="#2a303c"/>
+        <rect x="180" y="2" width="325" height="17" rx="4" fill="#ffb454"/>
+        <text x="712" y="15" fill="#ffb454">5 / 8</text>
+      </g>
+      <g transform="translate(0,134)">
+        <text x="0" y="13" fill="#a4adbd">Cyprinidae 鲤科</text>
+        <rect x="180" y="2" width="520" height="17" rx="4" fill="#2a303c"/>
+        <text x="712" y="15" fill="#ff6b6b" font-weight="700">0 / 26</text>
+      </g>
+      <g transform="translate(0,160)">
+        <text x="0" y="13" fill="#a4adbd">Xenocyprididae 鲴科</text>
+        <rect x="180" y="2" width="520" height="17" rx="4" fill="#2a303c"/>
+        <text x="712" y="15" fill="#ff6b6b" font-weight="700">0 / 18</text>
+      </g>
+      <g transform="translate(0,186)">
+        <text x="0" y="13" fill="#a4adbd">Leuciscidae 雅罗鱼科</text>
+        <rect x="180" y="2" width="520" height="17" rx="4" fill="#2a303c"/>
+        <text x="712" y="15" fill="#ff6b6b" font-weight="700">0 / 17</text>
+      </g>
+      <g transform="translate(0,212)">
+        <text x="0" y="13" fill="#a4adbd">Centrarchidae 太阳鱼科</text>
+        <rect x="180" y="2" width="520" height="17" rx="4" fill="#2a303c"/>
+        <text x="712" y="15" fill="#ff6b6b" font-weight="700">0 / 12</text>
+      </g>
+      <g transform="translate(0,238)">
+        <text x="0" y="13" fill="#a4adbd">Cichlidae 丽鱼科</text>
+        <rect x="180" y="2" width="520" height="17" rx="4" fill="#2a303c"/>
+        <text x="712" y="15" fill="#ff6b6b" font-weight="700">0 / 11</text>
+      </g>
+    </g>
+    <text x="10" y="288" fill="#6d7787" font-size="12">⇒ 这是 AquaMaps 的覆盖边界，不是抓取失败</text>
+  </svg>
+  <figcaption>数据可复验：<code>sources/scrape_out.csv</code></figcaption>
+</div>
+
+<p>⇒ 引出两条补法：<strong>淡水源（Hasnain）</strong>与<strong>模板法</strong>。</p>
+
+<h2><span class="n">04</span>第二次转折：把「找数据」换成「查用法」</h2>
+<p>偏好列写进去后，发现 <strong>77 条里 55 条「偏好区」跑到「可接受区」外面</strong>——比如褐鳟偏好 14.5–17.6，而「可接受」写 18–24，<strong>完全不重叠</strong>。</p>
+<p>按常规该去找一个更准的可接受源。但先查了一件事：<strong>「资料水温」到底怎么来的？</strong></p>
+
+<div class="box warn">
+  <p style="margin:0 0 8px"><strong>逐字核对 FishBase</strong>：白斑狗鱼 10–28、褐鳟 18–24、虹鳟 10–24 —— 对应的是 <code>Subtropical; 10°C - 28°C</code> 这种 <strong>气候带温度范围</strong>。</p>
+  <p style="margin:0">⇒ <strong>那个「倒置」被读懂为「两列本就不同源」——倒置是证据，不是待修的病。</strong></p>
+</div>
+
+<div class="flow">
+  <div class="st"><span class="n">症状</span><div><div class="t">偏好区跑到可接受区外面</div><div class="d">看起来像「数据错了」</div></div></div>
+  <div class="st go"><span class="n">查</span><div><div class="t">可接受区是怎么来的？</div><div class="d">⇒ FishBase 气候带查表值，141 个取值被 267 行复用，含 −1.3℃</div></div></div>
+  <div class="st"><span class="n">正解</span><div><div class="t">换可接受区的数据源</div><div class="d">而不是把偏好区夹进去（那会抹掉证据）</div></div></div>
+</div>
+
+<h2><span class="n">05</span>第三次转折：整个任务被取消</h2>
+<p>顺着「可接受区要不要重做」往下，做了一件更省事的动作——<strong>去翻生产配置表，看这个字段到底被谁读</strong>。</p>
+
+<div class="box bad">
+  <p style="margin:0 0 8px"><strong>生产水温模型＝「单点 ＋ 半宽 ＋ 门限」，没有区间</strong></p>
+  <p style="margin:0 0 8px"><code>temperature_fav</code>（最喜欢的温度 ×10，<strong>单点</strong>）＋ <code>temp_affected_ratio</code>（<strong>半宽</strong>）＋ <code>temp_threshold</code>（门控）</p>
+  <p style="margin:0">⇒ <code>资料水温下限/上限</code> <strong>不进入生产模型</strong>，它是「资料」参考列。<br>
+  ⇒ <strong>整个「找可接受水温源」的任务取消了</strong>——那个方向本来会白费一轮。</p>
+</div>
+
+<div class="fig">
+  <svg viewBox="0 0 860 170" role="img" aria-label="飞书四列与生产模型的对照">
+    <text x="0" y="16" fill="#a4adbd" font-size="13">飞书四列水温 → 生产对应</text>
+    <g font-size="13.5">
+      <rect x="0" y="32" width="330" height="30" rx="7" fill="#1d222b" stroke="#2a303c"/>
+      <text x="14" y="52" fill="#e8eaef">最喜欢的温度(°C)</text>
+      <text x="352" y="52" fill="#4ade80">→</text>
+      <text x="378" y="52" fill="#4ade80">temperature_fav ÷10 ✓</text>
+
+      <rect x="0" y="68" width="330" height="30" rx="7" fill="#1d222b" stroke="#2a303c"/>
+      <text x="14" y="88" fill="#e8eaef">对温度变化的容忍系数</text>
+      <text x="352" y="88" fill="#4ade80">→</text>
+      <text x="378" y="88" fill="#4ade80">temp_affected_ratio ✓</text>
+
+      <rect x="0" y="104" width="330" height="30" rx="7" fill="#1d222b" stroke="#2a303c"/>
+      <text x="14" y="124" fill="#e8eaef">水温接受阈值</text>
+      <text x="352" y="124" fill="#4ade80">→</text>
+      <text x="378" y="124" fill="#4ade80">temp_threshold ✓</text>
+
+      <rect x="0" y="140" width="330" height="26" rx="7" fill="#1d222b" stroke="#ff6b6b" stroke-dasharray="4 3"/>
+      <text x="14" y="158" fill="#ff8f8f">资料水温下限/上限(°C)</text>
+      <text x="352" y="158" fill="#ff6b6b">→</text>
+      <text x="378" y="158" fill="#ff8f8f" font-weight="700">无对应物 · 不进模型</text>
+    </g>
+  </svg>
+</div>
+
+<h2><span class="n">06</span>偏好列：怎么把 267 行填满</h2>
+<p>值来自多个源，所以加了一列 <code>水温数据口径</code> <strong>逐行标出来源</strong>——把「推导值」与「观测值」分开。</p>
+
+<div class="fig">
+  <svg viewBox="0 0 860 200" role="img" aria-label="口径分布">
+    <text x="0" y="16" fill="#a4adbd" font-size="13">267 行的口径构成</text>
+    <rect x="0" y="34" width="860" height="46" rx="9" fill="#1d222b"/>
+    <rect x="0" y="34" width="522" height="46" rx="9" fill="#ffb454"/>
+    <rect x="522" y="34" width="164" height="46" rx="9" fill="#b98cff"/>
+    <rect x="686" y="34" width="132" height="46" rx="9" fill="#4ade80"/>
+    <rect x="818" y="34" width="42" height="46" rx="9" fill="#38bdf8"/>
+    <text x="20" y="63" fill="#1a1206" font-size="15" font-weight="700">模板 162</text>
+    <text x="542" y="63" fill="#1a1206" font-size="15" font-weight="700">海洋模型 51</text>
+    <text x="700" y="63" fill="#052a12" font-size="14" font-weight="700">野外实测 41</text>
+    <g font-size="12.5" fill="#a4adbd">
+      <text x="0" y="106">按水温带取中位数（推导）</text>
+      <text x="0" y="128">FishBase AquaMaps</text>
+      <text x="0" y="150">Hasnain CCRR-17 的 FTP</text>
+      <text x="0" y="172">洄游种暂无淡水期源（标记待补）</text>
+    </g>
+    <g font-size="12.5" fill="#6d7787">
+      <text x="640" y="106">暖水 21.2–28.3 ×83 · 温水偏冷 8.9–17.6 ×46</text>
+      <text x="640" y="128">广温 0.5–31.9 ×18 · 冷水 1–11.4 ×15</text>
+    </g>
+    <text x="700" y="172" fill="#38bdf8" font-size="12.5">蓝色：海洋模型·淡水期缺 13</text>
+  </svg>
+  <figcaption>模板 162 行里，有 83 条鱼共用同一个值</figcaption>
+</div>
+
+<div class="box warn">
+  <p style="margin:0 0 6px"><strong>模板法有一个我自己埋的坑（后来才发现）：</strong></p>
+  <p style="margin:0">广温带当时特意用「<strong>全跨度</strong>」而不是中位数，理由是「避免宽度塌缩」。结果 <strong>广温模板宽 31.4℃，是其它带的 3–4 倍</strong>——当时没觉得有问题，直到它把接受区算成负数才暴露。</p>
+  <p style="margin:8px 0 0"><strong>而「广温」的语义是「耐受广」，「广」应该体现在可接受上，不是偏好上。</strong></p>
+</div>
+
+<h2><span class="n">07</span>海水鱼专项：一次钓场核查改变了问题</h2>
+
+<p>22 条洄游种当时用的都是 AquaMaps 海洋值，而早先裁过「洄游种一律取淡水期值」——<strong>这批全部不合规</strong>。</p>
+
+<div class="flow">
+  <div class="st"><span class="n">原</span><div><div class="t">22 条洄游种该换什么值？</div><div class="d">预期成本：为 20+ 个物种找淡水期水温源</div></div></div>
+  <div class="st go"><span class="n">查</span><div><div class="t">先查：这些鱼在游戏里投放到哪些钓场？</div>
+    <div class="d"><code>Noob_Sea</code>「新手海」存在但 <code>is_show=否</code>（禁用）⇒ <strong>没有独立海鱼池</strong>；
+    真正的海洋种集中在<strong>港口村</strong>；<strong>22 条里只有 7 条真被投放</strong>，其余 15 条没进任何水域</div></div></div>
+  <div class="st"><span class="n">新</span><div><div class="t">问题变成：港口村是什么水体？</div>
+    <div class="d"><strong>成本从「找 20 个数据源」降到「问一句」</strong> → 答案：<strong>淡海混合</strong></div></div></div>
+</div>
+
+<div class="two">
+  <div>
+    <div class="hh" style="color:#4ade80">A 组 15 条 · 取淡水口径</div>
+    <ul>
+      <li>鲟类 5（短吻鲟/高首鲟/闪光鲟/俄罗斯鲟…）</li>
+      <li>鲑类 5（帝王鲑/粉鲑/北极红点鲑…）</li>
+      <li>美洲鳗鲡、美洲西鲱、美洲条纹狼鲈</li>
+      <li>欧白鲑、大西洋小鳕</li>
+    </ul>
   </div>
-
-  <h2>九、沉淀下来的方法</h2>
-  <table>
-    <tr><th>规则</th><th>来自哪个坑</th></tr>
-    <tr><td><strong>先查用法，再找源</strong></td><td>三次转折都靠它，最后一次直接把任务取消</td></tr>
-    <tr><td><strong>列名 ≠ 语义</strong>；警惕「标题在骗你」「缺失码伪装成值」</td><td>五处字段名与实际不符</td></tr>
-    <tr><td><strong>看填充率，不只看字段在不在</strong></td><td><code>FishWiki.water_temp</code> 单看名字以为有数据，49 行全空</td></tr>
-    <tr><td><strong>断言「不存在」要给系统级证据</strong></td><td>「我没找到」是关于我的；「字段建了但全空」是关于系统的</td></tr>
-    <tr><td><strong>交付物要回读生成，与中间物分开</strong></td><td>中间产物混进交付目录，会被当成生效数据引用</td></tr>
-    <tr><td><strong>部分修复 ≠ 完成</strong></td><td>「已修 2 条」必须与「225 条待重估」并列出现</td></tr>
-  </table>
-
-  <p class="quote">共同点是：这些都不是推演出来的，是踩过之后才留下形状的。</p>
-
-  <div class="foot">
-    <p>交付目录：<code>fishbase-pref-temp-2026-09-18/</code>（<code>final/</code> 为权威，<code>sources/</code> 为中间物）<br>
-       目标表：飞书「钓鱼元素周期表 → V3鱼总表」，rev 5043</p>
+  <div>
+    <div class="hh" style="color:#5aa9ff">B 组 7 条 · 维持海洋口径</div>
+    <ul>
+      <li>鲻鱼、公牛鲨、沙鮻</li>
+      <li>海鲈、海鲈鱼</li>
+      <li>毛鳞鱼、大西洋大海鲢</li>
+    </ul>
   </div>
+</div>
+
+<div class="box acc">
+  <p style="margin:0"><strong>关键判据不是 FishBase 的 <code>diadromous</code> 标记，而是「这条鱼在游戏里主要在哪个水体被钓到」</strong>——
+  公牛鲨、鲻鱼、沙鮻主要是海洋鱼，FishBase 挂标记就给它们填淡水值是荒唐的。</p>
+</div>
+
+<h2><span class="n">08</span>接受水温：从「找源」到「设计值」</h2>
+
+<h3>8.1 先确认：飞书现成的那列不能用</h3>
+<p>判据是<strong>嵌套</strong>（偏好区必须落在接受区里）：<strong>成立率只有 30%（80/267）</strong>，187 行越界，其中 <strong>57 行偏好区比它自己还宽</strong>。</p>
+
+<h3>8.2 方案演进：两次走错</h3>
+
+<div class="fig">
+  <svg viewBox="0 0 880 340" role="img" aria-label="接受区方案演进">
+    <text x="0" y="16" fill="#a4adbd" font-size="13">三个方案，为什么前两个不行</text>
+
+    <!-- 方案1 -->
+    <rect x="0" y="30" width="880" height="86" rx="11" fill="#161a21" stroke="#2a303c"/>
+    <text x="18" y="53" fill="#ff6b6b" font-size="14" font-weight="700">✗ 按水温带映射</text>
+    <text x="18" y="75" fill="#a4adbd" font-size="13">冷水/温水偏冷/暖水/广温 各取一个区间</text>
+    <text x="18" y="97" fill="#6d7787" font-size="12.5">两个坑：① 带已被模板填满（带内 IQR＝0，循环论证）　② 带太粗，暖水 2.9–31.9 几乎覆盖全温域</text>
+
+    <!-- 方案2 -->
+    <rect x="0" y="128" width="880" height="112" rx="11" fill="#161a21" stroke="#2a303c"/>
+    <text x="18" y="151" fill="#ff6b6b" font-size="14" font-weight="700">✗ 在偏好区间上「按比例」放大　<code style="font-size:12px">fav ± k×半宽</code></text>
+    <text x="18" y="173" fill="#a4adbd" font-size="13">想法：偏好区间越宽，接受区间也按比例更宽</text>
+    <text x="18" y="196" fill="#ffb454" font-size="12.5">自败，而且方向是反的 ——</text>
+    <text x="18" y="216" fill="#ffb454" font-size="12.5">fav 越宽 ⇒ 降段越宽；而暖水宽 fav 的鱼恰恰离致死线最近 ⇒ 它给「最该小心的鱼」最宽的外扩</text>
+    <text x="18" y="234" fill="#6d7787" font-size="12">实测：比例 r=0.3 越致死线 3 种；加法 F=2.0 只越 1 种</text>
+
+    <!-- 方案3 -->
+    <rect x="0" y="252" width="880" height="76" rx="11" fill="#161a21" stroke="#4ade80" stroke-width="1.5"/>
+    <text x="18" y="275" fill="#4ade80" font-size="14" font-weight="700">✓ 改成加法：<code style="color:#4ade80;font-size:12px">accept = fav ± F</code>，每侧统一 2.0℃</text>
+    <text x="18" y="297" fill="#a4adbd" font-size="13">四带一致，斜坡可见；用致死线（UILT）卡出上限</text>
+    <text x="18" y="316" fill="#6d7787" font-size="12.5">F=2.0 时越致死线仅 1 种；F=2.5 时暴增到 16 种</text>
+  </svg>
+</div>
+
+<h3>8.3 F＝2.0 是怎么定的</h3>
+<p>用 Hasnain 的 <strong><code>UILT</code>（上临界致死温度）</strong>卡——可接受上限<strong>必须低于致死线</strong>，否则必错。</p>
+
+<table>
+  <tr><th>F</th><th class="num">越致死线的种数</th><th>说明</th></tr>
+  <tr><td>1.0</td><td class="num">1</td><td>外扩几乎看不见</td></tr>
+  <tr><td><strong>2.0</strong></td><td class="num"><strong>1</strong></td><td><strong>降段可见、且仍在致死线内</strong></td></tr>
+  <tr><td>2.5</td><td class="num" style="color:#ff6b6b"><strong>16</strong></td><td>接近一半的种越过致死线</td></tr>
+</table>
+
+<div class="box warn">
+  <p style="margin:0"><strong>一处自我更正</strong>：中途说过「k ≤ 1.25 是<strong>硬上界</strong>」——表述不准。
+  精确上界是 <code>k &lt; 1.372</code>，且<strong>由单个种（蓝鳃太阳鱼）决定</strong>、<strong>只在 15% 的种上可测</strong>、用的是<strong>致死线</strong> ⇒
+  <strong>必要条件，不是充分条件</strong>。F 的实际取值由「要留多宽的降段」这个设计意图定，边界只给上限。</p>
+</div>
+
+<h3>8.4 两条必须随行的声明</h3>
+<div class="two">
+  <div>
+    <div class="hh" style="color:#ffb454">① max(0, …) 是显式规则</div>
+    <ul>
+      <li>52 行的偏好下限低于 2℃ ⇒ 会算出负值</li>
+      <li>截到 0 是<strong>域约束</strong>（水不结冰以下无意义）</li>
+      <li>与「把接受区夹进偏好区」性质不同——那会抹掉证据</li>
+      <li><strong>但同样必须写进口径，不能静默处理</strong></li>
+    </ul>
+  </div>
+  <div>
+    <div class="hh" style="color:#38bdf8">② 它是设计值，不是实测</div>
+    <ul>
+      <li>四路源皆空之后，它是<strong>设计出来的</strong></li>
+      <li>不得标成「实测/资料」</li>
+      <li>与门控阈值 <code>temp_threshold</code> <strong>同向但不同层</strong>：一个是形状外沿，一个是消费判据</li>
+    </ul>
+  </div>
+</div>
+
+<h3>8.5 唯一例外</h3>
+<div class="box bad">
+  <p style="margin:0"><strong>蓝鳃太阳鱼</strong>：偏好 26.9–31.2 → 接受 24.9–33.2，而致死线 <strong>32.0</strong> ⇒ 越过。</p>
+  <p style="margin:8px 0 0">但这两个数<strong>同出 Hasnain</strong>，偏好上限离致死线只剩 0.8℃ —— 真实蓝鳃太阳鱼耐受远高于 32℃。
+  ⇒ <strong>判为那个致死线读数偏低，不是 F 取大了</strong>。保留并标注，不为它把全表的 F 压到 0.8。</p>
+</div>
+
+<h2><span class="n">09</span>最终数字</h2>
+
+<div class="kpi">
+  <div class="kpi a"><div class="v">88</div><div class="l">接受区的不同取值数<br>（按带法只有 4）</div></div>
+  <div class="kpi g"><div class="v">0</div><div class="l">嵌套违反<br>fav ⊂ accept</div></div>
+  <div class="kpi w"><div class="v">52</div><div class="l">接受下限被 0 截<br>（显式规则）</div></div>
+  <div class="kpi p"><div class="v">13</div><div class="l">待补：洄游种<br>淡水期值</div></div>
+</div>
+
+<h2><span class="n">10</span>落到哪儿</h2>
+<table>
+  <tr><th>落点</th><th>内容</th></tr>
+  <tr><td><strong>飞书 V3鱼总表</strong><br><span style="color:#6d7787;font-size:12.5px">rev 5047</span></td><td>新增 5 列：偏好 2 ＋ 口径 1 ＋ 接受 2；267 行全有值、0 空值</td></tr>
+  <tr><td><strong>交付目录</strong></td><td><code>final/</code>（权威，飞书回读生成）／<code>sources/</code>（源与脚本）／<code>backup/</code>（6 份写入前快照）</td></tr>
+  <tr><td><strong>Notion 鱼种库</strong></td><td>加 5 个属性 ＋ 267 条记录更新（含源表版本 4987→5047）</td></tr>
+  <tr><td><strong>线上速览</strong></td><td>本页</td></tr>
+</table>
+
+<h2><span class="n">11</span>一路沉淀的判断原则</h2>
+<p>这些都不是推演出来的，是踩过之后才留下形状的。</p>
+
+<table>
+  <tr><th>原则</th><th>来自哪个坑</th></tr>
+  <tr><td><strong>先查用法，再找源</strong></td><td>三次转折都靠它，最后一次直接把任务取消</td></tr>
+  <tr><td><strong>列名 ≠ 语义</strong></td><td><code>scientific_name</code> 装俗名、<code>Temperature Tolerances</code> 装陆地气温…</td></tr>
+  <tr><td><strong>看填充率，不只看字段在不在</strong></td><td><code>FishWiki.water_temp</code> 单看名字以为有数据，49 行全空</td></tr>
+  <tr><td><strong>断言「不存在」要给系统级证据</strong></td><td>「我没找到」是关于我的；「字段建了但全空」是关于系统的</td></tr>
+  <tr><td><strong>过程成立 ≠ 产物可用</strong></td><td>「模板不必重推」推不出「模板值可写进生产」</td></tr>
+  <tr><td><strong>交付物要回读生成</strong></td><td>中间产物混进交付目录，会被当成生效数据引用</td></tr>
+  <tr><td><strong>自我更正也要留痕</strong></td><td>「k ≤ 1.25 是硬上界」被自己证伪，更正一并记</td></tr>
+</table>
+
+<p class="quote">共同点：<strong>每一次正确的判断，都来自「先去看它实际是什么」，而不是「先假设它应该是什么」。</strong></p>
+
+<div class="foot">
+  <p>完整过程与决策记录（含全部数字、证据与可复验性说明）：<code>PROCESS-RECORD.md</code><br>
+  交付目录：<code>fishbase-pref-temp-2026-09-18/</code>　·　目标表：飞书「钓鱼元素周期表 → V3鱼总表」rev 5047</p>
+</div>
 
 </div>
 </body>
