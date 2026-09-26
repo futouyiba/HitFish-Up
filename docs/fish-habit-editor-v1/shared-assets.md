@@ -101,7 +101,7 @@ Hard Delete 看显式引用；Template complete-value Impact 看所有最终消�
 
 - **stable template identity**：Editor durable reference；不因改名变化。
 - **中文名**：作者在 Editor 中的主要显示名，用于左栏、Breadcrumb、搜索与日常沟通；ordinary autosave；不作为 Production identity。
-- **英文名**：作者可读的英文语义名；ordinary autosave。Blank Create / Extract 时工具应先给出一个可读建议值，作者可以直接接受或修改。
+- **英文名**：作者可读的英文语义名。Blank Create / Extract 时工具应先给出一个可读建议值，作者可以直接接受或修改。它在 Editor 层仍按 ordinary edit 持久化，但属于 **projection-affecting metadata**：改名不会改变 Template identity 或 Effective Value，却可能改变下一次 Publish 生成的 Production Profile name。
 
 Template Context 必须允许直接编辑中文名与英文名。中文名是 UI primary display；英文名视觉上可次一级，但不应隐藏成内部字段。
 
@@ -135,19 +135,17 @@ Temperature Template
 → Production Profile：Temp Warm Water
 ```
 
-Kind qualifier 的目的，是让不同 Profile 子表或合并查看场景下仍具有最低限度的表意性与抗碰撞能力。V1 固定语义前缀：
+Kind qualifier 的目的，是让 Production row 在脱离 Editor 上下文后仍保留最低限度的类型表意，并降低跨表查看 / 汇总场景中的撞名风险。**V1 只固定“Production Profile name 应携带 Kind 语义”，不冻结具体前缀 token。**
 
-- Temperature → `Temp`
-- Structure → `Struct`
-- Feeding Layer → `Feed`
-- Time Period → `Time`
-- Spatial Opportunity Policy → `Policy`
+例如可以采用 `Struct Heavy Cover`、`Temp Warm Water` 这样的形式；实际使用 `Struct / Structure`、`Temp / Temperature`，以及 Feeding / Time 等具体短词、delimiter、空格/下划线、大小写与合法字符 normalization，全部由 G3 根据真实 Production schema 固定。作者不需要手工重复输入 Kind qualifier。
 
-具体 delimiter、空格/下划线、大小写与合法字符 normalization 属 implementation contract；作者不需要手工重复输入 Kind prefix。
+Spatial Opportunity Policy 只有在现有 Production schema 中确实 materialize 为独立具名 row 时才应用同类规则；不得仅为了 UI 对称预设一个并不存在的 `Policy` 子表命名约束。
 
 如果最终 Profile 含有 Species / Mode 的有效 ADD / SET / CLEAR 等 local operation，则它已经不是 Template complete value 本身，应按 owner-specific materialization 规则生成 Production name，而不是继续冒用 Template 的 Production Profile name。
 
 若英文名或派生 Production Profile name 最终造成对应 lookup / collision domain 冲突，由 Publish Validator / materializer preflight 报错；不得把 display name 当作 durable identity。
+
+英文名 rename 不需要升级为 Template Value Candidate：它不改变 Template complete value，也不会改变任何 consumer 的 Effective 配置。但 Publish 必须把它当作 projection rename 处理：如果 Production 侧存在按 name 的引用，Materializer 必须能在本次全局 Publish 中安全重写并验证；如果引用边界无法证明完整、存在 Editor 外部 name-based reference，或 rename 会留下 orphan / duplicate row，则 Publish BLOCK，而不是 silent rename。
 
 ## 6. Complete Value 编辑
 
@@ -247,7 +245,7 @@ Cancel 只丢弃 candidate，不修改 durable Template。
 - 不建立 durable DRAFT_TEMPLATE；
 - 填写必要 metadata + 该 Kind 完整 typed value；
 - 中文名由作者输入；
-- 英文名由工具先给出可读建议值，作者可修改；
+- 英文名由工具先给出可读建议值，作者可修改；创建时必须已经存在非空英文语义名，但作者不必从空白手输；
 - atomic create；
 - 创建成功即 ACTIVE，并进入新 Template Context。
 
@@ -306,7 +304,7 @@ Structure                  只读
 规则：
 
 - 中文名由作者确认 / 输入；
-- 英文名由工具根据中文名、当前上下文或已有命名规则先生成可读建议值，作者可修改；
+- 英文名由工具根据中文名、当前上下文或已有命名规则先生成可读建议值，作者可修改；创建提交时必须有非空英文语义名；
 - 浮层内不编辑 Template complete value；complete value 来自当前 Effective Profile / Effective Policy 的 flatten；
 - 创建前不在左栏出现 durable Draft Template；
 - 点击创建后 atomic create ACTIVE Template；
