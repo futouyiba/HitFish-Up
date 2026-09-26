@@ -571,15 +571,16 @@ V1 明确区分三类命名 / identity：
 2. **作者资产名**：Shared Template 有中文名与英文名。中文名是 Editor primary display；英文名是作者可读的 semantic stem，Blank Create / Extract 时可由工具建议、作者可改。
 3. **Production projection name**：由 Materializer 根据 owner / lineage 派生；它可能在 Production 内承担 name-based lookup / reference key 的物理职责，但不反向成为 Editor durable identity。
 
-对于 Shared Template 的模板级 Profile projection，V1 固定的是下面这条**语义规则**：
+对于 Shared Template 的模板级 Profile projection，V1 只固定一条语义要求：
 
 ```text
 Production Profile Name
-= Component Kind 语义
-+ Template English Name
+← deterministic derivation from Template English Name
 ```
 
-例如可以得到 `Struct Heavy Cover`、`Temp Warm Water`。这些只是可读示例；V1 不在语义层冻结 `Struct / Temp / Feed / Time` 等具体 token，也不预设 Spatial Opportunity Policy 一定拥有同构的具名 Production 子表。exact token、delimiter、case、合法字符 normalization 与各表 collision domain 由 implementation G3 根据真实 schema 固定。
+是否加入 Component Kind qualifier 不属于 Authoring Semantics。优先可读 convention 可以是 `Struct Heavy Cover`、`Temp Warm Water`；但若真实 Production 已按独立子表 / lookup domain 天然隔离 Kind，则无需为了形式统一增加前缀。exact qualifier、delimiter、case、合法字符 normalization 与各表 collision domain 由 implementation G3 根据真实 schema 固定。
+
+同样，不预设 Spatial Opportunity Policy 一定拥有同构的具名 Production 子表。
 
 对于含 Species / Mode 有效 local operation 的 Profile，使用 owner-specific system-generated projection name，不继续冒用 Template Profile name。
 
@@ -639,7 +640,7 @@ Production projection 按 authoring lineage 决定，不按 payload 相等猜 ow
 
 至少保持：
 
-- Shared Template + 无有效 local operation：可复用模板级 projection，并按 §10.6 从 Component Kind 语义 + Template English Name 派生 Production Profile name；
+- Shared Template + 无有效 local operation：可复用模板级 projection，并按 §10.6 从 Template English Name 确定性派生 Production Profile name；是否加入 Kind qualifier 由 G3 的真实 lookup / collision domain 决定；
 - Mode 完全跟随 Species Recipe：可复用 Species projection；
 - explicit Source pin + 零 operation：只改变未来 binding relation，不因 pin 本身强制复制一个同值 production row；
 - 任何有效 ADD / SET / CLEAR 等 local operation：按对应 owner 的 materialization 规则投影；
