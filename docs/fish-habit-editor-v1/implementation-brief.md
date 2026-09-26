@@ -125,7 +125,7 @@ fail_env_coeff     = absent
 产品语义已经闭合；落码前只剩物理承载确认：
 
 - ProductionRowLedger 是否已经允许一个**非 young / mature** 的 system-default row；
-- 默认 Affinity 的 deterministic production human-readable name 与 collision lookup domain；
+- 默认 Affinity 的 deterministic production human-readable name：逻辑规则固定为 `Species canonical English name + Base`；具体 delimiter / case / normalization 与 collision lookup domain 由 G3 固定；
 - 新 row 的 `row_key → row_id` 回填路径。
 
 硬规则：
@@ -299,9 +299,16 @@ V1 不以 arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为
 
 **G3｜Production naming / collision domain**
 
-- 固定 default Affinity deterministic human-readable name 生成规则；
-- 固定 lookup/collision domain；
-- name 只作 Production projection，不成为 Editor identity。
+产品层已经固定命名职责，G3 只完成物理 convention 与 collision domain：
+
+- Shared Template 有作者可编辑中文名 / 英文名；stable template identity 不随改名变化；
+- 模板级 Component/Profile projection 使用 `Kind qualifier + Template English Name` 的逻辑命名，例如 `Struct Heavy Cover`、`Temp Warm Water`；
+- 含 Species / Mode 有效 local operation 的 Profile 使用 owner-specific system-generated name；
+- system-default `FishEnvAffinity` 使用 `Species canonical English name + Base`；
+- V1.0.1 fixed Compat 使用 `Species canonical English name + Juvenile / Mature`；
+- `FishEnvAffinity` row name 在 V1 / V1.0.1 不作为作者输入；
+- G3 仍需固定 exact delimiter / case /合法字符 normalization、lookup/collision domain，以及 rename 后 materialization 的安全更新规则；
+- 所有 name 只作 Production projection / human-readable lookup，不成为 Editor durable identity。
 
 **G4｜row_key → row_id create-from-absent handoff**
 

@@ -902,12 +902,27 @@ Fish Component Focus 与 Policy Focus 都提供低频资产动作：
 
 Component 路径从当前完整 Effective Profile 创建同 Kind Shared Template；Policy 路径从当前完整 Effective Policy 创建新的 Spatial Opportunity Policy Template。
 
-- 提取前只需填写 / 确认新模板名称等必要 metadata；
+提取动作先打开轻量创建浮层，只填写 / 确认必要资产 identity：
+
+- Template Kind 只读；
+- 中文名；
+- 英文名：工具先给出可读建议值，作者可改；
+- 不在浮层里编辑 flatten 后的 complete value。
+
+创建成功后直接进入新 Template Context：
+
+- 左栏切换到该 Template；
+- 中栏显示 Template Overview；
+- 右栏允许继续编辑中文名、英文名和 complete value；
+- 保存一个 ephemeral ReturnTarget，允许返回原 Fish Component / Policy。
+
+其它规则：
+
 - Component Profile absent / 无法完整 Resolve，或 Policy 无法形成完整 Effective Policy 时禁用，并明确原因；
 - 提取成功后当前 Fish 完全不变；
-- 可提供“查看新模板”；
 - 如需让当前 Fish 改用新模板，另行执行 Source Change Candidate；
-- 不提供“提取并自动改绑”的合并动作。
+- 不提供“提取并自动改绑”的合并动作；
+- 创建前不建立 durable Draft Template，也不提前把未创建对象放进左栏。
 
 原则：
 

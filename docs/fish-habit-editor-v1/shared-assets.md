@@ -97,13 +97,57 @@ Hard Delete 看显式引用；Template complete-value Impact 看所有最终消�
 
 ## 5. Metadata
 
-Template display name / alias 等 metadata ordinary autosave。
+每个 Shared Template 至少有三层身份，不能互相代替：
+
+- **stable template identity**：Editor durable reference；不因改名变化。
+- **中文名**：作者在 Editor 中的主要显示名，用于左栏、Breadcrumb、搜索与日常沟通；ordinary autosave；不作为 Production identity。
+- **英文名**：作者可读的英文语义名；ordinary autosave。Blank Create / Extract 时工具应先给出一个可读建议值，作者可以直接接受或修改。
+
+Template Context 必须允许直接编辑中文名与英文名。中文名是 UI primary display；英文名视觉上可次一级，但不应隐藏成内部字段。
 
 Template Kind 创建后不可修改；不同 Kind schema 不同，跨 Kind 改动不做 migration。
 
-内部 stable identity 不由 display name 决定。
+### 5.1 Template English Name 与 Production Profile Name
 
-若 metadata 最终会造成 Production lookup-domain collision，由 Publish Validator / materializer preflight 报错；普通 UI 不要求作者理解物理 row name。
+Template 英文名本身不是 Editor stable identity，也不是 `FishEnvAffinity` row name。
+
+当 Template 以**无有效 local operation**的形式直接 materialize 为对应 Component/Profile 子表 row 时，Production Profile name 从：
+
+```text
+Kind qualifier
++
+Template English Name
+```
+
+派生。
+
+例如：
+
+```text
+Structure Template
+中文名：重障碍区
+英文名：Heavy Cover
+→ Production Profile：Struct Heavy Cover
+
+Temperature Template
+中文名：暖水型
+英文名：Warm Water
+→ Production Profile：Temp Warm Water
+```
+
+Kind qualifier 的目的，是让不同 Profile 子表或合并查看场景下仍具有最低限度的表意性与抗碰撞能力。V1 固定语义前缀：
+
+- Temperature → `Temp`
+- Structure → `Struct`
+- Feeding Layer → `Feed`
+- Time Period → `Time`
+- Spatial Opportunity Policy → `Policy`
+
+具体 delimiter、空格/下划线、大小写与合法字符 normalization 属 implementation contract；作者不需要手工重复输入 Kind prefix。
+
+如果最终 Profile 含有 Species / Mode 的有效 ADD / SET / CLEAR 等 local operation，则它已经不是 Template complete value 本身，应按 owner-specific materialization 规则生成 Production name，而不是继续冒用 Template 的 Production Profile name。
+
+若英文名或派生 Production Profile name 最终造成对应 lookup / collision domain 冲突，由 Publish Validator / materializer preflight 报错；不得把 display name 当作 durable identity。
 
 ## 6. Complete Value 编辑
 
@@ -202,8 +246,10 @@ Cancel 只丢弃 candidate，不修改 durable Template。
 - 表单 ephemeral；
 - 不建立 durable DRAFT_TEMPLATE；
 - 填写必要 metadata + 该 Kind 完整 typed value；
+- 中文名由作者输入；
+- 英文名由工具先给出可读建议值，作者可修改；
 - atomic create；
-- 创建成功即 ACTIVE。
+- 创建成功即 ACTIVE，并进入新 Template Context。
 
 新 Template 尚无 consumer，因此不需要 Impact Preview。
 
@@ -228,8 +274,46 @@ Policy Focus：
 - 创建新的独立 Template；
 - 不复制 Source / ADD / SET / CLEAR / provenance / lineage；
 - 当前 Fish 完全不改；
-- 创建成功后可“查看新模板”；
 - 如果希望当前 Fish 改用新模板，必须另走 Source / Policy Template Change Candidate。
+
+### 10.1 Extract creation surface
+
+Extract 采用轻量创建浮层，而不是在左栏先制造未保存 Template Subject。
+
+浮层只承担创建所需的最小信息：
+
+```text
+提取为共享模板
+
+来源
+大口黑鲈 › 基础习性 › 结构习性
+
+模板类型
+Structure                  只读
+
+中文名
+[ 重障碍区 ]
+
+英文名
+[ Heavy Cover ]
+
+将提取当前完整 Effective Profile。
+不会改变当前 Fish 的 Source。
+
+[取消]                  [创建模板]
+```
+
+规则：
+
+- 中文名由作者确认 / 输入；
+- 英文名由工具根据中文名、当前上下文或已有命名规则先生成可读建议值，作者可修改；
+- 浮层内不编辑 Template complete value；complete value 来自当前 Effective Profile / Effective Policy 的 flatten；
+- 创建前不在左栏出现 durable Draft Template；
+- 点击创建后 atomic create ACTIVE Template；
+- 创建成功后**直接切换到新 Template Context**，左栏选择对应 Template，中栏显示 Template Overview，右栏允许继续编辑中文名、英文名与 Template complete value；
+- 保留单个 ephemeral ReturnTarget，例如 `← 返回 大口黑鲈 › 基础习性 › 结构习性`。
+
+这样“创建资产”和“继续编辑资产”分成两个清楚阶段：浮层负责把 Template 生出来，Template Context 负责后续维护。
 
 原则：
 
