@@ -275,7 +275,7 @@ V1 的 staged candidate 是**短事务**，不是可跨页面长期挂起的 Dra
 - 中文名：Editor primary display；
 - 英文名：作者可读英文语义名，Blank Create / Extract 时由工具先建议、作者可改。
 
-Template 的 stable identity 与名称分离。对于直接复用 Shared Template 的模板级 Production Profile，Materializer 应从 **Template English Name + Component Kind 语义** 派生可读的 Production name；`Struct Heavy Cover`、`Temp Warm Water` 只是示例，不冻结具体前缀 / delimiter。含 local operation 的 owner-specific Profile 仍由系统生成自己的 projection name。
+Template 的 stable identity 与名称分离。对于直接复用 Shared Template 的模板级 Production Profile，Materializer 应从 **Template English Name** 确定性派生 Production name；是否加入 Component Kind qualifier 属 G3 的 Production convention。`Struct Heavy Cover`、`Temp Warm Water` 是优先可读示例，但只有在真实 lookup / collision domain 中有价值时才应固化。含 local operation 的 owner-specific Profile 仍由系统生成自己的 projection name。
 
 Template 英文名虽然在 Editor 中是可编辑 metadata，但它会影响下一次 Production projection；rename 的 collision、name-based reference rewrite 与 verify 属 Publish / Materializer 责任，无法证明安全时必须阻断 Publish。
 
