@@ -261,16 +261,25 @@ V1 的 staged candidate 是**短事务**，不是可跨页面长期挂起的 Dra
 
 换 Source 是 staged mutation；改字段是 ordinary edit。两者在交互重量上故意不同。
 
-## 8. Persistence details stay hidden
+## 8. Author-facing names vs persistence details
 
-普通作者界面不显示：
+普通 Fish Authoring 界面不显示：
 
-- materialized name（例如 `cover_largemouth_bass`）
-- production subtable row id
-- persistence key 生成规则
-- Materializer 的命名细节
+- `FishEnvAffinity` raw row name；
+- production subtable row id；
+- persistence key 生成规则；
+- Materializer 的 delimiter / normalization / collision-domain 等物理细节。
 
-作者负责 Source、Operation、Role 等语义意图；物理 projection naming 属 Persistence / Materializer Contract。
+但 Shared Template 是作者资产，因此 Template Context 必须允许直接编辑：
+
+- 中文名：Editor primary display；
+- 英文名：作者可读英文语义名，Blank Create / Extract 时由工具先建议、作者可改。
+
+Template 的 stable identity 与名称分离。Materializer 可使用 `Kind qualifier + Template English Name` 派生**模板级 Production Profile name**，例如 `Struct Heavy Cover`、`Temp Warm Water`；含 local operation 的 owner-specific Profile 仍由系统生成自己的 projection name。
+
+`FishEnvAffinity` 自己的 row name 与 Component/Profile name 是两层不同命名：Affinity row name 由 Species 的 canonical English name + Affinity semantic suffix 系统生成，V1 不要求作者编辑。
+
+作者负责业务命名、Source、Operation、Role 等语义意图；稳定 identity、row id 与具体 naming normalization 仍属于 Persistence / Materializer Contract。
 
 ## 9. Explicit V1 absences
 
