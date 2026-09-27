@@ -16,44 +16,44 @@ Fish Habit Editor 的职责是维护“鱼的中鱼习性 Authoring Truth”，�
 - **Production 是 Habit Editor-owned domain 的 materialized output，不是并行 Authoring Truth。**
 - Bootstrap 之后，Habit Editor 不承诺持续 `Production → Editor` 自动反向同步；检测到外部 Production 变化时应阻断 Publish，并交给后续显式 reconcile / migration 流程处理。
 - Materialized Production 数值不能无损反推出 Template / Source / ADD / SET / CLEAR 等作者意图，因此不把“自动双向同步”作为目标。
-- Habit Editor 可以创建自己拥有的 Species Base 与系统默认 Affinity projection，但不创建新的 Species identity，也不接管 StockRelease / FishRelease 等跨域生产拓扑；任意 Engagement Mode identity 仍属于后续阶段。
+- V1.0 只编辑已经进入 Editor durable state 的 Species Base / Compat Subject，不提供 Species Base creation；它不创建新的 Species identity，也不接管 StockRelease / FishRelease 等跨域生产拓扑。V1.0.1 只补 fixed Compat slot creation。
 
 ## 2. V1｜Species Habit Authoring Minimum Loop
 
 ### 2.1 阶段目标
 
-V1 证明一条最小、可制作的 Authoring 闭环：
+V1.0 证明一条最小、可制作的**既有数据 Authoring 闭环**：
 
 ```text
-Fish Basic / authoritative Species Catalog
-→ 已有 Habit：直接编辑
-→ 无 Habit：开始配置习性
-→ 原子创建完整 Species Base
+existing Editor Species Base / Compat Subject
+→ Source（Shared Template / Existing Production）
 → Authoring
 → Validation
 → Resolve Preview
 → Publish
+→ local Production working tree
 ```
 
-V1 的核心成果不是覆盖所有 Runtime / StockRelease 拓扑，而是证明：
+V1.0 的核心成果不是创建新的 Fish Habit，而是证明：
 
-1. Species identity 继续由 Fish Basic 提供，Habit Editor 只创建自己拥有的 Species Base；
-2. 新建 Species Base 与既有 Species Base 使用同一套 Authoring / Resolve / Publish；
-3. 已有兼容 Mode 可以继续编辑；
-4. 新建 Species Base 同时得到一个系统默认 FishEnvAffinity 投影，使其具备最小运行时引用入口；
-5. V1.0.1 只负责在默认 Affinity 之外按需补 fixed Compat slots；UI 表达为“小个体 / 大个体”，底层继续使用既有 `young / mature` physical type。
+1. 既有 Species Base / Compat Subject 可以在一套统一 Editor 中安全维护；
+2. Shared Template 与 Existing Production compatibility source 可以共存但主次清楚；
+3. Authoring Truth 与 Production materialization 保持单向因果；
+4. Resolve / Validation / Publish 可以形成完整闭环；
+5. authoring / production 各自作为独立 Git working tree 协作；
+6. V1.0.1 再按需补 fixed Compat slots（UI：小个体 / 大个体，physical：`young / mature`）。
 
 ### 2.2 V1 Included
 
 #### Fish / Subject
 
 - Fish List 读取 Fish Basic / authoritative Species Catalog；Habit Editor 不创建新的 Species identity，也不维护鱼类基础数据、模型、图鉴或 Quality。
-- 已有 Habit 的 Species 直接编辑 Species Base；V1 UI primary label 为“基础习性”，表达 Species 默认习性。
-- 尚无 Habit 的 Species 可以通过“开始配置习性”创建完整 Species Base；Species 只能从 Fish Basic 已有条目中选择。
+- 已经进入 Editor durable state 的 Species 直接编辑 Species Base；V1 UI primary label 为“基础习性”，表达 Species 默认习性。
+- V1.0 不提供“开始配置习性”或 Species Base creation；尚未进入 Editor durable state 的 Species 由 bootstrap / migration 或后续版本能力处理。
 - 编辑已经存在的兼容习性 Scope；V1 UI 将其组织在“中鱼习性模式”下，并以中性 `[兼容]` badge 标识当前承载方式。
 - **V1 当前兼容拓扑中，一个可编辑中鱼习性模式 Subject 对应一条已经由 ingress / migration 无歧义映射到 `young` 或 `mature` physical slot 的既有 `FishEnvAffinity` 行。** UI 分别显示为“小个体 / 大个体”；不在一个 Subject 下聚合多条 Affinity 行，也不建立额外的 Mode→Quality 解释层；unmapped / multi-row legacy 不自动变成可编辑 Subject。
 - “中鱼习性模式”是相对 Species Base / 基础习性的可选偏差，不是完整生命周期分桶。一个 Species 可以没有模式，也可以只保留“小个体”；不要求同时存在“大个体”。
-- V1 不允许用户创建新的业务中鱼习性 Mode；新 Species 只自动建立一个系统默认 FishEnvAffinity 投影。已有兼容 Mode 继续编辑。
+- V1.0 不允许用户创建新的业务中鱼习性 Mode，也不创建新的 Species Base。已有兼容 Mode 继续编辑；V1.0.1 才补 fixed Compat slot creation。
 - StockRelease / FishRelease 继续负责 Quality / stocking row 与 FishEnvAffinity 的关联，Habit Editor 不创建或维护该关系。
 
 #### Component Authoring
@@ -69,6 +69,7 @@ V1 的核心成果不是覆盖所有 Runtime / StockRelease 拓扑，而是证�
 
 - Source binding；
 - Shared Template；
+- Existing Production Source（verified Production baseline 中合法同 Kind existing / pass-through row，作为过渡兼容来源）；
 - Species / Compat scope operation；
 - ADD / SET / CLEAR / inherit/absent 等各字段允许的语义；
 - Effective Value / provenance 只读派生；
@@ -108,66 +109,35 @@ V1 Shared Assets **只包含 Shared Template**；Species Preset / 鱼家族预�
 
 ### 2.3 V1 Data / Species Catalog Baseline
 
-V1 直接读取 Fish Basic / authoritative Species Catalog，不要求所有 Species 预先拥有 Habit Entry。
+V1.0 读取 Fish Basic / authoritative Species Catalog 作为已有 Species identity authority，但普通 Authoring 只接受已经准备好的 Editor Subject。
 
 规则：
 
 - Species identity / `species_key` 只能来自 Fish Basic 既有条目；
 - Habit Editor 不创建 Fish Basic Species，也不维护基础数据、模型、图鉴或 Quality；
-- 默认 Fish List 可以只展示已配置 Habit 的短列表；
-- “开始配置其他鱼种”只允许选择 `AVAILABLE_NEW`：无 Editor Species Base，且 Production 不存在该 Species 的 FishEnvAffinity footprint；
-- 无 Editor Species Base 但 Production 已存在 FishEnvAffinity 的 Species 标为 `LEGACY_UNIMPORTED`，不得 fresh create，先经过 bootstrap / migration；
-- V1 为该 Species 创建 Habit Editor 自己拥有的 Species Base，并同时建立一个**系统默认 FishEnvAffinity 投影壳**；该默认 Affinity 不是新的业务 Mode，也不是第二套 Authoring Subject。
+- Editor Species Base 已存在 → 正常编辑；
+- Production 有 legacy footprint、但 Editor Species Base 尚未建立 → 先 bounded bootstrap / migration；
+- Fish Basic Species 存在、但 Editor Species Base 不存在 → V1.0 不提供 fresh create；
+- 每个进入 V1.0 的 Species Base 必须已经满足 system-default Affinity invariant；
+- 未被 Editor / ledger 接管的 legacy rows 作为 pass-through Production 保留，Global Publish 不得误删。
 
-新 Species Habit 的正常创建态要求一次性选择：
-
-```text
-Temperature Source
-Structure Source
-Feeding Layer Source
-Time Period Source
-Policy Template
-```
-
-全部完成后 atomic create：
-
-1. 完整 Species Base；
-2. **恰好一个**系统默认 `FishEnvAffinity` / ProductionRowLedger 投影壳。
-
-该“一 Base 一 default Affinity”也是 Bootstrap / migration 进入 V1 后必须满足的 invariant。
-
-默认 Affinity 的初始语义固定为：
-
-- 四个 Component 全部跟随 Species Base；
-- numeric operation 全部 absent；
-- Role / `fail_env_coeff` 全部 inherit Species；
-- 不作为左栏额外 Subject 展示，避免与“基础习性”形成重复编辑入口；
-- Editor 使用稳定 `row_key`，Production `row_id` 在 Publish 后获得；
-- `FishEnvAffinity` Production name 不作为作者输入，由系统按 Species identity + system-default 语义确定性生成并做 collision validation；具体命名格式属于 Common Semantics / Implementation Contract；
-- system default Affinity 不得伪装成 `young` / `mature` bucket；物理 schema 必须能无歧义区分 default 与 fixed Compat bucket。
-
-因此新 Species 创建完成后已经有一份可被 StockRelease / FishRelease 在其自身配置表中引用的默认 EnvAffinity；Habit Editor **不创建或维护那条 StockRelease 引用关系本身**。
-
-Golden Seed / Snapshot 继续用于 demo / regression / migration / roundtrip evidence，但不决定其它 Fish Basic Species 是否可以开始配置。
-
-已有 Production migration 与新 Species initialization 分开：
-
-- Migration 负责承接已有习性数据；
-- 新 Species initialization 由作者显式选择 Source / Policy；
-- Shared Template 整理、聚类和业务命名不要求 Bootstrap 自动推断；
-- V1 不要求先完成全量历史迁移：未被 Editor / ledger 接管的 legacy rows 作为 pass-through Production 保留，Global Publish 只能替换 ownership 可证明的 managed projection，不能误删其它未迁移 rows。
+V1.0 不提供 migration UI；bootstrap / migration 是进入 ordinary Authoring 前的数据准备边界。
 
 ### 2.4 V1 Persistence
 
 - Canonical persistence 继续使用当前 JSON Editor State。
-- V1 不以 JSON → CSV persistence migration 为交付前提。
-- JSON 的限制不阻塞 V1 产品闭环；批量 Authoring / 多 CSV 方案作为后续基础设施候选处理。
+- Authoring Truth 位于独立 authoring Git working tree；Production tables 位于 sibling production Git working tree。
+- V1.0 不以 JSON → CSV persistence migration 为交付前提；未来多 CSV 仍留在 authoring working tree 边界内。
+- 发布版使用 Electron Desktop App；app / authoring / production 作为 sibling 一起打包分发，mutable data 不塞入 Electron app binary / `app.asar`。
+- Publish 物化到本地 production working tree，不自动 Git commit / push。
+- 详细物理边界见 [workspace-and-delivery.md](../fish-habit-editor-v1/workspace-and-delivery.md)。
 
 ### 2.5 V1 Explicitly Out of Scope
 
 V1 不承诺：
 
 - 创建新的 Species identity；
+- V1.0 创建新的 Species Base / “开始配置习性”；
 - Family / 鱼家族初始化；
 - Species Preset / 鱼家族预设；
 - 新建 Engagement Mode；
@@ -266,17 +236,17 @@ JSON canonical persistence
 - 聚类 / Family 初始化研究（只作后续 Topology Creation 输入，不进入 V1 Shared Assets）；
 - Golden Seed / migration tooling 的工程化增强。
 
-V1.1 不扩展任意 Engagement Mode / Routing；Species Base initialization 已属于 V1，固定 Compat Mode creation 已属于 V1.0.1。
+V1.1 不扩展任意 Engagement Mode / Routing，也不把 Species Base creation 偷渡成“效率功能”；固定 Compat Mode creation 已属于 V1.0.1。
 
 ## 5. V1.2｜Advanced Mode & Data Integration
 
-这一阶段不再解决 Species Base 是否能从 Editor 创建——该闭环已经在 V1 完成。这里开始处理更高级的初始化效率、任意 Engagement Mode 与外部数据接入。
+V1.2 才允许重新打开 Species Base creation / initialization：先闭合“如何创建一个新的基础习性 Subject”本身，再讨论 Family / Preset / 外部数据等高级初始化效率。这里同时开始处理任意 Engagement Mode 与外部数据接入。
 
 ### 5.1 Advanced Fish Initialization
 
 V1 已支持从 authoritative Species Catalog 创建完整 Species Base。
 
-这一阶段只研究更高级的初始化效率，例如：
+若 Species Base creation 在该阶段进入，先建立最小 creation contract；在此基础上再研究更高级的初始化效率，例如：
 
 - Family / 聚类辅助；
 - Species Preset；
