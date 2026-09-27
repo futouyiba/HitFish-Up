@@ -23,7 +23,7 @@ Fish
 
 - Subject 只在左侧 Subject Navigation 中选择。
 - `[兼容]` 是当前承载形态的中性状态，不是 Warning。
-- V1 一个可编辑兼容中鱼习性模式对应一条既有 `FishEnvAffinity` 行；V1 不允许用户创建新的业务 Mode，但新 Species 创建时会自动建立一个系统默认 Affinity 投影。
+- V1 一个可编辑兼容中鱼习性模式对应一条**已经由 ingress / migration 无歧义映射到固定 Compat 语义（幼年 / 成年及以上）**的既有 `FishEnvAffinity` 行；任意未映射 Affinity 不会仅因“已经存在”就自动成为 Mode Subject。V1 不允许用户创建新的业务 Mode，但新 Species 创建时会自动建立一个系统默认 Affinity 投影。
 - 普通作者 UI 不要求理解 `FishEnvAffinityRef`、Production row naming 或 materialized row id。
 
 ### 2.2 一份习性由什么组成
@@ -226,7 +226,7 @@ Template 示例：
 
 ## 6. Interaction taxonomy
 
-V1 只保留四类交互模型：
+V1 只保留四类**durable state / transaction 模型**：
 
 | 类型 | 示例 | 持久化模型 |
 |---|---|---|
@@ -236,6 +236,15 @@ V1 只保留四类交互模型：
 | Global Transaction | Publish | Preflight → Execute → Verify |
 
 不新增 Setup transaction、Import transaction、Preview draft 等平行事务类型。
+
+这里的“四类”描述的是**状态模型**，不是说 UI 只能有四种按钮手势。V1 仍有少量 bounded object command，例如：
+
+- Species Base 初始化：ephemeral form → atomic create；
+- Shared Template Blank Create / Extract / Clone：ephemeral form 或当前上下文 → atomic create；
+- Archive / Restore：轻量确认或 direct atomic action；
+- Hard Delete：满足 guard 后 destructive confirm → atomic delete。
+
+这些动作都**不建立第五种 durable Draft / Candidate / Setup 状态**。只有当动作会对既有 consumer 产生 propagated mutation（例如 Replace References、Template completeValue change）时，才进入 Staged Mutation。
 
 ### 6.1 Staged Candidate 的 V1 交互边界
 
