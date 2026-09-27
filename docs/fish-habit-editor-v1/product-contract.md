@@ -15,15 +15,19 @@ Fish 是最高层业务对象。
 
 ```text
 Fish
-├─ 基础习性
-└─ 中鱼习性模式
+├─ 常规习性
+└─ 特殊习性
    ├─ 幼年          [兼容]
-   └─ 成年及以上    [兼容]
+   └─ 大个体        [兼容]
 ```
 
 - Subject 只在左侧 Subject Navigation 中选择。
+- Species Base 是默认 / 常规习性的唯一 Authoring Truth；V1 UI primary label 使用 **“常规习性”**。Contract 中的 `Species Base` 仍是稳定对象名，旧文档里的“基础习性”指同一对象，不新增一层。
 - `[兼容]` 是当前承载形态的中性状态，不是 Warning。
-- V1 一个可编辑兼容中鱼习性模式对应一条**已经由 ingress / migration 无歧义映射到固定 Compat 语义（幼年 / 成年及以上）**的既有 `FishEnvAffinity` 行；任意未映射 Affinity 不会仅因“已经存在”就自动成为 Mode Subject。V1 不允许用户创建新的业务 Mode，但新 Species 创建时会自动建立一个系统默认 Affinity 投影。
+- V1 UI 将现有 Compat rows 表达为 **“特殊习性”**，强调它们是相对常规习性的可选偏差，不是把一个 Species 完整切成互斥分桶。
+- 现有 physical Compat slot 继续沿用 `young / mature` 承载；V1 UI 分别投影为 **“幼年” / “大个体”**。该 UI label projection 不要求修改底层 bucket token 或 Production English name。
+- 特殊习性可以为 0、1 或 2 个；缺少“大个体”不表示数据不完整。一个 Species 完全可以只使用“常规习性 + 幼年特殊习性”。
+- V1 一个可编辑特殊习性 Subject 对应一条已经由 ingress / migration 无歧义映射到固定 Compat physical slot 的既有 `FishEnvAffinity` 行；任意未映射 Affinity 不会仅因“已经存在”就自动成为 Subject。
 - 普通作者 UI 不要求理解 `FishEnvAffinityRef`、Production row naming 或 materialized row id。
 
 ### 2.2 一份习性由什么组成
@@ -101,7 +105,7 @@ Policy Template
 - 若缺少合适 Template，可从当前 Source picker 进入 Shared Assets 创建；初始化表单只在当前 UI 会话内保留已选 Species / binding，创建完成后返回并刷新候选。该保留是 ephemeral return state，不是 durable Draft；reload / 退出工作区可以丢弃；
 - 创建成功后的细调全部复用正常 Authoring Surface。
 
-Species Base 仍是唯一默认习性 Authoring Truth；系统默认 FishEnvAffinity 只是它的运行时 / Production 投影壳，不作为第二个可编辑 Subject。
+Species Base / 常规习性仍是唯一默认习性 Authoring Truth；系统默认 FishEnvAffinity 只是它的运行时 / Production 投影壳，不作为第二个可编辑 Subject。
 
 默认 Affinity 固定：
 
