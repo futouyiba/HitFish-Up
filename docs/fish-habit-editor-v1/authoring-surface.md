@@ -1,7 +1,7 @@
 # Fish Habit Editor V1｜Fish Authoring Surface Contract
 
 > Status: Current Surface Contract for V1  
-> 本文只定义 Fish Subject 的核心编辑屏与 Species Habit initialization。Shared Templates 见 [shared-assets.md](shared-assets.md)，Resolve / Publish 见 [secondary-surfaces.md](secondary-surfaces.md)；公共 Source / Operation / Policy / Validation 语义由 [common-semantics.md](common-semantics.md) 维护。
+> 本文只定义已有 Fish Subject 的核心编辑屏。Shared Templates 见 [shared-assets.md](shared-assets.md)，Resolve / Publish 见 [secondary-surfaces.md](secondary-surfaces.md)；公共 Source / Operation / Policy / Validation 语义由 [common-semantics.md](common-semantics.md) 维护。
 
 ## 1. 核心一屏
 
