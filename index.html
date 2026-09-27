@@ -313,7 +313,44 @@
   </svg>
 </div>
 
-<h2><span class="n">06</span>偏好列：怎么把 267 行填满</h2>
+<h2><span class="n">06</span>FishBase 缺口的三种形态</h2>
+<p>「FishBase 里没有」这句话，其实含 <strong>三种完全不同的情况</strong>——把三者混为一谈，就会在最难的那一类上反复白找源。</p>
+
+<div class="fig">
+  <svg viewBox="0 0 880 300" role="img" aria-label="FishBase 缺口的三种形态">
+    <text x="0" y="16" fill="#a4adbd" font-size="13">267 行按 FishBase 命中情况分三类</text>
+
+    <rect x="0" y="32" width="420" height="118" rx="11" fill="#161a21" stroke="#4ade80" stroke-width="1.2"/>
+    <text x="18" y="56" fill="#4ade80" font-size="15" font-weight="700">① 真的没有 —— 190 条</text>
+    <text x="18" y="79" fill="#a4adbd" font-size="13">纯淡水科：鲤科 26 / 鲴科 18 / 雅罗鱼科 17</text>
+    <text x="18" y="98" fill="#a4adbd" font-size="13">太阳鱼科 12 / 丽鱼科 11 / …</text>
+    <text x="18" y="122" fill="#6d7787" font-size="12.5">对照：鲭科 10/10 全中、海洋科几乎全中</text>
+    <text x="18" y="141" fill="#4ade80" font-size="12.5" font-weight="600">⇒ Hasnain 救回 28 ＋ 模板 162 ＝ 190 ✓</text>
+
+    <rect x="440" y="32" width="440" height="118" rx="11" fill="#161a21" stroke="#ffb454" stroke-width="1.2"/>
+    <text x="458" y="56" fill="#ffb454" font-size="15" font-weight="700">② 有，但给的是海洋期 —— 13 条</text>
+    <text x="458" y="79" fill="#a4adbd" font-size="13">值不是缺，是<b style="color:#e8eaef">错阶段</b>：AquaMaps 给的是海洋分布区适温</text>
+    <text x="458" y="102" fill="#a4adbd" font-size="12.5">虹鳟 1.3–10 → 淡水实为 12.7–18.5</text>
+    <text x="458" y="121" fill="#a4adbd" font-size="12.5">褐鳟 6.5–15.8 → 14.5–17.6　帝王鲑 0.7–8 → 12–16</text>
+    <text x="458" y="141" fill="#4ade80" font-size="12.5" font-weight="600">⇒ Hasnain 全部换掉（其中 11 条是鲑鳟类）</text>
+
+    <rect x="0" y="164" width="880" height="118" rx="11" fill="#161a21" stroke="#38bdf8" stroke-width="1.2"/>
+    <text x="18" y="188" fill="#38bdf8" font-size="15" font-weight="700">③ 洄游种，三个源都覆盖不到 —— 13 条</text>
+    <text x="18" y="211" fill="#a4adbd" font-size="13">短吻鲟 · 高首鲟 · 白化高首鲟 · 白马切喉鳟 · 美洲条纹狼鲈 · 美洲鳗鲡 · 美洲西鲱</text>
+    <text x="18" y="230" fill="#a4adbd" font-size="13">北极红点鲑 · 花羔红点鲑 · 大西洋小鳕 · 欧白鲑 · 闪光鲟 · 俄罗斯鲟</text>
+    <text x="18" y="253" fill="#6d7787" font-size="12.5">Hasnain 覆盖不到　·　USGS FishTraits 语义错（是陆地气温）　·　第三方已查遍</text>
+    <text x="18" y="272" fill="#38bdf8" font-size="12.5" font-weight="600">⇒ 保留海洋值 ＋ 标记「海洋模型·淡水期缺」</text>
+  </svg>
+  <figcaption>表内筛 <code>水温数据口径 = 海洋模型·淡水期缺</code> 即可取待办清单</figcaption>
+</div>
+
+<div class="box acc">
+  <p style="margin:0"><strong>一句判据：「FishBase 没有」→ 先问是「真没有」、还是「给了错阶段」。</strong><br>
+  前者要去<strong>别的源</strong>找；后者只要换一个<strong>更贴近游戏场景</strong>的源。
+  两者混在一起找，会在第三类上白耗。</p>
+</div>
+
+<h2><span class="n">07</span>偏好列：怎么把 267 行填满</h2>
 <p>值来自多个源，所以加了一列 <code>水温数据口径</code> <strong>逐行标出来源</strong>——把「推导值」与「观测值」分开。</p>
 
 <div class="fig">
@@ -348,7 +385,7 @@
   <p style="margin:8px 0 0"><strong>而「广温」的语义是「耐受广」，「广」应该体现在可接受上，不是偏好上。</strong></p>
 </div>
 
-<h2><span class="n">07</span>海水鱼专项：一次钓场核查改变了问题</h2>
+<h2><span class="n">08</span>海水鱼专项：一次钓场核查改变了问题</h2>
 
 <p>22 条洄游种当时用的都是 AquaMaps 海洋值，而早先裁过「洄游种一律取淡水期值」——<strong>这批全部不合规</strong>。</p>
 
@@ -386,7 +423,7 @@
   公牛鲨、鲻鱼、沙鮻主要是海洋鱼，FishBase 挂标记就给它们填淡水值是荒唐的。</p>
 </div>
 
-<h2><span class="n">08</span>接受水温：从「找源」到「设计值」</h2>
+<h2><span class="n">09</span>接受水温：从「找源」到「设计值」</h2>
 
 <h3>8.1 先确认：飞书现成的那列不能用</h3>
 <p>判据是<strong>嵌套</strong>（偏好区必须落在接受区里）：<strong>成立率只有 30%（80/267）</strong>，187 行越界，其中 <strong>57 行偏好区比它自己还宽</strong>。</p>
@@ -463,7 +500,7 @@
   ⇒ <strong>判为那个致死线读数偏低，不是 F 取大了</strong>。保留并标注，不为它把全表的 F 压到 0.8。</p>
 </div>
 
-<h2><span class="n">09</span>最终数字</h2>
+<h2><span class="n">10</span>最终数字</h2>
 
 <div class="kpi">
   <div class="kpi a"><div class="v">88</div><div class="l">接受区的不同取值数<br>（按带法只有 4）</div></div>
@@ -472,7 +509,7 @@
   <div class="kpi p"><div class="v">13</div><div class="l">待补：洄游种<br>淡水期值</div></div>
 </div>
 
-<h2><span class="n">10</span>落到哪儿</h2>
+<h2><span class="n">11</span>落到哪儿</h2>
 <table>
   <tr><th>落点</th><th>内容</th></tr>
   <tr><td><strong>飞书 V3鱼总表</strong><br><span style="color:#6d7787;font-size:12.5px">rev 5047</span></td><td>新增 5 列：偏好 2 ＋ 口径 1 ＋ 接受 2；267 行全有值、0 空值</td></tr>
@@ -481,7 +518,7 @@
   <tr><td><strong>线上速览</strong></td><td>本页</td></tr>
 </table>
 
-<h2><span class="n">11</span>一路沉淀的判断原则</h2>
+<h2><span class="n">12</span>一路沉淀的判断原则</h2>
 <p>这些都不是推演出来的，是踩过之后才留下形状的。</p>
 
 <table>
@@ -497,8 +534,48 @@
 
 <p class="quote">共同点：<strong>每一次正确的判断，都来自「先去看它实际是什么」，而不是「先假设它应该是什么」。</strong></p>
 
+<h2><span class="n">13</span>原始数据来源</h2>
+<p>全程用到的来源（含采纳、校验、以及<strong>调研过但排除</strong>的）。完整清单含可达性实测见 <code>SOURCES.md</code>。</p>
+
+<table>
+  <tr><th>用途</th><th>来源</th><th>链接</th></tr>
+  <tr><td><strong>采纳</strong>｜海洋模型 51＋淡水期缺 13</td>
+      <td>FishBase <code>Preferred temperature</code>（<code>Ref. 123201</code>）</td>
+      <td><code>fishbase.se/country/CountrySpeciesSummary.php?GenusName=…&amp;SpeciesName=…</code></td></tr>
+  <tr><td><strong>采纳</strong>｜野外实测 41</td>
+      <td>Hasnain, Minns &amp; Shuter 2010, <em>Key Ecological Temperature Metrics for Canadian Freshwater Fishes</em>（CCRR-17）</td>
+      <td><a href="https://collections.ola.org/mon/25007/299113.pdf">collections.ola.org/mon/25007/299113.pdf</a></td></tr>
+  <tr><td><strong>校验</strong>｜接受上限天花板</td>
+      <td>同上的 <code>UILT</code>（上临界致死温度，39 种可测）</td>
+      <td>同 CCRR-17</td></tr>
+  <tr><td>排除｜气候带查表值</td>
+      <td>FishBase <code>Environment:</code> 行（常见 <code>Ref. 12741</code>，鲻鱼为 <code>4944</code>）</td>
+      <td><code>fishbase.se/References/FBRefSummary.php?ID=12741</code></td></tr>
+  <tr><td>排除｜<strong>语义错</strong>（是陆地气温）</td>
+      <td>USGS <code>FishTraits Database</code>（<code>10.5066/f7wd3zh8</code>）</td>
+      <td><code>api.datacite.org/dois/10.5066/f7wd3zh8</code></td></tr>
+  <tr><td>排除｜USGS 无逐种温度数据</td>
+      <td>DataCite API 按 DOI 前缀 <code>10.5066</code> 全库枚举</td>
+      <td><code>api.datacite.org</code></td></tr>
+  <tr><td>备查未采用｜覆盖更大的海洋候选</td>
+      <td>Morley et al. 2019（Dryad <code>10.5061/dryad.1m2vn52</code>）<br>Dahlke et al. 2020 Science（PANGAEA <code>10.1594/PANGAEA.917796</code>）</td>
+      <td><a href="https://datadryad.org/dataset/doi:10.5061/dryad.1m2vn52">datadryad.org</a> ／ <a href="https://doi.pangaea.de/10.1594/PANGAEA.917796">doi.pangaea.de</a></td></tr>
+  <tr><td>本地｜权威目标表</td>
+      <td>飞书多维表格「V3鱼总表」（267 行）</td>
+      <td><code>base_token P9rTbUTARaE1GasZp3rctaoungb</code></td></tr>
+  <tr><td>本地｜生产配置表</td>
+      <td><code>preCompute/configs/xlsx/</code>（<code>TempAffinity</code>、<code>fish_pond</code> 等）</td>
+      <td>—</td></tr>
+</table>
+
+<div class="box warn">
+  <p style="margin:0"><strong>可达性实测（2026-09-27）</strong>：主用源与关键 PDF <strong>全部 200 ✓</strong>。
+  <code>sciencebase.gov</code> / <code>hydrosource.ornl.gov</code> / <code>zenodo.org</code> 为 <strong>403（Cloudflare）</strong>——
+  <strong>与采集当时实测一致</strong>，正因如此当时才改走 DataCite API 绕路。</p>
+</div>
+
 <div class="foot">
-  <p>完整过程与决策记录（含全部数字、证据与可复验性说明）：<code>PROCESS-RECORD.md</code><br>
+  <p>完整过程与决策记录：<code>PROCESS-RECORD.md</code>　·　原始来源清单：<code>SOURCES.md</code><br>
   交付目录：<code>fishbase-pref-temp-2026-09-18/</code>　·　目标表：飞书「钓鱼元素周期表 → V3鱼总表」rev 5047</p>
 </div>
 
