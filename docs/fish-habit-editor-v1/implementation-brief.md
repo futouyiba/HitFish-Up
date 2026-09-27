@@ -198,15 +198,17 @@ create → reread → unique row_id → local mapping → verify
 ## 9. 推荐实现顺序
 
 ```text
-1. Local workspace / Electron host adapter
-2. Existing Species Base + Compat loading
+1. Existing Species Base + Compat loading
+2. Species Base / Compat Authoring
 3. Source catalog：Template + Existing Production Profile
-4. Species Base / Compat Authoring
-5. Shared Template create / edit / propagation
-6. Resolve
-7. Non-destructive Publish + reread verify
+4. Shared Template create / edit / propagation
+5. Resolve
+6. Web dev server 下完成 Non-destructive Publish + reread verify
+7. Electron Host Shell + portable ZIP packaging
 8. V1.0.1 fixed Compat slot create
 ```
+
+先在 Web dev server 下完成核心闭环，最后再包 Electron；不要让桌面壳阻塞 Domain / Authoring / Publish 开发。
 
 其中 1–7 构成 V1.0；8 不阻塞 V1.0。
 
