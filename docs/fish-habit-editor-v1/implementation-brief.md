@@ -1,6 +1,6 @@
 # Fish Habit Editor V1｜Implementation Brief
 
-> Status: Current Implementation Entry for V1 — G1–G5 physical gates pending  
+> Status: Current Implementation Entry for V1  
 > Product Authority: [product-contract.md](product-contract.md)  
 > Semantic Authority: [common-semantics.md](common-semantics.md)  
 > Surface Contracts: [authoring-surface.md](authoring-surface.md), [shared-assets.md](shared-assets.md), [secondary-surfaces.md](secondary-surfaces.md)  
@@ -8,7 +8,7 @@
 
 本文只列 V1 最小生产闭环的实现切面与尚需工程落点，不重新定义产品语义。
 
-G1–G5 不表示 Product Contract 尚未闭合；它们只确认冻结语义如何映射到 Fish Basic、ProductionRowLedger、Production naming 与 legacy bootstrap。任何 Gate 若要求改变 Product / Semantic Current，必须停止实现并回到 Owner / Review，而不是在实现层自行改义。
+本文按“单机单写者、已有 Fish Habit、非破坏性 Publish”组织。Coding Agent 不需要实现多人 revision 协议、Species Base fresh-create、legacy adjudication UI、Production ownership graph / GC 或 Git 客户端。
 
 ## 1. V1 最小闭环
 
@@ -30,107 +30,60 @@ V1 不实现：
 - Bake；
 - Production reverse reconcile。
 
-## 2. Species Catalog integration
+## 2. Existing Subject integration
 
 Fish Habit Editor 只读 authoritative Fish Basic，用于已有 Subject 的 Species identity / display：
 
 - `species_key` 使用 Fish Basic 稳定 ID；
 - display name 只用于 UI；
 - Habit Editor 不写 Fish Basic；
-- 已有 Species Base 的 `species_key` 若在当前 Fish Basic 中失效，产生 `BROKEN_SPECIES_REF`，允许 tolerant load 但 Publish BLOCK，不按名称自动 remap；
-- V1.0 不提供 Species Base creation，也不提供“开始配置其他鱼种”。
+- 已有 Species Base 的 `species_key` 若失效，产生 `BROKEN_SPECIES_REF` 并阻断 Publish；
+- V1.0 不提供 Species Base creation / “开始配置其他鱼种”。
 
-### 2.1 Existing Production ingress
+普通 Authoring 的输入前提：
 
-V1 产品不提供 migration UI，但已有 Production 进入 Editor 时必须经过 bounded bootstrap / migration，并满足以下 ingress 约束：
+- Species Base 已经存在于 authoring working tree；
+- system-default Affinity identity 已经存在并能映射；
+- existing Compat 若属于 `young / mature` slot，可进入“小个体 / 大个体 [兼容]”Subject；
+- unmapped legacy row 不要求 Coding Agent 在 Editor 内 adjudicate，可留给 Editor 外部的数据准备脚本。
 
-- 一个 Species Base 最终必须恰好一个 system default Affinity projection；
-- 不因 Production row 名含 `NORMAL` / `Default` 就自动认定它是 system default；只有存在明确 migration mapping / evidence 时才复用既有 row，否则创建新的 default projection shell；
-- V1 Compat UI 只接受固定 `young / mature` 语义，并且每个 Species × Compat type 最多一条可编辑 `FishEnvAffinity`；
-- legacy 中同一 Compat type 有多条 rows 时，产生 `MULTIROW_COMPAT_UNSUPPORTED` migration blocker；不得自动聚合、任选一条或按 Quality 猜主行；
-- 无法映射到 system default / young / mature 的 legacy Affinity 产生 `UNMAPPED_AFFINITY` migration blocker；不得 silent drop；
-- migration 负责形成满足 V1 durable invariants 的 Editor state，之后 Authoring 才以 Editor state 为 Truth。
+## 3. Source catalog / picker
 
-这不是要求全量自动迁移；可以是目标 Species 集合上的一次性脚本 + 人工 adjudication。
-
-未进入 Editor ownership 的 legacy rows 继续作为 **pass-through Production** 保留在 verified baseline 中。Bootstrap / migration 必须能区分：
-
-- 已被 Editor / ledger 明确接管、后续允许 materialize / cleanup 的 managed rows；
-- 尚未 adjudicate、Publish 必须原样保留的 pass-through rows。
-
-不得因为一次 V1 Publish 只覆盖部分 Species，就把其它未迁移 legacy rows 从 Production 中删除。
-
-## 3. V1.0 existing Subject / Source baseline
-
-普通 Authoring 开始前，目标 Fish 必须已经具备 Editor durable Species Base；需要编辑的 Compat row 也必须经过 ingress mapping 进入 durable state。
-
-V1.0 不提供 Species Base creation transaction。
-
-Component Source 实现必须支持两类显式 binding：
+Component Source 统一支持：
 
 ```text
 Shared Template
 Existing Production Source
 ```
 
-Existing Production Source：
+Existing Production Source adapter：
 
-- 从 verified Production baseline 读取；
-- 只暴露与当前 Component Kind schema-compatible 的 existing / pass-through rows；
+- 从当前本地 Production working tree 读取；
+- 只按 Component Kind / schema legality 枚举候选；
 - 不按当前 Species / Quality 推导 owner；
-- UI 直接使用 Production row 的真实英文 `name`；
-- durable binding 记录真实 stable physical identity / key；
-- 作为只读兼容 Source 使用，不因被绑定就转移为 Editor-owned mutable row；
-- 本次 Publish 生成的 managed projection 不自动进入 Existing Production Source candidate set。
+- UI 直接显示 Production row 的真实英文 `name`；
+- durable binding 记录真实稳定 physical identity / key；
+- 在当前 workspace load / explicit refresh 时形成 Source catalog；
+- Publish 不在同一事务中把刚写出的 row 动态注入当前 Picker。
 
 中鱼习性模式还允许 `FOLLOW_SPECIES`，并与 explicit Template / Existing Production pin 保持正交。
 
-## 4. System Default Affinity projection
+## 4. Existing System Default Affinity
 
-系统默认 Affinity 不是第二个 Authoring Subject，也不是业务 Mode。
+system-default Affinity 不是第二个 Authoring Subject，也不是业务 Mode。
 
-固定语义：
+V1.0 的前提是该 identity 已经存在并能映射到 Species Base。Editor 只需要：
 
-```text
-4 Component Source = FOLLOW_SPECIES
-numeric operation  = absent
-Role patch         = absent
-fail_env_coeff     = absent
-```
+- 识别稳定 existing Affinity identity / row mapping；
+- 不把它当成 `young` / `mature`；
+- ordinary UI 不显示为中鱼习性模式；
+- Species Base Authoring 改变后，Publish 更新它所引用 / materialize 的 Profile 与 Policy 结果；
+- StockRelease / FishRelease 可以继续在自己的配置中引用该 EnvAffinity；
+- Habit Editor 不写 Quality / StockRelease 关联。
 
-因此它完全跟随 Species Base。
+如果现有数据无法无歧义识别 system-default Affinity，属于进入 V1.0 前的数据准备问题，不在 Editor UI 中设计 migration / create flow。
 
-实现必须满足：
-
-- 有稳定 Editor identity / row key；
-- system default Affinity 的物理表示不能复用 `young` / `mature` bucket 语义；
-- Publish 前可以处于未物化状态；
-- Publish 后得到 Production row identity；
-- ordinary UI 不把它列为“中鱼习性模式” child；
-- StockRelease / FishRelease 可以在自己的配置中引用其 Production EnvAffinity；
-- Habit Editor 不写这条外部关联。
-
-### 4.1 实现 Gate：default Affinity physical carrier
-
-产品语义已经闭合；落码前只剩物理承载确认：
-
-- ProductionRowLedger 是否已经允许一个**非 young / mature** 的 system-default row；
-- 默认 Affinity 的 deterministic Production name：必须由 Species canonical English name + Base 语义派生；exact suffix token、delimiter / case / normalization 与 collision lookup domain 由 G3 固定；
-- 新 row 的 `row_key → row_id` 回填路径。
-
-硬规则：
-
-- 不允许为了绕过 schema 修改，把 system default Affinity 填成 `young` 或 `mature`；
-- 若现有 ledger 可用 nullable / existing system slot 无歧义表达，直接复用；
-- 若不能表达，提交最小 schema delta，使 system-default 与 compat bucket 在 durable identity 上可判别；不顺便设计 arbitrary Engagement Mode。
-
-`row_key` 始终是 Editor durable identity；`row_id` 是 Production binding metadata。若 Production row 已写入但 `row_id` 回填 / final verify 失败，本次 Publish 按 partial / unverifiable failure 处理，禁止下一次 blind create 第二条默认 Affinity，直到 recovery 恢复可信映射。
-
-## 4.2 Species Base lifecycle boundary
-
-V1 不实现 Species Base / system default Affinity 的 Archive / Delete。
-
-原因：default Affinity 可能已经被 StockRelease / FishRelease 域引用，而 Habit Editor 不拥有完整跨域引用生命周期。V1.0 只编辑既有 / 已迁入 Subject；删除仍留到具备 cross-domain reference guard 的后续能力。
+V1.0 不实现 Species Base / system-default Affinity Create / Archive / Delete。
 
 ## 5. Existing Compat Mode
 
@@ -170,7 +123,7 @@ Template create 与 Fish binding 必须是两笔独立 mutation：
 
 ## 7. Resolve
 
-Resolve 只消费最近成功 durable revision。
+Resolve 只消费最近一次成功保存的 durable state。
 
 输出：
 
@@ -183,56 +136,55 @@ Resolve 只消费最近成功 durable revision。
 
 ## 8. Publish
 
-Publish 是 Editor-global transaction。
-
-Preflight：
-
-1. Editor durable state；
-2. full validation / materialization readiness；
-3. Production generation baseline。
-
-Executor 必须：
+Publish 是单机全局动作：
 
 ```text
-revision check
-→ generation check
-→ build expected full Production
-   = verified pass-through baseline
-   + materialized Editor-managed projection
-→ write
-→ whole Production reread
+flush / verify saved Authoring state
+→ full validation
+→ read current Production working tree
+→ materialize
+→ create / update 明确目标 rows
+→ keep all other rows unchanged
+→ reread touched rows/files
 → verify
 → success
 ```
 
-只有 reread + verify 成功才算 Publish success。
+V1.0 使用**非破坏性 patch**：
 
-Materializer 必须区分 Affinity identity row 与可复用的 Component/Profile row：system-default / Compat Affinity identity 不因 payload 相同而合并；Profile projection 才可以按 lineage 复用。
+- 不删除 Editor 不认识的 row；
+- 不做 orphan GC / obsolete-row cleanup；
+- 不做 managed-vs-pass-through ownership graph；
+- 不做 whole-generation concurrent baseline protocol；
+- touched output reread + verify 是 success 必要条件。
 
-实现无论采用 full-file replace 还是 row patch，都必须满足同一 ownership 语义：
+Materializer 仍必须区分 Affinity identity row 与可复用的 Component/Profile row：system-default / Compat Affinity identity 不因 payload 相同而合并；Profile projection 才可以按明确 lineage 复用。
 
-- managed obsolete rows 可在 desired graph 不再引用时清理；
-- pass-through rows 原样保留；
-- ownership 不明时不猜、不删，必要时 BLOCK。
+如果 materialization 需要新建 Production row 并取得 `row_id`：
 
-Partial / unverifiable write 不自动建立新 baseline。
+```text
+create → reread → unique row_id → local mapping → verify
+```
+
+未完成这条链路不宣告成功，不 blind recreate。
 
 ## 9. 推荐实现顺序
 
 ```text
 1. load existing Authoring working tree
-2. Fish Basic read + existing Species Base lookup
-3. Existing Production baseline / source adapter
-4. existing Species Base Authoring
-5. existing Compat Mode Authoring
-6. Shared Template create / edit / propagation
-7. Resolve
-8. Publish → Production working tree
-9. Electron host / portable workspace packaging
-10. V1.0.1 fixed Compat Mode create
+2. Fish Basic + existing Species Base / Compat loading
+3. Species Base / Compat Authoring
+4. Source catalog：Shared Template + Existing Production Source
+5. Shared Template create / edit / propagation
+6. Resolve
+7. Web Dev Server 下完成 Non-destructive Publish + touched-output verify
+8. Electron Host Shell + portable ZIP packaging
+9. V1.0.1 fixed Compat slot create
 ```
 
-其中 1–9 构成 V1.0；10 不阻塞 V1.0 Freeze。
+先完成 Domain / Authoring / Publish 核心闭环，再包 Electron；不要让桌面壳阻塞核心开发。
+
+其中 1–8 构成 V1.0；9 不阻塞 V1.0 Freeze。
 
 Workspace / Electron 物理边界见 [workspace-and-delivery.md](workspace-and-delivery.md)。
 
@@ -240,113 +192,64 @@ Workspace / Electron 物理边界见 [workspace-and-delivery.md](workspace-and-d
 
 至少覆盖：
 
-1. 从 authoring Git working tree 载入已有 Species Base / Compat Subject；
-2. Shared Template 与合法 Existing Production row 都可以成为 Component Source；
-3. Existing Production Source Picker 只按 Component Kind / schema legality 筛选，不按当前 Species / Quality 推 owner；
-4. Existing Production Source 直接显示真实 Production 英文 `name`；
-5. 修改 Species Base 字段并 Autosave 到 authoring working tree；
-6. 从当前 Component 提取 Shared Template；
-7. 将 Fish Source 改绑到 Template / Existing Production Source 并经过 Candidate；
-8. Resolve 解释最终值；
-9. Publish 写入 production Git working tree，并完成 reread / whole-output verify；
-10. Publish 不自动 `git commit` / `git push`；
-11. system default Affinity 不被编码成 young / mature bucket；
-12. Species Base / default Affinity 在 V1.0 没有 Create / Archive / Delete action；
-13. Fish Basic 删除 / 断开的 `species_key` 触发 `BROKEN_SPECIES_REF` 并阻断 Publish；
-14. Electron ZIP 中 app / authoring / production 为 sibling，authoring 与 production 各自保留 Git metadata；
-15. mutable Authoring / Production data 不打进 Electron `app.asar`。
+1. 从 authoring working tree 载入已有 Species Base / Compat Subject；
+2. default Affinity 不作为第二个业务 Subject；
+3. `young / mature` UI 显示“小个体 / 大个体”，缺任一 slot 都合法；
+4. Shared Template 与合法同 Kind Existing Production row 都可以成为 Component Source；
+5. Existing Production Source 直接显示真实英文 `name`，不推导 Fish ownership；
+6. Source Change Candidate 正确展示 before / after，原有 Operation 不被偷偷清理；
+7. 普通字段 Autosave 到本地 Authoring state；
+8. Extract / Template edit / propagation 可用；
+9. Resolve 解释最近一次成功保存的 Authoring Truth；
+10. Publish 只 create / update 明确目标 row，其它 Production row 保持不变；
+11. Publish 后 reread touched output 并 verify；
+12. Production working tree 可由外部 Git 直接 diff / commit / merge；Editor 不实现 Git merge；
+13. save / Production write failure 不冒充成功；
+14. V1.0 没有 Species Base fresh-create / migration adjudication UI / Production GC；
+15. Electron ZIP 保持 app / authoring / production sibling，mutable data 不进 `app.asar`。
 
-V1.0 不以 Species Base creation、arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为验收前提。
-
-### 10.1 还应覆盖的 Contract 验收
-
-除 Golden Path 外，至少再覆盖：
-
-- 未进入 Editor durable state 的 Species 在 V1.0 普通 UI 中没有 fresh-create 入口；
-- multi-row same-Compat legacy ingress 被 migration blocker 拒绝，而不是自动聚合；
-- unmapped Affinity 不会仅因“已存在”就进入 Compat Subject；
-- Species 只有 Species Base / 基础习性 + `young` 中鱼习性模式、没有 `mature` row 时仍是完整合法状态；UI 不显示“缺少大个体”错误或占位要求；
-- existing `young / mature` row 在 UI 显示为“小个体 / 大个体 [兼容]”时，底层 physical slot / row identity / Production English naming 不因中文 label projection 被重写；
-- Existing Compat Mode 的 inherit / ADD / SET / CLEAR 能正确 Resolve；
-- Compat Mode 完全跟随 Species 时，Component/Profile projection 可以复用，但 Compat `FishEnvAffinity` identity row 仍保留；
-- legacy pass-through rows 与 Editor-managed rows 并存时，Publish 只替换 managed projection，pass-through rows reread 后保持不变；
-- obsolete Editor-owned Profile projection 可以 cleanup，但 ownership 不明 row 不会被误删；
-- ordinary Autosave 遇到 revision conflict 不 last-write-wins、不自动 merge，Resolve / Publish 使用最近成功 durable truth；
-- Shared Template 多字段 Candidate 只提交一次并正确传播；
-- Template Value Candidate 遇到 revision stale 不自动把旧字段值 rebase 到新 Template；
-- Extract 在 incomplete raw input / save failure 时不会拿旧 durable value 冒充“当前值”创建 Template；
-- referenced ARCHIVED Template 仍可 Resolve，Hard Delete commit 会重新检查 DirectReferenceSet；
-- Production generation drift 阻断 Publish；
-- create-from-absent default Affinity 的 `row_id` 回填失败不能被判为 Publish success；
-- `row_id` backfill 不得用旧 Editor revision 覆盖并发产生的新 Authoring state。
-
+V1.0 不以 arbitrary Mode creation、Family、Quality、Bake、多人协作、reconcile 或 Production GC 作为验收前提。
 
 ## 11. Closure Status
 
 ### 11.1 Product / semantic closure
 
-以下内容对 V1 已有唯一 Contract，不应在落码时重新设计：
+V1.0 已冻结的最小语义：
 
-- Species identity 来自 Fish Basic；
-- V1.0 只编辑已有 / 已迁入 Species Base，不提供 Species Base creation；
-- 每个进入 V1.0 的 Species Base 恰好一个 hidden system default Affinity projection；
-- default Affinity 不是业务 Mode、不是第二个 Authoring Subject；
-- V1 只编辑既有 Compat Mode；V1.0.1 才补固定 young / mature create；
-- Shared Template create / extract / propagation / lifecycle；
-- Source / ADD / SET / CLEAR / Policy semantics；
-- Resolve Preview；
-- Global Publish / generation guard / reread verify；
-- StockRelease / FishRelease 关联不归 Habit Editor；
-- Species Base / default Affinity 在 V1 不提供 Archive / Delete。
+- 只编辑已有 Species Base / existing Compat；
+- Species identity 来自 Fish Basic，只读；
+- system-default Affinity 是已有 Species Base 的 Production projection，不是第二个 Authoring Subject；
+- `young / mature` 是 existing Compat physical slots，UI 映射为“小个体 / 大个体”；
+- Component Source = Shared Template 或同 Kind Existing Production Source；Compat 还可 Follow Species；
+- Existing Production Source 直接显示原英文 `name`，不推导 Fish ownership；
+- Source / ADD / SET / CLEAR / Policy / Resolve 语义保持现行 Contract；
+- Shared Template create / extract / propagation / lifecycle 保留；
+- Publish = 单机非破坏性 create/update + touched-output reread/verify；
+- 多人协作、Git merge、Production GC、reverse reconcile 不属于 V1.0。
 
 ### 11.2 Remaining engineering gates
 
-以下是落码前需要确认的**物理实现 Gate**，不是新的产品设计分支：
+只保留真正会阻塞落码的物理问题。
 
-**G1｜Fish Basic adapter**
+**G1｜Existing Fish / Species adapter**
 
-- 确认 authoritative Fish Basic 的稳定 Species ID 字段；
-- 确认 UI display name / production naming 所需的 canonical English name 来源；
-- 只读接入，不向 Fish Basic 回写。
+- 确认 Fish Basic 稳定 Species ID 与 display / canonical English name 来源；
+- 确认已有 Species Base / system-default Affinity / Compat 的读取映射；
+- 只读 Fish Basic，不实现 Species Base fresh-create。
 
-**G2｜System default Affinity physical carrier**
+**G2｜Source catalog adapter**
 
-- 核当前 ProductionRowLedger/schema 是否能表达非 `young / mature` 的 system-default row；
-- 若不能，做最小 schema delta；不得把 default 伪装成 compat bucket。
+- 为每个 Component Kind 枚举合法 Existing Production rows；
+- 暴露稳定 row identity + 原始英文 `name` + typed payload；
+- 不实现 current-Species ownership 推断；
+- 与 Shared Template 一起提供统一 Source Picker 数据。
 
-**G3｜Production naming / collision domain**
+**G3｜Production materialization / naming**
 
-产品层已经固定“谁命名、谁不命名”和命名应携带的语义；G3 只完成真实 Production schema 下的物理 convention 与安全边界：
+- 固定各 Profile / Affinity 子表的真实 lookup key、name collision domain 与 normalization；
+- Shared Template English name 如何派生 Production Profile name；
+- Existing row 能否原地 update、何时必须 create 新 row；
+- 新 row 若有 `row_id`，完成 create → reread → mapping → verify；
+- Publish 采用非破坏性 patch，不承担旧 row cleanup。
 
-- Shared Template 有作者可编辑中文名 / 英文名；stable template identity 不随改名变化；
-- 模板级 Component/Profile projection 的 Production name 必须从 Template English Name 确定性派生；是否需要 Kind qualifier 取决于真实 lookup / collision domain；
-- 先核对每个 Component/Profile 是否实际落到独立具名 Production row、主表是否按 name 字符串引用该 row、collision domain 是否跨 Kind 共享；
-- 若需要 Kind qualifier，当前优先 vocabulary 为 `Temp / Struct / FeedLayer / Period / Policy`：`Period` 对齐 canonical `Time Period`，避免过宽的 `Time`；`FeedLayer` 对齐 canonical `Feeding Layer`，避免 `Feed` 被误读成 food/feed type；`Policy` 仅在真实 Production 存在独立具名 Policy row 时适用；
-- 这些 qualifier 属 G3 Production convention，不是 Authoring Semantic Contract；
-- 含 Species / Mode 有效 local operation 的 Profile 使用 owner-specific system-generated name；
-- system-default `FishEnvAffinity` 名称必须表达 Species canonical English name + Base 语义；
-- V1.0.1 fixed Compat Production naming 可以继续表达 Species canonical English name + Juvenile / Mature physical slot；这不要求 UI 中文标签与旧年龄术语保持直译，当前 UI 使用“小个体 / 大个体”；
-- `FishEnvAffinity` row name 在 V1 / V1.0.1 不作为作者输入；
-- 固定 exact prefix / suffix token、delimiter / case / 合法字符 normalization、各表 lookup/collision domain；
-- 核实 Production name 是否承担表内 string-reference key，以及这些引用是否全部处于 Habit Editor 全局 Publish 的重写范围；
-- 固定 Template English rename 的 materialization 行为：若可以完整重写并 reread/verify，则允许 Publish；若存在无法证明覆盖的外部 name-based reference、orphan / duplicate 风险，则 Publish BLOCK；
-- Fish Basic canonical English name 若参与 Affinity Production naming，必须明确它是**受 Publish snapshot/revision guard 的 live input**，还是在 create/bootstrap 时形成的稳定 naming stem；不得让一个未绑定 revision 的外部可变 display field 在 Preflight 与 Execute 之间悄悄改变 materialized key；
-- Production name 可以是物理 reference key，但永远不成为 Editor durable identity。
-
-**G4｜row_key → row_id create-from-absent handoff**
-
-- 固定 Production create 后 reread、唯一 row_id 识别、Editor durable backfill 的具体调用顺序；
-- `row_id` backfill 是 Publish transaction 内的 system-owned metadata write，不得覆盖更新后的作者语义；
-- 若 Production 写入后另一 Editor session 已推进 durable semantic revision，backfill 必须按 stable `row_key` 做受控 metadata patch，或将本次 Publish 判为 unverifiable / recovery-required；不得用旧 revision 整体回写覆盖新 Authoring state；
-- backfill 本身可以推进 Editor revision；Publish success 应以完成 backfill 后的 durable state + 已验证 Production baseline 收尾，但不声称并发产生的更新后 Authoring state 已经被本次 Publish 发布；
-- backfill / verify 未完成时不得宣告 Publish success，也不得 blind recreate。
-
-**G5｜Initial legacy bootstrap**
-
-- 对首批已有 Production 的目标 Species执行 bounded bootstrap / migration；
-- multi-row same-Compat 与 unmapped Affinity 必须进入人工 adjudication，不自动聚合或 silent drop；
-- bootstrap 必须区分并可承载“明确 Profile absent”与“已有 binding 但 Source broken”两种 ingress state，不能把缺 Profile 伪造成 `BROKEN_SOURCE_REF`，也不能给缺失 Profile 自动补假数据；
-- bootstrap 同时建立 managed-vs-pass-through ownership 边界：被接管 row 进入 Editor / ledger ownership，未 adjudicate legacy row 留在 pass-through baseline，后续 Publish 不得误删。
-- `young / mature` 在 Habit Editor 中只作为既有 Compat physical slot / identity；哪个 Quality / FishPoint / StockRelease row 使用哪条 Affinity 由下游显式引用关系决定，不从 slot token 自动推导。因此 UI 将其投影为“小个体 / 大个体”不要求重迁既有 Affinity row，也不改变下游映射自由度。
-
-完成 G1–G5 后，V1 vertical slice 不需要再等待新的产品裁决即可进入实现。
+完成 G1–G3 后，V1.0 不需要新的产品裁决即可实现。

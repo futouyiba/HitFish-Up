@@ -5,7 +5,7 @@
 
 ## 1. 一句话产品模型
 
-V1.0 只编辑已经进入 Editor durable state 的 Species Base / 既有 Compat FishEnvAffinity。作者通过 **Source + 当前层 Authoring Operation** 编辑四类习性与空间机会策略；Resolve 展示派生结果，Publish 将 exact durable Authoring State 物化到本地 Production working tree。V1.0 不提供 Species Base creation。
+V1.0 是一个**单机单写者**的本地习性编辑器，只编辑已经存在于 authoring working tree 的 Species Base / 既有 Compat FishEnvAffinity。作者通过 **Source + 当前层 Authoring Operation** 编辑四类习性与空间机会策略；Resolve 展示派生结果；Publish 将最近一次成功保存的 Authoring Truth 非破坏性物化到本地 Production working tree。V1.0 不提供 Species Base creation。
 
 ## 2. Mental Model
 
@@ -27,7 +27,7 @@ Fish
 - V1 UI 将现有 Compat rows 组织在 **“中鱼习性模式”** 下。它们表达相对基础习性的可选差异，不是把一个 Species 完整切成互斥分桶。
 - 现有 physical Compat slot 继续沿用 `young / mature` 承载；V1 UI 分别投影为 **“小个体” / “大个体”**。该 UI label projection 不要求修改底层 bucket token 或 Production English name。
 - 中鱼习性模式可以为 0、1 或 2 个；缺少“小个体”或“大个体”都不表示 Species 数据不完整。一个 Species 完全可以只使用基础习性，或只增加其中一个模式。
-- V1 一个可编辑中鱼习性模式 Subject 对应一条已经由 ingress / migration 无歧义映射到固定 Compat physical slot 的既有 `FishEnvAffinity` 行；任意未映射 Affinity 不会仅因“已经存在”就自动成为 Subject。
+- V1 一个可编辑中鱼习性模式 Subject 对应一条已经明确映射到固定 Compat physical slot 的既有 `FishEnvAffinity` 行；任意未映射 Affinity 不会仅因“已经存在”就自动成为 Subject。
 - 普通作者 UI 不要求理解 `FishEnvAffinityRef`、Production row naming 或 materialized row id。
 
 ### 2.2 一份习性由什么组成
@@ -79,14 +79,14 @@ Effective Value、Resolve result/provenance、current selection、raw incomplete
 
 V1.0 不提供“开始配置其他鱼种”或 Species Base creation。
 
-进入普通 Authoring 前，目标 Species 必须已经通过现有 Editor state 或 bounded bootstrap / migration 具备：
+进入普通 Authoring 前，目标 Species 必须已经在 authoring working tree 中具备：
 
 - 一个 Species Base / 基础习性 Subject；
 - 需要被编辑的既有 Compat FishEnvAffinity（若有）；
 - 可解析的 Component Source binding / Policy binding；
 - 必要的 stable identity / ledger mapping。
 
-Bootstrap / migration 是数据准备边界，不是普通作者 UI，也不建立第二套长期 Authoring Truth。
+旧数据若需要转换成上述 Authoring state，作为 Editor 外的数据准备工作处理，不进入 V1.0 普通作者 IA。
 
 若某个 Fish Basic Species 尚未进入 Editor durable state，V1.0 Fish List 不把它显示为“可开始配置”的新对象；新增 Species Base 留给后续明确版本能力。
 
@@ -158,8 +158,8 @@ V1.0 Fish Navigation 只展示已经进入 Editor durable state 的 Species / Su
 - Species identity 仍来自 Fish Basic / authoritative Species Catalog；
 - Habit Editor 不创建新的 Species identity；
 - V1.0 不创建新的 Species Base；
-- 尚未进入 Editor durable state 的 Species 由 bootstrap / migration 或后续版本能力处理，不在当前 Authoring IA 中制造“开始配置”入口；
-- Golden Seed / Snapshot 只用于 demo / regression / migration evidence，不定义产品可编辑范围。
+- 尚未进入 authoring working tree 的 Species 由 Editor 外的数据准备工作或后续版本能力处理，不在当前 Authoring IA 中制造“开始配置”入口；
+- Golden Seed / Snapshot 只用于 demo / regression，不定义产品可编辑范围。
 
 Shared Template 与 Existing Production Source 都可以作为已有 Subject 的合法 Component Source；Source 规则见 [common-semantics.md §2](common-semantics.md#2-source-binding)。
 
@@ -239,9 +239,21 @@ V1 的 staged candidate 是**短事务**，不是可跨页面长期挂起的 Dra
 
 普通 Fish Authoring 中，**每个 Component 的 Source binding 只在该 Component Card 的 Source Selector 修改**。Policy Template Source 属独立 Policy binding，只在 Species Base Policy Card 修改。
 
-- Component Focus Editor 只展示当前 Source / provenance，可提供“查看模板”等导航，不再放第二个 Component Source Selector。
-- Policy Focus 同样不复制 Policy Template Source Selector。
-- 旧实现若仍存在顶部 Source Selector，不作为 V1 产品 Contract 要求，应在 projection / migration 中收敛，避免第二 mutation entry。
+Component Source Picker 统一提供：
+
+1. **Shared Template**：长期主路径，分组置前；
+2. **Existing Production Source**：过渡兼容来源，分组置后；
+3. Compat Subject 额外提供 **跟随基础习性**。
+
+Existing Production Source：
+
+- 来自当前本地 Production working tree；
+- 只按当前 Component Kind / schema legality 筛选；
+- 不推导“属于当前鱼种 / Quality”；
+- 直接显示 Production row 原英文 `name`；
+- 不进入 Shared Assets lifecycle。
+
+Component Focus Editor 只展示当前 Source / provenance，可提供“查看模板”等导航，不再放第二个 Component Source Selector。Policy Focus 同样不复制 Policy Template Source Selector。
 
 换 Source 是 staged mutation；改字段是 ordinary edit。两者在交互重量上故意不同。
 
@@ -275,7 +287,7 @@ Template 英文名虽然在 Editor 中是可编辑 metadata，但它会影响下
 - Mode Share / Routing
 - FishPond / StockRelease / FishRelease
 - 新建 Species identity
-- V1.0 创建新的 Species Base / system-default Affinity；V1.0.1 仅补 fixed Compat row creation
+- Species Base / system-default Affinity creation；V1.0.1 仅补 fixed Compat row creation
 - Family / Preset-assisted Species initialization
 - Species Base / system default Affinity Archive / Delete
 - 鱼家族预设 / Species Preset
@@ -303,9 +315,11 @@ Template 英文名虽然在 Editor 中是可编辑 metadata，但它会影响下
 → 处理 Validation
 → 解析预览
 → Publish
-→ 本地 production Git working tree 产生已验证 materialization diff
+→ 非破坏性 create / update 明确目标 rows
+→ reread / verify touched output
+→ 本地 production Git working tree 产生可供 Git diff 的变化
 ```
 
 V1.0 Review 的核心问题：
 
-> 在不依赖后续能力的情况下，一个作者能否安全编辑已有 Species Base / Compat Subject，明确理解 Source 与 Operation，完成验证、解析，并把 exact Authoring revision 可靠物化到 Production working tree？
+> 在不引入 Species Base fresh-create、多人协同协议或 Production GC 的情况下，一个作者能否安全编辑已有 Species Base / Compat Subject，明确理解 Source 与 Operation，完成验证、解析，并把当前本机成功保存的 Authoring Truth 可靠物化到 Production working tree？

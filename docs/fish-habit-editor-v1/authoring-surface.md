@@ -59,7 +59,7 @@ V1.0 左栏只显示已经进入 Editor durable state 的 Fish / Subject。
 - 从 Fish Basic 直接 fresh create Habit；
 - 把未迁移 Production footprint 自动解释成新 Subject。
 
-已有 Production 的 bootstrap / migration 在进入普通 Editor 前完成。若目标 Species 尚未进入 Editor durable state，V1.0 普通作者界面不为它建立半成品或 Setup flow。
+若目标 Species 尚未存在于 authoring working tree，V1.0 普通作者界面不为它建立半成品或 Setup flow；需要时由 Editor 外的数据准备工作处理。
 
 ## 3. Context Header
 
@@ -115,7 +115,7 @@ Component Card 的 Source Selector 是唯一 Source mutation entry。Picker 不�
 V1.0 显式 Source candidate 分两类：
 
 1. **共享模板**：长期主路径，可复用、可管理的 Authoring Source；
-2. **已有生产数据 · 兼容**：过渡期兼容来源，来自 verified Production baseline 中合法的同 Component Kind existing / pass-through row。
+2. **已有生产数据 · 兼容**：过渡期兼容来源，来自当前本地 Production working tree 中合法的同 Component Kind row。
 
 对于中鱼习性模式，Picker 顶部还可以有：
 
@@ -153,7 +153,7 @@ Legacy_Rocky_03
 - 当前 Source 若为 Template，可显示“共享模板”；若为 Existing Production，可显示“已有生产数据 · 兼容”；
 - Source Change 无论跨不跨类型，都继续走同一套 staged Candidate。
 
-V1.0 不把本次 Publish 新生成的 Editor-managed Production projection 自动发现为新的 Existing Production Source candidate，避免 output → source 隐式循环。Existing Production Source 只消费当前 verified baseline 中明确允许作为兼容来源的 existing / pass-through row。
+Existing Production Source catalog 在 workspace load / explicit refresh 时从本地 Production working tree 重建。Publish 过程中不动态把刚写出的 row 注入当前 Picker，避免同一事务内形成 output → source 循环。
 
 ## 5. Focus Editor states
 
@@ -283,7 +283,7 @@ UI 进入 local raw-input state：
 - 不进入 durable state；
 - 不触发 Resolve input；
 - Effective 区继续以最近一次 durable state 为准，并弱提示“未应用”；
-- Publish 消费最近一次成功 durable revision；
+- Publish 消费最近一次成功保存的 durable state；
 - 若作者在输入完成前切离该 field / Component / Subject / Workspace，丢弃 transient input，并恢复该行最近一次 durable 表达；不为半完成操作弹保存确认。
 
 ### 9.2 Durable-valid but publish-invalid
@@ -310,20 +310,14 @@ Validator ERROR 不等于 Save Failure。
 
 ### 9.3 Save failure
 
-Durable write 本身失败：
+本地 durable write 失败：
 
 - Topbar 显示编辑器保存失败；
-- 最近一次成功 durable revision 仍是 Truth；
-- 不把未成功保存的数据冒充 Resolve / Publish 输入。
+- 最近一次成功保存的 durable state 仍是 Truth；
+- 未成功保存的数据不能进入 Resolve / Publish；
+- 作者修复本地文件 / 权限问题后重试。
 
-若失败原因是 optimistic revision conflict，应明确显示“内容已被其它会话更新 / 当前修改尚未保存”，而不是只显示泛化网络错误：
-
-- 保留当前 typed value 作为本地未保存冲突值，便于作者查看 / 复制；
-- 暂停该 Subject 的继续 mutation、Resolve 与 Publish；
-- 提供“重新读取最新内容”；
-- 重新读取后不自动合并冲突值，作者在最新 durable state 上显式重新应用需要保留的修改。
-
-V1 不做 ordinary edit 的字段级自动三方合并。
+V1.0 是单机单写者工具，不实现多人 / 多会话 revision conflict、自动 merge 或 conflict replay。
 
 ## 10. Diagnostic projection
 
@@ -536,36 +530,27 @@ Candidate Confirm 不是 Publish。
 
 - candidate source 已删除 / 已不再是合法 selectable source；
 - candidate binding 不满足 schema；
-- revision stale 且尚未重新计算 Preview。
+- candidate Source 在 Confirm 前已经不存在或不再满足 schema。
 
 这与“结果有 Validator ERROR”必须区分。
 
-### 12.10 Revision stale
+### 12.10 Candidate validity
 
-Confirm 前必须做 optimistic revision check。
+Confirm 前只重新检查：
 
-若 Preview 基于 revision 104，而 durable state 已变成 105：
+- candidate Source 仍存在；
+- candidate Source 仍可作为当前 Component 的合法 Source；
+- Candidate payload 仍满足当前 schema。
 
-```text
-候选预览已过期
-
-这笔来源变更尚未保存。
-[重新计算预览]
-[取消更换]
-```
-
-- 不 silent auto-rebase；
-- “重新计算预览”保留本次候选 Source intent，以最新 durable revision 重算 before/after；
-- 重算后仍需再次显式 Confirm；
-- 若候选 Source 本身已失效，则不能继续确认，作者取消后回 Card 重新选择。
+若检查失败，禁用 Confirm；作者取消当前 Candidate 后重新选择。
 
 ### 12.11 Confirm / Cancel
 
 **确认更换来源**
 
 ```text
-revision check
-→ atomic durable commit
+candidate validity check
+→ local atomic durable commit
 → candidate cleared
 → 回到原 Authoring Surface
 → 原 Component 保持 selected
@@ -591,8 +576,6 @@ Durable Source
 Candidate Review
       │
       ├── 取消更换 ───────→ Durable 不变
-      │
-      ├── stale ──────────→ 重新计算 Preview
       │
       └── 确认更换来源
                  ↓
@@ -702,7 +685,7 @@ V1 一个兼容 Mode 对应一条既有 FishEnvAffinity 行，因此普通 UI �
 Role ordinary edit 走 Autosave。
 
 - IGNORED + Profile absent → 改 CORE / SECONDARY：先保存 Role，随后显示 required-Profile ERROR；不自动建 Profile、不自动选 Source、不回滚 Role。Diagnostic 提供“去配置习性”导航，定位到对应 Component 的普通 Authoring；作者仍通过该 Component Card 唯一 Source Selector 选择 Source，不新增 Setup transaction。
-- Profile absent 是 legacy / migration / recovery 可见状态，不是普通 V1 作者主动删除 Profile 后得到的状态；V1 不提供“删除 Profile / 清空 Source”动作。
+- Profile absent 是既有 / 恢复数据中可能出现的状态，不是普通 V1 作者主动删除 Profile 后得到的状态；V1 不提供“删除 Profile / 清空 Source”动作。
 - CORE / SECONDARY → IGNORED：已有 Profile 保留，仍可编辑；仅表示当前计算不消费该 Profile。
 - Role 的 Validator ERROR 与 save I/O failure 分开；可 durable 保存但可阻断 Publish。
 
