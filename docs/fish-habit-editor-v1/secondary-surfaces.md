@@ -557,7 +557,7 @@ V1.0 不维护 Editor 内的 Production generation / baseline 协议。点击 Ex
 6. verify；
 7. 解锁 Editor。
 
-V1.0 不处理另一 Editor 会话同时修改 Authoring state，也不实现 revision R / R+1 协同协议。
+V1.0 按单实例 Editor 运行，不存在运行期协同 revision 协议。
 
 ### 7.6 Non-destructive patch
 
