@@ -14,7 +14,7 @@
 
 ```text
 existing Editor Species Base / Compat Subject
-→ Component Source（Shared Template / Imported Source Snapshot）
+→ Component Source（Shared Template / Authoring compatibility data）
 → Authoring
 → Validation / Resolve
 → Publish
@@ -53,21 +53,22 @@ Component Source 统一支持：
 
 ```text
 Shared Template
-Imported Source Snapshot
+Authoring compatibility data   # UI：已有数据 · 兼容
 ```
 
-Imported Source Snapshot adapter：
+实现要求：
 
-- 从 authoring durable state 读取，不从 Production working tree 实时枚举；
-- 只按 Component Kind / schema legality 枚举候选；
+- Source catalog 从当前 Authoring persistence 读取；
+- 对兼容数据只按 Component Kind / schema legality 枚举候选；
 - 不按当前 Species / Quality 推导 owner；
-- UI 直接显示 snapshot 保存的原 Production 英文 `name`；
-- durable binding 使用 Authoring 内 stable snapshot identity；
-- snapshot 可保留原 Production row id / generation 等 provenance，但这些不是日常 binding target；
-- Production 文件变化不会自动改变 Source catalog；
-- 如需承接新的 Production row，由 Editor 外的显式数据准备 / import / bootstrap 先生成 / 更新 snapshot。
+- 若现有 Authoring 数据已经保留原 Production 英文 `name`，UI 直接显示；
+- durable binding 沿用当前 Authoring persistence 已有的 Source reference / key；
+- **不新增 ImportedSourceSnapshot aggregate、snapshot id、provenance schema 或 lifecycle**；
+- 如果当前实现已经使用冻结 input snapshot / JSON 输入层，继续通过现有 adapter 消费即可，不为本轮另造持久化模型；
+- Production 文件变化不会自动改变普通 Source catalog；
+- 若需要从旧 Production 重新准备 Authoring 输入，属于 Editor 外的数据准备工作，不是 V1.0 Editor flow。
 
-中鱼习性模式还允许 `FOLLOW_SPECIES`，并与 explicit Template / Imported Snapshot pin 保持正交。
+中鱼习性模式还允许 `FOLLOW_SPECIES`，并与 explicit Template / compatible-data pin 保持正交。
 
 ## 4. Existing System Default Affinity
 
@@ -175,7 +176,7 @@ create → reread → unique row_id → local mapping → verify
 1. load existing Authoring working tree
 2. Fish Basic + existing Species Base / Compat loading
 3. Species Base / Compat Authoring
-4. Source catalog：Shared Template + Imported Source Snapshot
+4. Source catalog：Shared Template + Authoring compatibility data
 5. Shared Template create / edit / propagation
 6. Resolve
 7. Web Dev Server 下完成 Non-destructive Publish + touched-output verify
@@ -196,9 +197,9 @@ Workspace / Electron 物理边界见 [workspace-and-delivery.md](workspace-and-d
 1. 从 authoring working tree 载入已有 Species Base / Compat Subject；
 2. default Affinity 不作为第二个业务 Subject；
 3. `young / mature` UI 显示“小个体 / 大个体”，缺任一 slot 都合法；
-4. Shared Template 与合法同 Kind Imported Source Snapshot 都可以成为 Component Source；
-5. Source Picker 不扫描 Production working tree；Imported Source Snapshot 显示其保留的原 Production 英文 `name`，不推导 Fish ownership；
-6. Production 文件变化不会静默改变已导入 snapshot；
+4. Shared Template 与合法同 Kind Authoring compatibility data 都可以成为 Component Source；
+5. Source Picker 不扫描 Production working tree；兼容数据若已保留原 Production 英文 `name` 则直接显示，不推导 Fish ownership；
+6. 不为兼容数据新增 snapshot identity / provenance persistence contract；
 7. Source Change Candidate 正确展示 before / after，原有 Operation 不被偷偷清理；
 8. 普通字段 Autosave 到本地 Authoring state；
 9. Extract / Template edit / propagation 可用；
@@ -222,8 +223,8 @@ V1.0 已冻结的最小语义：
 - Species identity 来自 Fish Basic，只读；
 - system-default Affinity 是已有 Species Base 的 Production projection，不是第二个 Authoring Subject；
 - `young / mature` 是 existing Compat physical slots，UI 映射为“小个体 / 大个体”；
-- Component Source = Shared Template 或同 Kind Imported Source Snapshot；Compat 还可 Follow Species；
-- Imported Source Snapshot 只从 Authoring durable state 读取，显示保留的原 Production 英文 `name`，不推导 Fish ownership；
+- Component Source = Shared Template 或 Authoring persistence 中同 Kind compatible data；Compat 还可 Follow Species；
+- compatible data 只从 Authoring persistence 读取；若已有原 Production 英文 `name` 则直接显示，不推导 Fish ownership，也不新增 snapshot object model；
 - Source / ADD / SET / CLEAR / Policy / Resolve 语义保持现行 Contract；
 - Shared Template create / extract / propagation / lifecycle 保留；
 - Publish = 单机非破坏性 create/update + touched-output reread/verify；
@@ -241,8 +242,10 @@ V1.0 已冻结的最小语义：
 
 **G2｜Source catalog adapter**
 
-- 为每个 Component Kind 从 Authoring durable state 枚举合法 Imported Source Snapshot；
-- 暴露 stable snapshot identity + 原 Production 英文 `name` + typed payload + 必要 provenance；
+- 为每个 Component Kind 从当前 Authoring persistence 枚举合法 compatibility source data；
+- 复用当前已有 Source reference / key 与 typed payload；
+- 若现有数据已有原 Production 英文 `name`，将其用于 UI；
+- 不新增 snapshot identity / provenance schema / lifecycle；
 - 不在普通 Source catalog 阶段读取 Production working tree；
 - 不实现 current-Species ownership 推断；
 - 与 Shared Template 一起提供统一 Source Picker 数据。
