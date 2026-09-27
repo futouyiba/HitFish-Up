@@ -5,7 +5,7 @@
 
 ## 1. 一句话模型
 
-V1.0 是一个 **本地工作区型编辑器**：
+V1.0 是一个 **本地、单机单写者工作区型编辑器**：
 
 ```text
 开发阶段：Web Dev Server
@@ -66,7 +66,7 @@ V1.0：
 - Autosave / staged mutation confirm 修改的是 authoring working tree；
 - 后续若 Authoring persistence 演进为多 CSV，仍留在同一个 authoring working tree 边界内；
 - JSON → CSV 不是 V1.0 交付前提；
-- Git history / diff 用于协作与恢复，但 Git commit 不是 Editor durable revision 本身。
+- Git history / diff 用于人与人之间的协作与恢复；Editor 自身不实现协同 revision protocol。
 
 Editor 不自动替作者执行：
 
@@ -83,7 +83,7 @@ Editor 不自动替作者执行：
 
 Publish 的产品语义是：
 
-> **把绑定的 exact Authoring durable revision 物化到 Production working tree，并 reread / verify。**
+> **把当前本机最近一次成功保存的 Authoring state 非破坏性物化到 Production working tree，并 reread / verify 本次 touched output。**
 
 不是：
 
@@ -103,7 +103,7 @@ Publish 的产品语义是：
 
 V1.0 Editor 不内置 Git client，也不把 commit / push 作为 Publish 成功条件。
 
-Production generation / baseline guard 仍以**实际文件内容 / canonical generation**为正确性依据；不能只用 Git HEAD 是否变化替代 whole-output verification，因为 working tree 可能存在未提交修改。
+Execute 时重新读取当前本地 Production working tree，作为本次 patch 的输入。V1.0 不维护 Editor 内的 whole-generation baseline / 外部修改合并协议。若作者通过 Git 或其它工具修改了文件，应在继续编辑 / Publish 前显式 reload workspace。
 
 ## 5. Dev Host 与 Electron Host
 
@@ -148,9 +148,11 @@ production/
 - 把两个 repo 合并为一个事务性 Git commit 并作为 V1.0 正确性前提；
 - 因 Electron 打包而复制出第三份 mutable Authoring / Production truth。
 
-Git 是协作与版本管理基础设施；Editor revision / Publish verify 才是产品事务语义。
+Git 是协作与版本管理基础设施；Editor 只负责当前本机 session 的保存、Resolve 与 Publish verify。
 
-## 7. 与 Existing Production Source 的关系
+__END__
+
+
 
 过渡期允许 Component 显式选择 **Existing Production Source**。
 
