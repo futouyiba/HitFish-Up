@@ -522,8 +522,6 @@ Candidate Confirm 不是 Publish。
 
 ### 12.10 Candidate validity
 
-V1.0 不处理其它 Editor 会话导致的 revision stale。
-
 Confirm 前只重新检查当前 candidate Source 仍然存在且合法。若 Source 已删除 / 归档为不可选 / schema 失效，则禁用 Confirm，作者取消后重新选择。
 
 ### 12.11 Confirm / Cancel
