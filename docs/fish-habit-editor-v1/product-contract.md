@@ -152,7 +152,7 @@ V1.0 不承担 Species Catalog-backed creation。
 
 - Species identity 继续只读来自 Fish Basic；
 - Fish List 展示当前已经有可编辑 Habit 的 Species；
-- 不提供 `AVAILABLE_NEW` / “开始配置其他鱼种” / Species Base initialization；
+- 不提供“开始配置其他鱼种” / Species Base initialization；
 - Shared Template creation 仍属于 Shared Assets，与 Fish identity / Species Base creation 无关。
 
 ## 4. Context Header
