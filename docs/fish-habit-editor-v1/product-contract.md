@@ -1,11 +1,11 @@
 # Fish Habit Editor V1｜Product Contract
 
 > Status: Current Product Contract for V1  
-> Scope: Species Habit Authoring Minimum Loop。V1 不创建新的 Species identity / Engagement Mode，不 Author Quality / FishPond / StockRelease / FishRelease，不承诺外部生态数据自动导入，也不包含 Bake Preview。
+> Scope: Existing Species Habit Authoring Minimum Loop。V1.0 只编辑已经存在的 Species Base / Compat Habit，不创建 Species Base、Species identity 或 Engagement Mode；不 Author Quality / FishPond / StockRelease / FishRelease，不承诺外部生态数据自动导入，也不包含 Bake Preview。
 
 ## 1. 一句话产品模型
 
-作者从 Fish Basic 中选择已有 Species；若已有 Habit 则直接编辑，若尚无 Habit 则先选择四个 Component Source + Policy Template 原子创建 Species Base。随后通过 **Source + 当前层 Authoring Operation** 编辑四类习性与空间机会策略；Resolve 展示派生结果，Publish 物化到 Habit Production。
+作者选择已经存在 Habit 数据的 Species，通过 **Source + 当前层 Authoring Operation** 编辑四类习性与空间机会策略；Resolve 展示派生结果，Publish 将当前 Authoring Truth 非破坏性物化到本地 Production working tree。V1.0 不提供 Species Base 初始化 / fresh create。
 
 ## 2. Mental Model
 
@@ -75,47 +75,15 @@ Durable authoring intent 包括 Source binding / override、field operation / pa
 
 Effective Value、Resolve result/provenance、current selection、raw incomplete input、未确认 candidate、validation projection、Publish preflight result 都是 derived / ephemeral，不成为第二份 Truth。
 
-### 2.5 开始配置习性
+### 2.5 V1.0 Fish coverage
 
-Fish List 的 Species identity 来自 Fish Basic / authoritative Species Catalog。
+V1.0 只编辑已经存在 Species Base 的 Fish。
 
-默认主列表可以只展示已配置 Habit 的 Species；作者通过“开始配置其他鱼种”搜索 Fish Basic 中尚未配置 Habit 的 Species。
-
-创建 Species Base 采用单屏初始化，不做 Wizard：
-
-```text
-Species（只读，来自 Fish Basic）
-
-Temperature Source
-Structure Source
-Feeding Layer Source
-Time Period Source
-Policy Template
-
-[开始配置]
-```
-
-五项选择完成且 resulting Species Base **没有 blocking validation error** 后，atomic create **完整 Species Base + 一个系统默认 FishEnvAffinity 投影壳**，并直接进入普通 Authoring。
-
-初始化页只做 **Source / Policy binding selection**：
-
-- 不在这里编辑 ADD / SET / CLEAR；
-- 不在这里改 Role / fail_env_coeff；
-- 不在这里创建 Template；
-- 若缺少合适 Template，可从当前 Source picker 进入 Shared Assets 创建；初始化表单只在当前 UI 会话内保留已选 Species / binding，创建完成后返回并刷新候选。该保留是 ephemeral return state，不是 durable Draft；reload / 退出工作区可以丢弃；
-- 创建成功后的细调全部复用正常 Authoring Surface。
-
-Species Base / 基础习性仍是唯一默认习性 Authoring Truth；系统默认 FishEnvAffinity 只是它的运行时 / Production 投影壳，不作为第二个可编辑 Subject。
-
-默认 Affinity 固定：
-
-- 四个 Component 跟随 Species Base；
-- local operations 为空；
-- Role / fail_env_coeff 继承 Species；
-- 不在“中鱼习性模式”列表里重复显示成一个 Mode；
-- Publish 后形成可供 StockRelease / FishRelease 在其自身配置表中引用的 EnvAffinity row。
-
-Habit Editor 不创建或编辑 Fish Basic 基础数据、模型、图鉴、Quality，也不创建 StockRelease / FishRelease 的 Quality ↔ FishEnvAffinity 关联。
+- Fish / Species identity 仍来自 Fish Basic / authoritative Species Catalog；
+- 左栏只需要列出当前已有 Habit Editor / legacy mapping 可直接编辑的 Species；
+- 没有 Species Base 的 Fish 在 V1.0 不提供“开始配置习性 / 新建 Species Base”入口；
+- 已有 system-default Affinity 是 Species Base 的 Production projection，不作为第二个可编辑 Subject；
+- 新 Species Base、default Affinity fresh-create 与初始化流程不属于 V1.0。
 
 ## 3. Workspace / IA
 
@@ -178,18 +146,14 @@ FISH：
 
 V1 Shared Assets 只包含 Shared Template。鱼家族预设 / Species Preset 不进入 V1；Species Base initialization 已属于 Fish Authoring Surface，而不是 Shared Assets。
 
-### 3.3 Species Catalog-backed Creation
+### 3.3 Fish List coverage
 
-V1 不采用 Bounded Coverage。
+V1.0 不承担 Species Catalog-backed creation。
 
-- Species identity 来自 Fish Basic / authoritative Species Catalog；
-- 默认 Fish List 可以只展示已配置 Habit 的 Species，保持工作列表简洁；
-- “开始配置其他鱼种”搜索尚未建立 Habit 的 Fish Basic Species；
-- 若 Editor 尚无 Species Base、但 Production 已存在该 Species 的 FishEnvAffinity footprint，则显示“存在旧习性数据 · 需迁移”，不得进入 fresh create；
-- 创建完成后得到完整 Species Base + 系统默认 Affinity projection；
-- Golden Seed 只用于 demo / regression / migration evidence，不决定其它 Species 是否可配置。
-
-Shared Template 仍是 Species Base initialization 和后续 Authoring 的合法 Source，并支持空白创建、从 Fish / Policy 提取、Clone、编辑、Archive / Restore / Replace References。
+- Species identity 继续只读来自 Fish Basic；
+- Fish List 展示当前已经有可编辑 Habit 的 Species；
+- 不提供 `AVAILABLE_NEW` / “开始配置其他鱼种” / Species Base initialization；
+- Shared Template creation 仍属于 Shared Assets，与 Fish identity / Species Base creation 无关。
 
 ## 4. Context Header
 
@@ -230,7 +194,7 @@ Template 示例：
 
 ## 6. Interaction taxonomy
 
-V1 只保留四类**durable state / transaction 模型**：
+V1 只保留四类交互重量：
 
 | 类型 | 示例 | 持久化模型 |
 |---|---|---|
@@ -243,12 +207,11 @@ V1 只保留四类**durable state / transaction 模型**：
 
 这里的“四类”描述的是**状态模型**，不是说 UI 只能有四种按钮手势。V1 仍有少量 bounded object command，例如：
 
-- Species Base 初始化：ephemeral form → atomic create；
 - Shared Template Blank Create / Extract / Clone：ephemeral form 或当前上下文 → atomic create；
 - Archive / Restore：轻量确认或 direct atomic action；
 - Hard Delete：满足 guard 后 destructive confirm → atomic delete。
 
-这些动作都**不建立第五种 durable Draft / Candidate / Setup 状态**。只有当动作会对既有 consumer 产生 propagated mutation（例如 Replace References、Template completeValue change）时，才进入 Staged Mutation。
+这些对象操作不建立长期 Draft。只有当动作会对既有 consumer 产生传播影响（例如 Replace References、Template completeValue change）时，才进入 Staged Mutation。
 
 ### 6.1 Staged Candidate 的 V1 交互边界
 
@@ -268,9 +231,20 @@ V1 的 staged candidate 是**短事务**，不是可跨页面长期挂起的 Dra
 
 普通 Fish Authoring 中，**每个 Component 的 Source binding 只在该 Component Card 的 Source Selector 修改**。Policy Template Source 属独立 Policy binding，只在 Species Base Policy Card 修改。
 
-- Component Focus Editor 只展示当前 Source / provenance，可提供“查看模板”等导航，不再放第二个 Component Source Selector。
-- Policy Focus 同样不复制 Policy Template Source Selector。
-- 旧实现若仍存在顶部 Source Selector，不作为 V1 产品 Contract 要求，应在 projection / migration 中收敛，避免第二 mutation entry。
+Component Source Picker 统一提供两类显式 Source：
+
+1. **Shared Template**：长期推荐的 Authoring Source，分组置前；
+2. **Existing Production Profile**：过渡兼容 Source，分组置后。
+
+Existing Production Profile 的规则保持简单：
+
+- 只按当前 Component Kind 做合法性筛选，例如 Structure 只列合法 Structure rows；
+- 不推导“这条 Production row 属于当前鱼种”；
+- 不额外生成“大口黑鲈现有结构数据”之类解释名；
+- 直接显示 Production row 已有的英文 `name`；
+- 不把 Existing Production 提升为 Shared Assets 一级对象。
+
+Component Focus Editor 只展示当前 Source / provenance，可提供“查看模板”等导航，不再放第二个 Component Source Selector。Policy Focus 同样不复制 Policy Template Source Selector。
 
 换 Source 是 staged mutation；改字段是 ordinary edit。两者在交互重量上故意不同。
 
