@@ -236,8 +236,6 @@ Cancel 只丢弃 candidate，不修改 durable Template。
 
 ### 8.1 Candidate validity
 
-V1.0 是单机单写者 workspace，不处理其它 Editor 会话修改 Template 导致的 revision stale。
-
 Template Value Candidate Confirm 前只检查当前 Template 仍存在、Kind 未变且 candidate payload 仍满足 schema；否则取消当前 Candidate 并回到最新本地 durable state。
 
 ## 9. Blank Create
@@ -388,14 +386,9 @@ ARCHIVED
 
 V1.0 不处理其它 Editor 会话并发新增引用的竞态。
 
-Hard Delete 删除的是 Editor Template asset。V1.0 的 Production Publish 不做 orphan GC / obsolete-row cleanup，因此可能遗留的旧 Production Profile row 不在 Hard Delete 时联动删除。
+Hard Delete 删除的是 Editor Template asset。V1.0 Publish 不做 orphan GC / obsolete-row cleanup，因此可能遗留的旧 Production Profile row 不在 Hard Delete 时联动删除。
 
-Hard Delete 删除的是 Editor Template asset。若该 Template 曾经 materialize 出 Editor-owned Production Profile row，实际 Production cleanup 发生在下一次 Global Publish，并受 managed-projection ownership guard 约束：
-
-- ownership 可证明且 current desired graph 已不再引用 → 可删除 obsolete projection；
-- ownership 不明 / 与 pass-through row 混淆 → Publish BLOCK，不因 Hard Delete 在 Editor 成功就盲删 Production row。
-
-因此 Hard Delete 成功只表示 Authoring asset 已删除，不等于 Production 已经同步清理。
+Hard Delete 成功只表示 Authoring asset 已删除，不等于 Production row 已清理。
 
 ## 13. Replace References
 
