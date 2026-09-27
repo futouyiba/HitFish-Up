@@ -51,7 +51,7 @@ V1 的核心成果不是覆盖所有 Runtime / StockRelease 拓扑，而是证�
 - 已有 Habit 的 Species 直接编辑 Species Base / 基础习性。
 - 尚无 Habit 的 Species 可以通过“开始配置习性”创建完整 Species Base；Species 只能从 Fish Basic 已有条目中选择。
 - 编辑已经存在的兼容习性 Scope；产品 UI 可用“中鱼习性模式”表达业务心智，并以中性 `[兼容]` badge 标识当前承载方式。
-- **V1 当前兼容拓扑中，一个可编辑中鱼习性模式对应一条既有 `FishEnvAffinity` 行。** 不在一个 Mode Context 下聚合多条 Affinity 行，也不建立额外的 Mode→Quality 解释层。
+- **V1 当前兼容拓扑中，一个可编辑中鱼习性模式对应一条已经由 ingress / migration 无歧义映射到固定 Compat 语义（幼年 / 成年及以上）的既有 `FishEnvAffinity` 行。** 不在一个 Mode Context 下聚合多条 Affinity 行，也不建立额外的 Mode→Quality 解释层；unmapped / multi-row legacy 不自动变成可编辑 Subject。
 - V1 不允许用户创建新的业务中鱼习性 Mode；新 Species 只自动建立一个系统默认 FishEnvAffinity 投影。已有兼容 Mode 继续编辑。
 - StockRelease / FishRelease 继续负责 Quality / stocking row 与 FishEnvAffinity 的关联，Habit Editor 不创建或维护该关系。
 
@@ -72,7 +72,7 @@ V1 的核心成果不是覆盖所有 Runtime / StockRelease 拓扑，而是证�
 - ADD / SET / CLEAR / inherit/absent 等各字段允许的语义；
 - Effective Value / provenance 只读派生；
 - Role / Profile 正交；
-- 合法 Empty / Setup 状态；
+- legacy / migration / recovery 中可容忍的 Profile absent 状态及其诊断 / 修复；正常 V1 Authoring 不提供“删除 Profile / 清空 Source”来主动制造该状态；
 - Validation 与 blocking diagnostics。
 
 Temperature V1 以**手工 Authoring**为主，不承诺外部生态数据库自动导入。
@@ -153,7 +153,8 @@ Golden Seed / Snapshot 继续用于 demo / regression / migration / roundtrip ev
 
 - Migration 负责承接已有习性数据；
 - 新 Species initialization 由作者显式选择 Source / Policy；
-- Shared Template 整理、聚类和业务命名不要求 Bootstrap 自动推断。
+- Shared Template 整理、聚类和业务命名不要求 Bootstrap 自动推断；
+- V1 不要求先完成全量历史迁移：未被 Editor / ledger 接管的 legacy rows 作为 pass-through Production 保留，Global Publish 只能替换 ownership 可证明的 managed projection，不能误删其它未迁移 rows。
 
 ### 2.4 V1 Persistence
 
