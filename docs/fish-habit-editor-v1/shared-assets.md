@@ -441,4 +441,4 @@ V1 Shared Template 不扩展为：
 
 停止线：
 
-> **让作者可以安全创建、提取、编辑、传播和维护可复用 Source Asset；不把 Template Workspace 扩成 Existing Production 浏览器、数据迁移或物种初始化系统。**
+> **让作者可以安全创建、提取、编辑、传播和维护可复用 Source Asset；不把 Template Workspace 扩成 Production 浏览器、数据迁移或物种初始化系统。**
