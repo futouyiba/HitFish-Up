@@ -302,8 +302,10 @@ V1 不以 arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为
 产品层已经固定“谁命名、谁不命名”和命名应携带的语义；G3 只完成真实 Production schema 下的物理 convention 与安全边界：
 
 - Shared Template 有作者可编辑中文名 / 英文名；stable template identity 不随改名变化；
-- 模板级 Component/Profile projection 的 Production name 必须携带 **Component Kind 语义 + Template English Name**；`Struct Heavy Cover`、`Temp Warm Water` 只是示例，不能先于 schema evidence 冻结具体 prefix token；
-- 先核对每个 Component/Profile 是否实际落到独立具名 Production row，以及主表是否按 name 字符串引用该 row；Spatial Opportunity Policy 不因 UI 对称就预设同构命名；
+- 模板级 Component/Profile projection 的 Production name 必须从 Template English Name 确定性派生；是否需要 Kind qualifier 取决于真实 lookup / collision domain；
+- 先核对每个 Component/Profile 是否实际落到独立具名 Production row、主表是否按 name 字符串引用该 row、collision domain 是否跨 Kind 共享；
+- 若需要 Kind qualifier，当前优先 vocabulary 为 `Temp / Struct / FeedLayer / Period / Policy`：`Period` 对齐 canonical `Time Period`，避免过宽的 `Time`；`FeedLayer` 对齐 canonical `Feeding Layer`，避免 `Feed` 被误读成 food/feed type；`Policy` 仅在真实 Production 存在独立具名 Policy row 时适用；
+- 这些 qualifier 属 G3 Production convention，不是 Authoring Semantic Contract；
 - 含 Species / Mode 有效 local operation 的 Profile 使用 owner-specific system-generated name；
 - system-default `FishEnvAffinity` 名称必须表达 Species canonical English name + Base 语义；
 - V1.0.1 fixed Compat 名称必须表达 Species canonical English name + Juvenile / Mature 语义；
