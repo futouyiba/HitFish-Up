@@ -58,6 +58,13 @@ V1 产品不提供 migration UI，但已有 Production 进入 Editor 时必须�
 
 这不是要求全量自动迁移；可以是目标 Species 集合上的一次性脚本 + 人工 adjudication。
 
+未进入 Editor ownership 的 legacy rows 继续作为 **pass-through Production** 保留在 verified baseline 中。Bootstrap / migration 必须能区分：
+
+- 已被 Editor / ledger 明确接管、后续允许 materialize / cleanup 的 managed rows；
+- 尚未 adjudicate、Publish 必须原样保留的 pass-through rows。
+
+不得因为一次 V1 Publish 只覆盖部分 Species，就把其它未迁移 legacy rows 从 Production 中删除。
+
 ## 3. Species Base creation transaction
 
 创建输入只有五个 binding：
@@ -205,6 +212,9 @@ Executor 必须：
 ```text
 revision check
 → generation check
+→ build expected full Production
+   = verified pass-through baseline
+   + materialized Editor-managed projection
 → write
 → whole Production reread
 → verify
@@ -212,6 +222,12 @@ revision check
 ```
 
 只有 reread + verify 成功才算 Publish success。
+
+实现无论采用 full-file replace 还是 row patch，都必须满足同一 ownership 语义：
+
+- managed obsolete rows 可在 desired graph 不再引用时清理；
+- pass-through rows 原样保留；
+- ownership 不明时不猜、不删，必要时 BLOCK。
 
 Partial / unverifiable write 不自动建立新 baseline。
 
@@ -313,6 +329,7 @@ V1 不以 arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为
 - 固定 exact prefix / suffix token、delimiter / case / 合法字符 normalization、各表 lookup/collision domain；
 - 核实 Production name 是否承担表内 string-reference key，以及这些引用是否全部处于 Habit Editor 全局 Publish 的重写范围；
 - 固定 Template English rename 的 materialization 行为：若可以完整重写并 reread/verify，则允许 Publish；若存在无法证明覆盖的外部 name-based reference、orphan / duplicate 风险，则 Publish BLOCK；
+- Fish Basic canonical English name 若参与 Affinity Production naming，必须明确它是**受 Publish snapshot/revision guard 的 live input**，还是在 create/bootstrap 时形成的稳定 naming stem；不得让一个未绑定 revision 的外部可变 display field 在 Preflight 与 Execute 之间悄悄改变 materialized key；
 - Production name 可以是物理 reference key，但永远不成为 Editor durable identity。
 
 **G4｜row_key → row_id create-from-absent handoff**
@@ -323,6 +340,7 @@ V1 不以 arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为
 **G5｜Initial legacy bootstrap**
 
 - 对首批已有 Production 的目标 Species 执行 bounded bootstrap / migration；
-- multi-row same-Compat 与 unmapped Affinity 必须进入人工 adjudication，不自动聚合或 silent drop。
+- multi-row same-Compat 与 unmapped Affinity 必须进入人工 adjudication，不自动聚合或 silent drop；
+- bootstrap 同时建立 managed-vs-pass-through ownership 边界：被接管 row 进入 Editor / ledger ownership，未 adjudicate legacy row 留在 pass-through baseline，后续 Publish 不得误删。
 
 完成 G1–G5 后，V1 vertical slice 不需要再等待新的产品裁决即可进入实现。
