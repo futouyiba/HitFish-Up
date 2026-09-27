@@ -16,7 +16,7 @@ Shared Template 是持续共享的 Source Asset。V1 必须支持：
 - Replace References；
 - 查看显式引用与额外跟随使用。
 
-V1 可以从 Fish Basic 创建 Species Base + 系统默认 Affinity projection；Shared Template 则是独立的可复用 Source Asset。Template 创建本身不创建或修改 Fish / Mode identity。
+V1.0 不创建 Species Base；Shared Template 是独立的可复用 Source Asset。Template 创建本身不创建或修改 Fish / Mode identity。
 
 ## 2. 左栏导航
 
@@ -214,7 +214,7 @@ Impact 必须区分：
 Confirm：
 
 ```text
-revision check
+candidate validity check
 → atomic replace template complete value
 → clear candidate
 → re-resolve consumers
@@ -321,7 +321,7 @@ Structure                  只读
 - 当前 Focus 有 incomplete raw input 时 BLOCK，要求作者先完成或取消输入，不 silent discard，也不拿旧 durable value 冒充“当前提取值”；
 - 中文名由作者确认 / 输入；
 - 英文名由工具根据中文名、当前上下文或已有命名规则先生成可读建议值，作者可修改；创建提交时必须有非空英文语义名；
-- 浮层内不编辑 Template complete value；complete value 来自上述 exact durable revision 的 Effective Profile / Effective Policy flatten；
+- 浮层内不编辑 Template complete value；complete value 来自上述最近一次成功保存 state 的 Effective Profile / Effective Policy flatten；
 - 创建前不在左栏出现 durable Draft Template；
 - 点击创建后 atomic create ACTIVE Template；
 - 创建成功后**直接切换到新 Template Context**，左栏选择对应 Template，中栏显示 Template Overview，右栏允许继续编辑中文名、英文名与 Template complete value；
@@ -383,8 +383,6 @@ ARCHIVED
 
 - Template 仍为 ARCHIVED；
 - DirectReferenceSet 仍为空。
-
-V1.0 不处理其它 Editor 会话并发新增引用的竞态。
 
 Hard Delete 删除的是 Editor Template asset。V1.0 Publish 不做 orphan GC / obsolete-row cleanup，因此可能遗留的旧 Production Profile row 不在 Hard Delete 时联动删除。
 
