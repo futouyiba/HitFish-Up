@@ -355,6 +355,7 @@ V1 不以 arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为
 
 - 对首批已有 Production 的目标 Species 执行 bounded bootstrap / migration；
 - multi-row same-Compat 与 unmapped Affinity 必须进入人工 adjudication，不自动聚合或 silent drop；
+- bootstrap 必须区分并可承载“明确 Profile absent”与“已有 binding 但 Source broken”两种 ingress state，不能把缺 Profile 伪造成 `BROKEN_SOURCE_REF`，也不能给缺失 Profile 自动补假数据；
 - bootstrap 同时建立 managed-vs-pass-through ownership 边界：被接管 row 进入 Editor / ledger ownership，未 adjudicate legacy row 留在 pass-through baseline，后续 Publish 不得误删。
 
 完成 G1–G5 后，V1 vertical slice 不需要再等待新的产品裁决即可进入实现。
