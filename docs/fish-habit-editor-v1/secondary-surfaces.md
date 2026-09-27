@@ -570,6 +570,8 @@ Blocker 列表使用人类 breadcrumb：
 
 V1 的 expected baseline 可以包含尚未 import 到 Editor 的 pass-through legacy rows。它们仍受 whole-generation guard 保护，但不会因此变成 Editor Authoring Truth。Publish 只能替换 ownership 可证明的 Editor-managed projection，并把 bound baseline 中的 pass-through rows 原样带入 expected output；不得因为“Editor 不认识”就清掉 legacy row。
 
+这里读取 Production 是 **Publish baseline / verification**，不是 Source resolution。Gate C 不会把 Production row 暴露成普通 Authoring Source，也不会把 Production 变化反向写入 Authoring durable state。
+
 Blocker 文案：
 
 ```text
