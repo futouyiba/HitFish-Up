@@ -229,7 +229,7 @@ create → reread → unique row_id → local mapping → verify
 11. Publish 后 reread touched output 并 verify；
 12. Production working tree 可由外部 Git 直接 diff / commit；Editor 不实现 Git merge；
 13. save / Production write failure 不冒充成功；
-14. 不存在 Species Base fresh-create / `AVAILABLE_NEW` / `LEGACY_UNIMPORTED` 产品流程。
+14. V1.0 没有 Species Base fresh-create / Species initialization 产品流程。
 
 V1.0 不以 arbitrary Mode creation、Family、Quality、Bake、多人协作、reconcile 或 Production GC 作为验收前提。
 
