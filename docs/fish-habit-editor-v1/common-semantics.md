@@ -24,13 +24,7 @@ V1.0 不创建 Species Base。
 
 进入 V1.0 Editor 的 Fish 必须已经有可识别的 Species Base / default habit 数据。Species identity 继续来自 Fish Basic / authoritative Species Catalog。
 
-V1.0 不定义：
-
-- `AVAILABLE_NEW`；
-- `LEGACY_UNIMPORTED`；
-- 五 Source 初始化表单；
-- Species Base fresh-create；
-- system-default Affinity create-from-absent。
+V1.0 不提供 Species Base fresh-create、Species initialization 或 system-default Affinity create-from-absent。
 
 已有 system-default `FishEnvAffinity` 仍是 Species Base 的 Production projection，不是第二个 Authoring Subject。Habit Editor 只编辑 Species Base，并在 Publish 时更新对应已有 projection。
 
