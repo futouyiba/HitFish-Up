@@ -63,7 +63,7 @@ Authoring compatibility data   # UI：已有数据 · 兼容
 - 不按当前 Species / Quality 推导 owner；
 - 若现有 Authoring 数据已经保留原 Production 英文 `name`，UI 直接显示；
 - durable binding 沿用当前 Authoring persistence 已有的 Source reference / key；
-- **不新增 ImportedSourceSnapshot aggregate、snapshot id、provenance schema 或 lifecycle**；
+- **不新增一套独立的兼容 Source asset / identity / lifecycle；沿用当前 Authoring persistence 结构**；
 - 如果当前实现已经使用冻结 input snapshot / JSON 输入层，继续通过现有 adapter 消费即可，不为本轮另造持久化模型；
 - Production 文件变化不会自动改变普通 Source catalog；
 - 若需要从旧 Production 重新准备 Authoring 输入，属于 Editor 外的数据准备工作，不是 V1.0 Editor flow。
@@ -199,7 +199,7 @@ Workspace / Electron 物理边界见 [workspace-and-delivery.md](workspace-and-d
 3. `young / mature` UI 显示“小个体 / 大个体”，缺任一 slot 都合法；
 4. Shared Template 与合法同 Kind Authoring compatibility data 都可以成为 Component Source；
 5. Source Picker 不扫描 Production working tree；兼容数据若已保留原 Production 英文 `name` 则直接显示，不推导 Fish ownership；
-6. 不为兼容数据新增 snapshot identity / provenance persistence contract；
+6. 不为兼容数据新增独立持久化对象模型；
 7. Source Change Candidate 正确展示 before / after，原有 Operation 不被偷偷清理；
 8. 普通字段 Autosave 到本地 Authoring state；
 9. Extract / Template edit / propagation 可用；
@@ -224,7 +224,7 @@ V1.0 已冻结的最小语义：
 - system-default Affinity 是已有 Species Base 的 Production projection，不是第二个 Authoring Subject；
 - `young / mature` 是 existing Compat physical slots，UI 映射为“小个体 / 大个体”；
 - Component Source = Shared Template 或 Authoring persistence 中同 Kind compatible data；Compat 还可 Follow Species；
-- compatible data 只从 Authoring persistence 读取；若已有原 Production 英文 `name` 则直接显示，不推导 Fish ownership，也不新增 snapshot object model；
+- compatible data 只从 Authoring persistence 读取；若已有原 Production 英文 `name` 则直接显示，不推导 Fish ownership，也不新增独立兼容源对象模型；
 - Source / ADD / SET / CLEAR / Policy / Resolve 语义保持现行 Contract；
 - Shared Template create / extract / propagation / lifecycle 保留；
 - Publish = 单机非破坏性 create/update + touched-output reread/verify；
@@ -245,7 +245,7 @@ V1.0 已冻结的最小语义：
 - 为每个 Component Kind 从当前 Authoring persistence 枚举合法 compatibility source data；
 - 复用当前已有 Source reference / key 与 typed payload；
 - 若现有数据已有原 Production 英文 `name`，将其用于 UI；
-- 不新增 snapshot identity / provenance schema / lifecycle；
+- 不新增独立兼容源 asset / identity / lifecycle；
 - 不在普通 Source catalog 阶段读取 Production working tree；
 - 不实现 current-Species ownership 推断；
 - 与 Shared Template 一起提供统一 Source Picker 数据。
