@@ -70,20 +70,21 @@ Component Source 实现必须支持两类显式 binding：
 
 ```text
 Shared Template
-Existing Production Source
+Imported Source Snapshot
 ```
 
-Existing Production Source：
+Imported Source Snapshot：
 
-- 从 verified Production baseline 读取；
-- 只暴露与当前 Component Kind schema-compatible 的 existing / pass-through rows；
-- 不按当前 Species / Quality 推导 owner；
-- UI 直接使用 Production row 的真实英文 `name`；
-- durable binding 记录真实 stable physical identity / key；
-- 作为只读兼容 Source 使用，不因被绑定就转移为 Editor-owned mutable row；
-- 本次 Publish 生成的 managed projection 不自动进入 Existing Production Source candidate set。
+- 位于 authoring durable store，而不是实时 `production/` lookup；
+- 只由显式 bootstrap / import 从 schema-compatible Production row 冻结生成；
+- snapshot 保存完整 Source value，以及原 Production 英文 `name` / row identity / source generation 等 provenance；
+- UI 使用 snapshot 保存的原 Production 英文 `name`；
+- durable binding 指向 Authoring 内 stable snapshot identity；
+- 日常 Edit / Resolve 不因 Production working tree 改动而改变 snapshot value；
+- 如需吸收新的 Production 内容，必须重新执行显式 import / bootstrap / reconcile；
+- 本次 Publish 生成的 managed projection 不自动进入 Source candidate set。
 
-中鱼习性模式还允许 `FOLLOW_SPECIES`，并与 explicit Template / Existing Production pin 保持正交。
+中鱼习性模式还允许 `FOLLOW_SPECIES`，并与 explicit Template / Imported Snapshot pin 保持正交。
 
 ## 4. System Default Affinity projection
 
@@ -241,20 +242,22 @@ Workspace / Electron 物理边界见 [workspace-and-delivery.md](workspace-and-d
 至少覆盖：
 
 1. 从 authoring Git working tree 载入已有 Species Base / Compat Subject；
-2. Shared Template 与合法 Existing Production row 都可以成为 Component Source；
-3. Existing Production Source Picker 只按 Component Kind / schema legality 筛选，不按当前 Species / Quality 推 owner；
-4. Existing Production Source 直接显示真实 Production 英文 `name`；
-5. 修改 Species Base 字段并 Autosave 到 authoring working tree；
-6. 从当前 Component 提取 Shared Template；
-7. 将 Fish Source 改绑到 Template / Existing Production Source 并经过 Candidate；
-8. Resolve 解释最终值；
-9. Publish 写入 production Git working tree，并完成 reread / whole-output verify；
-10. Publish 不自动 `git commit` / `git push`；
-11. system default Affinity 不被编码成 young / mature bucket；
-12. Species Base / default Affinity 在 V1.0 没有 Create / Archive / Delete action；
-13. Fish Basic 删除 / 断开的 `species_key` 触发 `BROKEN_SPECIES_REF` 并阻断 Publish；
-14. Electron ZIP 中 app / authoring / production 为 sibling，authoring 与 production 各自保留 Git metadata；
-15. mutable Authoring / Production data 不打进 Electron `app.asar`。
+2. Shared Template 与合法 Imported Source Snapshot 都可以成为 Component Source；
+3. Source Picker 只枚举 authoring store 中合法同 Kind snapshot，不扫描 Production working tree；
+4. Imported Source Snapshot 显示其保留的原 Production 英文 `name`；
+5. Production working tree 内容变化不会静默改变已导入 snapshot；
+6. 显式 bootstrap / import 可以把新的合法 Production row 冻结为 Authoring snapshot；
+7. 修改 Species Base 字段并 Autosave 到 authoring working tree；
+8. 从当前 Component 提取 Shared Template；
+9. 将 Fish Source 改绑到 Template / Imported Source Snapshot 并经过 Candidate；
+10. Resolve 解释最终值；
+11. Publish 写入 production Git working tree，并完成 reread / whole-output verify；
+12. Publish 不自动 `git commit` / `git push`；
+13. system default Affinity 不被编码成 young / mature bucket；
+14. Species Base / default Affinity 在 V1.0 没有 Create / Archive / Delete action；
+15. Fish Basic 删除 / 断开的 `species_key` 触发 `BROKEN_SPECIES_REF` 并阻断 Publish；
+16. Electron ZIP 中 app / authoring / production 为 sibling，authoring 与 production 各自保留 Git metadata；
+17. mutable Authoring / Production data 不打进 Electron `app.asar`。
 
 V1.0 不以 Species Base creation、arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为验收前提。
 
