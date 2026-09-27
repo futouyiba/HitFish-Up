@@ -42,7 +42,7 @@ Resolve Preview 是可选检查面；Publish 不要求作者先打开或逐项�
 
 ### 1.3 进入 Resolve 的 durable 边界
 
-Resolve 只消费**最近一次成功持久化的 durable revision**。
+Resolve 只消费**最近一次成功保存的 durable state**。
 
 进入规则：
 
