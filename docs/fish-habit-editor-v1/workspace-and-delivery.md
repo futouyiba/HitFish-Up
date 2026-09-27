@@ -150,25 +150,17 @@ production/
 
 Git 是协作与版本管理基础设施；Editor 只负责当前本机 session 的保存、Resolve 与 Publish verify。
 
-__END__
-
-
+## 7. 与 Existing Production Source 的关系
 
 过渡期允许 Component 显式选择 **Existing Production Source**。
 
-该 Source 来自 verified `production/` baseline 中合法的同 Kind existing / pass-through row；它是兼容 Source，不因此变成 Shared Asset，也不因为被引用就自动转移为 Editor-owned mutable Production row。
+Source catalog 从当前本地 `production/` working tree 中读取合法的同 Component Kind rows：
 
-因此形成单向边界：
+- 作为只读 compatibility source；
+- 不因此成为 Shared Asset；
+- 不推导“属于哪个 Fish / Quality”；
+- UI 直接显示 Production 原英文 `name`；
+- workspace load / explicit refresh 时重建 catalog；
+- Publish 过程中不动态把刚写出的 row 注入当前 Picker。
 
-```text
-Existing/pass-through Production row
-        ↓ read-only Source
-Authoring binding + operation
-        ↓
-Publish materialization
-        ↓
-Editor-managed Production projection
-```
-
-不得把本次 Publish 新生成的 managed output 再自动发现成新的 Source candidate，形成 output → source 的隐式循环。
-
+这条轻量边界足以避免同一 Publish 事务内形成 output → source 循环，不需要 managed/pass-through ownership graph。
