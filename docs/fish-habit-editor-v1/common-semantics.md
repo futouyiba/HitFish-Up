@@ -48,7 +48,7 @@ Fish Basic / authoritative Species Catalog
 
 不在 initialization transaction 中写 ADD / SET / CLEAR、Role override 或 fail_env_coeff override；这些全部在创建成功后的普通 Authoring 中完成。初始化 Source 只从当前合法、已存在的 ACTIVE Source 选择；Template creation 使用独立 Shared Assets flow。
 
-Species Base **不是** FishEnvAffinity row，也不是默认 Engagement Mode。V1 UI 将它显示为 **“常规习性”**，表达“没有特殊习性覆盖时使用的 Species 默认习性”。
+Species Base **不是** FishEnvAffinity row，也不是默认 Engagement Mode。V1 UI 将它显示为 **“基础习性”**，表达 Species 的默认习性；中鱼习性模式只表达相对基础习性的可选差异。
 
 ### 1.2 Default Affinity Projection
 
@@ -135,23 +135,23 @@ V1 当前沿用两个既有 physical Compat slot：
 
 进入 V1 Editor 前，existing Production ingress 必须已经把兼容 row **无歧义映射到其中一个 physical slot**。每个 Species × Compat slot 最多一条可编辑 row。
 
-产品层不再把这两个 slot 表达成一套必须穷举 Species 生命周期的“幼年 / 成年及以上”完整分类。V1 UI 投影为：
+产品层不再把这两个 slot 表达成一套必须穷举 Species 生命周期的“幼年 / 成年及以上”完整分类。V1 UI 将它们放在 **“中鱼习性模式”** 下，并投影为：
 
-- `young` → **幼年**；
+- `young` → **小个体**；
 - `mature` → **大个体**。
 
-这里的“幼年 / 大个体”是作者侧特殊习性标签；底层 `young / mature` token、既有 row identity 与 Production English naming 可以保持不变。
+这里的“小个体 / 大个体”是作者侧模式标签；底层 `young / mature` token、既有 row identity 与 Production English naming 可以保持不变。
 
 因此：
 
-- 已完成 slot mapping 的 existing row → 可作为 V1 特殊习性 Subject 编辑；
-- 一个 Species 可以没有特殊习性，也可以只有其中一个；不要求 young / mature 成对存在；
+- 已完成 slot mapping 的 existing row → 可作为 V1 中鱼习性模式 Subject 编辑；
+- 一个 Species 可以没有中鱼习性模式，也可以只有其中一个；不要求 young / mature 成对存在；
 - 同一 physical slot 多 row → migration blocker；
 - 无法映射到 system-default / young / mature 的 Affinity → migration blocker；
 - 不允许 UI 根据 row name、Quality 或 payload 相似度自行猜 slot identity；
 - 哪些 Quality / stocking rows 实际引用 system-default、young 或 mature Affinity，仍由 StockRelease / FishRelease 域决定。
 
-V1.0.1 只是在同一 fixed physical slot 体系下补“缺失特殊习性 row 的 create”；不会把 `young / mature` 升级为新的业务 Mode taxonomy。
+V1.0.1 只是在同一 fixed physical slot 体系下补“缺失中鱼习性模式 row 的 create”；不会把 `young / mature` 升级为新的业务 Mode taxonomy。
 
 ## 2. Source Binding
 
@@ -654,7 +654,7 @@ Production Profile Name
 - physical `young` slot → Production naming 可继续使用既有 Juvenile / Young 语义 token；
 - physical `mature` slot → Production naming 可继续使用既有 Mature token。
 
-这些 Production token 不要求与 V1 UI 中文标签一一同义：V1 UI 当前将 `young / mature` 显示为“幼年 / 大个体”。Species canonical English name 作为鱼种可读 stem；exact suffix token / delimiter / case / normalization 仍由 G3 固定。未来 arbitrary Engagement Mode 若需要作者命名，不从 V1 fixed Compat 反推。
+这些 Production token 不要求与 V1 UI 中文标签一一同义：V1 UI 当前将 `young / mature` 显示为“小个体 / 大个体”。Species canonical English name 作为鱼种可读 stem；exact suffix token / delimiter / case / normalization 仍由 G3 固定。未来 arbitrary Engagement Mode 若需要作者命名，不从 V1 fixed Compat 反推。
 
 ## 11. Broken / Archived Source
 
