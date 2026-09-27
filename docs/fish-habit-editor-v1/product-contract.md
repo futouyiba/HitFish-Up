@@ -53,7 +53,7 @@ Source
 Effective Profile
 ```
 
-Editor 保存 Source binding 和作者操作，不把 Effective Value 作为第二份可编辑 Truth。
+Editor 保存 Source binding 和作者操作，不把 Effective Value 作为第二份可编辑 Truth。V1.0 的显式 Component Source 包括 Shared Template 与 Existing Production compatibility source；特殊习性还可以选择跟随常规习性。
 
 ### 2.4 Truth 与 Derived
 
