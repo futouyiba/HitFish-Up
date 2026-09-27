@@ -283,7 +283,7 @@ UI 进入 local raw-input state：
 - 不进入 durable state；
 - 不触发 Resolve input；
 - Effective 区继续以最近一次 durable state 为准，并弱提示“未应用”；
-- Publish 消费最近一次成功 durable revision；
+- Publish 消费最近一次成功保存的 durable state；
 - 若作者在输入完成前切离该 field / Component / Subject / Workspace，丢弃 transient input，并恢复该行最近一次 durable 表达；不为半完成操作弹保存确认。
 
 ### 9.2 Durable-valid but publish-invalid
@@ -310,20 +310,14 @@ Validator ERROR 不等于 Save Failure。
 
 ### 9.3 Save failure
 
-Durable write 本身失败：
+本地 durable write 失败：
 
 - Topbar 显示编辑器保存失败；
-- 最近一次成功 durable revision 仍是 Truth；
-- 不把未成功保存的数据冒充 Resolve / Publish 输入。
+- 最近一次成功保存的 durable state 仍是 Truth；
+- 未成功保存的数据不能进入 Resolve / Publish；
+- 作者修复本地文件 / 权限问题后重试。
 
-若失败原因是 optimistic revision conflict，应明确显示“内容已被其它会话更新 / 当前修改尚未保存”，而不是只显示泛化网络错误：
-
-- 保留当前 typed value 作为本地未保存冲突值，便于作者查看 / 复制；
-- 暂停该 Subject 的继续 mutation、Resolve 与 Publish；
-- 提供“重新读取最新内容”；
-- 重新读取后不自动合并冲突值，作者在最新 durable state 上显式重新应用需要保留的修改。
-
-V1 不做 ordinary edit 的字段级自动三方合并。
+V1.0 是单机单写者工具，不实现多人 / 多会话 revision conflict、自动 merge 或 conflict replay。
 
 ## 10. Diagnostic projection
 
@@ -536,36 +530,29 @@ Candidate Confirm 不是 Publish。
 
 - candidate source 已删除 / 已不再是合法 selectable source；
 - candidate binding 不满足 schema；
-- revision stale 且尚未重新计算 Preview。
+- candidate Source 在 Confirm 前已经不存在或不再满足 schema。
 
 这与“结果有 Validator ERROR”必须区分。
 
-### 12.10 Revision stale
+### 12.10 Candidate validity
 
-Confirm 前必须做 optimistic revision check。
+V1.0 不处理其它 Editor 会话导致的 revision stale。
 
-若 Preview 基于 revision 104，而 durable state 已变成 105：
+Confirm 前只重新检查：
 
-```text
-候选预览已过期
+- candidate Source 仍存在；
+- candidate Source 仍可作为当前 Component 的合法 Source；
+- Candidate payload 仍满足当前 schema。
 
-这笔来源变更尚未保存。
-[重新计算预览]
-[取消更换]
-```
-
-- 不 silent auto-rebase；
-- “重新计算预览”保留本次候选 Source intent，以最新 durable revision 重算 before/after；
-- 重算后仍需再次显式 Confirm；
-- 若候选 Source 本身已失效，则不能继续确认，作者取消后回 Card 重新选择。
+若检查失败，禁用 Confirm；作者取消当前 Candidate 后重新选择。
 
 ### 12.11 Confirm / Cancel
 
 **确认更换来源**
 
 ```text
-revision check
-→ atomic durable commit
+candidate validity check
+→ local atomic durable commit
 → candidate cleared
 → 回到原 Authoring Surface
 → 原 Component 保持 selected
@@ -591,8 +578,6 @@ Durable Source
 Candidate Review
       │
       ├── 取消更换 ───────→ Durable 不变
-      │
-      ├── stale ──────────→ 重新计算 Preview
       │
       └── 确认更换来源
                  ↓
