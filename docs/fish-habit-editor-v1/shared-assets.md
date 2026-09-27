@@ -232,6 +232,22 @@ revision check
 
 Cancel 只丢弃 candidate，不修改 durable Template。
 
+### 8.1 Candidate revision stale
+
+Template Value Candidate 与 Source Change Candidate 的 stale 处理不同。
+
+Template complete value 是一组作者内容修改；如果 Candidate 基于 revision 104，而 durable Template 已被另一会话改到 105，V1 **不自动把旧 Candidate fields rebase 到新 Template**，避免把并发修改悄悄覆盖。
+
+此时：
+
+- Confirm 禁用；
+- 明确提示“模板内容已被其它会话更新，本次候选尚未保存”；
+- 当前 candidate 可以暂时保留为只读 / 可复制的本地值，方便作者人工对照；
+- 作者必须取消 / 结束当前 candidate，重新读取最新 durable Template，再显式重新应用需要保留的字段修改；
+- V1 不做 Template 字段级三方 merge。
+
+Source Change / Policy Source Change / Replace References 这类“稳定 intent + 重算 impact”的 staged mutation 可以按各自 Contract 在最新 durable revision 上重新计算 Preview；不能把这一规则误套到 Template complete-value content edit。
+
 ## 9. Blank Create
 
 从 Template Kind group 提供：
@@ -361,6 +377,13 @@ ARCHIVED
 ```
 
 时出现，并使用 destructive confirm。
+
+Hard Delete 删除的是 Editor Template asset。若该 Template 曾经 materialize 出 Editor-owned Production Profile row，实际 Production cleanup 发生在下一次 Global Publish，并受 managed-projection ownership guard 约束：
+
+- ownership 可证明且 current desired graph 已不再引用 → 可删除 obsolete projection；
+- ownership 不明 / 与 pass-through row 混淆 → Publish BLOCK，不因 Hard Delete 在 Editor 成功就盲删 Production row。
+
+因此 Hard Delete 成功只表示 Authoring asset 已删除，不等于 Production 已经同步清理。
 
 ## 13. Replace References
 
