@@ -94,7 +94,7 @@ Wood        0.60
 Grass       0.40
 ```
 
-Resolve Card 不显示 Source dropdown、本层 Operation dropdown、ADD / SET 参数输入，也不把“有本层调整 / 沿用底板”当主要信息。
+Resolve Card 不显示 Source dropdown、本层 Operation dropdown、ADD / SET 参数输入，也不把“有本层调整”这类汇总状态当主要信息。Source / Operation 的继承关系必须按实际因果链分别解释，不使用“沿用底板”这类模糊总称。
 
 Policy 示例：
 
