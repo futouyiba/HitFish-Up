@@ -278,7 +278,8 @@ Template 英文名虽然在 Editor 中是可编辑 metadata，但它会影响下
 - Mode Share / Routing
 - FishPond / StockRelease / FishRelease
 - 新建 Species identity
-- 用户创建额外 Engagement Mode / Compat FishEnvAffinity row（系统默认 Affinity projection 除外）
+- Species Base / system-default Affinity fresh-create
+- 用户创建额外 Engagement Mode / Compat FishEnvAffinity row
 - Family / Preset-assisted Species initialization
 - Species Base / system default Affinity Archive / Delete
 - 鱼家族预设 / Species Preset
@@ -289,7 +290,9 @@ Template 英文名虽然在 Editor 中是可编辑 metadata，但它会影响下
 
 不是 disabled placeholder；没有当前作者价值的入口默认不出现。
 
-## 10. Golden Path
+__PLACEHOLDER__
+
+
 
 ```text
 打开 Editor
