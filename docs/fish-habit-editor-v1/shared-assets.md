@@ -267,7 +267,14 @@ Source Change / Policy Source Change / Replace References 这类“稳定 intent
 - 中文名由作者输入；
 - 英文名由工具先给出可读建议值，作者可修改；创建时必须已经存在非空英文语义名，但作者不必从空白手输；
 - atomic create；
-- 创建成功即 ACTIVE，并进入新 Template Context。
+- 创建成功即 ACTIVE。
+
+成功后的去向按入口区分：
+
+- 从 Shared Assets 独立发起 Blank Create → 进入新 Template Context；
+- 从 Species initialization 的 Source picker 作为 contextual detour 发起 → 返回原 initialization form，保留此前 ephemeral 选择并刷新 Source candidates；新 Template **不自动绑定 / 不自动选中**，作者仍在原 Source picker 显式选择。
+
+这仍遵守 `Create Source ≠ Bind Source`，也避免为了 contextual detour 建立 durable draft / history stack。
 
 新 Template 尚无 consumer，因此不需要 Impact Preview。
 
@@ -434,6 +441,8 @@ Fish Component / Policy 中的“查看模板”可以进入 Shared Template Wor
 ```
 
 Template 引用列表进入 Fish 时同理可显示“返回当前模板”。
+
+Species initialization 从 Source picker 进入 Shared Assets 创建 Template 时，也使用同一种单层 contextual ReturnTarget；它返回 initialization form，而不是形成通用历史栈。
 
 只保留一个 ReturnTarget，不建立通用 back stack。
 
