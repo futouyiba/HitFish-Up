@@ -151,9 +151,10 @@ V1 不实现 Species Base / system default Affinity 的 Archive / Delete。
 
 ## 5. Existing Compat Mode
 
-V1 只编辑已存在的 Compat Mode / FishEnvAffinity：
+V1 只编辑已存在、且 ingress 已无歧义映射到固定 Juvenile / Mature 语义的 Compat Mode / FishEnvAffinity：
 
 - 一个 UI Mode 对应一条既有 Affinity row；
+- 该 Affinity row identity 必须保留；即使 Mode 最终完全跟随 Species、所有 Component/Profile payload 与 Species 相同，也只能复用下层 Profile projection，不能把 Compat Affinity row 本身折叠掉；
 - Source / numeric operation / Role / coeff 继续按 V1 Common Semantics；
 - V1 不创建额外 Mode。
 
@@ -222,6 +223,8 @@ revision check
 ```
 
 只有 reread + verify 成功才算 Publish success。
+
+Materializer 必须区分 Affinity identity row 与可复用的 Component/Profile row：system-default / Compat Affinity identity 不因 payload 相同而合并；Profile projection 才可以按 lineage 复用。
 
 实现无论采用 full-file replace 还是 row patch，都必须满足同一 ownership 语义：
 
@@ -335,6 +338,9 @@ V1 不以 arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为
 **G4｜row_key → row_id create-from-absent handoff**
 
 - 固定 Production create 后 reread、唯一 row_id 识别、Editor durable backfill 的具体调用顺序；
+- `row_id` backfill 是 Publish transaction 内的 system-owned metadata write，不得覆盖更新后的作者语义；
+- 若 Production 写入后另一 Editor session 已推进 durable semantic revision，backfill 必须按 stable `row_key` 做受控 metadata patch，或将本次 Publish 判为 unverifiable / recovery-required；不得用旧 revision 整体回写覆盖新 Authoring state；
+- backfill 本身可以推进 Editor revision；Publish success 应以完成 backfill 后的 durable state + 已验证 Production baseline 收尾，但不声称并发产生的更新后 Authoring state 已经被本次 Publish 发布；
 - backfill / verify 未完成时不得宣告 Publish success，也不得 blind recreate。
 
 **G5｜Initial legacy bootstrap**
