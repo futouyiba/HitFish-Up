@@ -725,11 +725,21 @@ materialize(current Editor durable state) 的 managed projection
 
 Production projection 按 authoring lineage 决定，不按 payload 相等猜 owner。
 
-至少保持：
+必须先区分两个层级：
 
-- Shared Template + 无有效 local operation：可复用模板级 projection，并按 §10.6 从 Template English Name 确定性派生 Production Profile name；是否加入 Kind qualifier 由 G3 的真实 lookup / collision domain 决定；
-- Mode 完全跟随 Species Recipe：可复用 Species projection；
-- explicit Source pin + 零 operation：只改变未来 binding relation，不因 pin 本身强制复制一个同值 production row；
+1. **Affinity identity projection**：system-default / existing Compat 各自稳定的 `FishEnvAffinity` row identity；
+2. **Component/Profile projection**：Temperature / Structure / Feeding Layer / Time Period 等可被 Affinity row 引用的 materialized profile rows。
+
+“复用 projection”默认指第二层，不允许因为 payload 相同就折叠第一层 identity。
+
+因此：
+
+- 每个 system-default Affinity 仍有自己的 `FishEnvAffinity` row；
+- 每个 V1 existing Compat Subject 仍保留自己的 `FishEnvAffinity` row / row_key / row_id；
+- Compat Mode 即使完全跟随 Species、最终值完全相同，也只是**复用 Species 的 Component/Profile projections**，不能因此消失为独立 Affinity identity；
+- Shared Template + 无有效 local operation：managed consumer 可复用模板级 Profile projection，并按 §10.6 从 Template English Name 确定性派生 Production Profile name；是否加入 Kind qualifier 由 G3 的真实 lookup / collision domain 决定；
+- Shared Template asset 的存在本身不强制生成一个永远常驻的 Production row；Template-level Profile projection 只在 current managed desired graph 需要它时 materialize / reuse。无 managed consumer 的 obsolete Editor-owned projection 可按 §12.3.1 cleanup；
+- explicit Source pin + 零 operation：只改变未来 binding relation，不因 pin 本身强制复制一个同值 Profile row；
 - 任何有效 ADD / SET / CLEAR 等 local operation：按对应 owner 的 materialization 规则投影；
 - same-value SET 仍是 SET，不能因 payload 相同折回继承；
 - payload 相等也不能把 pass-through row 误认成 Editor-owned row；projection reuse / cleanup 必须基于 lineage / ledger ownership，而不是数值或 name 相似度。
