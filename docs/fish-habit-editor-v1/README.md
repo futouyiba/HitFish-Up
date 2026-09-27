@@ -7,7 +7,7 @@
 
 本目录承接 **Fish Habit Editor V1 的产品层 Current**：作者看到什么、如何理解对象、如何导航、哪些交互属于普通编辑、哪些需要候选预览，以及 V1 各 Surface 如何组成一个完整生产工具。
 
-V1 当前最小生产闭环包括：从 Fish Basic 选择已有 Species，为尚无 Habit 的 Species 原子创建完整 Species Base + 系统默认 Affinity projection，然后进入同一套 Authoring / Resolve / Publish；V1 不创建新的 Species identity，也不接管 StockRelease / FishRelease 关联。
+V1.0 当前最小生产闭环只编辑**已经存在的 Species Base / existing Compat**：Authoring → Resolve → 非破坏性 Publish 到本地 Production Git working tree。V1.0 不创建 Species Base / Species identity，不接管 StockRelease / FishRelease 关联，也不实现多人协作。
 
 V1 当前需要的共用语义暂时与产品文档共址在 `common-semantics.md`。R2 只保留历史版本、裁定来源与证据，不再作为 V1 的最终语义解释入口。未来当这些语义稳定跨越多个版本后，再从 V1 提取到独立 common 目录。
 
@@ -15,17 +15,13 @@ V1 当前需要的共用语义暂时与产品文档共址在 `common-semantics.m
 
 V1 的 **Product / Semantic / Surface Contract 已闭合为 Current**。
 
-当前没有需要继续产品裁决的 V1 OPEN ITEM。实现前仍有 G1–G5 五个**物理实现 Gate**，集中记录在 [implementation-brief.md §11.2](implementation-brief.md#112-remaining-engineering-gates)：
+当前没有需要继续产品裁决的 V1.0 OPEN ITEM。Implementation Brief 只保留三个窄工程 Gate：
 
-- Fish Basic adapter；
-- system default Affinity physical carrier；
-- Production naming / collision domain；
-- `row_key → row_id` create-from-absent handoff；
-- initial legacy bootstrap。
+- Existing Fish / Species adapter；
+- Source catalog adapter；
+- Production materialization / naming。
 
-这些 Gate 用于确认既定产品语义如何落到现有 schema / Production；**不是继续探索产品形态的入口**。
-
-若 Gate 可以通过现有 schema 或最小实现 delta 满足，直接实现；只有当证据表明必须改变 V1 已冻结的业务语义时，才停止并回到 Owner / Review 边界。
+它们只确认现有数据如何接入，不引入 Species Base fresh-create、多人 revision protocol、legacy adjudication UI、Production ownership graph 或 GC。
 
 V1.0.1 的固定 Compat Mode 创建不阻塞 V1 验收。
 
@@ -42,7 +38,7 @@ V1.0.1 的固定 Compat Mode 创建不阻塞 V1 验收。
 5. [secondary-surfaces.md](secondary-surfaces.md)  
    V1 的次级产品面；当前已闭合 Resolve Preview 与 Publish。
 6. [implementation-brief.md](implementation-brief.md)  
-   V1 最小生产闭环的实现顺序、Species Base + default Affinity 创建、Shared Template、Resolve 与 Publish 工程落点。
+   V1.0 单机最小闭环的实现顺序、Source catalog、Shared Template、Resolve、非破坏性 Publish 与 Electron packaging。
 
 ## Authority relationship
 
