@@ -53,7 +53,7 @@ Source
 Effective Profile
 ```
 
-Editor 保存 Source binding 和作者操作，不把 Effective Value 作为第二份可编辑 Truth。V1.0 的显式 Component Source 包括 Shared Template 与 Imported Source Snapshot（UI：“已有数据 · 兼容”）；中鱼习性模式还可以选择跟随基础习性。Imported Source Snapshot 已经存在于 Authoring durable state 中，不是对 Production working tree 的实时引用。
+Editor 保存 Source binding 和作者操作，不把 Effective Value 作为第二份可编辑 Truth。V1.0 的显式 Component Source 包括 Shared Template 与 Authoring persistence 中已有的兼容数据（UI：“已有数据 · 兼容”）；中鱼习性模式还可以选择跟随基础习性。普通 Authoring 不实时读取 Production working tree。
 
 ### 2.4 Truth 与 Derived
 
@@ -161,7 +161,7 @@ V1.0 Fish Navigation 只展示已经进入 Editor durable state 的 Species / Su
 - 尚未进入 authoring working tree 的 Species 由 Editor 外的数据准备工作或后续版本能力处理，不在当前 Authoring IA 中制造“开始配置”入口；
 - Golden Seed / Snapshot 只用于 demo / regression，不定义产品可编辑范围。
 
-Shared Template 与 Imported Source Snapshot 都可以作为已有 Subject 的合法 Component Source；Source 规则见 [common-semantics.md §2](common-semantics.md#2-source-binding)。普通 Authoring 不从 Production working tree 动态建立 Source catalog。
+Shared Template 与 Authoring persistence 中已有的兼容数据都可以作为已有 Subject 的合法 Component Source；Source 规则见 [common-semantics.md §2](common-semantics.md#2-source-binding)。普通 Authoring 不从 Production working tree 动态建立 Source catalog。
 
 ## 4. Context Header
 
@@ -242,16 +242,17 @@ V1 的 staged candidate 是**短事务**，不是可跨页面长期挂起的 Dra
 Component Source Picker 统一提供：
 
 1. **Shared Template**：长期主路径，分组置前；
-2. **Imported Source Snapshot**：过渡兼容来源，分组置后；
+2. **已有数据 · 兼容**：Authoring persistence 中已有的过渡兼容来源，分组置后；
 3. Compat Subject 额外提供 **跟随基础习性**。
 
-Imported Source Snapshot：
+“已有数据 · 兼容”：
 
-- 来自 Authoring durable state 中已经冻结的兼容 Source；
+- 来自当前 Authoring persistence；
 - 只按当前 Component Kind / schema legality 筛选；
 - 不推导“属于当前鱼种 / Quality”；
-- 直接显示保留的原 Production 英文 `name`；
+- 若 Authoring 数据已保留原 Production 英文 `name`，直接显示该名称；
 - 不进入 Shared Assets lifecycle；
+- 不要求新增独立的兼容源资产模型；
 - 普通 Source Picker 不读取 Production working tree。
 
 Component Focus Editor 只展示当前 Source / provenance，可提供“查看模板”等导航，不再放第二个 Component Source Selector。Policy Focus 同样不复制 Policy Template Source Selector。
@@ -310,7 +311,7 @@ Template 英文名虽然在 Editor 中是可编辑 metadata，但它会影响下
 → 右栏 Inline Field Authoring
 → 必要时在 Card 换 Source
    → Shared Template
-   或 Imported Source Snapshot
+   或 已有数据 · 兼容
    → Candidate / Preview / Confirm
 → 普通字段 / Policy Autosave
 → 处理 Validation

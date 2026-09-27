@@ -28,7 +28,7 @@ Authoring 与 Production 是两个**独立的 sibling Git working tree / reposit
 
 - 普通 Edit / Resolve / Source Picker 只消费 `authoring/`；
 - Publish / writeback / touched-output verify 访问 `production/`；
-- 如需从旧 Production 承接数据，由 Editor 外的显式数据准备 / import / bootstrap 先冻结进 `authoring/`；
+- 如需从旧 Production 承接数据，由 Editor 外的数据准备流程先写入 / 更新 `authoring/`；
 - `production/` 不是普通 Authoring Source Store。
 
 ## 2. 发布包目录
@@ -147,7 +147,7 @@ server              ↓
 
 开发阶段可由本地 Web Dev Server 提供 Workspace File API；release 阶段由 Electron main/preload 提供等价的本地文件能力。
 
-正常 Editor 启动只需要打开 `authoringRoot`。执行 Publish / verify 时再访问 `productionRoot`。Production → Authoring 的承接属于显式外部数据准备边界，不混入普通 Source resolution。
+正常 Editor 启动只需要打开 `authoringRoot`。执行 Publish / verify 时再访问 `productionRoot`。Production → Authoring 的承接属于 Editor 外的数据准备边界，不混入普通 Source resolution。
 
 Resolver / Validator / Source semantics / Materializer / Publish transaction 必须共享同一 domain implementation；Host adapter 不重新解释业务语义。
 
@@ -172,29 +172,21 @@ production/
 
 Git 是协作与版本管理基础设施；Editor 只负责当前本机 session 的保存、Resolve 与 Publish verify。
 
-## 7. Imported Source Snapshot 与 Production 的边界
+## 7. Authoring 兼容数据与 Production 的边界
 
 Production working tree **不是普通 Authoring Source Store**。
 
-过渡期若需要继续使用既有 Production Profile，应先在 Editor 外完成显式数据准备：
+V1.0 只要求：若作者需要继续使用历史 Production 中的某些 Profile，这些可用数据在进入普通 Editor 前已经存在于 Authoring persistence 中。
 
 ```text
-production/ 中既有 row
+Editor 外的数据准备
         ↓
-explicit import / bootstrap / preparation
-        ↓
-authoring/ 中 Imported Source Snapshot
+authoring/ 中已有兼容数据
         ↓
 普通 Source Picker / Resolve
 ```
 
-Imported Source Snapshot：
-
-- 属于 Authoring durable state；
-- 保存冻结的完整 Source value；
-- 保留原 Production 英文 `name`、原 row identity / generation 等 provenance；
-- 日常 binding 指向 Authoring 内稳定 snapshot identity；
-- Production working tree 后续变化不会自动改变 snapshot。
+这里不定义新的兼容源 Asset 或 Import transaction。具体 Authoring 文件结构沿用当前实现；如果当前已有冻结 input JSON / snapshot 文件，也继续作为 Authoring persistence 的一部分使用即可。
 
 因此 V1.0 的运行时数据方向是：
 
@@ -207,7 +199,7 @@ authoring/ → Materializer → production/
                            ↘ reread touched output
 ```
 
-Production → Authoring 不是常规运行通道；若需要发生，只能在显式外部数据准备 / import / bootstrap 边界完成。Source Picker 不扫描 `production/`，Publish 生成的新 row 也不会自动成为 Source。
+Production → Authoring 不是普通运行通道。Source Picker 不扫描 `production/`，Publish 生成的新 row 也不会自动成为 Source。
 
 ## 8. Workspace 启动检查
 
