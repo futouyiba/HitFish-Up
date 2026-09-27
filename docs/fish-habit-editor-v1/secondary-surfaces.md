@@ -448,7 +448,9 @@ Publish 是 **Editor-global transaction**，不是当前 Fish / 当前 Subject �
 
 V1 只有一种发布范围：
 
-> **将当前 Fish Habit Editor 的完整 durable Authoring State 解析并物化到 Production。**
+> **将当前 Fish Habit Editor 的完整 durable Authoring State 解析并物化到本地 Production Git working tree。**
+
+这里的 Production 是 release workspace 中与 authoring sibling 的本地 Production working tree，不是服务器部署目标。Publish 完成后可以产生 Git file diff，但不自动 commit / push；详见 [workspace-and-delivery.md](workspace-and-delivery.md)。
 
 不提供：
 
@@ -691,7 +693,7 @@ executor 不执行无意义 write。
   - `正在写入生产配置…`
   - `正在重新读取并验证…`
 
-实现内部可以涉及多表 / 多文件 materialization，但产品只存在**一个全局 Publish transaction**。实现应优先使用 staging + atomic replace / commit 等方式把“部分写入”降为异常恢复边界，而不是把 partial success 设计成正常产品状态。
+实现内部可以涉及多表 / 多文件 materialization，但产品只存在**一个全局 Publish transaction**。这里的 atomic replace / commit 指文件级 staging / replace 等写入原子性，不指 `git commit`。V1.0 Publish 不执行 Git commit / push。实现应优先把“部分写入”降为异常恢复边界，而不是把 partial success 设计成正常产品状态。
 
 ### 7.9 Success 的必要条件
 
@@ -711,6 +713,7 @@ executor 不执行无意义 write。
 成功后：
 
 - reread 的 whole Production generation 成为新的 expected baseline；
+- production Git working tree 可以保持 dirty，供作者随后使用 Git diff / commit / merge；这不影响本次 Publish 已完成的 materialization verify；
 - 本次 success 只证明**绑定 revision R** 已按预期 materialize 并验证；
 - 如果执行期间 Editor durable state 已被其它会话推进到 R+1，仍可判定 R 的 Publish success，但必须短暂提示“编辑器已有更新，未包含在本次发布”；不得声称 R+1 已发布；
 - 本次 success 可以在当前 Surface / toast 短暂显示；
