@@ -277,6 +277,8 @@ V1 不以 arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为
 - `LEGACY_UNIMPORTED` Species 不能 fresh create；
 - multi-row same-Compat legacy ingress 被 migration blocker 拒绝，而不是自动聚合；
 - unmapped Affinity 不会仅因“已存在”就进入 Compat Subject；
+- Species 只有 Species Base / 常规习性 + `young` 特殊习性、没有 `mature` row 时仍是完整合法状态；UI 不显示“缺少大个体”错误或占位要求；
+- existing `mature` row 在 UI 显示为“大个体 [兼容]”时，底层 physical slot / row identity / Production English naming 不因中文 label projection 被重写；
 - Existing Compat Mode 的 inherit / ADD / SET / CLEAR 能正确 Resolve；
 - Compat Mode 完全跟随 Species 时，Component/Profile projection 可以复用，但 Compat `FishEnvAffinity` identity row 仍保留；
 - legacy pass-through rows 与 Editor-managed rows 并存时，Publish 只替换 managed projection，pass-through rows reread 后保持不变；
