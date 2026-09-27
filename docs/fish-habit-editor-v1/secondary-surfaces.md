@@ -442,144 +442,70 @@ V1 Resolve 的停止线：
 
 ## 7. Publish｜发布到生产配置
 
-### 7.1 产品职责与发布范围
+### 7.1 产品职责
 
-Publish 是 **Editor-global transaction**，不是当前 Fish / 当前 Subject 的第三个工作视角。
+V1.0 Publish 的职责只有一件事：
 
-V1 只有一种发布范围：
+> 把当前本机最近一次成功保存的 Authoring Truth，非破坏性物化到本地 Production Git working tree，并重新读取本次 touched output 验证一致。
 
-> **将当前 Fish Habit Editor 的完整 durable Authoring State 解析并物化到 Production。**
+它不是部署到服务器，也不是 Git 客户端。
 
-不提供：
-
-- 发布当前 Fish；
-- 发布当前 Mode；
-- 发布当前 Component；
-- 勾选部分对象发布；
-- “只发布这次修改”；
-- durable Publish History / reviewed state。
-
-顶栏 `发布到生产配置…` 只是进入 Publish Surface 的入口；真正 writeback executor 只存在于 Publish Surface。
+多人之间的 pull / diff / merge / commit / push 由工作区外部 Git 工具负责，Fish Habit Editor 不实现协同编辑或 Git merge。
 
 ### 7.2 进入 Publish Surface
 
-进入 Publish 后，产品语境从 Subject task 临时切换为 global task：
+Topbar 提供：
 
 ```text
-LEFT NAV             CENTER                     RIGHT
-只读/锁定             Publish Preflight          Publish Executor
-原上下文仍可见         全局检查                   发布动作 / 结果
+[发布到生产配置…]
 ```
 
-- 左栏保留进入前的 Subject / Shared Asset 上下文作为空间锚点，但在 Publish Surface 内不允许导航或 ordinary mutation；
-- 中栏 Context Header 不再显示 Fish breadcrumb，改为 **“发布到生产配置”**；
-- 右栏承担唯一执行按钮与本次 transaction 状态；
-- 进入前的 Subject / Edit-or-Resolve view 作为 ephemeral return target；退出 Publish 后恢复，不形成导航历史栈。
+进入独立 Publish Surface。若当前存在：
 
-Publish Surface 不是常驻第三个 Tab，也不与 `[编辑] [解析预览]` 并列。
+- incomplete raw input；
+- Autosave pending；
+- Autosave failure；
+- staged Candidate active；
 
-### 7.3 进入时的 ephemeral state
+则先完成 / 取消当前本地编辑，再进入 Publish。
 
-Publish 永远只消费最近一次成功持久化的 durable revision，因此必须防止作者误以为尚未落盘的输入会被发布。
+Validator ERROR 可以进入 Publish Surface查看 blocker，但 executor 禁用；WARNING 不阻断。
 
-- **staged candidate active**：Publish 已被 Candidate 短事务锁住，不能进入。
-- **Autosave pending**：进入 Publish 时先 flush / 等待该 typed edit 的 durable write 结果，再形成 Preflight snapshot。
-- **Autosave failure**：可以进入 Publish 查看 blocker，但 executor 禁用。
-- **incomplete raw input**：Publish entry 在离开当前编辑位前直接 BLOCK；不进入 Publish Surface、不 silent discard，也不把半完成输入纳入 durable revision。作者留在当前 field 完成或取消输入后再进入 Publish。
-- **Validator ERROR**：允许进入 Publish Surface；由全量发布校验 Gate 明确阻断。
-- **WARNING**：允许发布，不要求逐条勾选确认。
+### 7.3 Preflight
 
-### 7.4 Preflight 只保留三个 Gate
+V1.0 只保留两个 Gate。
 
 #### Gate A｜编辑器状态
-
-作者语言：
 
 ```text
 编辑器状态
 ✓ 已完成保存
 ```
 
-Pass 要求：
+要求：
 
-- 当前用于 Publish 的 Editor revision 已成功 durable；
+- 当前 Authoring 已成功写入本地 durable state；
 - 没有 incomplete raw input；
 - 没有 save failure；
 - 没有 staged candidate。
 
-若失败，明确区分：
-
-```text
-保存中…
-有未完成输入
-编辑器保存失败
-```
-
-不要把它们统称为“配置错误”。
-
 #### Gate B｜发布校验
 
-从 Gate A 的 exact durable revision 执行全量 validation / materialization-readiness check。
-
-Pass：
+对当前 saved state 执行完整 validation / materialization-readiness check。
 
 ```text
 发布校验
 ✓ 0 个阻断错误
-  3 个警告（不阻断）
+  3 个警告
 ```
 
-Blocking ERROR 可以来自：
+Blocking ERROR 包括 schema / semantic validation、required Profile 缺失、broken source、Production naming collision 等当前 Validator / Materializer 已知 blocker。
 
-- Schema / semantic validation；
-- required Profile 缺失；
-- broken source；
-- Temperature 等跨字段不变量；
-- materialization readiness（例如 Production lookup domain 内 name collision）；
-- 其它已经由当前 canonical validator / materializer preflight 定义的 Publish blocker。
+V1.0 不维护“expected Production generation”或多人并发 baseline。点击 Execute 时直接重新读取当前本地 Production working tree，作为本次非破坏性 patch 的输入。
 
-Warnings 不形成 acknowledgement debt，不要求“我已阅读”复选框。
+### 7.4 Preflight layout
 
-Blocker 列表使用人类 breadcrumb：
-
-```text
-大口黑鲈 › 大个体 › 结构习性 › Rock
-有效值低于允许范围
-```
-
-若当前诊断已有稳定定位能力，可提供“去修复”：**退出 Publish Surface**，回到 Edit 并定位对应 Subject / Component / Field。V1 不为了 Publish 单独创造新的 Diagnostic identity/router。
-
-#### Gate C｜生产配置基线
-
-作者语言：
-
-```text
-生产配置基线
-✓ 未检测到 Editor 外部修改
-```
-
-内部使用 expected Production generation / whole-generation verification，但普通 UI 不要求常驻显示 generation id。
-
-以下都 BLOCK：
-
-- generation mismatch；
-- generation 无法读取 / 无法验证；
-- current Production 与 expected baseline 不一致。
-
-V1 的 expected baseline 可以包含尚未 import 到 Editor 的 pass-through legacy rows。它们仍受 whole-generation guard 保护，但不会因此变成 Editor Authoring Truth。Publish 只能替换 ownership 可证明的 Editor-managed projection，并把 bound baseline 中的 pass-through rows 原样带入 expected output；不得因为“Editor 不认识”就清掉 legacy row。
-
-Blocker 文案：
-
-```text
-生产配置已在 Editor 之外发生变化。
-V1 不会自动覆盖、合并或采纳这些变化。
-```
-
-允许 `重新检查`，但它**只重新读取并比较**；不得把当前 Production generation 自动采纳成新的 expected baseline。
-
-### 7.5 Preflight layout
-
-推荐中栏：
+中栏：
 
 ```text
 发布到生产配置
@@ -590,7 +516,6 @@ V1 不会自动覆盖、合并或采纳这些变化。
 ✓ 编辑器状态
 ✓ 发布校验
   0 Error · 3 Warning
-✓ 生产配置基线
 
 警告
 ...
@@ -611,95 +536,52 @@ V1 不会自动覆盖、合并或采纳这些变化。
 [返回编辑器]
 ```
 
-Topbar 入口使用省略号 `发布到生产配置…`，表达“进入发布任务”；Publish Surface 内的 `发布到生产配置` 才是唯一 executor。
+不再额外弹第二层确认 Modal。
 
-不再额外弹第二层“确定要发布吗？” Modal。进入独立 Preflight Surface + 明确 executor 已经提供足够 intentionality。
+### 7.5 Execute
 
-### 7.6 Preflight snapshot 与 stale
+所有 Gate PASS 后：
 
-Preflight 必须绑定一个 exact Editor durable revision 和 expected Production generation。
+1. 锁定当前 App 的 Authoring mutation；
+2. 读取当前 Production working tree；
+3. Materializer 生成本次明确需要 create / update 的 rows；
+4. 非破坏性写入；
+5. 重新读取本次 touched output；
+6. verify；
+7. 解锁 Editor。
 
-即使当前 UI 已锁 ordinary mutation，也必须防其它 Editor session / 外部工具修改。
+V1.0 不处理另一 Editor 会话同时修改 Authoring state，也不实现 revision R / R+1 协同协议。
 
-点击 executor 时再次核验：
+### 7.6 Non-destructive patch
 
-1. Editor durable revision 仍等于 Preflight revision；
-2. expected Production generation 仍匹配。
+Publish 只 create / update 明确目标 rows。
 
-任一 stale：
+- 其它 Production rows 原样保留；
+- 不做 orphan GC；
+- 不做 obsolete-row cleanup；
+- 不做全表 ownership reconcile；
+- 不按 payload / name 相似度自动 dedupe。
 
-```text
-发布前检查已过期
-没有执行写入
-
-[重新检查]
-[返回编辑器]
-```
-
-不 silent rebase、不自动覆盖。
+旧 row 暂时留在 Production 的成本，低于 V1 自动清理造成误删的风险。清理 / reconcile 属后续维护能力。
 
 ### 7.7 No-op Publish
 
-V1 不维护“已发布 / 有未发布修改”的 durable 状态，但可以在 Preflight 中比较。
-
-当 Production 只包含 Editor-managed projection 时，可近似理解为：
-
-```text
-materialize(current durable revision)
-vs.
-current verified Production
-```
-
-当还存在 pass-through legacy / external rows 时，真正比较的是：
-
-```text
-expected full Production
-=
-verified pass-through baseline
-+
-materialize(current durable revision) 的 managed projection
-
-vs.
-
-current verified Production
-```
-
-如果完整 expected Production 已完全一致：
+若本次 materialized touched output 已与当前 Production 对应 rows 一致：
 
 ```text
 当前生产结果已与 Editor 一致
 无需写入
 ```
 
-executor 不执行无意义 write。
+不执行无意义 write。
 
-这是当前态的 output equality check，不是 Publish History；也不能因为 Production payload 相同就反推 Source / operation / inheritance authoring intent 相同。
+### 7.8 Success
 
-### 7.8 Execute
+只有：
 
-所有 Gate PASS 且存在实际 output delta 时，唯一 executor 可用。
-
-一次 Execute 的 semantic target 是 Preflight 绑定并在写入前重新核验通过的**exact Editor durable revision R**。执行开始后，R 不再随当前 Editor 的后续变化移动。
-
-执行开始后：
-
-- 锁定当前 Publish Surface；
-- 不允许当前会话导航 / authoring mutation；
-- 不提供“写到一半取消”；
-- 其它 Editor session 若在执行期间成功写出 R+1，不自动把 R+1 合并进本次 materialization；
-- UI 可以依次显示高层阶段：
-  - `正在写入生产配置…`
-  - `正在重新读取并验证…`
-
-实现内部可以涉及多表 / 多文件 materialization，但产品只存在**一个全局 Publish transaction**。实现应优先使用 staging + atomic replace / commit 等方式把“部分写入”降为异常恢复边界，而不是把 partial success 设计成正常产品状态。
-
-### 7.9 Success 的必要条件
-
-只有同时满足：
-
-1. writeback 完成；
-2. 重新读取**整组 Production generation**成功；
-3. reread 后的 Production 与本次预期 full output 验证一致——包括 managed projection 精确匹配，以及 bound pass-through set 未被意外改写；
+- write 完成；
+- touched output reread 成功；
+- reread 值与本次 expected materialization 一致；
 
 才显示：
 
@@ -708,102 +590,54 @@ executor 不执行无意义 write。
 生产配置已重新读取并验证一致
 ```
 
-成功后：
+Publish success 不代表 Git commit / push 已完成。作者随后通过外部 Git 工具检查 diff、commit、pull / merge / push。
 
-- reread 的 whole Production generation 成为新的 expected baseline；
-- 本次 success 只证明**绑定 revision R** 已按预期 materialize 并验证；
-- 如果执行期间 Editor durable state 已被其它会话推进到 R+1，仍可判定 R 的 Publish success，但必须短暂提示“编辑器已有更新，未包含在本次发布”；不得声称 R+1 已发布；
-- 本次 success 可以在当前 Surface / toast 短暂显示；
-- V1 不把它持久化成 Publish History，也不在每个 Fish 上制造 Published badge；
-- `返回编辑器` 恢复进入 Publish 前的 context。
+### 7.9 Failure
 
-### 7.10 Failure taxonomy
+Publish Failure 与 Autosave Failure 分开。
 
-Publish Failure 不等于 Autosave Failure。
-
-#### A. 写入前 stale / generation mismatch
-
-```text
-发布未执行
-发布前检查已过期 / 生产配置已发生外部变化
-```
-
-没有开始 writeback。
-
-#### B. Writeback 明确失败
-
-显示：
+若 Production write、reread 或 verify 任一步失败：
 
 ```text
 发布失败
-生产配置未能完成写入
+请检查本地 Production 文件状态后重试
 ```
 
-不得显示成功。
+不宣告 partial success，也不 blind retry create。
 
-#### C. Partial write / completion unknown
-
-如果内部多目标 write 发生部分失败或无法证明整体完成：
+对于需要新建 row 并取得 Production `row_id` 的情况：
 
 ```text
-发布失败
-生产配置可能处于部分更新或未验证状态
+create
+→ reread
+→ 唯一识别 row_id
+→ 更新本地 mapping
+→ verify
 ```
 
-必须重新读取**整组** Production generation / output 以确定当前事实；不得按 target 拼接 baseline，不允许“成功一半”。**仅仅读回当前状态不足以自动恢复发布资格。** 如果无法证明 whole Production 已回到原 expected baseline 或已经由受控恢复流程建立新的可信 baseline，则后续 Publish 保持 BLOCK。V1 不自动采纳 partial-write 后的 Production。
+未完成整条链路不能判定成功。
 
-#### D. 写入完成但 reread / verification 失败
+### 7.10 Warnings
 
-```text
-写入已执行，但无法验证最终生产配置
-本次不能判定为发布成功
-```
+Warnings：
 
-同样要求重新读取 whole Production；不可因为 write API 返回 success 就提前宣告成功。若验证能力仍不可恢复，保持 Publish BLOCK，进入外部恢复 / 重新 Bootstrap 边界。
+- 不阻断 Publish；
+- 不要求逐条确认；
+- 不形成 reviewed / waived durable state。
 
-### 7.11 失败后的 Retry
+### 7.11 V1 停止线
 
-V1 不提供 blind Retry。
+V1.0 Publish 不做：
 
-失败后只有在重新获得：
-
-- exact durable Editor revision；
-- 可验证且可信的 whole Production baseline；
-- full Publish validation；
-
-以后，executor 才重新可用。
-
-对于普通 stale / generation mismatch，`重新检查` 只重新比较；对于 partial / unverifiable write，V1 不提供自动 recovery merge。若需要建立新的 baseline，走受控外部恢复 / 重新 Bootstrap / 后续 Reconcile 能力。
-
-`重新检查` 不是“再次写入”，也不是“接受 Production 当前值”。
-
-### 7.12 Warnings
-
-Warnings 在 Preflight 中集中展示，但：
-
-- 不阻断 executor；
-- 不要求逐项 checkbox acknowledgement；
-- 不产生 reviewed / waived durable state；
-- 不因为 Publish 成功而消失或被标记为已处理。
-
-Warning 仍然只是 current state derived diagnostic。
-
-### 7.13 不进入 V1 Publish 的能力
-
-明确不做：
-
-- per-Fish / per-Mode / per-Component partial publish；
-- Publish selection tree；
-- semantic change history；
-- durable Publish History / author / timestamp ledger；
-- “上次发布以来修改了什么”的 Authoring diff；
-- 自动采纳外部 Production；
-- reverse import / auto merge；
-- Production row-level manual override；
-- materialized production name / row id 的普通作者编辑；
-- second confirmation modal；
-- warning acknowledgement workflow。
+- per-Fish / per-Mode partial publish；
+- Publish History；
+- 协同编辑 / revision merge；
+- Git pull / commit / merge / push；
+- Production reverse import；
+- automatic reconcile；
+- Production row GC / cleanup；
+- Production row manual editor。
 
 Publish 的停止线：
 
-> **验证当前 Editor durable state 可以安全物化，并以一个全局 transaction 写入且重新验证 Production；不把 Publish 扩成版本管理、Reconcile 或 Production 编辑器。**
+> **把当前单机 Authoring Truth 安全地非破坏性物化到本地 Production working tree，并验证本次写入。**
