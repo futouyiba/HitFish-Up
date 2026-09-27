@@ -13,14 +13,14 @@ Fish Habit Editor          编辑器已保存   ⛔2   ● 未确认变更   [�
 
 LEFT NAV              CENTER                                       FOCUS
 
-FISH                  鱼习性 › 大口黑鲈 › 特殊习性            结构习性
+FISH                  鱼习性 › 大口黑鲈 › 中鱼习性模式            结构习性
                       › 大个体 [兼容]                          大口黑鲈 · 大个体
 
 ▼ 大口黑鲈            [ 编辑 ] [ 解析预览 ]                       当前来源
-  常规习性                                                          Heavy Cover
-  特殊习性        ┌ 温度习性 ────────────────┐
-    幼年 [兼容]       │ 来源 Warmwater ▾         │                字段行式编辑
-    大个体 ●      │ 沿用底板                 │
+  基础习性                                                          Heavy Cover
+  中鱼习性模式        ┌ 温度习性 ────────────────┐
+    小个体 [兼容]       │ 来源 Warmwater ▾         │                字段行式编辑
+    大个体 [兼容] ●      │ 沿用底板                 │
          [兼容]       └──────────────────────────┘
                       ┌ 结构习性 ──────────── ⛔ ┐
 ▸ 虹鳟                │ 来源 Heavy Cover ▾      │
@@ -40,7 +40,7 @@ FISH                  鱼习性 › 大口黑鲈 › 特殊习性            结
 ## 2. Subject Navigation
 
 - Subject 只在左栏选择。
-- 点击 Fish 名称 → 该 Fish / 常规习性。
+- 点击 Fish 名称 → 该 Fish / 基础习性。
 - 点击 Mode child → 该 Fish / 对应 Mode。
 - Chevron 只控制 disclosure，不改变 Subject。
 - 当前 Subject path 始终可见。
@@ -77,7 +77,7 @@ Policy Template       [ ... ]
 [开始配置]
 ```
 
-五项全部有效、且 resulting Species Base 没有 blocking validation error 后，一次 atomic create **Species Base + 系统默认 FishEnvAffinity 投影壳**；成功后直接进入该 Species 的常规习性 Authoring。
+五项全部有效、且 resulting Species Base 没有 blocking validation error 后，一次 atomic create **Species Base + 系统默认 FishEnvAffinity 投影壳**；成功后直接进入该 Species 的基础习性 Authoring。
 
 初始化页只负责选择已有合法 Source / Policy Template，不提供字段 Operation、Role 或 coeff 编辑；这些在创建后的正常 Authoring 中完成。
 
@@ -89,16 +89,16 @@ Policy Template       [ ... ]
 - Source picker 若需要新 Template，可进入 Shared Assets；当前初始化表单只以内存态保留 Species 与已选 binding，创建/取消后返回。这个 return state 不持久化，reload / 退出工作区可丢弃；
 - 不编辑 Fish Basic 基础字段、Quality 或 StockRelease 关系。
 
-创建后即使当前 Species 尚无任何 Compat Mode，常规习性仍可正常 Author；系统默认 Affinity 不作为左栏 Mode child 重复显示。
+创建后即使当前 Species 尚无任何 Compat Mode，基础习性仍可正常 Author；系统默认 Affinity 不作为左栏 Mode child 重复显示。
 
 若没有额外 Compat Mode，左栏只需：
 
 ```text
 ▼ Atlantic Salmon
-  常规习性
+  基础习性
 ```
 
-不显示“尚无特殊习性”错误态，也不把系统默认 Affinity 伪装成业务 Mode。
+不显示“尚无中鱼习性模式”错误态，也不把系统默认 Affinity 伪装成业务 Mode。
 
 V1 不提供 Species Base / system default Affinity 的 Archive / Delete。误建对象不通过 Habit Editor 做跨域删除；后续只有在具备 StockRelease / FishRelease 安全引用检查后才讨论生命周期动作。
 
@@ -107,8 +107,8 @@ V1 不提供 Species Base / system default Affinity 的 Archive / Delete。误�
 Header 仅一行 identity breadcrumb：
 
 ```text
-鱼习性 › 大口黑鲈 › 常规习性
-鱼习性 › 大口黑鲈 › 特殊习性 › 大个体 [兼容]
+鱼习性 › 大口黑鲈 › 基础习性
+鱼习性 › 大口黑鲈 › 中鱼习性模式 › 大个体 [兼容]
 ```
 
 Context Header 不常驻显示 `有本层调整`、Error 数量、Autosave 等 aggregate status；这些分别由 Component/Policy 与 Global Topbar 承担。
@@ -371,8 +371,8 @@ Source Candidate 只能从**最近一次成功持久化的 durable state**启动
 但下列情况即使当前 Effective Source / Effective Value 相同，仍属于真实 Source mutation：
 
 ```text
-跟随常规习性 → 显式固定 Heavy Cover
-显式固定 Heavy Cover → 跟随常规习性
+跟随基础习性 → 显式固定 Heavy Cover
+显式固定 Heavy Cover → 跟随基础习性
 ```
 
 因为未来传播行为不同，不能按 value diff = 0 折成 no-op。
@@ -380,7 +380,7 @@ Source Candidate 只能从**最近一次成功持久化的 durable state**启动
 Compat Mode 的 Source 展示必须区分：
 
 ```text
-跟随常规习性 → Heavy Cover
+跟随基础习性 → Heavy Cover
 Heavy Cover · 本模式设置
 ```
 
@@ -426,7 +426,7 @@ V1 不为 Local Rebase / Propagated Impact 新建独立 Workspace。
 大口黑鲈 · 大个体 · 结构习性
 
 来源关系
-当前      跟随常规习性 → Heavy Cover
+当前      跟随基础习性 → Heavy Cover
 候选      Heavy Cover · 本模式设置
 
 字段结果
@@ -436,7 +436,7 @@ Wood      0.60 → 0.60
 
 当前数值无变化
 但来源关系将从“跟随”变为“显式固定”。
-以后常规习性更换来源时，本模式将不再跟随。
+以后基础习性更换来源时，本模式将不再跟随。
 
 [取消更换]                    [确认更换来源]
 ```
@@ -477,7 +477,7 @@ Wood   0.60 → 0.60
 ```text
 同时影响
 
-幼年 [兼容]          3 项变化   0 Error
+小个体 [兼容]          3 项变化   0 Error
 大个体 [兼容]    2 项变化   1 Warning
 ```
 
@@ -622,12 +622,12 @@ Compat Mode 示例：
 空间机会策略
 
 策略来源
-沿用常规习性 → Predator Policy
+沿用基础习性 → Predator Policy
 
-温度          CORE        沿用常规习性角色
+温度          CORE        沿用基础习性角色
 结构          SECONDARY   本模式设置
 觅食水层      CORE        使用策略模板原始角色
-时段          IGNORED     沿用常规习性角色
+时段          IGNORED     沿用基础习性角色
 
 fail_env_coeff   0.015    本模式调整
 ```
@@ -663,7 +663,7 @@ Species Base：
 
 ```text
 空间机会策略
-大口黑鲈 · 常规习性
+大口黑鲈 · 基础习性
 
 组件            有效角色       本层意图
 ────────────────────────────────────────
@@ -681,10 +681,10 @@ Compat Mode：
 ```text
 组件            有效角色       本模式意图
 ──────────────────────────────────────────────
-温度            CORE          [沿用常规习性角色 ▾]
+温度            CORE          [沿用基础习性角色 ▾]
 结构            CORE          [设置为 CORE ▾]
 觅食水层        SECONDARY     [使用策略模板原始角色 ▾]
-时段            IGNORED       [沿用常规习性角色 ▾]
+时段            IGNORED       [沿用基础习性角色 ▾]
 ```
 
 V1 一个兼容 Mode 对应一条既有 FishEnvAffinity 行，因此普通 UI 不显示 row_key / Quality / production row identity，也不保留 multi-row Compat 展开。
@@ -714,7 +714,7 @@ Species Base Policy Card 可提供唯一策略来源选择器：
 Compat Mode 不提供 Policy Source Selector；只读显示：
 
 ```text
-沿用常规习性 → Predator Policy
+沿用基础习性 → Predator Policy
 ```
 
 Mode 只编辑 Role / fail_env_coeff patch，不虚构 policySourceOverride。
@@ -735,7 +735,7 @@ Species Base 每行的 dropdown 直接包含完整作者意图：
 Compat Mode：
 
 ```text
-沿用常规习性角色
+沿用基础习性角色
 使用策略模板原始角色
 设置为 CORE
 设置为 SECONDARY
@@ -746,7 +746,7 @@ Compat Mode：
 
 重要语义：
 
-- “沿用常规习性角色”＝本 Mode 没有 row-level Role patch；
+- “沿用基础习性角色”＝本 Mode 没有 row-level Role patch；
 - “使用策略模板原始角色”＝显式 CLEAR Species Role override，回到当前 Policy Template raw Role；
 - “设置为 X”＝显式 SET，即使 X 与当前 Effective Role / Template raw Role 相同也保留作者 intent；
 - 不根据最终 Role 相同就自动折叠成 inherit / CLEAR。
@@ -780,7 +780,7 @@ Compat Mode：
 ```text
 fail_env_coeff
 
-常规习性配置       0.015
+基础习性配置       0.015
 策略模板原始值     0.010
 本模式操作         [使用策略模板原始值 ▾]
 有效值             0.010
@@ -789,7 +789,7 @@ fail_env_coeff
 可选动作：
 
 ```text
-沿用常规习性配置
+沿用基础习性配置
 使用策略模板原始值
 调整
 设置为
@@ -797,7 +797,7 @@ fail_env_coeff
 
 其中：
 
-- Mode absent＝沿用常规习性配置；
+- Mode absent＝沿用基础习性配置；
 - Mode CLEAR＝使用策略模板原始值；
 - ADD＝绝对数值增量，不是百分比；
 - SET＝绝对值。
@@ -844,7 +844,7 @@ V1 复用 §12 的**短事务 Candidate Review**，不建立 Policy 专属 Candi
 
 ```text
 策略来源变更预览
-大口黑鲈 · 常规习性
+大口黑鲈 · 基础习性
 
 当前      Predator Policy
 候选      Generalist Policy
@@ -858,7 +858,7 @@ V1 复用 §12 的**短事务 Candidate Review**，不建立 Policy 专属 Candi
 fail_env_coeff    0.015     0.025     本层 ADD +0.005，按候选 baseline 重算
 
 同时影响
-幼年 [兼容]          2 项变化
+小个体 [兼容]          2 项变化
 大个体 [兼容]    1 项变化 · 1 Error
 
 [取消更换]                  [确认更换策略]
@@ -890,7 +890,7 @@ Compat Mode 只读显示：
 
 ```text
 策略来源
-沿用常规习性 → Predator Policy
+沿用基础习性 → Predator Policy
 ```
 
 不提供 Policy Source Selector。

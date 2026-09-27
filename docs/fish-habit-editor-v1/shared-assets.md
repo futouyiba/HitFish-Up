@@ -190,7 +190,7 @@ Heavy Cover · 更新影响
 大口黑鲈 › 基础习性 › Structure
   Rock   1.00 → 0.80
 
-大口黑鲈 › 成年及以上 › Structure
+大口黑鲈 › 中鱼习性模式 › 大个体 [兼容] › Structure
   Rock   0.80 → 0.60
   原有 ADD -0.20 保留
 
@@ -437,7 +437,7 @@ Confirm 后 atomic rewrite direct bindings，并重 Resolve 全部受影响对�
 Fish Component / Policy 中的“查看模板”可以进入 Shared Template Workspace，并保存一个 ephemeral ReturnTarget：
 
 ```text
-← 返回 大口黑鲈 › 成年及以上 › 结构习性
+← 返回 大口黑鲈 › 中鱼习性模式 › 大个体 [兼容] › 结构习性
 ```
 
 Template 引用列表进入 Fish 时同理可显示“返回当前模板”。
