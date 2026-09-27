@@ -115,7 +115,7 @@ Component Card 的 Source Selector 是唯一 Source mutation entry。Picker 不�
 V1.0 显式 Source candidate 分两类：
 
 1. **共享模板**：长期主路径，可复用、可管理的 Authoring Source；
-2. **已有生产数据 · 兼容**：过渡期兼容来源，来自 verified Production baseline 中合法的同 Component Kind existing / pass-through row。
+2. **已有生产数据 · 兼容**：过渡期兼容来源，来自当前本地 Production working tree 中合法的同 Component Kind row。
 
 对于中鱼习性模式，Picker 顶部还可以有：
 
@@ -153,7 +153,7 @@ Legacy_Rocky_03
 - 当前 Source 若为 Template，可显示“共享模板”；若为 Existing Production，可显示“已有生产数据 · 兼容”；
 - Source Change 无论跨不跨类型，都继续走同一套 staged Candidate。
 
-V1.0 不把本次 Publish 新生成的 Editor-managed Production projection 自动发现为新的 Existing Production Source candidate，避免 output → source 隐式循环。Existing Production Source 只消费当前 verified baseline 中明确允许作为兼容来源的 existing / pass-through row。
+Existing Production Source catalog 在 workspace load / explicit refresh 时从本地 Production working tree 重建。Publish 过程中不动态把刚写出的 row 注入当前 Picker，避免同一事务内形成 output → source 循环。
 
 ## 5. Focus Editor states
 
@@ -535,8 +535,6 @@ Candidate Confirm 不是 Publish。
 这与“结果有 Validator ERROR”必须区分。
 
 ### 12.10 Candidate validity
-
-V1.0 不处理其它 Editor 会话导致的 revision stale。
 
 Confirm 前只重新检查：
 
