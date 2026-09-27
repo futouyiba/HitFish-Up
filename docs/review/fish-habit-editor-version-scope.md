@@ -117,7 +117,7 @@ V1.0 的数据前提很简单：
 - 无法明确映射的 legacy row 可以不暴露给 V1.0 Editor，不要求做 migration adjudication UI；
 - 没有 Species Base 的 Fish 不进入 V1.0。
 
-V1.0 不定义 `AVAILABLE_NEW`、`LEGACY_UNIMPORTED`、Species Base initialization 或 fresh-create 流程。
+V1.0 不定义 Species Base initialization / fresh-create 流程。
 
 ### 2.4 V1 Persistence / Packaging
 
