@@ -275,7 +275,7 @@ Template 英文名虽然在 Editor 中是可编辑 metadata，但它会影响下
 - Mode Share / Routing
 - FishPond / StockRelease / FishRelease
 - 新建 Species identity
-- 用户创建额外 Engagement Mode / Compat FishEnvAffinity row（系统默认 Affinity projection 除外）
+- V1.0 创建新的 Species Base / system-default Affinity；V1.0.1 仅补 fixed Compat row creation
 - Family / Preset-assisted Species initialization
 - Species Base / system default Affinity Archive / Delete
 - 鱼家族预设 / Species Preset
@@ -290,22 +290,22 @@ Template 英文名虽然在 Editor 中是可编辑 metadata，但它会影响下
 
 ```text
 打开 Editor
-→ 已有 Habit：直接选择 Fish
-→ 无 Habit：从 Fish Basic 选择 Species
-   → 选择四个 Component Source + Policy Template
-   → atomic create Species Base + system default Affinity projection
+→ 从已有 Fish / Subject 中选择目标
 → 左栏选择基础习性 / 已有中鱼习性模式
 → 中栏查看四个 Component + Policy
 → 选择 Component
 → 右栏 Inline Field Authoring
 → 必要时在 Card 换 Source
+   → Shared Template
+   或 Existing Production Source
    → Candidate / Preview / Confirm
 → 普通字段 / Policy Autosave
 → 处理 Validation
 → 解析预览
 → Publish
+→ 本地 production Git working tree 产生已验证 materialization diff
 ```
 
-V1 Review 的核心问题：
+V1.0 Review 的核心问题：
 
-> 在不依赖后续能力的情况下，一个作者能否从 Fish Basic 选择已有 Species，创建或编辑完整 Species Base，并安全地验证、解析和发布；同时继续编辑已有 Compat Mode？
+> 在不依赖后续能力的情况下，一个作者能否安全编辑已有 Species Base / Compat Subject，明确理解 Source 与 Operation，完成验证、解析，并把 exact Authoring revision 可靠物化到 Production working tree？
