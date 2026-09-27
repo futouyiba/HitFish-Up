@@ -711,6 +711,8 @@ executor 不执行无意义 write。
 成功后：
 
 - reread 的 whole Production generation 成为新的 expected baseline；
+- 本次 success 只证明**绑定 revision R** 已按预期 materialize 并验证；
+- 如果执行期间 Editor durable state 已被其它会话推进到 R+1，仍可判定 R 的 Publish success，但必须短暂提示“编辑器已有更新，未包含在本次发布”；不得声称 R+1 已发布；
 - 本次 success 可以在当前 Surface / toast 短暂显示；
 - V1 不把它持久化成 Publish History，也不在每个 Fish 上制造 Published badge；
 - `返回编辑器` 恢复进入 Publish 前的 context。
