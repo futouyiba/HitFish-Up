@@ -269,7 +269,7 @@ UI 进入 local raw-input state：
 - 不进入 durable state；
 - 不触发 Resolve input；
 - Effective 区继续以最近一次 durable state 为准，并弱提示“未应用”；
-- Publish 消费最近一次成功 durable revision；
+- Publish 消费最近一次成功保存的 durable state；
 - 若作者在输入完成前切离该 field / Component / Subject / Workspace，丢弃 transient input，并恢复该行最近一次 durable 表达；不为半完成操作弹保存确认。
 
 ### 9.2 Durable-valid but publish-invalid
@@ -303,7 +303,7 @@ Validator ERROR 不等于 Save Failure。
 - 不把未成功保存的数据冒充 Resolve / Publish 输入；
 - 作者修正文件 / 权限问题后重试。
 
-V1.0 是单机单写者工具，不实现多人 / 多会话 revision conflict、自动 merge 或 conflict replay UI。
+V1.0 只处理本地保存失败；协作冲突不进入 Editor UX。
 
 ## 10. Diagnostic projection
 
