@@ -124,6 +124,26 @@ LEGACY_UNIMPORTED
 - 不允许在 Habit Editor 中改写 Species identity；
 - 修复必须由 authoritative Catalog / migration 侧恢复原 identity 或完成受控迁移。
 
+### 1.5 Existing Compat ingress boundary
+
+V1 所说的“编辑已有 Compat Mode”不是“任意已有 `FishEnvAffinity` row 都自动成为一个 Mode Subject”。
+
+进入 V1 Editor 前，existing Production ingress 必须已经把兼容 row **无歧义映射到 V1 当前支持的固定 Compat 语义**：
+
+- 幼年 / Juvenile；
+- 成年及以上 / Mature。
+
+每个 Species × Compat type 最多一条可编辑 row。
+
+因此：
+
+- 已经完成该映射的 existing row → 可作为 V1 Compat Subject 编辑；
+- 同一 Compat type 多 row → migration blocker；
+- 无法映射到 default / Juvenile / Mature 的 Affinity → migration blocker；
+- 不允许 UI 根据 row name、Quality 或 payload 相似度自行猜 Mode identity。
+
+V1.0.1 只是在同一固定语义下补“缺失 Compat row 的 create”；不会改变 V1 existing Compat 的 identity 边界。
+
 ## 2. Source Binding
 
 ### 2.1 Source 与 Operation 正交
@@ -170,6 +190,31 @@ Heavy Cover · 本模式设置
 FOLLOW ↔ explicit pin 改变未来传播行为，因此是真实 durable mutation。
 
 只有候选 binding intent 与当前 durable binding intent 完全相同，才是 exact no-op。
+
+### 2.5 Profile absent 的 V1 来源边界
+
+`Profile absent` 是 V1 Resolver / Validator 必须能处理的 durable state，但**不是正常 V1 Authoring 主动制造的日常状态**。
+
+Golden Path 中：
+
+- 新 Species Base 创建要求四个 Component 都能 Resolve 完整 Profile；
+- 普通 Source Selector 只选择能形成合法 Profile 的 Source；
+- V1 没有“删除 Profile / 清空 Source”作者动作。
+
+因此正常 V1 Authoring 不提供把一个 present Profile 主动变成 absent 的入口。
+
+Profile absent 主要来自：
+
+- legacy / bounded migration 保留下来的不完整状态；
+- 已有 Editor durable state 的兼容 / 恢复场景；
+- 未来 schema 兼容时需要 Resolver 正确定义的边界状态。
+
+它与 `BROKEN_SOURCE_REF` 不同：
+
+- **Profile absent**：当前 Component 没有可消费 Profile，是明确的“缺 Profile”状态；
+- **BROKEN_SOURCE_REF**：durable binding 指向的 Source 已丢失或无法解析，是悬空引用错误。
+
+V1 不要求普通作者理解底层如何物理表示 Profile absent；产品语义只要求两者诊断与修复路径不能混淆。修复 Profile absent 仍通过该 Component 唯一 Source Selector 选择合法 Source，不新增 Setup transaction。
 
 ## 3. Component Field Operations
 
@@ -393,6 +438,16 @@ I/O / revision write failure：
 - 未成功写入的输入不能进入 Resolve / Publish；
 - 不 silent last-write-wins。
 
+其中 optimistic revision conflict 必须与普通网络 / I/O failure 区分。发生 stale revision 时：
+
+- 不自动把本地 typed edit merge 到新的 durable state；
+- 不覆盖另一会话已经成功写入的 revision；
+- 当前本地 typed value 可以暂时保留在 UI 作为“未保存冲突值”，方便作者查看 / 复制，但它不是 Authoring Truth；
+- 该 Subject 的后续 semantic mutation、Resolve 与 Publish 暂停，直到作者重新读取最新 durable state；
+- V1 不做字段级自动三方合并；作者在最新 state 上显式重新应用需要保留的修改。
+
+这样 optimistic revision check 才是完整的并发保护，而不是仅仅把冲突归入一个没有恢复路径的 Save Failure。
+
 ### 7.4 Diagnostics
 
 Diagnostics 是 derived state，不持久化为第二份 Truth。
@@ -612,7 +667,9 @@ Resolve UI 只展示 Resolver 实际能给出的结果，不自行补算第二�
 
 ### 12.1 Publish Scope
 
-V1 Publish 永远消费**整个 Editor durable state**，不是当前 Fish / Mode / Component。
+V1 Publish 永远消费**整个 Editor durable state 的一个 exact bound revision**，不是当前 Fish / Mode / Component，也不是执行期间持续移动的“最新状态”。
+
+Preflight / Execute 绑定 revision R；若其它会话在 Execute 期间产生 R+1，本次 Publish 仍只 materialize R。只要 R 的 Production write + reread + verify 成功，可判定本次事务成功；R+1 视为尚未包含的后续 Authoring change，不被本次 success 冒充已发布。
 
 ### 12.2 Production
 
@@ -634,17 +691,60 @@ Publish 必须验证 whole Production generation / baseline：
 - 不按 target 拼接 baseline；
 - 成功后 whole reread + verify，才能建立新的 expected baseline。
 
+### 12.3.1 Managed Projection 与 Pass-through Production
+
+V1 不要求先把整个历史 Production 全量迁入 Editor，因此 Production 中允许同时存在：
+
+1. **Editor-managed projection**：有明确 Editor / ledger ownership，可以由当前 Editor durable state 重新 materialize 的 rows；
+2. **pass-through Production**：尚未 import / adjudicate、当前 Editor 不拥有 Authoring Truth 的 legacy / external rows。
+
+Publish 的目标不是“用 Editor 输出覆盖整张 Production 表”，也不是“永远保留所有旧 rows”。
+
+正确模型是：
+
+```text
+Expected Production
+=
+verified pass-through baseline
++
+materialize(current Editor durable state) 的 managed projection
+```
+
+这里的“+”表示按明确 ownership 边界组合，而不是按 row name 猜测合并。
+
+硬规则：
+
+- Publish 只能 create / update / remove **ownership 可证明**的 managed projection；
+- pass-through rows 必须沿用本次 verified baseline 原样保留，不能因为 Editor 不认识就删除；
+- ownership 不明的 row 不得被自动 claim、rename、dedupe 或 cleanup；
+- managed desired output 与 pass-through row 发生 key / name collision 时，Preflight BLOCK，不 silent overwrite；
+- Editor-owned projection 因 Source change、Template rename / Hard Delete、owner-specific materialization 变化而变成 obsolete 时，若 ownership 可证明且当前 desired graph 已不再引用，可在同一 Publish 中移除；
+- whole reread / verify 必须同时证明：managed projection 与预期一致，pass-through set 相对 bound baseline 未被意外改写。
+
+这条边界使“bounded legacy bootstrap”和“Editor-global Publish”可以同时成立，不要求 V1 先完成全量历史迁移。
+
 ### 12.4 Materialization lineage
 
 Production projection 按 authoring lineage 决定，不按 payload 相等猜 owner。
 
-至少保持：
+必须先区分两个层级：
 
-- Shared Template + 无有效 local operation：可复用模板级 projection，并按 §10.6 从 Template English Name 确定性派生 Production Profile name；是否加入 Kind qualifier 由 G3 的真实 lookup / collision domain 决定；
-- Mode 完全跟随 Species Recipe：可复用 Species projection；
-- explicit Source pin + 零 operation：只改变未来 binding relation，不因 pin 本身强制复制一个同值 production row；
+1. **Affinity identity projection**：system-default / existing Compat 各自稳定的 `FishEnvAffinity` row identity；
+2. **Component/Profile projection**：Temperature / Structure / Feeding Layer / Time Period 等可被 Affinity row 引用的 materialized profile rows。
+
+“复用 projection”默认指第二层，不允许因为 payload 相同就折叠第一层 identity。
+
+因此：
+
+- 每个 system-default Affinity 仍有自己的 `FishEnvAffinity` row；
+- 每个 V1 existing Compat Subject 仍保留自己的 `FishEnvAffinity` row / row_key / row_id；
+- Compat Mode 即使完全跟随 Species、最终值完全相同，也只是**复用 Species 的 Component/Profile projections**，不能因此消失为独立 Affinity identity；
+- Shared Template + 无有效 local operation：managed consumer 可复用模板级 Profile projection，并按 §10.6 从 Template English Name 确定性派生 Production Profile name；是否加入 Kind qualifier 由 G3 的真实 lookup / collision domain 决定；
+- Shared Template asset 的存在本身不强制生成一个永远常驻的 Production row；Template-level Profile projection 只在 current managed desired graph 需要它时 materialize / reuse。无 managed consumer 的 obsolete Editor-owned projection 可按 §12.3.1 cleanup；
+- explicit Source pin + 零 operation：只改变未来 binding relation，不因 pin 本身强制复制一个同值 Profile row；
 - 任何有效 ADD / SET / CLEAR 等 local operation：按对应 owner 的 materialization 规则投影；
-- same-value SET 仍是 SET，不能因 payload 相同折回继承。
+- same-value SET 仍是 SET，不能因 payload 相同折回继承；
+- payload 相等也不能把 pass-through row 误认成 Editor-owned row；projection reuse / cleanup 必须基于 lineage / ledger ownership，而不是数值或 name 相似度。
 
 ### 12.5 Partial / Unverifiable Write
 

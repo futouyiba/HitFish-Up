@@ -58,6 +58,13 @@ V1 产品不提供 migration UI，但已有 Production 进入 Editor 时必须�
 
 这不是要求全量自动迁移；可以是目标 Species 集合上的一次性脚本 + 人工 adjudication。
 
+未进入 Editor ownership 的 legacy rows 继续作为 **pass-through Production** 保留在 verified baseline 中。Bootstrap / migration 必须能区分：
+
+- 已被 Editor / ledger 明确接管、后续允许 materialize / cleanup 的 managed rows；
+- 尚未 adjudicate、Publish 必须原样保留的 pass-through rows。
+
+不得因为一次 V1 Publish 只覆盖部分 Species，就把其它未迁移 legacy rows 从 Production 中删除。
+
 ## 3. Species Base creation transaction
 
 创建输入只有五个 binding：
@@ -144,9 +151,10 @@ V1 不实现 Species Base / system default Affinity 的 Archive / Delete。
 
 ## 5. Existing Compat Mode
 
-V1 只编辑已存在的 Compat Mode / FishEnvAffinity：
+V1 只编辑已存在、且 ingress 已无歧义映射到固定 Juvenile / Mature 语义的 Compat Mode / FishEnvAffinity：
 
 - 一个 UI Mode 对应一条既有 Affinity row；
+- 该 Affinity row identity 必须保留；即使 Mode 最终完全跟随 Species、所有 Component/Profile payload 与 Species 相同，也只能复用下层 Profile projection，不能把 Compat Affinity row 本身折叠掉；
 - Source / numeric operation / Role / coeff 继续按 V1 Common Semantics；
 - V1 不创建额外 Mode。
 
@@ -205,6 +213,9 @@ Executor 必须：
 ```text
 revision check
 → generation check
+→ build expected full Production
+   = verified pass-through baseline
+   + materialized Editor-managed projection
 → write
 → whole Production reread
 → verify
@@ -212,6 +223,14 @@ revision check
 ```
 
 只有 reread + verify 成功才算 Publish success。
+
+Materializer 必须区分 Affinity identity row 与可复用的 Component/Profile row：system-default / Compat Affinity identity 不因 payload 相同而合并；Profile projection 才可以按 lineage 复用。
+
+实现无论采用 full-file replace 还是 row patch，都必须满足同一 ownership 语义：
+
+- managed obsolete rows 可在 desired graph 不再引用时清理；
+- pass-through rows 原样保留；
+- ownership 不明时不猜、不删，必要时 BLOCK。
 
 Partial / unverifiable write 不自动建立新 baseline。
 
@@ -257,11 +276,19 @@ V1 不以 arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为
 
 - `LEGACY_UNIMPORTED` Species 不能 fresh create；
 - multi-row same-Compat legacy ingress 被 migration blocker 拒绝，而不是自动聚合；
+- unmapped Affinity 不会仅因“已存在”就进入 Compat Subject；
 - Existing Compat Mode 的 inherit / ADD / SET / CLEAR 能正确 Resolve；
+- Compat Mode 完全跟随 Species 时，Component/Profile projection 可以复用，但 Compat `FishEnvAffinity` identity row 仍保留；
+- legacy pass-through rows 与 Editor-managed rows 并存时，Publish 只替换 managed projection，pass-through rows reread 后保持不变；
+- obsolete Editor-owned Profile projection 可以 cleanup，但 ownership 不明 row 不会被误删；
+- ordinary Autosave 遇到 revision conflict 不 last-write-wins、不自动 merge，Resolve / Publish 使用最近成功 durable truth；
 - Shared Template 多字段 Candidate 只提交一次并正确传播；
-- referenced ARCHIVED Template 仍可 Resolve，Hard Delete guard 生效；
+- Template Value Candidate 遇到 revision stale 不自动把旧字段值 rebase 到新 Template；
+- Extract 在 incomplete raw input / save failure 时不会拿旧 durable value 冒充“当前值”创建 Template；
+- referenced ARCHIVED Template 仍可 Resolve，Hard Delete commit 会重新检查 DirectReferenceSet；
 - Production generation drift 阻断 Publish；
-- create-from-absent default Affinity 的 `row_id` 回填失败不能被判为 Publish success。
+- create-from-absent default Affinity 的 `row_id` 回填失败不能被判为 Publish success；
+- `row_id` backfill 不得用旧 Editor revision 覆盖并发产生的新 Authoring state。
 
 
 ## 11. Closure Status
@@ -313,16 +340,22 @@ V1 不以 arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为
 - 固定 exact prefix / suffix token、delimiter / case / 合法字符 normalization、各表 lookup/collision domain；
 - 核实 Production name 是否承担表内 string-reference key，以及这些引用是否全部处于 Habit Editor 全局 Publish 的重写范围；
 - 固定 Template English rename 的 materialization 行为：若可以完整重写并 reread/verify，则允许 Publish；若存在无法证明覆盖的外部 name-based reference、orphan / duplicate 风险，则 Publish BLOCK；
+- Fish Basic canonical English name 若参与 Affinity Production naming，必须明确它是**受 Publish snapshot/revision guard 的 live input**，还是在 create/bootstrap 时形成的稳定 naming stem；不得让一个未绑定 revision 的外部可变 display field 在 Preflight 与 Execute 之间悄悄改变 materialized key；
 - Production name 可以是物理 reference key，但永远不成为 Editor durable identity。
 
 **G4｜row_key → row_id create-from-absent handoff**
 
 - 固定 Production create 后 reread、唯一 row_id 识别、Editor durable backfill 的具体调用顺序；
+- `row_id` backfill 是 Publish transaction 内的 system-owned metadata write，不得覆盖更新后的作者语义；
+- 若 Production 写入后另一 Editor session 已推进 durable semantic revision，backfill 必须按 stable `row_key` 做受控 metadata patch，或将本次 Publish 判为 unverifiable / recovery-required；不得用旧 revision 整体回写覆盖新 Authoring state；
+- backfill 本身可以推进 Editor revision；Publish success 应以完成 backfill 后的 durable state + 已验证 Production baseline 收尾，但不声称并发产生的更新后 Authoring state 已经被本次 Publish 发布；
 - backfill / verify 未完成时不得宣告 Publish success，也不得 blind recreate。
 
 **G5｜Initial legacy bootstrap**
 
 - 对首批已有 Production 的目标 Species 执行 bounded bootstrap / migration；
-- multi-row same-Compat 与 unmapped Affinity 必须进入人工 adjudication，不自动聚合或 silent drop。
+- multi-row same-Compat 与 unmapped Affinity 必须进入人工 adjudication，不自动聚合或 silent drop；
+- bootstrap 必须区分并可承载“明确 Profile absent”与“已有 binding 但 Source broken”两种 ingress state，不能把缺 Profile 伪造成 `BROKEN_SOURCE_REF`，也不能给缺失 Profile 自动补假数据；
+- bootstrap 同时建立 managed-vs-pass-through ownership 边界：被接管 row 进入 Editor / ledger ownership，未 adjudicate legacy row 留在 pass-through baseline，后续 Publish 不得误删。
 
 完成 G1–G5 后，V1 vertical slice 不需要再等待新的产品裁决即可进入实现。

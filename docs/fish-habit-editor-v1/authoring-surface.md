@@ -308,6 +308,15 @@ Durable write 本身失败：
 - 最近一次成功 durable revision 仍是 Truth；
 - 不把未成功保存的数据冒充 Resolve / Publish 输入。
 
+若失败原因是 optimistic revision conflict，应明确显示“内容已被其它会话更新 / 当前修改尚未保存”，而不是只显示泛化网络错误：
+
+- 保留当前 typed value 作为本地未保存冲突值，便于作者查看 / 复制；
+- 暂停该 Subject 的继续 mutation、Resolve 与 Publish；
+- 提供“重新读取最新内容”；
+- 重新读取后不自动合并冲突值，作者在最新 durable state 上显式重新应用需要保留的修改。
+
+V1 不做 ordinary edit 的字段级自动三方合并。
+
 ## 10. Diagnostic projection
 
 同一个 Diagnostic 可以投影到 field row、Component Card badge、Global Topbar / Validation List，但它仍是一份 derived diagnostic，不是三份状态。
@@ -685,6 +694,7 @@ V1 一个兼容 Mode 对应一条既有 FishEnvAffinity 行，因此普通 UI �
 Role ordinary edit 走 Autosave。
 
 - IGNORED + Profile absent → 改 CORE / SECONDARY：先保存 Role，随后显示 required-Profile ERROR；不自动建 Profile、不自动选 Source、不回滚 Role。Diagnostic 提供“去配置习性”导航，定位到对应 Component 的普通 Authoring；作者仍通过该 Component Card 唯一 Source Selector 选择 Source，不新增 Setup transaction。
+- Profile absent 是 legacy / migration / recovery 可见状态，不是普通 V1 作者主动删除 Profile 后得到的状态；V1 不提供“删除 Profile / 清空 Source”动作。
 - CORE / SECONDARY → IGNORED：已有 Profile 保留，仍可编辑；仅表示当前计算不消费该 Profile。
 - Role 的 Validator ERROR 与 save I/O failure 分开；可 durable 保存但可阻断 Publish。
 

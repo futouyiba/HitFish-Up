@@ -566,6 +566,8 @@ Blocker 列表使用人类 breadcrumb：
 - generation 无法读取 / 无法验证；
 - current Production 与 expected baseline 不一致。
 
+V1 的 expected baseline 可以包含尚未 import 到 Editor 的 pass-through legacy rows。它们仍受 whole-generation guard 保护，但不会因此变成 Editor Authoring Truth。Publish 只能替换 ownership 可证明的 Editor-managed projection，并把 bound baseline 中的 pass-through rows 原样带入 expected output；不得因为“Editor 不认识”就清掉 legacy row。
+
 Blocker 文案：
 
 ```text
@@ -638,7 +640,9 @@ Preflight 必须绑定一个 exact Editor durable revision 和 expected Producti
 
 ### 7.7 No-op Publish
 
-V1 不维护“已发布 / 有未发布修改”的 durable 状态，但可以在 Preflight 中比较：
+V1 不维护“已发布 / 有未发布修改”的 durable 状态，但可以在 Preflight 中比较。
+
+当 Production 只包含 Editor-managed projection 时，可近似理解为：
 
 ```text
 materialize(current durable revision)
@@ -646,7 +650,21 @@ vs.
 current verified Production
 ```
 
-如果完整 Production projection 已完全一致：
+当还存在 pass-through legacy / external rows 时，真正比较的是：
+
+```text
+expected full Production
+=
+verified pass-through baseline
++
+materialize(current durable revision) 的 managed projection
+
+vs.
+
+current verified Production
+```
+
+如果完整 expected Production 已完全一致：
 
 ```text
 当前生产结果已与 Editor 一致
@@ -661,11 +679,14 @@ executor 不执行无意义 write。
 
 所有 Gate PASS 且存在实际 output delta 时，唯一 executor 可用。
 
+一次 Execute 的 semantic target 是 Preflight 绑定并在写入前重新核验通过的**exact Editor durable revision R**。执行开始后，R 不再随当前 Editor 的后续变化移动。
+
 执行开始后：
 
-- 锁定 Publish Surface；
-- 不允许导航 / authoring mutation；
+- 锁定当前 Publish Surface；
+- 不允许当前会话导航 / authoring mutation；
 - 不提供“写到一半取消”；
+- 其它 Editor session 若在执行期间成功写出 R+1，不自动把 R+1 合并进本次 materialization；
 - UI 可以依次显示高层阶段：
   - `正在写入生产配置…`
   - `正在重新读取并验证…`
@@ -678,7 +699,7 @@ executor 不执行无意义 write。
 
 1. writeback 完成；
 2. 重新读取**整组 Production generation**成功；
-3. reread 后的 Production 与本次预期 materialized output 验证一致；
+3. reread 后的 Production 与本次预期 full output 验证一致——包括 managed projection 精确匹配，以及 bound pass-through set 未被意外改写；
 
 才显示：
 
@@ -690,6 +711,8 @@ executor 不执行无意义 write。
 成功后：
 
 - reread 的 whole Production generation 成为新的 expected baseline；
+- 本次 success 只证明**绑定 revision R** 已按预期 materialize 并验证；
+- 如果执行期间 Editor durable state 已被其它会话推进到 R+1，仍可判定 R 的 Publish success，但必须短暂提示“编辑器已有更新，未包含在本次发布”；不得声称 R+1 已发布；
 - 本次 success 可以在当前 Surface / toast 短暂显示；
 - V1 不把它持久化成 Publish History，也不在每个 Fish 上制造 Published badge；
 - `返回编辑器` 恢复进入 Publish 前的 context。

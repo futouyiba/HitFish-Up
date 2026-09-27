@@ -105,6 +105,8 @@ Hard Delete 看显式引用；Template complete-value Impact 看所有最终消�
 
 Template Context 必须允许直接编辑中文名与英文名。中文名是 UI primary display；英文名视觉上可次一级，但不应隐藏成内部字段。
 
+中文名与英文名都是 Template 的 required metadata：trim 后为空的值不能形成 durable commit。名称重复是否允许由各自 Editor / Production collision domain 决定；即使名称相同，stable template identity 仍不得按名字合并。
+
 Template Kind 创建后不可修改；不同 Kind schema 不同，跨 Kind 改动不做 migration。
 
 ### 5.1 Template English Name 与 Production Profile Name
@@ -232,6 +234,22 @@ revision check
 
 Cancel 只丢弃 candidate，不修改 durable Template。
 
+### 8.1 Candidate revision stale
+
+Template Value Candidate 与 Source Change Candidate 的 stale 处理不同。
+
+Template complete value 是一组作者内容修改；如果 Candidate 基于 revision 104，而 durable Template 已被另一会话改到 105，V1 **不自动把旧 Candidate fields rebase 到新 Template**，避免把并发修改悄悄覆盖。
+
+此时：
+
+- Confirm 禁用；
+- 明确提示“模板内容已被其它会话更新，本次候选尚未保存”；
+- 当前 candidate 可以暂时保留为只读 / 可复制的本地值，方便作者人工对照；
+- 作者必须取消 / 结束当前 candidate，重新读取最新 durable Template，再显式重新应用需要保留的字段修改；
+- V1 不做 Template 字段级三方 merge。
+
+Source Change / Policy Source Change / Replace References 这类“稳定 intent + 重算 impact”的 staged mutation 可以按各自 Contract 在最新 durable revision 上重新计算 Preview；不能把这一规则误套到 Template complete-value content edit。
+
 ## 9. Blank Create
 
 从 Template Kind group 提供：
@@ -249,7 +267,14 @@ Cancel 只丢弃 candidate，不修改 durable Template。
 - 中文名由作者输入；
 - 英文名由工具先给出可读建议值，作者可修改；创建时必须已经存在非空英文语义名，但作者不必从空白手输；
 - atomic create；
-- 创建成功即 ACTIVE，并进入新 Template Context。
+- 创建成功即 ACTIVE。
+
+成功后的去向按入口区分：
+
+- 从 Shared Assets 独立发起 Blank Create → 进入新 Template Context；
+- 从 Species initialization 的 Source picker 作为 contextual detour 发起 → 返回原 initialization form，保留此前 ephemeral 选择并刷新 Source candidates；新 Template **不自动绑定 / 不自动选中**，作者仍在原 Source picker 显式选择。
+
+这仍遵守 `Create Source ≠ Bind Source`，也避免为了 contextual detour 建立 durable draft / history stack。
 
 新 Template 尚无 consumer，因此不需要 Impact Preview。
 
@@ -305,9 +330,13 @@ Structure                  只读
 
 规则：
 
+- Extract 只从**最近一次成功 durable revision**的 Effective Profile / Effective Policy 取值；
+- staged candidate active 时 Extract 不可用；
+- Autosave pending 时先等待 / flush durable write；save failure 时 BLOCK；
+- 当前 Focus 有 incomplete raw input 时 BLOCK，要求作者先完成或取消输入，不 silent discard，也不拿旧 durable value 冒充“当前提取值”；
 - 中文名由作者确认 / 输入；
 - 英文名由工具根据中文名、当前上下文或已有命名规则先生成可读建议值，作者可修改；创建提交时必须有非空英文语义名；
-- 浮层内不编辑 Template complete value；complete value 来自当前 Effective Profile / Effective Policy 的 flatten；
+- 浮层内不编辑 Template complete value；complete value 来自上述 exact durable revision 的 Effective Profile / Effective Policy flatten；
 - 创建前不在左栏出现 durable Draft Template；
 - 点击创建后 atomic create ACTIVE Template；
 - 创建成功后**直接切换到新 Template Context**，左栏选择对应 Template，中栏显示 Template Overview，右栏允许继续编辑中文名、英文名与 Template complete value；
@@ -323,9 +352,12 @@ Profile absent / 无法完整 Resolve，或 Policy 无法形成完整 Effective 
 
 ## 11. Clone / Save As
 
-Clone / Save As：
+Clone / Save As 复用 bounded Template creation flow：
 
-- 从当前 complete value 创建新 Template identity；
+- Kind 锁定为当前 Template Kind；
+- complete value 复制当前**最近一次成功 durable**的 Template value；active Value Candidate 时 Clone / Save As 不可用；
+- 创建表单要求确认新的中文名 / 英文名，可基于当前名称给出“副本 / Copy”等建议，但不能直接复用到会造成 schema / naming collision 的非法名称；
+- atomic create 新 Template identity，成功后进入新 Template Context；
 - 两者以后完全独立；
 - 不形成 Template → Template inheritance；
 - 不修改任何 existing binding。
@@ -362,6 +394,21 @@ ARCHIVED
 
 时出现，并使用 destructive confirm。
 
+执行 delete commit 时必须再次做 optimistic revision / guard check，确认：
+
+- Template 仍为 ARCHIVED；
+- DirectReferenceSet 仍为空；
+- 当前 durable revision 未使 delete 前提失效。
+
+如果另一会话在确认期间新建了 direct reference，Hard Delete 必须冲突失败并刷新引用状态，不能先删 Template 再制造 broken source。
+
+Hard Delete 删除的是 Editor Template asset。若该 Template 曾经 materialize 出 Editor-owned Production Profile row，实际 Production cleanup 发生在下一次 Global Publish，并受 managed-projection ownership guard 约束：
+
+- ownership 可证明且 current desired graph 已不再引用 → 可删除 obsolete projection；
+- ownership 不明 / 与 pass-through row 混淆 → Publish BLOCK，不因 Hard Delete 在 Editor 成功就盲删 Production row。
+
+因此 Hard Delete 成功只表示 Authoring asset 已删除，不等于 Production 已经同步清理。
+
 ## 13. Replace References
 
 Replace A → B 是 staged propagated mutation。
@@ -394,6 +441,8 @@ Fish Component / Policy 中的“查看模板”可以进入 Shared Template Wor
 ```
 
 Template 引用列表进入 Fish 时同理可显示“返回当前模板”。
+
+Species initialization 从 Source picker 进入 Shared Assets 创建 Template 时，也使用同一种单层 contextual ReturnTarget；它返回 initialization form，而不是形成通用历史栈。
 
 只保留一个 ReturnTarget，不建立通用 back stack。
 
