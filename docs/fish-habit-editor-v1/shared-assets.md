@@ -1,7 +1,7 @@
 # Fish Habit Editor V1｜Shared Templates
 
 > Status: Current Surface Contract for V1  
-> V1 Shared Assets 只包含 Shared Template。Fish Family / Species Preset 不属于 V1；Species Base initialization 属于 Fish Authoring Surface，不属于 Shared Template Workspace。
+> V1 Shared Assets 只包含 Shared Template。Fish Family / Species Preset 不属于 V1；V1.0 不提供 Species Base initialization。
 
 ## 1. 产品职责
 
@@ -16,7 +16,9 @@ Shared Template 是持续共享的 Source Asset。V1 必须支持：
 - Replace References；
 - 查看显式引用与额外跟随使用。
 
-V1 可以从 Fish Basic 创建 Species Base + 系统默认 Affinity projection；Shared Template 则是独立的可复用 Source Asset。Template 创建本身不创建或修改 Fish / Mode identity。
+Shared Template 是长期可管理资产；Existing Production Source 不是 Shared Asset，不出现在本 Workspace，也不获得 Template metadata / lifecycle。它只在 Fish Component 的 Source Picker 中作为“已有生产数据 · 兼容”出现。
+
+V1.0 不创建 Species Base；Shared Template 是独立的可复用 Source Asset。Template 创建本身不创建或修改 Fish / Mode identity。
 
 ## 2. 左栏导航
 
