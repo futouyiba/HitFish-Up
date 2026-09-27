@@ -7,7 +7,7 @@
 
 本目录承接 **Fish Habit Editor V1 的产品层 Current**：作者看到什么、如何理解对象、如何导航、哪些交互属于普通编辑、哪些需要候选预览，以及 V1 各 Surface 如何组成一个完整生产工具。
 
-V1 当前最小生产闭环包括：从 Fish Basic 选择已有 Species，为尚无 Habit 的 Species 原子创建完整 Species Base + 系统默认 Affinity projection，然后进入同一套 Authoring / Resolve / Publish；V1 不创建新的 Species identity，也不接管 StockRelease / FishRelease 关联。
+V1.0 当前最小生产闭环只编辑**已经进入 Editor durable state 的 Species Base / 既有 Compat FishEnvAffinity**，完成 Authoring / Resolve / Publish；V1.0 不提供 Species Base creation，也不接管 StockRelease / FishRelease 关联。已有 Production 的接入由 bounded bootstrap / migration 准备，不作为普通作者 UI。
 
 V1 当前需要的共用语义暂时与产品文档共址在 `common-semantics.md`。R2 只保留历史版本、裁定来源与证据，不再作为 V1 的最终语义解释入口。未来当这些语义稳定跨越多个版本后，再从 V1 提取到独立 common 目录。
 
@@ -42,7 +42,9 @@ V1.0.1 的固定 Compat Mode 创建不阻塞 V1 验收。
 5. [secondary-surfaces.md](secondary-surfaces.md)  
    V1 的次级产品面；当前已闭合 Resolve Preview 与 Publish。
 6. [implementation-brief.md](implementation-brief.md)  
-   V1 最小生产闭环的实现顺序、Species Base + default Affinity 创建、Shared Template、Resolve 与 Publish 工程落点。
+   V1.0 最小生产闭环的实现顺序、existing ingress、Source、Shared Template、Resolve 与 Publish 工程落点。
+7. [workspace-and-delivery.md](workspace-and-delivery.md)  
+   Web Dev Server / Electron 宿主、authoring / production 双 Git working tree、ZIP 分发与本地 Publish 物化边界。
 
 ## Authority relationship
 
