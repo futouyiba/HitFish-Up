@@ -59,7 +59,7 @@ V1.0 左栏只显示已经进入 Editor durable state 的 Fish / Subject。
 - 从 Fish Basic 直接 fresh create Habit；
 - 把未迁移 Production footprint 自动解释成新 Subject。
 
-已有 Production 的 bootstrap / migration 在进入普通 Editor 前完成。若目标 Species 尚未进入 Editor durable state，V1.0 普通作者界面不为它建立半成品或 Setup flow。
+若目标 Species 尚未存在于 authoring working tree，V1.0 普通作者界面不为它建立半成品或 Setup flow；需要时由 Editor 外的数据准备工作处理。
 
 ## 3. Context Header
 
@@ -685,7 +685,7 @@ V1 一个兼容 Mode 对应一条既有 FishEnvAffinity 行，因此普通 UI �
 Role ordinary edit 走 Autosave。
 
 - IGNORED + Profile absent → 改 CORE / SECONDARY：先保存 Role，随后显示 required-Profile ERROR；不自动建 Profile、不自动选 Source、不回滚 Role。Diagnostic 提供“去配置习性”导航，定位到对应 Component 的普通 Authoring；作者仍通过该 Component Card 唯一 Source Selector 选择 Source，不新增 Setup transaction。
-- Profile absent 是 legacy / migration / recovery 可见状态，不是普通 V1 作者主动删除 Profile 后得到的状态；V1 不提供“删除 Profile / 清空 Source”动作。
+- Profile absent 是既有 / 恢复数据中可能出现的状态，不是普通 V1 作者主动删除 Profile 后得到的状态；V1 不提供“删除 Profile / 清空 Source”动作。
 - CORE / SECONDARY → IGNORED：已有 Profile 保留，仍可编辑；仅表示当前计算不消费该 Profile。
 - Role 的 Validator ERROR 与 save I/O failure 分开；可 durable 保存但可阻断 Publish。
 
