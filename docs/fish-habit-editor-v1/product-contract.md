@@ -112,7 +112,7 @@ Species Base / 常规习性仍是唯一默认习性 Authoring Truth；系统默�
 - 四个 Component 跟随 Species Base；
 - local operations 为空；
 - Role / fail_env_coeff 继承 Species；
-- 不在“中鱼习性模式”列表里重复显示成一个 Mode；
+- 不在“特殊习性”列表里重复显示成一个 Mode；
 - Publish 后形成可供 StockRelease / FishRelease 在其自身配置表中引用的 EnvAffinity row。
 
 Habit Editor 不创建或编辑 Fish Basic 基础数据、模型、图鉴、Quality，也不创建 StockRelease / FishRelease 的 Quality ↔ FishEnvAffinity 关联。
@@ -156,9 +156,9 @@ FISH：
 ```text
 ▼ 大口黑鲈
    基础习性
-   中鱼习性模式
+   特殊习性
      幼年          [兼容]
-     成年及以上    [兼容]
+     大个体    [兼容]
 ▸ 虹鳟
 ▸ 狗鱼
 ```
@@ -200,8 +200,8 @@ Context Header 属于中栏 Surface，不属于 Global Topbar。
 Fish 示例：
 
 ```text
-鱼习性 › 大口黑鲈 › 基础习性
-鱼习性 › 大口黑鲈 › 中鱼习性模式 › 成年及以上 [兼容]
+鱼习性 › 大口黑鲈 › 常规习性
+鱼习性 › 大口黑鲈 › 特殊习性 › 大个体 [兼容]
 ```
 
 Template 示例：
@@ -323,7 +323,7 @@ Template 英文名虽然在 Editor 中是可编辑 metadata，但它会影响下
 → 无 Habit：从 Fish Basic 选择 Species
    → 选择四个 Component Source + Policy Template
    → atomic create Species Base + system default Affinity projection
-→ 左栏选择基础习性 / 已有中鱼习性模式
+→ 左栏选择常规习性 / 已有特殊习性
 → 中栏查看四个 Component + Policy
 → 选择 Component
 → 右栏 Inline Field Authoring
