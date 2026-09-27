@@ -97,8 +97,8 @@ V1 当前沿用两个既有 physical Compat slot：
 
 - 已完成 slot mapping 的 existing row → 可作为 V1 中鱼习性模式 Subject 编辑；
 - 一个 Species 可以没有中鱼习性模式，也可以只有其中一个；不要求 young / mature 成对存在；
-- 同一 physical slot 多 row → migration blocker；
-- 无法映射到 system-default / young / mature 的 Affinity → migration blocker；
+- 同一 physical slot 存在无法唯一选择的多 row → V1.0 不暴露该 Compat Subject；
+- 无法映射到 system-default / young / mature 的 Affinity → V1.0 不作为可编辑 Subject；
 - 不允许 UI 根据 row name、Quality 或 payload 相似度自行猜 slot identity；
 - 哪些 Quality / stocking rows 实际引用 system-default、young 或 mature Affinity，仍由 StockRelease / FishRelease 域决定。
 
