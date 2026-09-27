@@ -206,7 +206,7 @@ absence 与 CLEAR 必须可区分；即使两者当前 Effective Value 相同，
 
 ## 4. Resolve Semantics
 
-Resolve 只从最近一次成功 durable revision 计算。
+Resolve 只从最近一次成功保存的 durable state 计算。
 
 ### 4.1 Effective Value
 
@@ -391,9 +391,9 @@ V1 只有两类 mutation 重量：
 Candidate：
 
 - ephemeral；
-- 只能从最近一次成功 durable revision 启动；
+- 只能从最近一次成功保存的 durable state 启动；
 - Candidate active 时暂停其它导航、ordinary mutation 与 Publish；
-- 确认前做 revision check；
+- Confirm 前检查 Candidate Source 仍然合法；
 - 取消不回滚已 durable 的普通编辑。
 
 Preview 必须说明：
@@ -470,7 +470,7 @@ Replace A → B：
 
 ## 10. Shared Template Creation
 
-V1 可以从 Fish Basic 创建新的 Species Base + system default Affinity；Shared Template 是另一类独立 Source asset，Template 创建本身不创建或修改 Fish / Mode identity。
+V1.0 不创建 Species Base。Shared Template 是独立 Source asset，Template 创建本身不创建或修改 Fish / Mode identity。
 
 ### 10.1 Blank Create
 
