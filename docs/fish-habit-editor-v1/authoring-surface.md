@@ -115,7 +115,7 @@ Component Card 的 Source Selector 是唯一 Source mutation entry。Picker 不�
 V1.0 显式 Source candidate 分两类：
 
 1. **共享模板**：长期主路径，可复用、可管理的 Authoring Source；
-2. **已有生产数据 · 兼容**：过渡期兼容来源，来自当前本地 Production working tree 中合法的同 Component Kind row。
+2. **已有数据 · 兼容**：过渡期兼容来源，来自已经冻结在 Authoring Store 中的 Imported Source Snapshot。
 
 对于中鱼习性模式，Picker 顶部还可以有：
 
@@ -135,7 +135,7 @@ V1.0 显式 Source candidate 分两类：
 重障碍区          Heavy Cover
 岩石岸线          Rocky Shore
 
-已有生产数据 · 兼容
+已有数据 · 兼容
 ────────────────
 Bass_Struct_01
 Trout_Struct_A
@@ -144,16 +144,16 @@ Legacy_Rocky_03
 
 产品规则：
 
-- Shared Template 排在前面，表达长期主路径；Existing Production 放在后面，表达 transition compatibility；
+- Shared Template 排在前面，表达长期主路径；Imported Source Snapshot 放在后面，表达 transition compatibility；
 - 不使用两个平级 Tab 来暗示两套长期 Source System；
-- Existing Production 直接显示 Production row 的真实英文 `name`；不生成“大口黑鲈现有结构数据”之类推导名称；
-- Picker 展示**所有合法的同 Kind Existing Production Source**，不按当前 Species / Quality 推导 ownership 或做隐式筛选；
-- Source binding 使用真实稳定 physical identity / key；display name 不是额外 Editor identity；
-- Existing Production Source 不进入“共享资产”左栏，不获得 Template lifecycle / metadata；
-- 当前 Source 若为 Template，可显示“共享模板”；若为 Existing Production，可显示“已有生产数据 · 兼容”；
+- Imported Source Snapshot 直接显示其保留的原 Production 英文 `name`；不生成“大口黑鲈现有结构数据”之类推导名称；
+- Picker 展示 Authoring Store 中**所有合法的同 Kind Imported Source Snapshot**，不按当前 Species / Quality 推导 ownership 或做隐式筛选；
+- Source binding 使用 Authoring 内稳定 snapshot identity；原 Production row identity 只作为 provenance；
+- Imported Source Snapshot 不进入“共享资产”左栏，不获得 Template lifecycle / metadata；
+- 当前 Source 若为 Template，可显示“共享模板”；若为 Imported Source Snapshot，可显示“已有数据 · 兼容”；
 - Source Change 无论跨不跨类型，都继续走同一套 staged Candidate。
 
-Existing Production Source catalog 在 workspace load / explicit refresh 时从本地 Production working tree 重建。Publish 过程中不动态把刚写出的 row 注入当前 Picker，避免同一事务内形成 output → source 循环。
+普通 Source Picker **不扫描 / refresh `production/` working tree**。如果需要承接新的 Production 数据，应先由 Editor 外的显式数据准备 / import / bootstrap 流程把它冻结进 Authoring Store。
 
 ## 5. Focus Editor states
 
@@ -184,7 +184,7 @@ Grass      0.30        [仅用当前来源 ▾]                     0.30
 - Source value / inherited operation / Effective Value 是解释性 projection。
 - 本层 Operation 与参数是 authoring input。
 - Focus Editor 不出现 Source mutation control。
-- 当前 Source 是 Shared Template 时可提供 `查看模板`；当前 Source 是 Existing Production 时只显示真实 Production name + “已有生产数据 · 兼容”，V1.0 不从这里建立第二套 Production 编辑入口。
+- 当前 Source 是 Shared Template 时可提供 `查看模板`；当前 Source 是 Imported Source Snapshot 时只显示保留的原 Production name + “已有数据 · 兼容”，V1.0 不从这里建立 Production 浏览 / 编辑入口。
 - 一屏尽量同时看到该 Component 的全部字段，支持连续扫描与人工批量编辑。
 
 ## 7. Operation vocabulary projection
