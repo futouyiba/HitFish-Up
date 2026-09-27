@@ -501,7 +501,7 @@ V1.0 只保留两个 Gate。
 
 Blocking ERROR 包括 schema / semantic validation、required Profile 缺失、broken source、Production naming collision 等当前 Validator / Materializer 已知 blocker。
 
-V1.0 不维护“expected Production generation”或多人并发 baseline。点击 Execute 时直接重新读取当前本地 Production working tree，作为本次非破坏性 patch 的输入。
+点击 Execute 时重新读取当前本地 Production working tree，作为本次非破坏性 patch 的输入。
 
 ### 7.4 Preflight layout
 
