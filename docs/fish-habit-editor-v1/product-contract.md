@@ -5,7 +5,7 @@
 
 ## 1. 一句话产品模型
 
-作者从 Fish Basic 中选择已有 Species；若已有 Habit 则直接编辑，若尚无 Habit 则先选择四个 Component Source + Policy Template 原子创建 Species Base。随后通过 **Source + 当前层 Authoring Operation** 编辑四类习性与空间机会策略；Resolve 展示派生结果，Publish 物化到 Habit Production。
+V1.0 只编辑已经进入 Editor durable state 的 Species Base / 既有 Compat FishEnvAffinity。作者通过 **Source + 当前层 Authoring Operation** 编辑四类习性与空间机会策略；Resolve 展示派生结果，Publish 将 exact durable Authoring State 物化到本地 Production working tree。V1.0 不提供 Species Base creation。
 
 ## 2. Mental Model
 
@@ -75,47 +75,20 @@ Durable authoring intent 包括 Source binding / override、field operation / pa
 
 Effective Value、Resolve result/provenance、current selection、raw incomplete input、未确认 candidate、validation projection、Publish preflight result 都是 derived / ephemeral，不成为第二份 Truth。
 
-### 2.5 开始配置习性
+### 2.5 V1.0 Subject baseline
 
-Fish List 的 Species identity 来自 Fish Basic / authoritative Species Catalog。
+V1.0 不提供“开始配置其他鱼种”或 Species Base creation。
 
-默认主列表可以只展示已配置 Habit 的 Species；作者通过“开始配置其他鱼种”搜索 Fish Basic 中尚未配置 Habit 的 Species。
+进入普通 Authoring 前，目标 Species 必须已经通过现有 Editor state 或 bounded bootstrap / migration 具备：
 
-创建 Species Base 采用单屏初始化，不做 Wizard：
+- 一个 Species Base / 常规习性 Subject；
+- 需要被编辑的既有 Compat FishEnvAffinity（若有）；
+- 可解析的 Component Source binding / Policy binding；
+- 必要的 stable identity / ledger mapping。
 
-```text
-Species（只读，来自 Fish Basic）
+Bootstrap / migration 是数据准备边界，不是普通作者 UI，也不建立第二套长期 Authoring Truth。
 
-Temperature Source
-Structure Source
-Feeding Layer Source
-Time Period Source
-Policy Template
-
-[开始配置]
-```
-
-五项选择完成且 resulting Species Base **没有 blocking validation error** 后，atomic create **完整 Species Base + 一个系统默认 FishEnvAffinity 投影壳**，并直接进入普通 Authoring。
-
-初始化页只做 **Source / Policy binding selection**：
-
-- 不在这里编辑 ADD / SET / CLEAR；
-- 不在这里改 Role / fail_env_coeff；
-- 不在这里创建 Template；
-- 若缺少合适 Template，可从当前 Source picker 进入 Shared Assets 创建；初始化表单只在当前 UI 会话内保留已选 Species / binding，创建完成后返回并刷新候选。该保留是 ephemeral return state，不是 durable Draft；reload / 退出工作区可以丢弃；
-- 创建成功后的细调全部复用正常 Authoring Surface。
-
-Species Base / 常规习性仍是唯一默认习性 Authoring Truth；系统默认 FishEnvAffinity 只是它的运行时 / Production 投影壳，不作为第二个可编辑 Subject。
-
-默认 Affinity 固定：
-
-- 四个 Component 跟随 Species Base；
-- local operations 为空；
-- Role / fail_env_coeff 继承 Species；
-- 不在“特殊习性”列表里重复显示成一个 Mode；
-- Publish 后形成可供 StockRelease / FishRelease 在其自身配置表中引用的 EnvAffinity row。
-
-Habit Editor 不创建或编辑 Fish Basic 基础数据、模型、图鉴、Quality，也不创建 StockRelease / FishRelease 的 Quality ↔ FishEnvAffinity 关联。
+若某个 Fish Basic Species 尚未进入 Editor durable state，V1.0 Fish List 不把它显示为“可开始配置”的新对象；新增 Species Base 留给后续明确版本能力。
 
 ## 3. Workspace / IA
 
@@ -176,20 +149,19 @@ FISH：
 └─ 空间机会策略
 ```
 
-V1 Shared Assets 只包含 Shared Template。鱼家族预设 / Species Preset 不进入 V1；Species Base initialization 已属于 Fish Authoring Surface，而不是 Shared Assets。
+V1 Shared Assets 只包含 Shared Template。鱼家族预设 / Species Preset 不进入 V1；V1.0 也不提供 Species Base initialization。
 
-### 3.3 Species Catalog-backed Creation
+### 3.3 V1.0 Fish coverage
 
-V1 不采用 Bounded Coverage。
+V1.0 Fish Navigation 只展示已经进入 Editor durable state 的 Species / Subjects。
 
-- Species identity 来自 Fish Basic / authoritative Species Catalog；
-- 默认 Fish List 可以只展示已配置 Habit 的 Species，保持工作列表简洁；
-- “开始配置其他鱼种”搜索尚未建立 Habit 的 Fish Basic Species；
-- 若 Editor 尚无 Species Base、但 Production 已存在该 Species 的 FishEnvAffinity footprint，则显示“存在旧习性数据 · 需迁移”，不得进入 fresh create；
-- 创建完成后得到完整 Species Base + 系统默认 Affinity projection；
-- Golden Seed 只用于 demo / regression / migration evidence，不决定其它 Species 是否可配置。
+- Species identity 仍来自 Fish Basic / authoritative Species Catalog；
+- Habit Editor 不创建新的 Species identity；
+- V1.0 不创建新的 Species Base；
+- 尚未进入 Editor durable state 的 Species 由 bootstrap / migration 或后续版本能力处理，不在当前 Authoring IA 中制造“开始配置”入口；
+- Golden Seed / Snapshot 只用于 demo / regression / migration evidence，不定义产品可编辑范围。
 
-Shared Template 仍是 Species Base initialization 和后续 Authoring 的合法 Source，并支持空白创建、从 Fish / Policy 提取、Clone、编辑、Archive / Restore / Replace References。
+Shared Template 与 Existing Production Source 都可以作为已有 Subject 的合法 Component Source；Source 规则见 [common-semantics.md §2](common-semantics.md#2-source-binding)。
 
 ## 4. Context Header
 
@@ -243,7 +215,6 @@ V1 只保留四类**durable state / transaction 模型**：
 
 这里的“四类”描述的是**状态模型**，不是说 UI 只能有四种按钮手势。V1 仍有少量 bounded object command，例如：
 
-- Species Base 初始化：ephemeral form → atomic create；
 - Shared Template Blank Create / Extract / Clone：ephemeral form 或当前上下文 → atomic create；
 - Archive / Restore：轻量确认或 direct atomic action；
 - Hard Delete：满足 guard 后 destructive confirm → atomic delete。
