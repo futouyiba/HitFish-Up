@@ -356,9 +356,9 @@ V1 不以 arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为
 **G5｜Initial legacy bootstrap**
 
 - 对首批已有 Production 的目标 Species执行 bounded bootstrap / migration；
-- 做一个窄的 compat-token coupling check：确认现有 Runtime / StockRelease / materializer 没有根据 `mature` token 本身推导“成年”业务行为，而只是把它当作既有 Affinity slot / identity。若存在这种硬编码业务分支，UI 不能只靠改中文标签完成语义迁移，必须先显式处理该 coupling；
 - multi-row same-Compat 与 unmapped Affinity 必须进入人工 adjudication，不自动聚合或 silent drop；
 - bootstrap 必须区分并可承载“明确 Profile absent”与“已有 binding 但 Source broken”两种 ingress state，不能把缺 Profile 伪造成 `BROKEN_SOURCE_REF`，也不能给缺失 Profile 自动补假数据；
 - bootstrap 同时建立 managed-vs-pass-through ownership 边界：被接管 row 进入 Editor / ledger ownership，未 adjudicate legacy row 留在 pass-through baseline，后续 Publish 不得误删。
+- `young / mature` 在 Habit Editor 中只作为既有 Compat physical slot / identity；哪个 Quality / FishPoint / StockRelease row 使用哪条 Affinity 由下游显式引用关系决定，不从 slot token 自动推导。因此 UI 将 `mature` 投影为“大个体”不要求重迁既有 Affinity row，也不改变下游映射自由度。
 
 完成 G1–G5 后，V1 vertical slice 不需要再等待新的产品裁决即可进入实现。
