@@ -216,8 +216,8 @@ Impact 必须区分：
 Confirm：
 
 ```text
-revision check
-→ atomic replace template complete value
+candidate validity check
+→ local atomic replace template complete value
 → clear candidate
 → re-resolve consumers
 → 回 Template Overview / Editor
@@ -236,21 +236,11 @@ revision check
 
 Cancel 只丢弃 candidate，不修改 durable Template。
 
-### 8.1 Candidate revision stale
+### 8.1 Candidate validity
 
-Template Value Candidate 与 Source Change Candidate 的 stale 处理不同。
+V1.0 是单机单写者 workspace，不设计跨会话 Template merge / rebase。
 
-Template complete value 是一组作者内容修改；如果 Candidate 基于 revision 104，而 durable Template 已被另一会话改到 105，V1 **不自动把旧 Candidate fields rebase 到新 Template**，避免把并发修改悄悄覆盖。
-
-此时：
-
-- Confirm 禁用；
-- 明确提示“模板内容已被其它会话更新，本次候选尚未保存”；
-- 当前 candidate 可以暂时保留为只读 / 可复制的本地值，方便作者人工对照；
-- 作者必须取消 / 结束当前 candidate，重新读取最新 durable Template，再显式重新应用需要保留的字段修改；
-- V1 不做 Template 字段级三方 merge。
-
-Source Change / Policy Source Change / Replace References 这类“稳定 intent + 重算 impact”的 staged mutation 可以按各自 Contract 在最新 durable revision 上重新计算 Preview；不能把这一规则误套到 Template complete-value content edit。
+Confirm 前只检查当前 Template 仍存在、Kind 未变且 candidate payload 满足 schema；否则取消 Candidate 并回到当前本地 durable state。
 
 ## 9. Blank Create
 
@@ -271,12 +261,9 @@ Source Change / Policy Source Change / Replace References 这类“稳定 intent
 - atomic create；
 - 创建成功即 ACTIVE。
 
-成功后的去向按入口区分：
+创建成功后进入新 Template Context。
 
-- 从 Shared Assets 独立发起 Blank Create → 进入新 Template Context；
-- 从 Species initialization 的 Source picker 作为 contextual detour 发起 → 返回原 initialization form，保留此前 ephemeral 选择并刷新 Source candidates；新 Template **不自动绑定 / 不自动选中**，作者仍在原 Source picker 显式选择。
-
-这仍遵守 `Create Source ≠ Bind Source`，也避免为了 contextual detour 建立 durable draft / history stack。
+`Create Source ≠ Bind Source`：创建新 Template 不自动修改任何 Fish Source；需要使用时仍通过普通 Source Change Candidate 显式改绑。
 
 新 Template 尚无 consumer，因此不需要 Impact Preview。
 
@@ -332,13 +319,13 @@ Structure                  只读
 
 规则：
 
-- Extract 只从**最近一次成功 durable revision**的 Effective Profile / Effective Policy 取值；
+- Extract 只从**最近一次成功保存的 durable state**的 Effective Profile / Effective Policy 取值；
 - staged candidate active 时 Extract 不可用；
 - Autosave pending 时先等待 / flush durable write；save failure 时 BLOCK；
 - 当前 Focus 有 incomplete raw input 时 BLOCK，要求作者先完成或取消输入，不 silent discard，也不拿旧 durable value 冒充“当前提取值”；
 - 中文名由作者确认 / 输入；
 - 英文名由工具根据中文名、当前上下文或已有命名规则先生成可读建议值，作者可修改；创建提交时必须有非空英文语义名；
-- 浮层内不编辑 Template complete value；complete value 来自上述 exact durable revision 的 Effective Profile / Effective Policy flatten；
+- 浮层内不编辑 Template complete value；complete value 来自上述最近一次成功保存的 durable state 的 Effective Profile / Effective Policy flatten；
 - 创建前不在左栏出现 durable Draft Template；
 - 点击创建后 atomic create ACTIVE Template；
 - 创建成功后**直接切换到新 Template Context**，左栏选择对应 Template，中栏显示 Template Overview，右栏允许继续编辑中文名、英文名与 Template complete value；
@@ -396,20 +383,16 @@ ARCHIVED
 
 时出现，并使用 destructive confirm。
 
-执行 delete commit 时必须再次做 optimistic revision / guard check，确认：
+执行 Hard Delete 前只基于当前本地 durable state 再检查：
 
 - Template 仍为 ARCHIVED；
-- DirectReferenceSet 仍为空；
-- 当前 durable revision 未使 delete 前提失效。
+- DirectReferenceSet 仍为空。
 
-如果另一会话在确认期间新建了 direct reference，Hard Delete 必须冲突失败并刷新引用状态，不能先删 Template 再制造 broken source。
+满足后执行本地 atomic delete。
 
-Hard Delete 删除的是 Editor Template asset。若该 Template 曾经 materialize 出 Editor-owned Production Profile row，实际 Production cleanup 发生在下一次 Global Publish，并受 managed-projection ownership guard 约束：
+Hard Delete 只删除 Authoring Template asset。V1.0 Publish 不做 orphan GC / obsolete-row cleanup，因此已经存在的旧 Production Profile row 可以暂时保留，不在 Hard Delete 时联动清理。
 
-- ownership 可证明且 current desired graph 已不再引用 → 可删除 obsolete projection；
-- ownership 不明 / 与 pass-through row 混淆 → Publish BLOCK，不因 Hard Delete 在 Editor 成功就盲删 Production row。
-
-因此 Hard Delete 成功只表示 Authoring asset 已删除，不等于 Production 已经同步清理。
+## 13. Replace References
 
 ## 13. Replace References
 
@@ -443,10 +426,6 @@ Fish Component / Policy 中的“查看模板”可以进入 Shared Template Wor
 ```
 
 Template 引用列表进入 Fish 时同理可显示“返回当前模板”。
-
-Species initialization 从 Source picker 进入 Shared Assets 创建 Template 时，也使用同一种单层 contextual ReturnTarget；它返回 initialization form，而不是形成通用历史栈。
-
-只保留一个 ReturnTarget，不建立通用 back stack。
 
 ## 15. V1 停止线
 
