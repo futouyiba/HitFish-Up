@@ -458,10 +458,10 @@ V1 Shared Template 不扩展为：
 - 自动聚类；
 - Family；
 - 鱼家族预设；
-- Species Base initialization workflow（属于 Fish Surface，不塞进 Template Workspace）；
+- Species Base initialization workflow（V1.0 不提供；未来若引入仍不塞进 Template Workspace）；
 - 外部生态 Import；
 - 批量跨多个 Template 的编辑事务。
 
 停止线：
 
-> **让作者可以安全创建、提取、编辑、传播和维护可复用 Source Asset；不把 Template Workspace 扩成数据迁移或物种初始化系统。**
+> **让作者可以安全创建、提取、编辑、传播和维护可复用 Source Asset；不把 Template Workspace 扩成 Existing Production 浏览器、数据迁移或物种初始化系统。**
