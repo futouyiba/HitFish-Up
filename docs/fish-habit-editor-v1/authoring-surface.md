@@ -148,7 +148,7 @@ Legacy_Rocky_03
 - 不使用两个平级 Tab 来暗示两套长期 Source System；
 - 兼容数据若已经保留原 Production 英文 `name`，直接显示该名称；不生成“大口黑鲈现有结构数据”之类推导名称；
 - Picker 展示 Authoring persistence 中**所有合法的同 Kind 兼容 Source**，不按当前 Species / Quality 推导 ownership 或做隐式筛选；
-- Source binding 沿用当前 Authoring persistence 已有的 Source reference / key，不为这类数据新增 snapshot identity；
+- Source binding 沿用当前 Authoring persistence 已有的 Source reference / key，不为这类数据新增独立资产身份；
 - “已有数据 · 兼容”不进入“共享资产”左栏，不获得 Template lifecycle / metadata；
 - 当前 Source 若为 Template，可显示“共享模板”；若为兼容数据，可显示“已有数据 · 兼容”；
 - Source Change 无论跨不跨类型，都继续走同一套 staged Candidate。
