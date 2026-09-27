@@ -22,7 +22,7 @@ V1 不创建新的 durable EngagementMode identity，也不把 Quality / FishPon
 
 V1.0 不提供 Species Base creation。
 
-普通 Authoring 只处理**已经存在于 authoring working tree** 的 Species Base / 基础习性。如何把更老的 Production 数据整理进 authoring working tree 属数据准备 / migration 工作，不是 V1.0 Editor 产品能力，也不是 Coding Agent 需要实现的普通流程。
+普通 Authoring 只处理**已经存在于 authoring working tree** 的 Species Base / 基础习性。更老的数据如何被整理成这份 Authoring state 属 Editor 外的数据准备工作，不是 V1.0 Editor 产品能力，也不是 Coding Agent 的实现前提。
 
 Species identity 仍来自 Fish Basic / authoritative Species Catalog：
 
@@ -59,8 +59,8 @@ V1.0 不提供 Species Base / system-default Affinity Archive / Delete。
 普通 UI 只列出已经存在于 authoring working tree、并能正常解析 Species identity 的 Subject。
 
 - 没有 Species Base 的 Fish 不进入 V1.0；
-- unmapped / 不支持的 legacy row 不要求 Editor adjudicate，也不作为 blocker 迫使 V1 实现 migration UI；
-- 数据准备脚本可以在 Editor 外部处理这些问题。
+- unmapped / 不支持的 legacy row 不要求 Editor adjudicate；
+- Editor 外的数据准备脚本可以选择性处理这些问题。
 
 ### 1.4 Broken Species Reference
 
@@ -73,7 +73,7 @@ V1.0 不提供 Species Base / system-default Affinity Archive / Delete。
 - Publish BLOCK；
 - 不自动按名称匹配到另一条 Species；
 - 不允许在 Habit Editor 中改写 Species identity；
-- 修复必须由 authoritative Catalog / migration 侧恢复原 identity 或完成受控迁移。
+- 修复由 authoritative Catalog 或 Editor 外的数据准备流程恢复正确 identity。
 
 ### 1.5 Existing Compat ingress boundary
 
@@ -247,7 +247,7 @@ absence 与 CLEAR 必须可区分；即使两者当前 Effective Value 相同，
 
 ## 4. Resolve Semantics
 
-Resolve 只从最近一次成功 durable revision 计算。
+Resolve 只从最近一次成功保存的 durable state 计算。
 
 ### 4.1 Effective Value
 
