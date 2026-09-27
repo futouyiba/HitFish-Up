@@ -68,47 +68,22 @@ Existing Production Source adapter：
 
 中鱼习性模式还允许 `FOLLOW_SPECIES`，并与 explicit Template / Existing Production pin 保持正交。
 
-## 4. System Default Affinity projection
+## 4. Existing System Default Affinity
 
-系统默认 Affinity 不是第二个 Authoring Subject，也不是业务 Mode。
+system-default Affinity 不是第二个 Authoring Subject，也不是业务 Mode。
 
-固定语义：
+V1.0 的前提是该 identity 已经存在并能映射到 Species Base。Editor 只需要：
 
-```text
-4 Component Source = FOLLOW_SPECIES
-numeric operation  = absent
-Role patch         = absent
-fail_env_coeff     = absent
-```
+- 识别稳定 existing Affinity identity / row mapping；
+- 不把它当成 `young` / `mature`；
+- ordinary UI 不显示为中鱼习性模式；
+- Species Base Authoring 改变后，Publish 更新它所引用 / materialize 的 Profile 与 Policy 结果；
+- StockRelease / FishRelease 可以继续在自己的配置中引用该 EnvAffinity；
+- Habit Editor 不写 Quality / StockRelease 关联。
 
-因此它完全跟随 Species Base。
+如果现有数据无法无歧义识别 system-default Affinity，属于进入 V1.0 前的数据准备问题，不在 Editor UI 中设计 migration / create flow。
 
-实现必须满足：
-
-- 有稳定 Editor identity / row key；
-- system default Affinity 的物理表示不能复用 `young` / `mature` bucket 语义；
-- Publish 前可以处于未物化状态；
-- Publish 后得到 Production row identity；
-- ordinary UI 不把它列为“中鱼习性模式” child；
-- StockRelease / FishRelease 可以在自己的配置中引用其 Production EnvAffinity；
-- Habit Editor 不写这条外部关联。
-
-### 4.1 Existing default Affinity physical mapping
-
-V1.0 不创建 system-default Affinity，只需要能识别既有 identity：
-
-- 不得把 default 当成 `young` / `mature`；
-- 有稳定 row identity / mapping；
-- ordinary UI 不显示为 Mode；
-- Publish 能更新其引用的 Component/Profile materialization。
-
-若现有数据无法无歧义识别 default Affinity，属于进入 Editor 前的数据准备问题，不在 V1.0 UI 中设计 migration adjudication。
-
-## 4.2 Species Base lifecycle boundary
-
-V1 不实现 Species Base / system default Affinity 的 Archive / Delete。
-
-原因：default Affinity 可能已经被 StockRelease / FishRelease 域引用，而 Habit Editor 不拥有完整跨域引用生命周期。V1.0 只编辑既有 / 已迁入 Subject；删除仍留到具备 cross-domain reference guard 的后续能力。
+V1.0 不实现 Species Base / system-default Affinity Create / Archive / Delete。
 
 ## 5. Existing Compat Mode
 
@@ -148,7 +123,7 @@ Template create 与 Fish binding 必须是两笔独立 mutation：
 
 ## 7. Resolve
 
-Resolve 只消费最近成功 durable revision。
+Resolve 只消费最近一次成功保存的 durable state。
 
 输出：
 
