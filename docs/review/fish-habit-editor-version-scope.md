@@ -49,9 +49,9 @@ V1.0 的核心成果不是创建新的 Fish Habit，而是证明：
 
 - Fish List 读取 Fish Basic / authoritative Species Catalog；Habit Editor 不创建新的 Species identity，也不维护鱼类基础数据、模型、图鉴或 Quality。
 - 已经进入 Editor durable state 的 Species 直接编辑 Species Base；V1 UI primary label 为“基础习性”，表达 Species 默认习性。
-- V1.0 不提供“开始配置习性”或 Species Base creation；尚未进入 Editor durable state 的 Species 由 bootstrap / migration 或后续版本能力处理。
+- V1.0 不提供“开始配置习性”或 Species Base creation；尚未存在于 authoring working tree 的 Species 由 Editor 外的数据准备工作或后续版本能力处理。
 - 编辑已经存在的兼容习性 Scope；V1 UI 将其组织在“中鱼习性模式”下，并以中性 `[兼容]` badge 标识当前承载方式。
-- **V1 当前兼容拓扑中，一个可编辑中鱼习性模式 Subject 对应一条已经由 ingress / migration 无歧义映射到 `young` 或 `mature` physical slot 的既有 `FishEnvAffinity` 行。** UI 分别显示为“小个体 / 大个体”；不在一个 Subject 下聚合多条 Affinity 行，也不建立额外的 Mode→Quality 解释层；unmapped / multi-row legacy 不自动变成可编辑 Subject。
+- **V1 当前兼容拓扑中，一个可编辑中鱼习性模式 Subject 对应一条已经无歧义映射到 `young` 或 `mature` physical slot 的既有 `FishEnvAffinity` 行。** UI 分别显示为“小个体 / 大个体”；不在一个 Subject 下聚合多条 Affinity 行，也不建立额外的 Mode→Quality 解释层；unmapped / multi-row legacy 不自动变成可编辑 Subject。
 - “中鱼习性模式”是相对 Species Base / 基础习性的可选偏差，不是完整生命周期分桶。一个 Species 可以没有模式，也可以只保留“小个体”；不要求同时存在“大个体”。
 - V1.0 不允许用户创建新的业务中鱼习性 Mode，也不创建新的 Species Base。已有兼容 Mode 继续编辑；V1.0.1 才补 fixed Compat slot creation。
 - StockRelease / FishRelease 继续负责 Quality / stocking row 与 FishEnvAffinity 的关联，Habit Editor 不创建或维护该关系。
@@ -74,7 +74,7 @@ V1.0 的核心成果不是创建新的 Fish Habit，而是证明：
 - ADD / SET / CLEAR / inherit/absent 等各字段允许的语义；
 - Effective Value / provenance 只读派生；
 - Role / Profile 正交；
-- legacy / migration / recovery 中可容忍的 Profile absent 状态及其诊断 / 修复；正常 V1 Authoring 不提供“删除 Profile / 清空 Source”来主动制造该状态；
+- 既有 / recovery 数据中可容忍的 Profile absent 状态及其诊断 / 修复；正常 V1 Authoring 不提供“删除 Profile / 清空 Source”来主动制造该状态；
 - Validation 与 blocking diagnostics。
 
 Temperature V1 以**手工 Authoring**为主，不承诺外部生态数据库自动导入。
@@ -120,7 +120,7 @@ V1.0 读取 Fish Basic 作为 Species identity authority，但普通 Authoring �
 - 没有 Species Base 的 Fish 不进入 V1.0；
 - unmapped / unsupported legacy row 不要求 V1.0 Editor 提供 adjudication UI。
 
-如果项目需要把旧 Production 整理成 Authoring state，可使用 Editor 外的数据准备脚本 / migration；这不是 V1.0 Coding Agent 的产品实现范围。
+如果项目需要把旧 Production 整理成 Authoring state，可使用 Editor 外的数据准备脚本；这不是 V1.0 Coding Agent 的产品实现范围。
 
 ### 2.4 V1 Persistence
 
