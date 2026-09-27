@@ -159,7 +159,7 @@ V1.0 Fish Navigation 只展示已经进入 Editor durable state 的 Species / Su
 - Habit Editor 不创建新的 Species identity；
 - V1.0 不创建新的 Species Base；
 - 尚未进入 authoring working tree 的 Species 由 Editor 外的数据准备工作或后续版本能力处理，不在当前 Authoring IA 中制造“开始配置”入口；
-- Golden Seed / Snapshot 只用于 demo / regression / migration evidence，不定义产品可编辑范围。
+- Golden Seed / Snapshot 只用于 demo / regression，不定义产品可编辑范围。
 
 Shared Template 与 Existing Production Source 都可以作为已有 Subject 的合法 Component Source；Source 规则见 [common-semantics.md §2](common-semantics.md#2-source-binding)。
 
