@@ -223,7 +223,7 @@ Partial / unverifiable write 不自动建立新 baseline。
 ```text
 1. load existing Authoring working tree
 2. Fish Basic read + existing Species Base lookup
-3. Existing Production baseline / source adapter
+3. Production baseline adapter + explicit Import / Bootstrap snapshot adapter
 4. existing Species Base Authoring
 5. existing Compat Mode Authoring
 6. Shared Template create / edit / propagation
