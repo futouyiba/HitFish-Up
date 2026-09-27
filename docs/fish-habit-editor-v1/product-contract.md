@@ -252,7 +252,7 @@ Component Source Picker 统一提供：
 - 不推导“属于当前鱼种 / Quality”；
 - 若 Authoring 数据已保留原 Production 英文 `name`，直接显示该名称；
 - 不进入 Shared Assets lifecycle；
-- 不要求新增 snapshot identity / provenance model；
+- 不要求新增独立的兼容源资产模型；
 - 普通 Source Picker 不读取 Production working tree。
 
 Component Focus Editor 只展示当前 Source / provenance，可提供“查看模板”等导航，不再放第二个 Component Source Selector。Policy Focus 同样不复制 Policy Template Source Selector。
