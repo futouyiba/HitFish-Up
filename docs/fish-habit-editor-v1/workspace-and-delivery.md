@@ -13,16 +13,26 @@ V1.0 是一个 **本地工作区型编辑器**：
 
                     Fish Habit Editor
                            │
-                 Workspace File API
+                      WorkspaceRoot
                     ┌──────┴──────┐
                     ↓             ↓
               authoring/      production/
                 .git/            .git/
           Editor Authoring    Production Tables
                Truth          Working Tree
+                    ↑             ↑
+             daily Edit/Resolve   Publish / Verify
+                    │             │
+                    └─ explicit Import/Bootstrap ─┘
 ```
 
 Authoring 与 Production 是两个**独立的 sibling Git working tree / repository directory**。它们都保留自己的 Git metadata，用于 pull / diff / commit / merge / history；Habit Editor 不把两者合并成同一个 repo。
+
+关键方向性：
+
+- 普通 Edit / Resolve / Source resolution 只消费 `authoring/`；
+- Publish / Production baseline verify 读写 `production/`；
+- 显式 Import / Bootstrap 可以读取 `production/`，但必须先把需要承接的数据冻结进 `authoring/`，之后普通 Authoring 不再实时依赖原 Production row。
 
 ## 2. 发布包目录
 
@@ -109,6 +119,19 @@ Production generation / baseline guard 仍以**实际文件内容 / canonical ge
 
 UI / domain core 不为 Web 与 Electron 写两套。
 
+两种 Host 必须解析到同一种 Workspace 语义：
+
+```text
+WorkspaceRoot
+├─ authoring/
+└─ production/
+```
+
+- Dev Server：通过启动配置 / 环境参数显式获得 `WorkspaceRoot`；
+- Electron：从 release workspace 解析同一个 `WorkspaceRoot`；
+- Editor Domain 不直接依赖 `process.cwd()`、源码目录或 Electron app path 来猜数据位置；
+- Host 只负责把 `authoringRoot` / `productionRoot` 暴露给统一 Workspace API。
+
 推荐宿主边界：
 
 ```text
@@ -126,6 +149,8 @@ server              ↓
 ```
 
 开发阶段可由本地 Web Dev Server 提供 Workspace File API；release 阶段由 Electron main/preload 提供等价的本地文件能力。
+
+正常 Editor 启动首先打开 `authoringRoot`。只有进入 Publish / Production verify / 显式 Import-Bootstrap 边界时才访问 `productionRoot`。
 
 Resolver / Validator / Source semantics / Materializer / Publish transaction 必须共享同一 domain implementation；Host adapter 不重新解释业务语义。
 
@@ -150,23 +175,54 @@ production/
 
 Git 是协作与版本管理基础设施；Editor revision / Publish verify 才是产品事务语义。
 
-## 7. 与 Existing Production Source 的关系
+## 7. 显式 Import / Bootstrap 与 Imported Source Snapshot
 
-过渡期允许 Component 显式选择 **Existing Production Source**。
+Production working tree **不是普通 Authoring Source Store**。
 
-该 Source 来自 verified `production/` baseline 中合法的同 Kind existing / pass-through row；它是兼容 Source，不因此变成 Shared Asset，也不因为被引用就自动转移为 Editor-owned mutable Production row。
-
-因此形成单向边界：
+过渡期若需要继续使用既有 Production Profile，流程必须是：
 
 ```text
-Existing/pass-through Production row
-        ↓ read-only Source
-Authoring binding + operation
+production/ 中既有 row
         ↓
-Publish materialization
+explicit Import / Bootstrap
         ↓
-Editor-managed Production projection
+authoring/ 中 Imported Source Snapshot
+        ↓
+普通 Source Picker / Resolve
 ```
 
-不得把本次 Publish 新生成的 managed output 再自动发现成新的 Source candidate，形成 output → source 的隐式循环。
+Imported Source Snapshot：
 
+- 是 Authoring durable state 的一部分；
+- 保存冻结的完整 Source value；
+- 保留原 Production 英文 `name`、原 row identity / generation 等 provenance；
+- 日常 binding 指向 Authoring 内稳定 snapshot identity；
+- Production working tree 后续变化不会自动改变 snapshot；
+- 如需更新，必须再次经过显式 Import / Bootstrap / Reconcile。
+
+因此 V1.0 的三条数据通道是：
+
+```text
+A. 日常 Authoring
+authoring/ ↔ Editor
+
+B. Publish / Verify
+authoring/ → Materializer → production/
+                           ↘ reread / verify
+
+C. 显式 Import / Bootstrap
+production/ → importer → authoring/
+```
+
+C 不得隐式混入 A。Source Picker 不扫描 `production/`，Publish 生成的新 managed row 也不会自动回流为新的 Source Snapshot。
+
+## 8. Workspace 启动检查
+
+Host 解析出 `WorkspaceRoot` 后做最小 preflight：
+
+1. `authoring/` 存在且可读取；
+2. canonical Authoring persistence 可识别；
+3. `production/` 若当前要执行 Publish / Verify / Import，则必须存在且可读取；
+4. 对需要写入的事务检查对应目录可写。
+
+`.git/` 用于正常团队协作与发布包交付，但 **Git metadata 本身不是 Authoring / Publish 语义真相**。实现不得用 Git HEAD 替代 Editor revision 或 whole Production verification。
