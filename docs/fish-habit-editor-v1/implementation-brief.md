@@ -276,11 +276,19 @@ V1 不以 arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为
 
 - `LEGACY_UNIMPORTED` Species 不能 fresh create；
 - multi-row same-Compat legacy ingress 被 migration blocker 拒绝，而不是自动聚合；
+- unmapped Affinity 不会仅因“已存在”就进入 Compat Subject；
 - Existing Compat Mode 的 inherit / ADD / SET / CLEAR 能正确 Resolve；
+- Compat Mode 完全跟随 Species 时，Component/Profile projection 可以复用，但 Compat `FishEnvAffinity` identity row 仍保留；
+- legacy pass-through rows 与 Editor-managed rows 并存时，Publish 只替换 managed projection，pass-through rows reread 后保持不变；
+- obsolete Editor-owned Profile projection 可以 cleanup，但 ownership 不明 row 不会被误删；
+- ordinary Autosave 遇到 revision conflict 不 last-write-wins、不自动 merge，Resolve / Publish 使用最近成功 durable truth；
 - Shared Template 多字段 Candidate 只提交一次并正确传播；
-- referenced ARCHIVED Template 仍可 Resolve，Hard Delete guard 生效；
+- Template Value Candidate 遇到 revision stale 不自动把旧字段值 rebase 到新 Template；
+- Extract 在 incomplete raw input / save failure 时不会拿旧 durable value 冒充“当前值”创建 Template；
+- referenced ARCHIVED Template 仍可 Resolve，Hard Delete commit 会重新检查 DirectReferenceSet；
 - Production generation drift 阻断 Publish；
-- create-from-absent default Affinity 的 `row_id` 回填失败不能被判为 Publish success。
+- create-from-absent default Affinity 的 `row_id` 回填失败不能被判为 Publish success；
+- `row_id` backfill 不得用旧 Editor revision 覆盖并发产生的新 Authoring state。
 
 
 ## 11. Closure Status
