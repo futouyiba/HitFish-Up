@@ -48,59 +48,14 @@ FISH                  鱼习性 › 大口黑鲈 › 中鱼习性模式         
 
 中栏不重复 Fish / Mode selector。
 
-### 2.1 开始配置其他鱼种
+### 2.1 V1.0 Fish coverage
 
-FISH 主列表默认可以只展示已有 Habit 的 Species，保持工作列表简洁。
+V1.0 左栏只展示已经存在可编辑 Habit 的 Species。
 
-提供：
-
-```text
-[ + 开始配置其他鱼种 ]
-```
-
-点击后搜索 Fish Basic / authoritative Species Catalog 中尚未建立 Editor Species Base 的 Species，并先区分是否已有 Production Habit footprint：
-
-- 无 Editor Base + 无 Production FishEnvAffinity → 可开始配置；
-- 无 Editor Base + 已有 Production FishEnvAffinity → 显示“存在旧习性数据 · 需迁移”，不可 fresh create。
-
-选择 Species 后进入单屏初始化：
-
-```text
-开始配置 Atlantic Salmon
-
-Temperature Source    [ ... ]
-Structure Source      [ ... ]
-Feeding Layer Source  [ ... ]
-Time Period Source    [ ... ]
-Policy Template       [ ... ]
-
-[开始配置]
-```
-
-五项全部有效、且 resulting Species Base 没有 blocking validation error 后，一次 atomic create **Species Base + 系统默认 FishEnvAffinity 投影壳**；成功后直接进入该 Species 的基础习性 Authoring。
-
-初始化页只负责选择已有合法 Source / Policy Template，不提供字段 Operation、Role 或 coeff 编辑；这些在创建后的正常 Authoring 中完成。
-
-- 不创建 Species identity；
-- 不创建用户可见的新 Mode；只自动建立系统默认 Affinity 投影；
-- 不保存半完成 draft；
-- 不要求 Family / Preset；
-- 不在初始化页创建 Template；Template creation 走 Shared Assets；
-- Source picker 若需要新 Template，可进入 Shared Assets；当前初始化表单只以内存态保留 Species 与已选 binding，创建/取消后返回。这个 return state 不持久化，reload / 退出工作区可丢弃；
-- 不编辑 Fish Basic 基础字段、Quality 或 StockRelease 关系。
-
-创建后即使当前 Species 尚无任何 Compat Mode，基础习性仍可正常 Author；系统默认 Affinity 不作为左栏 Mode child 重复显示。
-
-若没有额外 Compat Mode，左栏只需：
-
-```text
-▼ Atlantic Salmon
-  基础习性
-```
-
-不显示“尚无中鱼习性模式”错误态，也不把系统默认 Affinity 伪装成业务 Mode。
-
-V1 不提供 Species Base / system default Affinity 的 Archive / Delete。误建对象不通过 Habit Editor 做跨域删除；后续只有在具备 StockRelease / FishRelease 安全引用检查后才讨论生命周期动作。
+- 不提供“开始配置其他鱼种”；
+- 不提供 Species Base initialization；
+- 没有 Species Base 的 Fish 不在 V1.0 Editor 中创建；
+- system-default Affinity 仍不作为额外 Mode child 展示。
 
 ## 3. Context Header
 
@@ -302,20 +257,14 @@ Validator ERROR 不等于 Save Failure。
 
 ### 9.3 Save failure
 
-Durable write 本身失败：
+本地 durable write 失败：
 
 - Topbar 显示编辑器保存失败；
-- 最近一次成功 durable revision 仍是 Truth；
-- 不把未成功保存的数据冒充 Resolve / Publish 输入。
+- 最近一次成功 durable state 仍是 Truth；
+- 不把未成功保存的数据冒充 Resolve / Publish 输入；
+- 作者修正文件 / 权限问题后重试。
 
-若失败原因是 optimistic revision conflict，应明确显示“内容已被其它会话更新 / 当前修改尚未保存”，而不是只显示泛化网络错误：
-
-- 保留当前 typed value 作为本地未保存冲突值，便于作者查看 / 复制；
-- 暂停该 Subject 的继续 mutation、Resolve 与 Publish；
-- 提供“重新读取最新内容”；
-- 重新读取后不自动合并冲突值，作者在最新 durable state 上显式重新应用需要保留的修改。
-
-V1 不做 ordinary edit 的字段级自动三方合并。
+V1.0 是单机单写者工具，不实现多人 / 多会话 revision conflict、自动 merge 或 conflict replay UI。
 
 ## 10. Diagnostic projection
 
@@ -528,36 +477,23 @@ Candidate Confirm 不是 Publish。
 
 - candidate source 已删除 / 已不再是合法 selectable source；
 - candidate binding 不满足 schema；
-- revision stale 且尚未重新计算 Preview。
+- candidate Source 在确认前已经不再是合法 selectable source。
 
 这与“结果有 Validator ERROR”必须区分。
 
-### 12.10 Revision stale
+### 12.10 Candidate validity
 
-Confirm 前必须做 optimistic revision check。
+V1.0 不处理其它 Editor 会话导致的 revision stale。
 
-若 Preview 基于 revision 104，而 durable state 已变成 105：
-
-```text
-候选预览已过期
-
-这笔来源变更尚未保存。
-[重新计算预览]
-[取消更换]
-```
-
-- 不 silent auto-rebase；
-- “重新计算预览”保留本次候选 Source intent，以最新 durable revision 重算 before/after；
-- 重算后仍需再次显式 Confirm；
-- 若候选 Source 本身已失效，则不能继续确认，作者取消后回 Card 重新选择。
+Confirm 前只重新检查当前 candidate Source 仍然存在且合法。若 Source 已删除 / 归档为不可选 / schema 失效，则禁用 Confirm，作者取消后重新选择。
 
 ### 12.11 Confirm / Cancel
 
 **确认更换来源**
 
 ```text
-revision check
-→ atomic durable commit
+candidate validity check
+→ local atomic durable commit
 → candidate cleared
 → 回到原 Authoring Surface
 → 原 Component 保持 selected
@@ -583,8 +519,6 @@ Durable Source
 Candidate Review
       │
       ├── 取消更换 ───────→ Durable 不变
-      │
-      ├── stale ──────────→ 重新计算 Preview
       │
       └── 确认更换来源
                  ↓
