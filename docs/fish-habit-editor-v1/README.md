@@ -56,6 +56,12 @@ V1 Product Contract ───────┐
 V1 Common Semantics ──────┘
                           ↓
               implementation brief / Figma projection
+
+Workspace & Delivery Contract
+    ↓
+Web Dev Host / Electron Host
+    ↓
+authoring Git working tree + production Git working tree
 ```
 
 - **Version Scope** 回答“V1 做什么 / 不做什么”。
@@ -63,5 +69,6 @@ V1 Common Semantics ──────┘
 - **Surface Contract** 回答“具体一屏如何交互”。
 - **V1 Common Semantics** 拥有当前 V1 使用的 Source / Operation / Policy / Validation / lifecycle / materialization 共用语义。R2 只作为 V0.2 历史版本与证据。
 - **Implementation / Figma** 是产品 Contract 的实现与视觉投影，不反向成为产品语义 Authority。
+- **Workspace & Delivery Contract** 只定义宿主与文件/Git物理边界：开发期 Web、发布期 Electron、authoring / production 双 working tree；不重新定义 Source / Resolve / Publish 业务语义。
 
 普通修订历史由 Git / PR 保存；本目录只维护当前有效产品状态。
