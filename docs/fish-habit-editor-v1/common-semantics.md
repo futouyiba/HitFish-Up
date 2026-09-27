@@ -667,7 +667,9 @@ Resolve UI 只展示 Resolver 实际能给出的结果，不自行补算第二�
 
 ### 12.1 Publish Scope
 
-V1 Publish 永远消费**整个 Editor durable state**，不是当前 Fish / Mode / Component。
+V1 Publish 永远消费**整个 Editor durable state 的一个 exact bound revision**，不是当前 Fish / Mode / Component，也不是执行期间持续移动的“最新状态”。
+
+Preflight / Execute 绑定 revision R；若其它会话在 Execute 期间产生 R+1，本次 Publish 仍只 materialize R。只要 R 的 Production write + reread + verify 成功，可判定本次事务成功；R+1 视为尚未包含的后续 Authoring change，不被本次 success 冒充已发布。
 
 ### 12.2 Production
 
