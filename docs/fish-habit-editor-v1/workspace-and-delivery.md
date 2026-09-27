@@ -186,7 +186,7 @@ authoring/ 中已有兼容数据
 普通 Source Picker / Resolve
 ```
 
-这里不定义新的 Snapshot asset、Import transaction、snapshot id 或 provenance schema。具体 Authoring 文件结构沿用当前实现；如果当前已有冻结 input JSON / snapshot 文件，也继续作为 Authoring persistence 的一部分使用即可。
+这里不定义新的兼容源 Asset 或 Import transaction。具体 Authoring 文件结构沿用当前实现；如果当前已有冻结 input JSON / snapshot 文件，也继续作为 Authoring persistence 的一部分使用即可。
 
 因此 V1.0 的运行时数据方向是：
 
