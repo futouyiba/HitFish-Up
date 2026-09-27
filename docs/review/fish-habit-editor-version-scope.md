@@ -37,7 +37,7 @@ existing Editor Species Base / Compat Subject
 V1.0 的核心成果不是创建新的 Fish Habit，而是证明：
 
 1. 既有 Species Base / Compat Subject 可以在一套统一 Editor 中安全维护；
-2. Shared Template 与 Existing Production compatibility source 可以共存但主次清楚；
+2. Shared Template 与 Imported Source Snapshot 可以共存但主次清楚；普通 Authoring 不实时读取 Production working tree；
 3. Authoring Truth 与 Production materialization 保持单向因果；
 4. Resolve / Validation / Publish 可以形成完整闭环；
 5. authoring / production 各自作为独立 Git working tree 协作；
@@ -69,7 +69,7 @@ V1.0 的核心成果不是创建新的 Fish Habit，而是证明：
 
 - Source binding；
 - Shared Template；
-- Existing Production Source（verified Production baseline 中合法同 Kind existing / pass-through row，作为过渡兼容来源）；
+- Imported Source Snapshot（通过显式 bootstrap / import 从既有 Production row 冻结进 Authoring durable state，UI 显示“已有数据 · 兼容”）；
 - Species / Compat scope operation；
 - ADD / SET / CLEAR / inherit/absent 等各字段允许的语义；
 - Effective Value / provenance 只读派生；
@@ -116,7 +116,7 @@ V1.0 读取 Fish Basic / authoritative Species Catalog 作为已有 Species iden
 - Species identity / `species_key` 只能来自 Fish Basic 既有条目；
 - Habit Editor 不创建 Fish Basic Species，也不维护基础数据、模型、图鉴或 Quality；
 - Editor Species Base 已存在 → 正常编辑；
-- Production 有 legacy footprint、但 Editor Species Base 尚未建立 → 先 bounded bootstrap / migration；
+- Production 有 legacy footprint、但 Editor Species Base 尚未建立 → 先 bounded bootstrap / migration，把需要承接的数据固化进 Authoring durable state；
 - Fish Basic Species 存在、但 Editor Species Base 不存在 → V1.0 不提供 fresh create；
 - 每个进入 V1.0 的 Species Base 必须已经满足 system-default Affinity invariant；
 - 未被 Editor / ledger 接管的 legacy rows 作为 pass-through Production 保留，Global Publish 不得误删。
