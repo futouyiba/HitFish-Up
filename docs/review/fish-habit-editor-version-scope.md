@@ -69,6 +69,7 @@ V1.0 的核心成果不是创建新的 Fish Habit，而是证明：
 
 - Source binding；
 - Shared Template；
+- Existing Production Source（verified Production baseline 中合法同 Kind existing / pass-through row，作为过渡兼容来源）；
 - Species / Compat scope operation；
 - ADD / SET / CLEAR / inherit/absent 等各字段允许的语义；
 - Effective Value / provenance 只读派生；
