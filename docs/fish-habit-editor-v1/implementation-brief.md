@@ -123,7 +123,7 @@ fail_env_coeff     = absent
 - system default Affinity 的物理表示不能复用 `young` / `mature` bucket 语义；
 - Publish 前可以处于未物化状态；
 - Publish 后得到 Production row identity；
-- ordinary UI 不把它列为“中鱼习性模式” child；
+- ordinary UI 不把它列为“特殊习性” child；
 - StockRelease / FishRelease 可以在自己的配置中引用其 Production EnvAffinity；
 - Habit Editor 不写这条外部关联。
 
@@ -151,21 +151,21 @@ V1 不实现 Species Base / system default Affinity 的 Archive / Delete。
 
 ## 5. Existing Compat Mode
 
-V1 只编辑已存在、且 ingress 已无歧义映射到固定 Juvenile / Mature 语义的 Compat Mode / FishEnvAffinity：
+V1 只编辑已存在、且 ingress 已无歧义映射到 `young / mature` physical slot 的 Compat FishEnvAffinity。产品 UI 把这些 rows 作为“特殊习性”展示：`young → 幼年`，`mature → 大个体`。
 
 - 一个 UI Mode 对应一条既有 Affinity row；
 - 该 Affinity row identity 必须保留；即使 Mode 最终完全跟随 Species、所有 Component/Profile payload 与 Species 相同，也只能复用下层 Profile projection，不能把 Compat Affinity row 本身折叠掉；
 - Source / numeric operation / Role / coeff 继续按 V1 Common Semantics；
 - V1 不创建额外 Mode。
 
-V1.0.1 才补固定：
+V1.0.1 才补缺失 fixed slot 的按需创建：
 
 ```text
-幼年
-成年及以上
+幼年      → young
+大个体    → mature
 ```
 
-的缺失 Compat Mode 创建。
+两个 slot 不要求成对存在；Species Base / 常规习性始终是默认入口。
 
 ## 6. Shared Template
 
@@ -277,6 +277,8 @@ V1 不以 arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为
 - `LEGACY_UNIMPORTED` Species 不能 fresh create；
 - multi-row same-Compat legacy ingress 被 migration blocker 拒绝，而不是自动聚合；
 - unmapped Affinity 不会仅因“已存在”就进入 Compat Subject；
+- Species 只有 Species Base / 常规习性 + `young` 特殊习性、没有 `mature` row 时仍是完整合法状态；UI 不显示“缺少大个体”错误或占位要求；
+- existing `mature` row 在 UI 显示为“大个体 [兼容]”时，底层 physical slot / row identity / Production English naming 不因中文 label projection 被重写；
 - Existing Compat Mode 的 inherit / ADD / SET / CLEAR 能正确 Resolve；
 - Compat Mode 完全跟随 Species 时，Component/Profile projection 可以复用，但 Compat `FishEnvAffinity` identity row 仍保留；
 - legacy pass-through rows 与 Editor-managed rows 并存时，Publish 只替换 managed projection，pass-through rows reread 后保持不变；
@@ -335,7 +337,7 @@ V1 不以 arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为
 - 这些 qualifier 属 G3 Production convention，不是 Authoring Semantic Contract；
 - 含 Species / Mode 有效 local operation 的 Profile 使用 owner-specific system-generated name；
 - system-default `FishEnvAffinity` 名称必须表达 Species canonical English name + Base 语义；
-- V1.0.1 fixed Compat 名称必须表达 Species canonical English name + Juvenile / Mature 语义；
+- V1.0.1 fixed Compat Production naming 可以继续表达 Species canonical English name + Juvenile / Mature physical slot；这不要求 UI 中文标签继续写“成年及以上”；
 - `FishEnvAffinity` row name 在 V1 / V1.0.1 不作为作者输入；
 - 固定 exact prefix / suffix token、delimiter / case / 合法字符 normalization、各表 lookup/collision domain；
 - 核实 Production name 是否承担表内 string-reference key，以及这些引用是否全部处于 Habit Editor 全局 Publish 的重写范围；
@@ -353,7 +355,8 @@ V1 不以 arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为
 
 **G5｜Initial legacy bootstrap**
 
-- 对首批已有 Production 的目标 Species 执行 bounded bootstrap / migration；
+- 对首批已有 Production 的目标 Species执行 bounded bootstrap / migration；
+- 做一个窄的 compat-token coupling check：确认现有 Runtime / StockRelease / materializer 没有根据 `mature` token 本身推导“成年”业务行为，而只是把它当作既有 Affinity slot / identity。若存在这种硬编码业务分支，UI 不能只靠改中文标签完成语义迁移，必须先显式处理该 coupling；
 - multi-row same-Compat 与 unmapped Affinity 必须进入人工 adjudication，不自动聚合或 silent drop；
 - bootstrap 必须区分并可承载“明确 Profile absent”与“已有 binding 但 Source broken”两种 ingress state，不能把缺 Profile 伪造成 `BROKEN_SOURCE_REF`，也不能给缺失 Profile 自动补假数据；
 - bootstrap 同时建立 managed-vs-pass-through ownership 边界：被接管 row 进入 Editor / ledger ownership，未 adjudicate legacy row 留在 pass-through baseline，后续 Publish 不得误删。

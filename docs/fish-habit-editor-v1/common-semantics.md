@@ -48,7 +48,7 @@ Fish Basic / authoritative Species Catalog
 
 不在 initialization transaction 中写 ADD / SET / CLEAR、Role override 或 fail_env_coeff override；这些全部在创建成功后的普通 Authoring 中完成。初始化 Source 只从当前合法、已存在的 ACTIVE Source 选择；Template creation 使用独立 Shared Assets flow。
 
-Species Base **不是** FishEnvAffinity row，也不是默认 Engagement Mode。
+Species Base **不是** FishEnvAffinity row，也不是默认 Engagement Mode。V1 UI 将它显示为 **“常规习性”**，表达“没有特殊习性覆盖时使用的 Species 默认习性”。
 
 ### 1.2 Default Affinity Projection
 
@@ -128,21 +128,30 @@ LEGACY_UNIMPORTED
 
 V1 所说的“编辑已有 Compat Mode”不是“任意已有 `FishEnvAffinity` row 都自动成为一个 Mode Subject”。
 
-进入 V1 Editor 前，existing Production ingress 必须已经把兼容 row **无歧义映射到 V1 当前支持的固定 Compat 语义**：
+V1 当前沿用两个既有 physical Compat slot：
 
-- 幼年 / Juvenile；
-- 成年及以上 / Mature。
+- `young`；
+- `mature`。
 
-每个 Species × Compat type 最多一条可编辑 row。
+进入 V1 Editor 前，existing Production ingress 必须已经把兼容 row **无歧义映射到其中一个 physical slot**。每个 Species × Compat slot 最多一条可编辑 row。
+
+产品层不再把这两个 slot 表达成一套必须穷举 Species 生命周期的“幼年 / 成年及以上”完整分类。V1 UI 投影为：
+
+- `young` → **幼年**；
+- `mature` → **大个体**。
+
+这里的“幼年 / 大个体”是作者侧特殊习性标签；底层 `young / mature` token、既有 row identity 与 Production English naming 可以保持不变。
 
 因此：
 
-- 已经完成该映射的 existing row → 可作为 V1 Compat Subject 编辑；
-- 同一 Compat type 多 row → migration blocker；
-- 无法映射到 default / Juvenile / Mature 的 Affinity → migration blocker；
-- 不允许 UI 根据 row name、Quality 或 payload 相似度自行猜 Mode identity。
+- 已完成 slot mapping 的 existing row → 可作为 V1 特殊习性 Subject 编辑；
+- 一个 Species 可以没有特殊习性，也可以只有其中一个；不要求 young / mature 成对存在；
+- 同一 physical slot 多 row → migration blocker；
+- 无法映射到 system-default / young / mature 的 Affinity → migration blocker；
+- 不允许 UI 根据 row name、Quality 或 payload 相似度自行猜 slot identity；
+- 哪些 Quality / stocking rows 实际引用 system-default、young 或 mature Affinity，仍由 StockRelease / FishRelease 域决定。
 
-V1.0.1 只是在同一固定语义下补“缺失 Compat row 的 create”；不会改变 V1 existing Compat 的 identity 边界。
+V1.0.1 只是在同一 fixed physical slot 体系下补“缺失特殊习性 row 的 create”；不会把 `young / mature` 升级为新的业务 Mode taxonomy。
 
 ## 2. Source Binding
 
@@ -642,10 +651,10 @@ Production Profile Name
 `FishEnvAffinity` row name 与 Component/Profile row name 是不同层级。Affinity row name 不允许作者在 V1 / V1.0.1 手工命名；系统命名必须表达对应的 Affinity semantic class：
 
 - system default → Base 语义；
-- V1.0.1 fixed juvenile → Juvenile 语义；
-- V1.0.1 fixed mature → Mature 语义。
+- physical `young` slot → Production naming 可继续使用既有 Juvenile / Young 语义 token；
+- physical `mature` slot → Production naming 可继续使用既有 Mature token。
 
-Species canonical English name 作为鱼种可读 stem；exact suffix token / delimiter / case / normalization 仍由 G3 固定。未来 arbitrary Engagement Mode 若需要作者命名，不从 V1 fixed Compat 反推。
+这些 Production token 不要求与 V1 UI 中文标签一一同义：V1 UI 当前将 `young / mature` 显示为“幼年 / 大个体”。Species canonical English name 作为鱼种可读 stem；exact suffix token / delimiter / case / normalization 仍由 G3 固定。未来 arbitrary Engagement Mode 若需要作者命名，不从 V1 fixed Compat 反推。
 
 ## 11. Broken / Archived Source
 

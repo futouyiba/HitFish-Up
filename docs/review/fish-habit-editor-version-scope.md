@@ -41,17 +41,18 @@ V1 的核心成果不是覆盖所有 Runtime / StockRelease 拓扑，而是证�
 2. 新建 Species Base 与既有 Species Base 使用同一套 Authoring / Resolve / Publish；
 3. 已有兼容 Mode 可以继续编辑；
 4. 新建 Species Base 同时得到一个系统默认 FishEnvAffinity 投影，使其具备最小运行时引用入口；
-5. V1.0.1 只负责在默认 Affinity 之外再补固定 Compat Mode（幼年 / 成年及以上）。
+5. V1.0.1 只负责在默认 Affinity 之外按需补 fixed Compat slots；UI 表达为“幼年 / 大个体”，底层继续使用既有 `young / mature` physical type。
 
 ### 2.2 V1 Included
 
 #### Fish / Subject
 
 - Fish List 读取 Fish Basic / authoritative Species Catalog；Habit Editor 不创建新的 Species identity，也不维护鱼类基础数据、模型、图鉴或 Quality。
-- 已有 Habit 的 Species 直接编辑 Species Base / 基础习性。
+- 已有 Habit 的 Species 直接编辑 Species Base；V1 UI primary label 为“常规习性”，表达 Species 默认 / 常规行为。
 - 尚无 Habit 的 Species 可以通过“开始配置习性”创建完整 Species Base；Species 只能从 Fish Basic 已有条目中选择。
-- 编辑已经存在的兼容习性 Scope；产品 UI 可用“中鱼习性模式”表达业务心智，并以中性 `[兼容]` badge 标识当前承载方式。
-- **V1 当前兼容拓扑中，一个可编辑中鱼习性模式对应一条已经由 ingress / migration 无歧义映射到固定 Compat 语义（幼年 / 成年及以上）的既有 `FishEnvAffinity` 行。** 不在一个 Mode Context 下聚合多条 Affinity 行，也不建立额外的 Mode→Quality 解释层；unmapped / multi-row legacy 不自动变成可编辑 Subject。
+- 编辑已经存在的兼容习性 Scope；V1 UI 将其组织在“特殊习性”下，并以中性 `[兼容]` badge 标识当前承载方式。
+- **V1 当前兼容拓扑中，一个可编辑特殊习性 Subject 对应一条已经由 ingress / migration 无歧义映射到 `young` 或 `mature` physical slot 的既有 `FishEnvAffinity` 行。** UI 分别显示为“幼年 / 大个体”；不在一个 Subject 下聚合多条 Affinity 行，也不建立额外的 Mode→Quality 解释层；unmapped / multi-row legacy 不自动变成可编辑 Subject。
+- “特殊习性”是相对 Species Base / 常规习性的可选偏差，不是完整生命周期分桶。一个 Species 可以没有特殊习性，也可以只保留“幼年”；不要求同时存在“大个体”。
 - V1 不允许用户创建新的业务中鱼习性 Mode；新 Species 只自动建立一个系统默认 FishEnvAffinity 投影。已有兼容 Mode 继续编辑。
 - StockRelease / FishRelease 继续负责 Quality / stocking row 与 FishEnvAffinity 的关联，Habit Editor 不创建或维护该关系。
 
@@ -140,7 +141,7 @@ Policy Template
 - 四个 Component 全部跟随 Species Base；
 - numeric operation 全部 absent；
 - Role / `fail_env_coeff` 全部 inherit Species；
-- 不作为左栏额外 Mode Subject 展示，避免与“基础习性”形成重复编辑入口；
+- 不作为左栏额外 Subject 展示，避免与“常规习性”形成重复编辑入口；
 - Editor 使用稳定 `row_key`，Production `row_id` 在 Publish 后获得；
 - `FishEnvAffinity` Production name 不作为作者输入，由系统按 Species identity + system-default 语义确定性生成并做 collision validation；具体命名格式属于 Common Semantics / Implementation Contract；
 - system default Affinity 不得伪装成 `young` / `mature` bucket；物理 schema 必须能无歧义区分 default 与 fixed Compat bucket。
@@ -186,12 +187,15 @@ V1 不承诺：
 
 ## 3. V1.0.1｜Fixed Compat Mode Creation
 
-V1.0.1 是紧随 V1 的窄增量，只补固定 Compat Mode 创建：
+V1.0.1 是紧随 V1 的窄增量，只补 fixed Compat slot 的按需创建：
 
 ```text
-幼年
-成年及以上
+UI          physical slot
+幼年        young
+大个体      mature
 ```
+
+两个 slot **不要求成对创建**。若当前设计只需要“常规习性 + 幼年特殊习性”，可以长期没有 `mature` row。
 
 不支持任意 Mode 名称，不引入正式 Engagement Mode registry / Routing / Share。
 
@@ -204,7 +208,7 @@ V1.0.1 是紧随 V1 的窄增量，只补固定 Compat Mode 创建：
 - 四个 Component 初始 Source = 跟随 Species Base；
 - numeric operations 初始 absent；
 - Role / `fail_env_coeff` 初始 inherit Species；
-- 业务显示名固定为“幼年 / 成年及以上”，不要求用户填写 Mode name；Production `FishEnvAffinity` row name 同样不作为作者输入，由系统根据 Species identity + fixed Compat type 确定性生成；具体命名格式属于 Common Semantics / Implementation Contract。
+- UI 业务显示名固定为“幼年 / 大个体”，不要求用户填写 Mode name；physical type 仍为 `young / mature`，Production `FishEnvAffinity` row name 可继续沿用既有 Juvenile / Mature naming convention，不要求同步改英文名；具体命名格式属于 Common Semantics / Implementation Contract。
 - StockRelease / FishRelease 是否让某个 Quality 使用该 Affinity，继续由其自己的配置表维护，不属于 Habit Editor。
 
 V1.0.1 的固定 Compat Mode creation 是 create-only 窄增量；不在该版本补 Mode Archive / Delete / rename。删除生命周期仍等待跨域引用边界闭合。
@@ -283,7 +287,7 @@ Family / Preset 若进入，只作为初始化便利，不形成长期 parent re
 
 ### 5.2 Engagement Mode Creation
 
-在 V1.0.1 固定幼年 / 成年及以上创建之外，支持：
+在 V1.0.1 fixed `young / mature` slot（UI：幼年 / 大个体）创建之外，支持：
 
 - 新建真正需要的任意 Engagement Mode；
 - Mode identity / lifecycle；
@@ -357,7 +361,7 @@ V1 的兼容 scope UI 不能被用来反推 V2 Routing 参数形态。
 优先顺序：
 
 1. **先闭合 Species Base Creation + Existing Compat Authoring；**
-2. **V1.0.1 只补固定幼年 / 成年及以上 Compat Mode Creation；**
+2. **V1.0.1 只补 fixed `young / mature` Compat slot Creation（UI：幼年 / 大个体），且不要求成对创建；**
 3. **再提升批量 Authoring / Persistence 效率；**
 4. **再进入任意 Engagement Mode / 高级初始化；**
 5. **再接外部数据与 reconcile；**
