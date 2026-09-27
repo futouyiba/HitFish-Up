@@ -144,7 +144,7 @@ FISH：
 └─ 空间机会策略
 ```
 
-V1 Shared Assets 只包含 Shared Template。鱼家族预设 / Species Preset 不进入 V1；Species Base initialization 已属于 Fish Authoring Surface，而不是 Shared Assets。
+V1 Shared Assets 只包含 Shared Template。鱼家族预设 / Species Preset 不进入 V1。
 
 ### 3.3 Fish List coverage
 
@@ -153,7 +153,7 @@ V1.0 不承担 Species Catalog-backed creation。
 - Species identity 继续只读来自 Fish Basic；
 - Fish List 展示当前已经有可编辑 Habit 的 Species；
 - 不提供“开始配置其他鱼种” / Species Base initialization；
-- Shared Template creation 仍属于 Shared Assets，与 Fish identity / Species Base creation 无关。
+- Shared Template creation 属于 Shared Assets，与 Fish identity / Species Base 无关。
 
 ## 4. Context Header
 
