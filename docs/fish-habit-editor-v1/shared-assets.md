@@ -129,7 +129,17 @@ Temperature Template
 
 优先 convention 是在需要时加入 Kind qualifier，例如 `Struct Heavy Cover`、`Temp Warm Water`：它能提高裸看 Production 时的表意性，并在共享 / 合并 namespace 中降低跨 Kind 撞名风险。但如果真实 schema 已按独立子表或独立 lookup domain 天然隔离 Kind，则不应为了形式统一强制增加无收益前缀。
 
-因此 G3 必须先确认实际 lookup / collision domain，再决定是否使用 `Struct / Structure`、`Temp / Temperature` 等 qualifier，以及 delimiter、空格/下划线、大小写与合法字符 normalization。作者不需要手工输入 Kind qualifier。
+若 G3 最终确认需要 Kind qualifier，当前优先 vocabulary 为：
+
+- Temperature → `Temp`
+- Structure → `Struct`
+- Feeding Layer → `FeedLayer`
+- Time Period → `Period`
+- Spatial Opportunity Policy → `Policy`（仅在真实 Production 中存在独立具名 Policy row 时）
+
+其中 `Period` 保持与 canonical `Time Period` 概念一致，避免 `Time` 与 timestamp / runtime time 等更宽语义混淆；`FeedLayer` 明确保留“觅食水层”语义，避免 `Feed` 被理解成食物 / 饵料类型。这个 vocabulary 属 G3 naming convention，不升级为 Authoring Semantic Contract。
+
+G3 仍需根据真实 schema 固定 delimiter、空格/下划线、大小写与合法字符 normalization。作者不需要手工输入 Kind qualifier。
 
 Spatial Opportunity Policy 只有在现有 Production schema 中确实 materialize 为独立具名 row 时才应用同类命名；不得仅为了 UI 对称预设一个并不存在的 `Policy` 子表。
 
