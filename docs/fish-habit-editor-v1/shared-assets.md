@@ -321,9 +321,13 @@ Structure                  只读
 
 规则：
 
+- Extract 只从**最近一次成功 durable revision**的 Effective Profile / Effective Policy 取值；
+- staged candidate active 时 Extract 不可用；
+- Autosave pending 时先等待 / flush durable write；save failure 时 BLOCK；
+- 当前 Focus 有 incomplete raw input 时 BLOCK，要求作者先完成或取消输入，不 silent discard，也不拿旧 durable value 冒充“当前提取值”；
 - 中文名由作者确认 / 输入；
 - 英文名由工具根据中文名、当前上下文或已有命名规则先生成可读建议值，作者可修改；创建提交时必须有非空英文语义名；
-- 浮层内不编辑 Template complete value；complete value 来自当前 Effective Profile / Effective Policy 的 flatten；
+- 浮层内不编辑 Template complete value；complete value 来自上述 exact durable revision 的 Effective Profile / Effective Policy flatten；
 - 创建前不在左栏出现 durable Draft Template；
 - 点击创建后 atomic create ACTIVE Template；
 - 创建成功后**直接切换到新 Template Context**，左栏选择对应 Template，中栏显示 Template Overview，右栏允许继续编辑中文名、英文名与 Template complete value；
@@ -377,6 +381,14 @@ ARCHIVED
 ```
 
 时出现，并使用 destructive confirm。
+
+执行 delete commit 时必须再次做 optimistic revision / guard check，确认：
+
+- Template 仍为 ARCHIVED；
+- DirectReferenceSet 仍为空；
+- 当前 durable revision 未使 delete 前提失效。
+
+如果另一会话在确认期间新建了 direct reference，Hard Delete 必须冲突失败并刷新引用状态，不能先删 Template 再制造 broken source。
 
 Hard Delete 删除的是 Editor Template asset。若该 Template 曾经 materialize 出 Editor-owned Production Profile row，实际 Production cleanup 发生在下一次 Global Publish，并受 managed-projection ownership guard 约束：
 
