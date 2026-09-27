@@ -105,6 +105,8 @@ Hard Delete 看显式引用；Template complete-value Impact 看所有最终消�
 
 Template Context 必须允许直接编辑中文名与英文名。中文名是 UI primary display；英文名视觉上可次一级，但不应隐藏成内部字段。
 
+中文名与英文名都是 Template 的 required metadata：trim 后为空的值不能形成 durable commit。名称重复是否允许由各自 Editor / Production collision domain 决定；即使名称相同，stable template identity 仍不得按名字合并。
+
 Template Kind 创建后不可修改；不同 Kind schema 不同，跨 Kind 改动不做 migration。
 
 ### 5.1 Template English Name 与 Production Profile Name
@@ -343,9 +345,12 @@ Profile absent / 无法完整 Resolve，或 Policy 无法形成完整 Effective 
 
 ## 11. Clone / Save As
 
-Clone / Save As：
+Clone / Save As 复用 bounded Template creation flow：
 
-- 从当前 complete value 创建新 Template identity；
+- Kind 锁定为当前 Template Kind；
+- complete value 复制当前**最近一次成功 durable**的 Template value；active Value Candidate 时 Clone / Save As 不可用；
+- 创建表单要求确认新的中文名 / 英文名，可基于当前名称给出“副本 / Copy”等建议，但不能直接复用到会造成 schema / naming collision 的非法名称；
+- atomic create 新 Template identity，成功后进入新 Template Context；
 - 两者以后完全独立；
 - 不形成 Template → Template inheritance；
 - 不修改任何 existing binding。
