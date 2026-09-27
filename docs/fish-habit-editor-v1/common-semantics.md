@@ -18,41 +18,30 @@ V1 唯一长期 Authoring Truth 是 Editor durable state。
 
 V1 不创建新的 durable EngagementMode identity，也不把 Quality / FishPond / StockRelease / FishRelease 拉回 Habit Editor ownership。
 
-## 1.1 Species Habit Creation
+## 1.1 V1.0 Existing Species Base boundary
 
-V1 可以创建 Habit Editor 自己拥有的 **Species Base Record**，但不能创建 Species identity。
+V1.0 不提供 Species Base creation。
 
-Species 创建来源：
+普通 Authoring 只处理已经进入 Editor durable state 的 Species Base / 常规习性。已有 Production 数据若尚未形成 Editor durable state，先经过 bounded bootstrap / migration；该过程不是普通作者 UI，也不建立第二套 Authoring Truth。
+
+Species identity 仍来自 Fish Basic / authoritative Species Catalog：
 
 ```text
-Fish Basic / authoritative Species Catalog
-→ existing species_key
-→ Species Habit Base
+Fish Basic species_key
+→ existing Editor Species Base
+→ ordinary Authoring
 ```
 
-新建 Species Base 的产品完成条件：
+V1.0 不提供：
 
-- Temperature Source 已选择；
-- Structure Source 已选择；
-- Feeding Layer Source 已选择；
-- Time Period Source 已选择；
-- Policy Template 已选择；
-- 四个 Component Profile 与 Policy 均可 Resolve。
-
-创建为一个 atomic durable transaction；不建立 durable half-created wizard / draft。
-
-初始化 transaction 只写 Species Base 的五个 binding：
-
-- 四个 Component Source；
-- 一个 Policy Template Source。
-
-不在 initialization transaction 中写 ADD / SET / CLEAR、Role override 或 fail_env_coeff override；这些全部在创建成功后的普通 Authoring 中完成。初始化 Source 只从当前合法、已存在的 ACTIVE Source 选择；Template creation 使用独立 Shared Assets flow。
-
-Species Base **不是** FishEnvAffinity row，也不是默认 Engagement Mode。V1 UI 将它显示为 **“常规习性”**，表达“没有特殊习性覆盖时使用的 Species 默认习性”。
+- “开始配置其他鱼种”；
+- fresh create Species Base；
+- half-created Habit draft；
+- 从 Production footprint 自动猜出一个新的 Species Base。
 
 ### 1.2 Default Affinity Projection
 
-每个 Species Base 在 V1 durable state 中必须**恰好对应一个系统默认 FishEnvAffinity 投影壳**。新建 Species Base 时，两者由同一个 atomic creation transaction 建立；Bootstrap / migration 进入 V1 时也必须补齐这一 invariant。
+每个进入 V1.0 Editor durable state 的 Species Base 必须**恰好对应一个系统默认 FishEnvAffinity 投影壳**。该 invariant 由既有 durable state 或 Bootstrap / migration 在进入普通 Authoring 前保证；V1.0 UI 不负责创建 Species Base。
 
 它不是第二份 Authoring Truth，也不是用户可编辑的 Mode。
 
@@ -85,31 +74,27 @@ Quality / StockRelease / FishRelease 与 FishEnvAffinity 的关联继续由其�
 
 V1 不提供 Species Base / system default Affinity 的 Archive / Delete。原因不是技术上不能删，而是 Habit Editor 不拥有完整的跨域 StockRelease / FishRelease 引用生命周期；在没有安全 cross-domain reference guard 前，删除不进入最小闭环。
 
-### 1.3 Species create eligibility
+### 1.3 V1.0 Subject ingress
 
-“Editor 中没有 Species Base”不自动等于“可以 fresh create”。
-
-Fish Basic Species 分三类：
+V1.0 只接受已经准备好的 Editor Subject。
 
 ```text
-CONFIGURED
+EDITOR_READY
   Editor Species Base exists
   → 正常编辑
 
-AVAILABLE_NEW
-  no Editor Species Base
-  + no existing Production FishEnvAffinity footprint for this species
-  → 可以“开始配置习性”
-
 LEGACY_UNIMPORTED
-  no Editor Species Base
-  + existing Production FishEnvAffinity footprint
-  → 禁止 fresh create
+  Production 存在习性 footprint
+  + Editor Species Base 尚未建立
+  → 不进入普通 Authoring；先 bootstrap / migration
+
+NOT_INGRESSED
+  Fish Basic Species 存在
+  + Editor Species Base 不存在
+  → V1.0 不提供 fresh create
 ```
 
-`LEGACY_UNIMPORTED` 必须提示存在旧生产习性数据，需要经过 bounded bootstrap / migration 后才能进入 V1 Editor。V1 不用一套新 Source/Policy 覆盖旧 Production，也不把 generation guard 当 migration 工具。
-
-若并发会话在提交前已经为同一 `species_key` 创建 Species Base，当前 create transaction 必须冲突失败并刷新为现有 Subject，不能生成第二份 Species Base。
+普通 UI 不把 `LEGACY_UNIMPORTED` / `NOT_INGRESSED` 显示成“可开始配置”的对象，也不通过一套临时 Source/Policy 表单覆盖旧 Production。
 
 ### 1.4 Broken Species Reference
 
@@ -170,22 +155,40 @@ Source 变化不自动清理 Operation；Operation 变化不自动换 Source。
 
 不得为了保持旧 Effective Value 自动制造 SET。
 
-### 2.2 Species Base Source
+### 2.2 Explicit Component Source
 
-V1 Species Base：
+V1.0 每个 Component 的显式 Source 只有两类：
 
-- Structure / Feeding Layer / Time Period：选择 Shared Template；
-- Temperature：可选择 Shared Template；若当前 Species 已存在合法 Species Concrete，可继续引用该 Concrete；
-- V1 不提供外部生态数据库 Import / Reimport 来新建或更新 Concrete。
+1. **Shared Template**；
+2. **Existing Production Source**。
 
-### 2.3 Compat Mode Source
+Existing Production Source 是过渡期兼容来源，来自当前 verified Production baseline 中**合法的同 Component Kind existing / pass-through row**。
 
-Compat Mode 每个 Component 只有：
+规则：
 
-- 跟随基础习性；
-- 显式选择合法 Shared Template。
+- Shared Template 是长期主路径；
+- Existing Production Source 是只读兼容依赖，不因此成为 Shared Asset；
+- Picker 展示所有合法同 Kind Existing Production rows，不按当前 Species / Quality 推导“归属关系”；
+- UI 直接显示 Production row 的真实英文 `name`，不生成新的中文解释名或“某鱼现有数据”别名；
+- durable binding 使用真实稳定 physical identity / key；display name 不成为第二个 Editor identity；
+- 选择 Existing Production Source 不自动把该 Production row 变成 Editor-owned mutable row；
+- 本次 Publish 新生成的 Editor-managed output 不自动回流为新的 Source candidate，避免 output → source 的隐式循环；
+- V1.0 不提供外部生态数据库 Import / Reimport 来生成新的 Concrete Source。
 
-Mode 不直接选择 Species Concrete；需要消费 Species Concrete 时走“跟随基础习性”。
+### 2.3 Species Base / Compat Source relation
+
+Species Base 每个 Component 可以显式选择：
+
+- 合法 Shared Template；
+- 合法 Existing Production Source。
+
+Compat Mode 每个 Component可以：
+
+- 跟随常规习性；
+- 显式选择合法 Shared Template；
+- 显式选择合法 Existing Production Source。
+
+因此 Compat 的 FOLLOW 与“本层显式 pin 某个 Source”仍是两种不同 durable intent；显式 pin 不要求 Source 必须来自 Template。
 
 ### 2.4 Follow 与 Explicit Pin
 
@@ -206,8 +209,8 @@ FOLLOW ↔ explicit pin 改变未来传播行为，因此是真实 durable mutat
 
 Golden Path 中：
 
-- 新 Species Base 创建要求四个 Component 都能 Resolve 完整 Profile；
-- 普通 Source Selector 只选择能形成合法 Profile 的 Source；
+- 正常 V1.0 Authoring 的四个 Component 应能 Resolve 完整 Profile；
+- 普通 Source Selector 只选择能形成合法 Profile 的 Shared Template / Existing Production Source；
 - V1 没有“删除 Profile / 清空 Source”作者动作。
 
 因此正常 V1 Authoring 不提供把一个 present Profile 主动变成 absent 的入口。
@@ -565,7 +568,7 @@ Replace A → B：
 
 ## 10. Shared Template Creation
 
-V1 可以从 Fish Basic 创建新的 Species Base + system default Affinity；Shared Template 是另一类独立 Source asset，Template 创建本身不创建或修改 Fish / Mode identity。
+V1.0 不创建 Species Base；Shared Template 是独立的可复用 Source asset，Template 创建本身不创建或修改 Fish / Mode identity。
 
 ### 10.1 Blank Create
 
