@@ -244,7 +244,7 @@ V1.2 才允许重新打开 Species Base creation / initialization：先闭合“
 
 ### 5.1 Advanced Fish Initialization
 
-V1 已支持从 authoritative Species Catalog 创建完整 Species Base。
+V1.0 尚不支持从 authoritative Species Catalog 创建新的 Species Base。
 
 若 Species Base creation 在该阶段进入，先建立最小 creation contract；在此基础上再研究更高级的初始化效率，例如：
 
@@ -330,10 +330,10 @@ V1 的兼容 scope UI 不能被用来反推 V2 Routing 参数形态。
 
 优先顺序：
 
-1. **先闭合 Species Base Creation + Existing Compat Authoring；**
+1. **先闭合 Existing Species Base + Existing Compat Authoring；**
 2. **V1.0.1 只补 fixed `young / mature` Compat slot Creation（UI：小个体 / 大个体），且不要求成对创建；**
 3. **再提升批量 Authoring / Persistence 效率；**
-4. **再进入任意 Engagement Mode / 高级初始化；**
+4. **V1.2 再进入 Species Base Creation、任意 Engagement Mode 与高级初始化；**
 5. **再接外部数据与 reconcile；**
 6. **最后进入完整 Engagement Mode / Routing。**
 
@@ -341,4 +341,4 @@ V1 的兼容 scope UI 不能被用来反推 V2 Routing 参数形态。
 
 V1 Review 的核心问题应始终是：
 
-> **在不依赖后续能力的情况下，一个作者能否从 Fish Basic 选择已有 Species，创建或编辑完整 Species Base，并安全地验证、解析和发布；同时继续编辑已有 Compat Mode？**
+> **在不依赖后续能力的情况下，一个作者能否安全编辑已有 Species Base / Compat Subject，明确理解 Source 与 Operation，并完成验证、解析与 Production materialization？**
