@@ -136,7 +136,7 @@ V1.0 每个 Component 的显式 Source 只有两类：
 - “已有数据 · 兼容”只从当前 Authoring persistence 读取，不实时读取 `production/`；
 - Source Picker 枚举 Authoring persistence 中合法的同 Component Kind 兼容数据；
 - 若当前 Authoring 数据已经保留原 Production 英文 `name`，UI 直接显示该名称，不再推导“大口黑鲈现有结构数据”之类新名称；
-- durable binding 沿用当前 Authoring persistence 已有的 Source reference / key；V1.0 **不新增 snapshot identity / provenance schema / lifecycle contract**；
+- durable binding 沿用当前 Authoring persistence 已有的 Source reference / key；V1.0 不新增独立的“兼容源资产”模型；
 - Production working tree 后续变化不会静默改变已经存在于 Authoring persistence 中的 Source 数据；
 - 若项目需要从旧 Production 重新准备 Authoring 输入，由 Editor 外的数据准备流程处理；这不是普通 Authoring 事务；
 - Publish 刚生成的 Production row 不自动回流为普通 Source candidate。
