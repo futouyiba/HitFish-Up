@@ -79,14 +79,14 @@ Effective Value、Resolve result/provenance、current selection、raw incomplete
 
 V1.0 不提供“开始配置其他鱼种”或 Species Base creation。
 
-进入普通 Authoring 前，目标 Species 必须已经通过现有 Editor state 或 bounded bootstrap / migration 具备：
+进入普通 Authoring 前，目标 Species 必须已经在 authoring working tree 中具备：
 
 - 一个 Species Base / 基础习性 Subject；
 - 需要被编辑的既有 Compat FishEnvAffinity（若有）；
 - 可解析的 Component Source binding / Policy binding；
 - 必要的 stable identity / ledger mapping。
 
-Bootstrap / migration 是数据准备边界，不是普通作者 UI，也不建立第二套长期 Authoring Truth。
+旧数据若需要转换成上述 Authoring state，作为 Editor 外的数据准备工作处理，不进入 V1.0 普通作者 IA。
 
 若某个 Fish Basic Species 尚未进入 Editor durable state，V1.0 Fish List 不把它显示为“可开始配置”的新对象；新增 Species Base 留给后续明确版本能力。
 
