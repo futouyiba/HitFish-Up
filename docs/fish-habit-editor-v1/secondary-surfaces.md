@@ -679,11 +679,14 @@ executor 不执行无意义 write。
 
 所有 Gate PASS 且存在实际 output delta 时，唯一 executor 可用。
 
+一次 Execute 的 semantic target 是 Preflight 绑定并在写入前重新核验通过的**exact Editor durable revision R**。执行开始后，R 不再随当前 Editor 的后续变化移动。
+
 执行开始后：
 
-- 锁定 Publish Surface；
-- 不允许导航 / authoring mutation；
+- 锁定当前 Publish Surface；
+- 不允许当前会话导航 / authoring mutation；
 - 不提供“写到一半取消”；
+- 其它 Editor session 若在执行期间成功写出 R+1，不自动把 R+1 合并进本次 materialization；
 - UI 可以依次显示高层阶段：
   - `正在写入生产配置…`
   - `正在重新读取并验证…`
