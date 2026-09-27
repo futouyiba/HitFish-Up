@@ -26,7 +26,7 @@ V1.0 证明一条最小、可制作的**既有数据 Authoring 闭环**：
 
 ```text
 existing Editor Species Base / Compat Subject
-→ Source（Shared Template / Imported Source Snapshot）
+→ Source（Shared Template / 已有数据 · 兼容）
 → Authoring
 → Validation
 → Resolve Preview
@@ -37,7 +37,7 @@ existing Editor Species Base / Compat Subject
 V1.0 的核心成果不是创建新的 Fish Habit，而是证明：
 
 1. 既有 Species Base / Compat Subject 可以在一套统一 Editor 中安全维护；
-2. Shared Template 与 Imported Source Snapshot 可以共存但主次清楚；普通 Authoring 不实时读取 Production working tree；
+2. Shared Template 与 Authoring persistence 中已有的兼容数据可以共存但主次清楚；普通 Authoring 不实时读取 Production working tree；
 3. Authoring Truth 与 Production materialization 保持单向因果；
 4. Resolve / Validation / Publish 可以形成完整闭环；
 5. authoring / production 各自作为独立 Git working tree 协作；
@@ -69,7 +69,7 @@ V1.0 的核心成果不是创建新的 Fish Habit，而是证明：
 
 - Source binding；
 - Shared Template；
-- Imported Source Snapshot（已冻结在 Authoring durable state 中的同 Kind 兼容来源，UI 显示“已有数据 · 兼容”）；
+- Authoring persistence 中已有的同 Kind 兼容来源（UI 显示“已有数据 · 兼容”）；
 - Species / Compat scope operation；
 - ADD / SET / CLEAR / inherit/absent 等各字段允许的语义；
 - Effective Value / provenance 只读派生；
@@ -120,7 +120,7 @@ V1.0 读取 Fish Basic 作为 Species identity authority，但普通 Authoring �
 - 没有 Species Base 的 Fish 不进入 V1.0；
 - unmapped / unsupported legacy row 不要求 V1.0 Editor 提供 adjudication UI。
 
-如果项目需要把旧 Production 整理成 Authoring state，可使用 Editor 外的数据准备 / import / bootstrap 脚本，把需要继续使用的 Profile 冻结为 Authoring 内的 Imported Source Snapshot；这不是 V1.0 普通 Editor 产品流程。
+如果项目需要把旧 Production 整理成 Authoring state，由 Editor 外的数据准备流程完成；V1.0 只消费已经准备好的 Authoring persistence，不定义 Import / Snapshot 产品模型。
 
 ### 2.4 V1 Persistence
 
