@@ -103,6 +103,45 @@ Wood        设置为 0.60                 0.60
 - Role badge 只读显示 Effective Role；不提供 dropdown / toggle，也不作为第二个 Policy mutation entry。
 - Card 不直接编辑 field numeric value。
 
+### 4.1 Source Picker
+
+Source Selector 打开一个统一 Picker，不先让作者选择“来源类型”。
+
+Species Base 示例：
+
+```text
+选择结构习性来源
+
+共享模板
+────────────────
+重障碍区          Heavy Cover
+岩石区            Rocky Cover
+
+已有生产数据 · 兼容
+────────────────
+Bass_Struct_01
+Legacy_Rock_03
+Trout_Structure_A
+```
+
+Compat Subject 在最上方多一个：
+
+```text
+跟随基础习性
+当前解析为 Heavy Cover
+```
+
+规则：
+
+- Shared Template 分组置前，是长期主路径；
+- Existing Production 分组置后，是过渡兼容路径；
+- 不用两个平级 Tab；
+- Existing Production 只按当前 Component Kind 筛合法 rows；
+- 不筛“当前鱼种拥有的数据”，因为 V1 不建立这种 ownership；
+- Existing Production 直接显示 Production 原英文 `name`，不生成额外中文解释名；
+- 搜索可以覆盖两个分组；
+- 当前 Source 在 Card 上同时显示 name + source kind provenance，例如 `Heavy Cover · 共享模板`、`Bass_Struct_01 · 已有生产数据`。
+
 ## 5. Focus Editor states
 
 四种视觉状态：
