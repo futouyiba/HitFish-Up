@@ -18,98 +18,23 @@ V1 唯一长期 Authoring Truth 是 Editor durable state。
 
 V1 不创建新的 durable EngagementMode identity，也不把 Quality / FishPond / StockRelease / FishRelease 拉回 Habit Editor ownership。
 
-## 1.1 Species Habit Creation
+## 1.1 Existing Species Base boundary
 
-V1 可以创建 Habit Editor 自己拥有的 **Species Base Record**，但不能创建 Species identity。
+V1.0 不创建 Species Base。
 
-Species 创建来源：
+进入 V1.0 Editor 的 Fish 必须已经有可识别的 Species Base / default habit 数据。Species identity 继续来自 Fish Basic / authoritative Species Catalog。
 
-```text
-Fish Basic / authoritative Species Catalog
-→ existing species_key
-→ Species Habit Base
-```
+V1.0 不定义：
 
-新建 Species Base 的产品完成条件：
+- `AVAILABLE_NEW`；
+- `LEGACY_UNIMPORTED`；
+- 五 Source 初始化表单；
+- Species Base fresh-create；
+- system-default Affinity create-from-absent。
 
-- Temperature Source 已选择；
-- Structure Source 已选择；
-- Feeding Layer Source 已选择；
-- Time Period Source 已选择；
-- Policy Template 已选择；
-- 四个 Component Profile 与 Policy 均可 Resolve。
+已有 system-default `FishEnvAffinity` 仍是 Species Base 的 Production projection，不是第二个 Authoring Subject。Habit Editor 只编辑 Species Base，并在 Publish 时更新对应已有 projection。
 
-创建为一个 atomic durable transaction；不建立 durable half-created wizard / draft。
-
-初始化 transaction 只写 Species Base 的五个 binding：
-
-- 四个 Component Source；
-- 一个 Policy Template Source。
-
-不在 initialization transaction 中写 ADD / SET / CLEAR、Role override 或 fail_env_coeff override；这些全部在创建成功后的普通 Authoring 中完成。初始化 Source 只从当前合法、已存在的 ACTIVE Source 选择；Template creation 使用独立 Shared Assets flow。
-
-Species Base **不是** FishEnvAffinity row，也不是默认 Engagement Mode。V1 UI 将它显示为 **“基础习性”**，表达 Species 的默认习性；中鱼习性模式只表达相对基础习性的可选差异。
-
-### 1.2 Default Affinity Projection
-
-每个 Species Base 在 V1 durable state 中必须**恰好对应一个系统默认 FishEnvAffinity 投影壳**。新建 Species Base 时，两者由同一个 atomic creation transaction 建立；Bootstrap / migration 进入 V1 时也必须补齐这一 invariant。
-
-它不是第二份 Authoring Truth，也不是用户可编辑的 Mode。
-
-初始语义固定：
-
-```text
-Default Affinity
-├─ Temperature Source  = FOLLOW_SPECIES
-├─ Structure Source    = FOLLOW_SPECIES
-├─ Feeding Source      = FOLLOW_SPECIES
-├─ Time Source         = FOLLOW_SPECIES
-├─ numeric operations  = absent
-├─ Role patches        = absent
-└─ fail_env_coeff      = absent
-```
-
-因此它完整继承 Species Base 的四 Component 与 Policy。
-
-Durable / Production identity：
-
-- Editor 创建稳定 `row_key`；
-- Production `row_id` 可在 Publish 后获得；
-- `FishEnvAffinity` production row name 由系统根据 Species canonical English name + Affinity semantic class 派生并校验 collision；system-default 的语义类别是 Base，作者不直接编辑该 row name；具体 suffix token、delimiter / normalization 与 lookup domain 留给 G3；
-- 普通作者 UI 不要求编辑该 name，也不把默认 Affinity 显示为独立 Mode；
-- 系统默认 Affinity **不得为了复用旧 schema 被伪装成 `young` 或 `mature` bucket**。其物理表示必须能与固定 Compat bucket 无歧义区分；若当前 ledger schema 无法表达，使用最小显式 schema delta，而不是污染 bucket 语义。
-
-Species Base 仍是作者编辑“默认习性”的唯一入口；默认 Affinity 只是让这套习性拥有一个可被 Runtime / StockRelease 域引用的具体 EnvAffinity projection。
-
-Quality / StockRelease / FishRelease 与 FishEnvAffinity 的关联继续由其各自 domain 维护，Habit Editor 不创建或同步该关系。
-
-V1 不提供 Species Base / system default Affinity 的 Archive / Delete。原因不是技术上不能删，而是 Habit Editor 不拥有完整的跨域 StockRelease / FishRelease 引用生命周期；在没有安全 cross-domain reference guard 前，删除不进入最小闭环。
-
-### 1.3 Species create eligibility
-
-“Editor 中没有 Species Base”不自动等于“可以 fresh create”。
-
-Fish Basic Species 分三类：
-
-```text
-CONFIGURED
-  Editor Species Base exists
-  → 正常编辑
-
-AVAILABLE_NEW
-  no Editor Species Base
-  + no existing Production FishEnvAffinity footprint for this species
-  → 可以“开始配置习性”
-
-LEGACY_UNIMPORTED
-  no Editor Species Base
-  + existing Production FishEnvAffinity footprint
-  → 禁止 fresh create
-```
-
-`LEGACY_UNIMPORTED` 必须提示存在旧生产习性数据，需要经过 bounded bootstrap / migration 后才能进入 V1 Editor。V1 不用一套新 Source/Policy 覆盖旧 Production，也不把 generation guard 当 migration 工具。
-
-若并发会话在提交前已经为同一 `species_key` 创建 Species Base，当前 create transaction 必须冲突失败并刷新为现有 Subject，不能生成第二份 Species Base。
+V1.0 不提供 Species Base / system-default Affinity Archive / Delete。
 
 ### 1.4 Broken Species Reference
 
@@ -172,20 +97,29 @@ Source 变化不自动清理 Operation；Operation 变化不自动换 Source。
 
 ### 2.2 Species Base Source
 
-V1 Species Base：
+V1.0 每个 Component 的显式 Source 可以来自：
 
-- Structure / Feeding Layer / Time Period：选择 Shared Template；
-- Temperature：可选择 Shared Template；若当前 Species 已存在合法 Species Concrete，可继续引用该 Concrete；
-- V1 不提供外部生态数据库 Import / Reimport 来新建或更新 Concrete。
+1. **Shared Template**；
+2. **Existing Production Profile**。
+
+Existing Production Profile 是过渡期兼容 Source：
+
+- Picker 只按当前 Component Kind 筛选合法 rows；
+- 不要求 row 与当前 Species 存在 ownership 关系；
+- 不根据 Fish / Quality / Affinity 猜“归属”；
+- UI 直接显示 Production row 现有英文 `name`，不额外生成解释性中文名称。
+
+Shared Template 是长期推荐的 Authoring Source；Existing Production Profile 是合法但次级的兼容来源。二者使用同一个 Component Source Picker。
 
 ### 2.3 Compat Mode Source
 
-Compat Mode 每个 Component 只有：
+Compat Mode 每个 Component 可以：
 
 - 跟随基础习性；
-- 显式选择合法 Shared Template。
+- 显式选择合法 Shared Template；
+- 显式选择合法 Existing Production Profile。
 
-Mode 不直接选择 Species Concrete；需要消费 Species Concrete 时走“跟随基础习性”。
+FOLLOW 与 explicit Source 仍是两种不同作者意图。
 
 ### 2.4 Follow 与 Explicit Pin
 
@@ -200,30 +134,14 @@ FOLLOW ↔ explicit pin 改变未来传播行为，因此是真实 durable mutat
 
 只有候选 binding intent 与当前 durable binding intent 完全相同，才是 exact no-op。
 
-### 2.5 Profile absent 的 V1 来源边界
+### 2.5 Profile absent
 
-`Profile absent` 是 V1 Resolver / Validator 必须能处理的 durable state，但**不是正常 V1 Authoring 主动制造的日常状态**。
+`Profile absent` 是 V1 Resolver / Validator 可容忍的已有数据状态，但不是普通作者主动制造的状态。
 
-Golden Path 中：
-
-- 新 Species Base 创建要求四个 Component 都能 Resolve 完整 Profile；
-- 普通 Source Selector 只选择能形成合法 Profile 的 Source；
-- V1 没有“删除 Profile / 清空 Source”作者动作。
-
-因此正常 V1 Authoring 不提供把一个 present Profile 主动变成 absent 的入口。
-
-Profile absent 主要来自：
-
-- legacy / bounded migration 保留下来的不完整状态；
-- 已有 Editor durable state 的兼容 / 恢复场景；
-- 未来 schema 兼容时需要 Resolver 正确定义的边界状态。
-
-它与 `BROKEN_SOURCE_REF` 不同：
-
-- **Profile absent**：当前 Component 没有可消费 Profile，是明确的“缺 Profile”状态；
-- **BROKEN_SOURCE_REF**：durable binding 指向的 Source 已丢失或无法解析，是悬空引用错误。
-
-V1 不要求普通作者理解底层如何物理表示 Profile absent；产品语义只要求两者诊断与修复路径不能混淆。修复 Profile absent 仍通过该 Component 唯一 Source Selector 选择合法 Source，不新增 Setup transaction。
+- V1 不提供“删除 Profile / 清空 Source”；
+- `Profile absent` 表示没有可消费 Profile；
+- `BROKEN_SOURCE_REF` 表示已有 binding 指向不存在 / 无法解析的 Source；
+- 两者都通过重新选择合法 Source 修复，不能混为同一状态。
 
 ## 3. Component Field Operations
 
@@ -433,29 +351,22 @@ Validator ERROR
 ```text
 typed state
 → short debounce/coalesce
-→ optimistic revision check
-→ atomic durable write
+→ local atomic durable write
 ```
 
 无常驻 Save 按钮。
 
+V1.0 定位为**单机单写者 workspace**。Editor 不设计多人 / 多会话协同编辑协议；人与人之间的同步、diff、merge、冲突处理交给工作区外部的 Git。
+
 ### 7.3 Save Failure
 
-I/O / revision write failure：
+本地文件写入失败时：
 
-- 最近一次成功 durable revision 仍是 Truth；
-- 未成功写入的输入不能进入 Resolve / Publish；
-- 不 silent last-write-wins。
+- 最近一次成功 durable state 仍是 Truth；
+- 未成功保存的输入不能进入 Resolve / Publish；
+- UI 明确提示保存失败并允许作者重试。
 
-其中 optimistic revision conflict 必须与普通网络 / I/O failure 区分。发生 stale revision 时：
-
-- 不自动把本地 typed edit merge 到新的 durable state；
-- 不覆盖另一会话已经成功写入的 revision；
-- 当前本地 typed value 可以暂时保留在 UI 作为“未保存冲突值”，方便作者查看 / 复制，但它不是 Authoring Truth；
-- 该 Subject 的后续 semantic mutation、Resolve 与 Publish 暂停，直到作者重新读取最新 durable state；
-- V1 不做字段级自动三方合并；作者在最新 state 上显式重新应用需要保留的修改。
-
-这样 optimistic revision check 才是完整的并发保护，而不是仅仅把冲突归入一个没有恢复路径的 Save Failure。
+V1.0 不实现字段级 merge、revision rebase、跨会话 conflict recovery。
 
 ### 7.4 Diagnostics
 
@@ -676,108 +587,69 @@ Resolve UI 只展示 Resolver 实际能给出的结果，不自行补算第二�
 
 ### 12.1 Publish Scope
 
-V1 Publish 永远消费**整个 Editor durable state 的一个 exact bound revision**，不是当前 Fish / Mode / Component，也不是执行期间持续移动的“最新状态”。
+Publish 消费当前本机**最近一次成功保存的 Authoring Truth**。
 
-Preflight / Execute 绑定 revision R；若其它会话在 Execute 期间产生 R+1，本次 Publish 仍只 materialize R。只要 R 的 Production write + reread + verify 成功，可判定本次事务成功；R+1 视为尚未包含的后续 Authoring change，不被本次 success 冒充已发布。
+点击 Execute 后，当前 App 暂停 Authoring mutation，直到本次 Publish 成功或失败。V1.0 不处理另一 Editor 会话同时修改 Authoring state 的情况。
 
 ### 12.2 Production
 
-Production 保存 materialized full values / enums，不保存 Source / operation provenance。
+Production 是本地 Production Git working tree 中的 materialized output，不是第二个 Authoring Truth。
 
-因此：
+Production payload 无法无损反推出 Template / Source / ADD / SET / CLEAR 等作者意图，因此 V1 不做持续 Production → Editor reverse sync。
 
-- Production payload 无法无损反推出 Authoring intent；
-- V1 不支持持续 Production → Editor reverse sync；
-- external Production drift 只做检测 / BLOCK，不自动采纳或 merge。
+### 12.3 Non-destructive Publish
 
-### 12.3 Generation Guard
-
-Publish 必须验证 whole Production generation / baseline：
-
-- mismatch BLOCK；
-- unverifiable BLOCK；
-- 不 silent overwrite；
-- 不按 target 拼接 baseline；
-- 成功后 whole reread + verify，才能建立新的 expected baseline。
-
-### 12.3.1 Managed Projection 与 Pass-through Production
-
-V1 不要求先把整个历史 Production 全量迁入 Editor，因此 Production 中允许同时存在：
-
-1. **Editor-managed projection**：有明确 Editor / ledger ownership，可以由当前 Editor durable state 重新 materialize 的 rows；
-2. **pass-through Production**：尚未 import / adjudicate、当前 Editor 不拥有 Authoring Truth 的 legacy / external rows。
-
-Publish 的目标不是“用 Editor 输出覆盖整张 Production 表”，也不是“永远保留所有旧 rows”。
-
-正确模型是：
+V1.0 Publish 采用**非破坏性 patch**：
 
 ```text
-Expected Production
-=
-verified pass-through baseline
-+
-materialize(current Editor durable state) 的 managed projection
+read current Production working tree
+→ materialize current saved Authoring state
+→ create / update 明确目标 rows
+→ 保留其它 Production rows
+→ reread touched output
+→ verify
+→ success
 ```
-
-这里的“+”表示按明确 ownership 边界组合，而不是按 row name 猜测合并。
 
 硬规则：
 
-- Publish 只能 create / update / remove **ownership 可证明**的 managed projection；
-- pass-through rows 必须沿用本次 verified baseline 原样保留，不能因为 Editor 不认识就删除；
-- ownership 不明的 row 不得被自动 claim、rename、dedupe 或 cleanup；
-- managed desired output 与 pass-through row 发生 key / name collision 时，Preflight BLOCK，不 silent overwrite；
-- Editor-owned projection 因 Source change、Template rename / Hard Delete、owner-specific materialization 变化而变成 obsolete 时，若 ownership 可证明且当前 desired graph 已不再引用，可在同一 Publish 中移除；
-- whole reread / verify 必须同时证明：managed projection 与预期一致，pass-through set 相对 bound baseline 未被意外改写。
+- 只修改本次可以明确定位的目标 rows；
+- 不因为 Editor 不认识某条 row 就删除它；
+- V1.0 不做 orphan GC、obsolete-row cleanup、全表 ownership reconcile；
+- Source change / Template rename 产生的旧 row 若无法安全原地复用，允许暂时保留；
+- 文件写入后必须 reread + verify 本次 touched output，失败则不得宣告 Publish success。
 
-这条边界使“bounded legacy bootstrap”和“Editor-global Publish”可以同时成立，不要求 V1 先完成全量历史迁移。
+这种模型优先避免误删 Production 数据；历史垃圾清理、全量 reconcile、semantic recovery 留给后续维护阶段。
 
 ### 12.4 Materialization lineage
 
-Production projection 按 authoring lineage 决定，不按 payload 相等猜 owner。
+必须区分：
 
-必须先区分两个层级：
-
-1. **Affinity identity projection**：system-default / existing Compat 各自稳定的 `FishEnvAffinity` row identity；
-2. **Component/Profile projection**：Temperature / Structure / Feeding Layer / Time Period 等可被 Affinity row 引用的 materialized profile rows。
-
-“复用 projection”默认指第二层，不允许因为 payload 相同就折叠第一层 identity。
+1. **Affinity identity row**：system-default / existing Compat 各自稳定的 `FishEnvAffinity` identity；
+2. **Component/Profile row**：Temperature / Structure / Feeding Layer / Time Period 等 materialized profile。
 
 因此：
 
-- 每个 system-default Affinity 仍有自己的 `FishEnvAffinity` row；
-- 每个 V1 existing Compat Subject 仍保留自己的 `FishEnvAffinity` row / row_key / row_id；
-- Compat Mode 即使完全跟随 Species、最终值完全相同，也只是**复用 Species 的 Component/Profile projections**，不能因此消失为独立 Affinity identity；
-- Shared Template + 无有效 local operation：managed consumer 可复用模板级 Profile projection，并按 §10.6 从 Template English Name 确定性派生 Production Profile name；是否加入 Kind qualifier 由 G3 的真实 lookup / collision domain 决定；
-- Shared Template asset 的存在本身不强制生成一个永远常驻的 Production row；Template-level Profile projection 只在 current managed desired graph 需要它时 materialize / reuse。无 managed consumer 的 obsolete Editor-owned projection 可按 §12.3.1 cleanup；
-- explicit Source pin + 零 operation：只改变未来 binding relation，不因 pin 本身强制复制一个同值 Profile row；
-- 任何有效 ADD / SET / CLEAR 等 local operation：按对应 owner 的 materialization 规则投影；
+- Compat 即使完全跟随 Species、最终值完全相同，也保留自己的 Affinity identity row；
+- Component/Profile 可以按明确 Source / lineage 复用；
 - same-value SET 仍是 SET，不能因 payload 相同折回继承；
-- payload 相等也不能把 pass-through row 误认成 Editor-owned row；projection reuse / cleanup 必须基于 lineage / ledger ownership，而不是数值或 name 相似度。
+- V1.0 不因为 payload / name 相似就自动 dedupe Production rows。
 
-### 12.5 Partial / Unverifiable Write
+### 12.5 Local write failure
 
-V1 不接受“成功一半”。
+Production create / update 只要任一步写入、reread 或 verify 失败，本次 Publish 即失败，并保留明确错误信息。
 
-若 writeback partial 或 final verification 不可证明：
+若新建 row 需要 Production `row_id`：
 
-- Publish 失败；
-- 不自动采纳当前 Production 为新 baseline；
-- 后续 Publish 保持 BLOCK，直到 whole Production 回到可信 baseline；
-- recovery / reconcile 不在 V1 内自动完成。
+```text
+create
+→ reread
+→ 唯一识别 row_id
+→ 更新本地 mapping
+→ verify
+```
 
-具体产品交互见 [secondary-surfaces.md §7](secondary-surfaces.md#7-publish发布到生产配置)。
-
-### 12.6 Create-from-absent row identity
-
-对于 system default Affinity 或后续固定 Compat Mode 这类 `row_id = null` 的新 row：
-
-- `row_key` 是 Editor durable identity；
-- Production create 成功后，必须 reread 得到唯一 `row_id`；
-- `row_id` mapping 必须回填到 Editor durable metadata；
-- 只有 Production verify 与 mapping durable save 都成功，本次 create-from-absent 才可视为 Publish success。
-
-如果 Production row 已创建，但 `row_id` 回填或 final verification 失败，本次按 partial / unverifiable failure 处理；在恢复可信 `row_key ↔ row_id` 映射前，不允许下一次 blind create 同一语义 row。
+未完成这条链路不得宣告成功，也不得 blind recreate。
 
 ## 13. V1 Semantic Negative List
 
