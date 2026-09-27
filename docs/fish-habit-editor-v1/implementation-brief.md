@@ -13,13 +13,12 @@ G1–G5 不表示 Product Contract 尚未闭合；它们只确认冻结语义如
 ## 1. V1 最小闭环
 
 ```text
-Fish Basic
-→ 选择已有 Species
-→ 若无 Habit：创建 Species Base + 系统默认 Affinity projection
-→ Species Base / 已有 Compat Mode Authoring
-→ Shared Template
+existing Editor Species Base / Compat Subject
+→ Component Source（Shared Template / Existing Production）
+→ Authoring
 → Validation / Resolve
 → Publish
+→ local Production working tree
 ```
 
 V1 不实现：
@@ -33,17 +32,13 @@ V1 不实现：
 
 ## 2. Species Catalog integration
 
-Fish Habit Editor 读取 authoritative Fish Basic：
+Fish Habit Editor 只读 authoritative Fish Basic，用于已有 Subject 的 Species identity / display：
 
 - `species_key` 使用 Fish Basic 稳定 ID；
 - display name 只用于 UI；
 - Habit Editor 不写 Fish Basic；
 - 已有 Species Base 的 `species_key` 若在当前 Fish Basic 中失效，产生 `BROKEN_SPECIES_REF`，允许 tolerant load 但 Publish BLOCK，不按名称自动 remap；
-- 已有 Editor Species Base → 进入正常左栏；
-- 无 Editor Species Base + 无 Production FishEnvAffinity footprint → 可通过“开始配置其他鱼种”创建；
-- 无 Editor Species Base + 已有 Production FishEnvAffinity footprint → 标记 `LEGACY_UNIMPORTED`，禁止 fresh create，先走 bounded bootstrap / migration。
-
-必须保证同一 `species_key` 不能重复创建 Species Base；create commit 前再次做 uniqueness / revision check，并发冲突时刷新为已经存在的 Subject。
+- V1.0 不提供 Species Base creation，也不提供“开始配置其他鱼种”。
 
 ### 2.1 Existing Production ingress
 
@@ -65,42 +60,30 @@ V1 产品不提供 migration UI，但已有 Production 进入 Editor 时必须�
 
 不得因为一次 V1 Publish 只覆盖部分 Species，就把其它未迁移 legacy rows 从 Production 中删除。
 
-## 3. Species Base creation transaction
+## 3. V1.0 existing Subject / Source baseline
 
-创建输入只有五个 binding：
+普通 Authoring 开始前，目标 Fish 必须已经具备 Editor durable Species Base；需要编辑的 Compat row 也必须经过 ingress mapping 进入 durable state。
+
+V1.0 不提供 Species Base creation transaction。
+
+Component Source 实现必须支持两类显式 binding：
 
 ```text
-Temperature Source
-Structure Source
-Feeding Layer Source
-Time Period Source
-Policy Template
+Shared Template
+Existing Production Source
 ```
 
-提交前校验：
+Existing Production Source：
 
-- 五个 binding 都存在且当前可选；
-- 四个 Component 可以 Resolve 完整 Profile；
-- Policy 可以 Resolve 完整 Effective Policy；
-- resulting Species Base 没有 blocking validation error；
-- `species_key` 尚无 Species Base；
-- Production 不存在该 Species 的未导入 FishEnvAffinity footprint。
+- 从 verified Production baseline 读取；
+- 只暴露与当前 Component Kind schema-compatible 的 existing / pass-through rows；
+- 不按当前 Species / Quality 推导 owner；
+- UI 直接使用 Production row 的真实英文 `name`；
+- durable binding 记录真实 stable physical identity / key；
+- 作为只读兼容 Source 使用，不因被绑定就转移为 Editor-owned mutable row；
+- 本次 Publish 生成的 managed projection 不自动进入 Existing Production Source candidate set。
 
-一次 atomic transaction 同时创建：
-
-1. Species Base Record；
-2. **恰好一个**系统默认 Affinity projection record / ledger entry。
-
-Bootstrap / migration 载入既有 Species Base 时也必须建立同一 invariant：每个 Species Base 恰好一个 system default Affinity projection。
-
-初始化 transaction 不写：
-
-- ADD / SET / CLEAR；
-- Role override；
-- fail_env_coeff override；
-- Quality / StockRelease binding。
-
-创建成功后直接进入普通 Species Base Authoring。
+特殊习性还允许 `FOLLOW_SPECIES`，并与 explicit Template / Existing Production pin 保持正交。
 
 ## 4. System Default Affinity projection
 
@@ -147,7 +130,7 @@ fail_env_coeff     = absent
 
 V1 不实现 Species Base / system default Affinity 的 Archive / Delete。
 
-原因：default Affinity 可能已经被 StockRelease / FishRelease 域引用，而 Habit Editor 不拥有完整跨域引用生命周期。V1 create 是显式 atomic action；创建后只能继续编辑和发布，删除留到具备 cross-domain reference guard 的后续能力。
+原因：default Affinity 可能已经被 StockRelease / FishRelease 域引用，而 Habit Editor 不拥有完整跨域引用生命周期。V1.0 只编辑既有 / 已迁入 Subject；删除仍留到具备 cross-domain reference guard 的后续能力。
 
 ## 5. Existing Compat Mode
 
@@ -237,44 +220,49 @@ Partial / unverifiable write 不自动建立新 baseline。
 ## 9. 推荐实现顺序
 
 ```text
-1. Fish Basic read + Species Base lookup
-2. Species Base create + default Affinity ledger shell
-3. existing Species Base Authoring
-4. existing Compat Mode Authoring
-5. Shared Template create / edit / propagation
-6. Resolve
-7. Publish
-8. V1.0.1 fixed Compat Mode create
+1. load existing Authoring working tree
+2. Fish Basic read + existing Species Base lookup
+3. Existing Production baseline / source adapter
+4. existing Species Base Authoring
+5. existing Compat Mode Authoring
+6. Shared Template create / edit / propagation
+7. Resolve
+8. Publish → Production working tree
+9. Electron host / portable workspace packaging
+10. V1.0.1 fixed Compat Mode create
 ```
 
-其中 1–7 构成 V1；8 不阻塞 V1 Freeze。
+其中 1–9 构成 V1.0；10 不阻塞 V1.0 Freeze。
+
+Workspace / Electron 物理边界见 [workspace-and-delivery.md](workspace-and-delivery.md)。
 
 ## 10. V1 验收最小样例
 
 至少覆盖：
 
-1. 选择 Fish Basic 中 `AVAILABLE_NEW` 的 Species；并验证 `LEGACY_UNIMPORTED` Species 不能 fresh create；
-2. 用五个既有 Source / Policy 创建 Species Base，并同时得到且仅得到一个 system default Affinity ledger entry；
-3. 默认 Affinity 不出现在 Mode 列表；
-4. 修改 Species Base 字段并 Autosave；
-5. 从当前 Component 提取 Shared Template；
-6. 将 Fish Source 改绑到模板并经过 Candidate；
-7. Resolve 解释最终值；
-8. Publish 创建 / 更新需要的 Production projection；
-9. reread / verify 成功；
-10. StockRelease 域可以使用默认 EnvAffinity identity，但 Habit Editor 本身没有创建任何 StockRelease 关联；
+1. 从 authoring Git working tree 载入已有 Species Base / Compat Subject；
+2. Shared Template 与合法 Existing Production row 都可以成为 Component Source；
+3. Existing Production Source Picker 只按 Component Kind / schema legality 筛选，不按当前 Species / Quality 推 owner；
+4. Existing Production Source 直接显示真实 Production 英文 `name`；
+5. 修改 Species Base 字段并 Autosave 到 authoring working tree；
+6. 从当前 Component 提取 Shared Template；
+7. 将 Fish Source 改绑到 Template / Existing Production Source 并经过 Candidate；
+8. Resolve 解释最终值；
+9. Publish 写入 production Git working tree，并完成 reread / whole-output verify；
+10. Publish 不自动 `git commit` / `git push`；
 11. system default Affinity 不被编码成 young / mature bucket；
-12. Species Base / default Affinity 在 V1 没有 Archive / Delete action；
+12. Species Base / default Affinity 在 V1.0 没有 Create / Archive / Delete action；
 13. Fish Basic 删除 / 断开的 `species_key` 触发 `BROKEN_SPECIES_REF` 并阻断 Publish；
-14. create-from-absent row 只有在 Production reread + verify + `row_id` durable backfill 全部成功后才算 Publish success。
+14. Electron ZIP 中 app / authoring / production 为 sibling，authoring 与 production 各自保留 Git metadata；
+15. mutable Authoring / Production data 不打进 Electron `app.asar`。
 
-V1 不以 arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为验收前提。
+V1.0 不以 Species Base creation、arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为验收前提。
 
 ### 10.1 还应覆盖的 Contract 验收
 
 除 Golden Path 外，至少再覆盖：
 
-- `LEGACY_UNIMPORTED` Species 不能 fresh create；
+- 未进入 Editor durable state 的 Species 在 V1.0 普通 UI 中没有 fresh-create 入口；
 - multi-row same-Compat legacy ingress 被 migration blocker 拒绝，而不是自动聚合；
 - unmapped Affinity 不会仅因“已存在”就进入 Compat Subject；
 - Species 只有 Species Base / 常规习性 + `young` 特殊习性、没有 `mature` row 时仍是完整合法状态；UI 不显示“缺少大个体”错误或占位要求；
@@ -300,8 +288,8 @@ V1 不以 arbitrary Mode creation、Family、Quality、Bake 或 reconcile 作为
 以下内容对 V1 已有唯一 Contract，不应在落码时重新设计：
 
 - Species identity 来自 Fish Basic；
-- Species Base creation = 五 binding atomic create；
-- 每个 Species Base 恰好一个 hidden system default Affinity projection；
+- V1.0 只编辑已有 / 已迁入 Species Base，不提供 Species Base creation；
+- 每个进入 V1.0 的 Species Base 恰好一个 hidden system default Affinity projection；
 - default Affinity 不是业务 Mode、不是第二个 Authoring Subject；
 - V1 只编辑既有 Compat Mode；V1.0.1 才补固定 young / mature create；
 - Shared Template create / extract / propagation / lifecycle；
