@@ -135,7 +135,7 @@ V1 当前沿用两个既有 physical Compat slot：
 
 进入 V1 Editor 前，existing Production ingress 必须已经把兼容 row **无歧义映射到其中一个 physical slot**。每个 Species × Compat slot 最多一条可编辑 row。
 
-产品层不再把这两个 slot 表达成一套必须穷举 Species 生命周期的“幼年 / 成年及以上”完整分类。V1 UI 将它们放在 **“中鱼习性模式”** 下，并投影为：
+产品层不把这两个 slot 表达成一套必须穷举 Species 生命周期的完整分类。V1 UI 将它们放在 **“中鱼习性模式”** 下，并投影为：
 
 - `young` → **小个体**；
 - `mature` → **大个体**。
