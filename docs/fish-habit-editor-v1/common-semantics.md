@@ -160,19 +160,21 @@ Source 变化不自动清理 Operation；Operation 变化不自动换 Source。
 V1.0 每个 Component 的显式 Source 只有两类：
 
 1. **Shared Template**；
-2. **Existing Production Source**。
+2. **Imported Source Snapshot**（UI：**已有数据 · 兼容**）。
 
-Existing Production Source 是过渡期兼容来源，来自当前 verified Production baseline 中**合法的同 Component Kind existing / pass-through row**。
+Imported Source Snapshot 是通过显式 bootstrap / import 从既有 Production 数据**冻结并写入 Authoring durable state** 的兼容 Source。它不是对 `production/` working tree 的实时引用。
 
 规则：
 
 - Shared Template 是长期主路径；
-- Existing Production Source 是只读兼容依赖，不因此成为 Shared Asset；
-- Picker 展示所有合法同 Kind Existing Production rows，不按当前 Species / Quality 推导“归属关系”；
-- UI 直接显示 Production row 的真实英文 `name`，不生成新的中文解释名或“某鱼现有数据”别名；
-- durable binding 使用真实稳定 physical identity / key；display name 不成为第二个 Editor identity；
-- 选择 Existing Production Source 不自动把该 Production row 变成 Editor-owned mutable row；
-- 本次 Publish 新生成的 Editor-managed output 不自动回流为新的 Source candidate，避免 output → source 的隐式循环；
+- Imported Source Snapshot 是 Authoring Store 中的只读兼容 Source，不因此成为 Shared Asset；
+- 日常 Edit / Resolve 只读取 Authoring durable state，不为了 Source resolution 实时读取 Production working tree；
+- bootstrap / import 可以从合法的同 Component Kind Production row 生成 snapshot；
+- snapshot 保留原 Production 英文 `name`、原始 row identity / generation 等 provenance metadata，用于展示与追溯；
+- UI 直接显示保留下来的原 Production 英文 `name`，不生成新的中文解释名或“某鱼现有数据”别名；
+- durable Source binding 指向 **Authoring 内稳定 snapshot identity**；原 Production row identity 只是 provenance，不是日常 binding target；
+- Production 后续变化不会静默改变已导入 snapshot；需要更新时必须经过新的显式 import / bootstrap / reconcile 流程；
+- Publish 新生成的 Editor-managed Production output 不自动回流为 Source Snapshot，避免 output → source 隐式循环；
 - V1.0 不提供外部生态数据库 Import / Reimport 来生成新的 Concrete Source。
 
 ### 2.3 Species Base / Compat Source relation
@@ -180,13 +182,13 @@ Existing Production Source 是过渡期兼容来源，来自当前 verified Prod
 Species Base 每个 Component 可以显式选择：
 
 - 合法 Shared Template；
-- 合法 Existing Production Source。
+- 合法 Imported Source Snapshot。
 
 Compat Mode 每个 Component 可以：
 
 - 跟随基础习性；
 - 显式选择合法 Shared Template；
-- 显式选择合法 Existing Production Source。
+- 显式选择合法 Imported Source Snapshot。
 
 因此 Compat 的 FOLLOW 与“本层显式 pin 某个 Source”仍是两种不同 durable intent；显式 pin 不要求 Source 必须来自 Template。
 
@@ -210,7 +212,7 @@ FOLLOW ↔ explicit pin 改变未来传播行为，因此是真实 durable mutat
 Golden Path 中：
 
 - 正常 V1.0 Authoring 的四个 Component 应能 Resolve 完整 Profile；
-- 普通 Source Selector 只选择能形成合法 Profile 的 Shared Template / Existing Production Source；
+- 普通 Source Selector 只选择能形成合法 Profile 的 Shared Template / Imported Source Snapshot；
 - V1 没有“删除 Profile / 清空 Source”作者动作。
 
 因此正常 V1 Authoring 不提供把一个 present Profile 主动变成 absent 的入口。
