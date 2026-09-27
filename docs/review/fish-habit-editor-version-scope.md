@@ -287,7 +287,7 @@ Family / Preset 若进入，只作为初始化便利，不形成长期 parent re
 
 ### 5.2 Engagement Mode Creation
 
-在 V1.0.1 固定幼年 / 成年及以上创建之外，支持：
+在 V1.0.1 fixed `young / mature` slot（UI：幼年 / 大个体）创建之外，支持：
 
 - 新建真正需要的任意 Engagement Mode；
 - Mode identity / lifecycle；
@@ -361,7 +361,7 @@ V1 的兼容 scope UI 不能被用来反推 V2 Routing 参数形态。
 优先顺序：
 
 1. **先闭合 Species Base Creation + Existing Compat Authoring；**
-2. **V1.0.1 只补固定幼年 / 成年及以上 Compat Mode Creation；**
+2. **V1.0.1 只补 fixed `young / mature` Compat slot Creation（UI：幼年 / 大个体），且不要求成对创建；**
 3. **再提升批量 Authoring / Persistence 效率；**
 4. **再进入任意 Engagement Mode / 高级初始化；**
 5. **再接外部数据与 reconcile；**
