@@ -566,6 +566,8 @@ Blocker 列表使用人类 breadcrumb：
 - generation 无法读取 / 无法验证；
 - current Production 与 expected baseline 不一致。
 
+V1 的 expected baseline 可以包含尚未 import 到 Editor 的 pass-through legacy rows。它们仍受 whole-generation guard 保护，但不会因此变成 Editor Authoring Truth。Publish 只能替换 ownership 可证明的 Editor-managed projection，并把 bound baseline 中的 pass-through rows 原样带入 expected output；不得因为“Editor 不认识”就清掉 legacy row。
+
 Blocker 文案：
 
 ```text
@@ -638,7 +640,9 @@ Preflight 必须绑定一个 exact Editor durable revision 和 expected Producti
 
 ### 7.7 No-op Publish
 
-V1 不维护“已发布 / 有未发布修改”的 durable 状态，但可以在 Preflight 中比较：
+V1 不维护“已发布 / 有未发布修改”的 durable 状态，但可以在 Preflight 中比较。
+
+当 Production 只包含 Editor-managed projection 时，可近似理解为：
 
 ```text
 materialize(current durable revision)
@@ -646,7 +650,21 @@ vs.
 current verified Production
 ```
 
-如果完整 Production projection 已完全一致：
+当还存在 pass-through legacy / external rows 时，真正比较的是：
+
+```text
+expected full Production
+=
+verified pass-through baseline
++
+materialize(current durable revision) 的 managed projection
+
+vs.
+
+current verified Production
+```
+
+如果完整 expected Production 已完全一致：
 
 ```text
 当前生产结果已与 Editor 一致
@@ -678,7 +696,7 @@ executor 不执行无意义 write。
 
 1. writeback 完成；
 2. 重新读取**整组 Production generation**成功；
-3. reread 后的 Production 与本次预期 materialized output 验证一致；
+3. reread 后的 Production 与本次预期 full output 验证一致——包括 managed projection 精确匹配，以及 bound pass-through set 未被意外改写；
 
 才显示：
 
