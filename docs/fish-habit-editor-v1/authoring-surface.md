@@ -1,7 +1,7 @@
 # Fish Habit Editor V1｜Fish Authoring Surface Contract
 
 > Status: Current Surface Contract for V1  
-> 本文只定义 Fish Subject 的核心编辑屏与 Species Habit initialization。Shared Templates 见 [shared-assets.md](shared-assets.md)，Resolve / Publish 见 [secondary-surfaces.md](secondary-surfaces.md)；公共 Source / Operation / Policy / Validation 语义由 [common-semantics.md](common-semantics.md) 维护。
+> 本文只定义 V1.0 已有 Fish Subject 的核心编辑屏。V1.0 不提供 Species Base initialization。Shared Templates 见 [shared-assets.md](shared-assets.md)，Resolve / Publish 见 [secondary-surfaces.md](secondary-surfaces.md)；公共 Source / Operation / Policy / Validation 语义由 [common-semantics.md](common-semantics.md) 维护。
 
 ## 1. 核心一屏
 
@@ -48,59 +48,18 @@ FISH                  鱼习性 › 大口黑鲈 › 特殊习性            结
 
 中栏不重复 Fish / Mode selector。
 
-### 2.1 开始配置其他鱼种
+### 2.1 V1.0 Subject coverage
 
-FISH 主列表默认可以只展示已有 Habit 的 Species，保持工作列表简洁。
+V1.0 左栏只显示已经进入 Editor durable state 的 Fish / Subject。
 
-提供：
+不提供：
 
-```text
-[ + 开始配置其他鱼种 ]
-```
+- “开始配置其他鱼种”；
+- Species Base initialization；
+- 从 Fish Basic 直接 fresh create Habit；
+- 把未迁移 Production footprint 自动解释成新 Subject。
 
-点击后搜索 Fish Basic / authoritative Species Catalog 中尚未建立 Editor Species Base 的 Species，并先区分是否已有 Production Habit footprint：
-
-- 无 Editor Base + 无 Production FishEnvAffinity → 可开始配置；
-- 无 Editor Base + 已有 Production FishEnvAffinity → 显示“存在旧习性数据 · 需迁移”，不可 fresh create。
-
-选择 Species 后进入单屏初始化：
-
-```text
-开始配置 Atlantic Salmon
-
-Temperature Source    [ ... ]
-Structure Source      [ ... ]
-Feeding Layer Source  [ ... ]
-Time Period Source    [ ... ]
-Policy Template       [ ... ]
-
-[开始配置]
-```
-
-五项全部有效、且 resulting Species Base 没有 blocking validation error 后，一次 atomic create **Species Base + 系统默认 FishEnvAffinity 投影壳**；成功后直接进入该 Species 的常规习性 Authoring。
-
-初始化页只负责选择已有合法 Source / Policy Template，不提供字段 Operation、Role 或 coeff 编辑；这些在创建后的正常 Authoring 中完成。
-
-- 不创建 Species identity；
-- 不创建用户可见的新 Mode；只自动建立系统默认 Affinity 投影；
-- 不保存半完成 draft；
-- 不要求 Family / Preset；
-- 不在初始化页创建 Template；Template creation 走 Shared Assets；
-- Source picker 若需要新 Template，可进入 Shared Assets；当前初始化表单只以内存态保留 Species 与已选 binding，创建/取消后返回。这个 return state 不持久化，reload / 退出工作区可丢弃；
-- 不编辑 Fish Basic 基础字段、Quality 或 StockRelease 关系。
-
-创建后即使当前 Species 尚无任何 Compat Mode，常规习性仍可正常 Author；系统默认 Affinity 不作为左栏 Mode child 重复显示。
-
-若没有额外 Compat Mode，左栏只需：
-
-```text
-▼ Atlantic Salmon
-  常规习性
-```
-
-不显示“尚无特殊习性”错误态，也不把系统默认 Affinity 伪装成业务 Mode。
-
-V1 不提供 Species Base / system default Affinity 的 Archive / Delete。误建对象不通过 Habit Editor 做跨域删除；后续只有在具备 StockRelease / FishRelease 安全引用检查后才讨论生命周期动作。
+已有 Production 的 bootstrap / migration 在进入普通 Editor 前完成。若目标 Species 尚未进入 Editor durable state，V1.0 普通作者界面不为它建立半成品或 Setup flow。
 
 ## 3. Context Header
 
@@ -130,6 +89,7 @@ Card 职责是“摘要 + Focus 入口 + Source mutation”，不是完整字段
 
 来源
 [ Heavy Cover ▾ ]
+共享模板
 
 本层状态
 有本层调整
@@ -147,6 +107,53 @@ Wood        设置为 0.60                 0.60
 - Diagnostic badge → 选中该 Component 的相关诊断。
 - Role badge 只读显示 Effective Role；不提供 dropdown / toggle，也不作为第二个 Policy mutation entry。
 - Card 不直接编辑 field numeric value。
+
+### 4.1 Source Picker｜一个入口，两类显式来源
+
+Component Card 的 Source Selector 是唯一 Source mutation entry。Picker 不把“来源类型”拆成第二个独立字段，也不在 Focus Editor 再放一个 Source selector。
+
+V1.0 显式 Source candidate 分两类：
+
+1. **共享模板**：长期主路径，可复用、可管理的 Authoring Source；
+2. **已有生产数据 · 兼容**：过渡期兼容来源，来自 verified Production baseline 中合法的同 Component Kind existing / pass-through row。
+
+对于特殊习性，Picker 顶部还可以有：
+
+```text
+跟随常规习性
+```
+
+因此推荐结构：
+
+```text
+选择结构习性来源
+
+跟随常规习性                 # 仅特殊习性
+
+共享模板
+────────────────
+重障碍区          Heavy Cover
+岩石岸线          Rocky Shore
+
+已有生产数据 · 兼容
+────────────────
+Bass_Struct_01
+Trout_Struct_A
+Legacy_Rocky_03
+```
+
+产品规则：
+
+- Shared Template 排在前面，表达长期主路径；Existing Production 放在后面，表达 transition compatibility；
+- 不使用两个平级 Tab 来暗示两套长期 Source System；
+- Existing Production 直接显示 Production row 的真实英文 `name`；不生成“大口黑鲈现有结构数据”之类推导名称；
+- Picker 展示**所有合法的同 Kind Existing Production Source**，不按当前 Species / Quality 推导 ownership 或做隐式筛选；
+- Source binding 使用真实稳定 physical identity / key；display name 不是额外 Editor identity；
+- Existing Production Source 不进入“共享资产”左栏，不获得 Template lifecycle / metadata；
+- 当前 Source 若为 Template，可显示“共享模板”；若为 Existing Production，可显示“已有生产数据 · 兼容”；
+- Source Change 无论跨不跨类型，都继续走同一套 staged Candidate。
+
+V1.0 不把本次 Publish 新生成的 Editor-managed Production projection 自动发现为新的 Existing Production Source candidate，避免 output → source 隐式循环。Existing Production Source 只消费当前 verified baseline 中明确允许作为兼容来源的 existing / pass-through row。
 
 ## 5. Focus Editor states
 
