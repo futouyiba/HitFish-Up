@@ -171,7 +171,7 @@ Field Authoring 优先表现为宽屏行式编辑，不使用二次 Drawer / Mod
 ```text
 结构习性
 
-当前来源：Heavy Cover                                  [查看模板]
+当前来源：Heavy Cover · 共享模板                     [查看模板]
 
 字段       来源值       本层操作                 参数       有效值
 ──────────────────────────────────────────────────────────────
@@ -184,6 +184,7 @@ Grass      0.30        [仅用当前来源 ▾]                     0.30
 - Source value / inherited operation / Effective Value 是解释性 projection。
 - 本层 Operation 与参数是 authoring input。
 - Focus Editor 不出现 Source mutation control。
+- 当前 Source 是 Shared Template 时可提供 `查看模板`；当前 Source 是 Existing Production 时只显示真实 Production name + “已有生产数据 · 兼容”，V1.0 不从这里建立第二套 Production 编辑入口。
 - 一屏尽量同时看到该 Component 的全部字段，支持连续扫描与人工批量编辑。
 
 ## 7. Operation vocabulary projection
