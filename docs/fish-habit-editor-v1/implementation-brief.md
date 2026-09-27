@@ -123,7 +123,7 @@ fail_env_coeff     = absent
 - system default Affinity 的物理表示不能复用 `young` / `mature` bucket 语义；
 - Publish 前可以处于未物化状态；
 - Publish 后得到 Production row identity；
-- ordinary UI 不把它列为“特殊习性” child；
+- ordinary UI 不把它列为“中鱼习性模式” child；
 - StockRelease / FishRelease 可以在自己的配置中引用其 Production EnvAffinity；
 - Habit Editor 不写这条外部关联。
 
