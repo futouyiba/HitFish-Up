@@ -109,7 +109,7 @@ Existing Production Profile catalog：
 
 Compat Subject 额外允许“跟随基础习性”。
 
-Source change 继续使用 Candidate Preview，因为它会改变整个 Component 的计算基准；这与多人协同无关，不应删除。
+Source change 继续使用 Candidate Preview，因为它会改变整个 Component 的计算基准。
 
 ## 5. Single-writer persistence
 
@@ -151,7 +151,7 @@ Template create 与 Fish binding 必须是两笔独立 mutation：
 
 ## 7. Resolve
 
-Resolve 只消费最近成功 durable revision。
+Resolve 只消费最近一次成功保存的 durable state。
 
 输出：
 
@@ -182,9 +182,6 @@ V1.0 使用**非破坏性 patch**：
 
 - 不删除 Editor 不认识的 row；
 - 不做 orphan GC / obsolete-row cleanup；
-- 不做 managed-vs-pass-through ownership graph；
-- 不做 whole-generation concurrent baseline protocol；
-- 不做多人 revision R / R+1；
 - touched output reread + verify 仍是 success 必要条件。
 
 如果 materialization 需要新建 Production row 并取得 `row_id`：
