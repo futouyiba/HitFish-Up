@@ -344,7 +344,7 @@ Profile absent / 无法完整 Resolve，或 Policy 无法形成完整 Effective 
 Clone / Save As 复用 bounded Template creation flow：
 
 - Kind 锁定为当前 Template Kind；
-- complete value 复制当前**最近一次成功 durable**的 Template value；active Value Candidate 时 Clone / Save As 不可用；
+- complete value 复制当前**最近一次成功保存**的 Template value；active Value Candidate 时 Clone / Save As 不可用；
 - 创建表单要求确认新的中文名 / 英文名，可基于当前名称给出“副本 / Copy”等建议，但不能直接复用到会造成 schema / naming collision 的非法名称；
 - atomic create 新 Template identity，成功后进入新 Template Context；
 - 两者以后完全独立；
@@ -391,8 +391,6 @@ ARCHIVED
 满足后执行本地 atomic delete。
 
 Hard Delete 只删除 Authoring Template asset。V1.0 Publish 不做 orphan GC / obsolete-row cleanup，因此已经存在的旧 Production Profile row 可以暂时保留，不在 Hard Delete 时联动清理。
-
-## 13. Replace References
 
 ## 13. Replace References
 
