@@ -136,6 +136,7 @@ V1.0 不提供 migration UI；bootstrap / migration 是进入 ordinary Authoring
 V1 不承诺：
 
 - 创建新的 Species identity；
+- V1.0 创建新的 Species Base / “开始配置习性”；
 - Family / 鱼家族初始化；
 - Species Preset / 鱼家族预设；
 - 新建 Engagement Mode；
@@ -234,17 +235,17 @@ JSON canonical persistence
 - 聚类 / Family 初始化研究（只作后续 Topology Creation 输入，不进入 V1 Shared Assets）；
 - Golden Seed / migration tooling 的工程化增强。
 
-V1.1 不扩展任意 Engagement Mode / Routing；Species Base initialization 已属于 V1，固定 Compat Mode creation 已属于 V1.0.1。
+V1.1 不扩展任意 Engagement Mode / Routing，也不把 Species Base creation 偷渡成“效率功能”；固定 Compat Mode creation 已属于 V1.0.1。
 
 ## 5. V1.2｜Advanced Mode & Data Integration
 
-这一阶段不再解决 Species Base 是否能从 Editor 创建——该闭环已经在 V1 完成。这里开始处理更高级的初始化效率、任意 Engagement Mode 与外部数据接入。
+V1.2 才允许重新打开 Species Base creation / initialization：先闭合“如何创建一个新的常规习性 Subject”本身，再讨论 Family / Preset / 外部数据等高级初始化效率。这里同时开始处理任意 Engagement Mode 与外部数据接入。
 
 ### 5.1 Advanced Fish Initialization
 
 V1 已支持从 authoritative Species Catalog 创建完整 Species Base。
 
-这一阶段只研究更高级的初始化效率，例如：
+若 Species Base creation 在该阶段进入，先建立最小 creation contract；在此基础上再研究更高级的初始化效率，例如：
 
 - Family / 聚类辅助；
 - Species Preset；
