@@ -14,7 +14,7 @@
 
 ```text
 existing Editor Species Base / Compat Subject
-→ Component Source（Shared Template / Existing Production）
+→ Component Source（Shared Template / Imported Source Snapshot）
 → Authoring
 → Validation / Resolve
 → Publish
@@ -53,20 +53,21 @@ Component Source 统一支持：
 
 ```text
 Shared Template
-Existing Production Source
+Imported Source Snapshot
 ```
 
-Existing Production Source adapter：
+Imported Source Snapshot adapter：
 
-- 从当前本地 Production working tree 读取；
+- 从 authoring durable state 读取，不从 Production working tree 实时枚举；
 - 只按 Component Kind / schema legality 枚举候选；
 - 不按当前 Species / Quality 推导 owner；
-- UI 直接显示 Production row 的真实英文 `name`；
-- durable binding 记录真实稳定 physical identity / key；
-- 在当前 workspace load / explicit refresh 时形成 Source catalog；
-- Publish 不在同一事务中把刚写出的 row 动态注入当前 Picker。
+- UI 直接显示 snapshot 保存的原 Production 英文 `name`；
+- durable binding 使用 Authoring 内 stable snapshot identity；
+- snapshot 可保留原 Production row id / generation 等 provenance，但这些不是日常 binding target；
+- Production 文件变化不会自动改变 Source catalog；
+- 如需承接新的 Production row，由 Editor 外的显式数据准备 / import / bootstrap 先生成 / 更新 snapshot。
 
-中鱼习性模式还允许 `FOLLOW_SPECIES`，并与 explicit Template / Existing Production pin 保持正交。
+中鱼习性模式还允许 `FOLLOW_SPECIES`，并与 explicit Template / Imported Snapshot pin 保持正交。
 
 ## 4. Existing System Default Affinity
 
@@ -174,7 +175,7 @@ create → reread → unique row_id → local mapping → verify
 1. load existing Authoring working tree
 2. Fish Basic + existing Species Base / Compat loading
 3. Species Base / Compat Authoring
-4. Source catalog：Shared Template + Existing Production Source
+4. Source catalog：Shared Template + Imported Source Snapshot
 5. Shared Template create / edit / propagation
 6. Resolve
 7. Web Dev Server 下完成 Non-destructive Publish + touched-output verify
@@ -195,18 +196,19 @@ Workspace / Electron 物理边界见 [workspace-and-delivery.md](workspace-and-d
 1. 从 authoring working tree 载入已有 Species Base / Compat Subject；
 2. default Affinity 不作为第二个业务 Subject；
 3. `young / mature` UI 显示“小个体 / 大个体”，缺任一 slot 都合法；
-4. Shared Template 与合法同 Kind Existing Production row 都可以成为 Component Source；
-5. Existing Production Source 直接显示真实英文 `name`，不推导 Fish ownership；
-6. Source Change Candidate 正确展示 before / after，原有 Operation 不被偷偷清理；
-7. 普通字段 Autosave 到本地 Authoring state；
-8. Extract / Template edit / propagation 可用；
-9. Resolve 解释最近一次成功保存的 Authoring Truth；
-10. Publish 只 create / update 明确目标 row，其它 Production row 保持不变；
-11. Publish 后 reread touched output 并 verify；
-12. Production working tree 可由外部 Git 直接 diff / commit / merge；Editor 不实现 Git merge；
-13. save / Production write failure 不冒充成功；
-14. V1.0 没有 Species Base fresh-create / migration adjudication UI / Production GC；
-15. Electron ZIP 保持 app / authoring / production sibling，mutable data 不进 `app.asar`。
+4. Shared Template 与合法同 Kind Imported Source Snapshot 都可以成为 Component Source；
+5. Source Picker 不扫描 Production working tree；Imported Source Snapshot 显示其保留的原 Production 英文 `name`，不推导 Fish ownership；
+6. Production 文件变化不会静默改变已导入 snapshot；
+7. Source Change Candidate 正确展示 before / after，原有 Operation 不被偷偷清理；
+8. 普通字段 Autosave 到本地 Authoring state；
+9. Extract / Template edit / propagation 可用；
+10. Resolve 解释最近一次成功保存的 Authoring Truth；
+11. Publish 只 create / update 明确目标 row，其它 Production row 保持不变；
+12. Publish 后 reread touched output 并 verify；
+13. Production working tree 可由外部 Git 直接 diff / commit / merge；Editor 不实现 Git merge；
+14. save / Production write failure 不冒充成功；
+15. V1.0 没有 Species Base fresh-create / migration adjudication UI / Production GC；
+16. Electron ZIP 保持 app / authoring / production sibling，mutable data 不进 `app.asar`。
 
 V1.0 不以 arbitrary Mode creation、Family、Quality、Bake、多人协作、reconcile 或 Production GC 作为验收前提。
 
@@ -220,8 +222,8 @@ V1.0 已冻结的最小语义：
 - Species identity 来自 Fish Basic，只读；
 - system-default Affinity 是已有 Species Base 的 Production projection，不是第二个 Authoring Subject；
 - `young / mature` 是 existing Compat physical slots，UI 映射为“小个体 / 大个体”；
-- Component Source = Shared Template 或同 Kind Existing Production Source；Compat 还可 Follow Species；
-- Existing Production Source 直接显示原英文 `name`，不推导 Fish ownership；
+- Component Source = Shared Template 或同 Kind Imported Source Snapshot；Compat 还可 Follow Species；
+- Imported Source Snapshot 只从 Authoring durable state 读取，显示保留的原 Production 英文 `name`，不推导 Fish ownership；
 - Source / ADD / SET / CLEAR / Policy / Resolve 语义保持现行 Contract；
 - Shared Template create / extract / propagation / lifecycle 保留；
 - Publish = 单机非破坏性 create/update + touched-output reread/verify；
@@ -239,8 +241,9 @@ V1.0 已冻结的最小语义：
 
 **G2｜Source catalog adapter**
 
-- 为每个 Component Kind 枚举合法 Existing Production rows；
-- 暴露稳定 row identity + 原始英文 `name` + typed payload；
+- 为每个 Component Kind 从 Authoring durable state 枚举合法 Imported Source Snapshot；
+- 暴露 stable snapshot identity + 原 Production 英文 `name` + typed payload + 必要 provenance；
+- 不在普通 Source catalog 阶段读取 Production working tree；
 - 不实现 current-Species ownership 推断；
 - 与 Shared Template 一起提供统一 Source Picker 数据。
 

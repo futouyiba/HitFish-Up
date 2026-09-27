@@ -126,33 +126,34 @@ Source 变化不自动清理 Operation；Operation 变化不自动换 Source。
 V1.0 每个 Component 的显式 Source 只有两类：
 
 1. **Shared Template**；
-2. **Existing Production Source**。
+2. **Imported Source Snapshot**（UI：**已有数据 · 兼容**）。
 
-Existing Production Source 是过渡期兼容来源，来自当前本地 Production working tree 中**合法的同 Component Kind row**。
+Imported Source Snapshot 是已经冻结在 `authoring/` durable state 中的兼容 Source。它可以由 Editor 外的显式数据准备 / import / bootstrap 流程从既有 Production row 生成，但普通 Authoring **不实时读取 `production/` 作为 Source Store**。
 
 规则：
 
 - Shared Template 是长期主路径；
-- Existing Production Source 是只读兼容依赖，不因此成为 Shared Asset；
-- Picker 展示所有合法同 Kind Existing Production rows，不按当前 Species / Quality 推导“归属关系”；
-- UI 直接显示 Production row 的真实英文 `name`，不生成新的中文解释名或“某鱼现有数据”别名；
-- durable binding 使用真实稳定 physical identity / key；display name 不成为第二个 Editor identity；
-- Existing Production Source 作为只读 compatibility source 使用；
-- Source catalog 在 workspace load / refresh 时建立；Publish 过程中不动态把刚写出的 row 注入当前 Picker，避免同一事务内形成 output → source 循环；
-- V1.0 不提供外部生态数据库 Import / Reimport 来生成新的 Concrete Source。
+- Imported Source Snapshot 是 Authoring Store 中的只读兼容 Source，不因此成为 Shared Asset；
+- Source Picker 只枚举当前 Authoring Store 中合法的同 Component Kind snapshot；
+- snapshot 保留原 Production 英文 `name`、原 row identity / generation 等 provenance，用于展示与追溯；
+- UI 直接显示 snapshot 保存的原 Production 英文 `name`，不生成新的中文解释名或“某鱼现有数据”别名；
+- durable binding 指向 Authoring 内稳定 snapshot identity；原 Production row identity 只是 provenance，不是日常 binding target；
+- Production working tree 后续变化不会静默改变已导入 snapshot；
+- 如需吸收新的 Production 内容，先通过显式外部数据准备 / import / bootstrap 更新 Authoring snapshot；
+- Publish 刚生成的 Production row 不自动回流为新的 Source candidate。
 
 ### 2.3 Species Base / Compat Source relation
 
 Species Base 每个 Component 可以显式选择：
 
 - 合法 Shared Template；
-- 合法 Existing Production Source。
+- 合法 Imported Source Snapshot。
 
 Compat Mode 每个 Component 可以：
 
 - 跟随基础习性；
 - 显式选择合法 Shared Template；
-- 显式选择合法 Existing Production Source。
+- 显式选择合法 Imported Source Snapshot。
 
 因此 Compat 的 FOLLOW 与“本层显式 pin 某个 Source”仍是两种不同 durable intent；显式 pin 不要求 Source 必须来自 Template。
 
@@ -176,7 +177,7 @@ FOLLOW ↔ explicit pin 改变未来传播行为，因此是真实 durable mutat
 - V1 不提供“删除 Profile / 清空 Source”；
 - `Profile absent` 表示没有可消费 Profile；
 - `BROKEN_SOURCE_REF` 表示已有 binding 指向不存在 / 无法解析的 Source；
-- 两者都通过重新选择合法 Source 修复。
+- 两者都通过重新选择合法 Shared Template / Imported Source Snapshot 修复。
 
 ## 3. Component Field Operations
 

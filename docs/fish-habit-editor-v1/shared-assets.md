@@ -16,7 +16,7 @@ Shared Template 是持续共享的 Source Asset。V1 必须支持：
 - Replace References；
 - 查看显式引用与额外跟随使用。
 
-Shared Template 是长期可管理资产；Existing Production Source 不是 Shared Asset，不出现在本 Workspace，也不获得 Template metadata / lifecycle。它只在 Fish Component 的 Source Picker 中作为“已有生产数据 · 兼容”出现。
+Shared Template 是长期可管理资产；Imported Source Snapshot 不是 Shared Asset，不出现在本 Workspace，也不获得 Template metadata / lifecycle。它只在 Fish Component 的 Source Picker 中作为“已有数据 · 兼容”出现，并已经固化在 Authoring durable state 中。
 
 V1.0 不创建 Species Base；Shared Template 是独立的可复用 Source Asset。Template 创建本身不创建或修改 Fish / Mode identity。
 
@@ -441,4 +441,4 @@ V1 Shared Template 不扩展为：
 
 停止线：
 
-> **让作者可以安全创建、提取、编辑、传播和维护可复用 Source Asset；不把 Template Workspace 扩成 Existing Production 浏览器、数据迁移或物种初始化系统。**
+> **让作者可以安全创建、提取、编辑、传播和维护可复用 Source Asset；不把 Template Workspace 扩成 Production 浏览器、数据迁移或物种初始化系统。**

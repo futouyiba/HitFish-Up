@@ -13,7 +13,7 @@ V1.0 是一个 **本地、单机单写者工作区型编辑器**：
 
                     Fish Habit Editor
                            │
-                 Workspace File API
+                      WorkspaceRoot
                     ┌──────┴──────┐
                     ↓             ↓
               authoring/      production/
@@ -23,6 +23,13 @@ V1.0 是一个 **本地、单机单写者工作区型编辑器**：
 ```
 
 Authoring 与 Production 是两个**独立的 sibling Git working tree / repository directory**。它们都保留自己的 Git metadata，用于 pull / diff / commit / merge / history；Habit Editor 不把两者合并成同一个 repo。
+
+方向性固定为：
+
+- 普通 Edit / Resolve / Source Picker 只消费 `authoring/`；
+- Publish / writeback / touched-output verify 访问 `production/`；
+- 如需从旧 Production 承接数据，由 Editor 外的显式数据准备 / import / bootstrap 先冻结进 `authoring/`；
+- `production/` 不是普通 Authoring Source Store。
 
 ## 2. 发布包目录
 
@@ -109,6 +116,19 @@ Execute 时重新读取当前本地 Production working tree，作为本次 patch
 
 UI / domain core 不为 Web 与 Electron 写两套。
 
+两种 Host 必须解析到同一个 Workspace 语义：
+
+```text
+WorkspaceRoot
+├─ authoring/
+└─ production/
+```
+
+- Dev Server 通过启动参数 / 环境配置显式获得 `WorkspaceRoot`；
+- Electron 从 release workspace 解析同一个 `WorkspaceRoot`；
+- Editor Domain 不依赖 `process.cwd()`、源码目录或 Electron app path 猜数据位置；
+- Host 只向统一 Workspace API 提供 `authoringRoot` / `productionRoot`。
+
 推荐宿主边界：
 
 ```text
@@ -126,6 +146,8 @@ server              ↓
 ```
 
 开发阶段可由本地 Web Dev Server 提供 Workspace File API；release 阶段由 Electron main/preload 提供等价的本地文件能力。
+
+正常 Editor 启动只需要打开 `authoringRoot`。执行 Publish / verify 时再访问 `productionRoot`。Production → Authoring 的承接属于显式外部数据准备边界，不混入普通 Source resolution。
 
 Resolver / Validator / Source semantics / Materializer / Publish transaction 必须共享同一 domain implementation；Host adapter 不重新解释业务语义。
 
@@ -150,17 +172,48 @@ production/
 
 Git 是协作与版本管理基础设施；Editor 只负责当前本机 session 的保存、Resolve 与 Publish verify。
 
-## 7. 与 Existing Production Source 的关系
+## 7. Imported Source Snapshot 与 Production 的边界
 
-过渡期允许 Component 显式选择 **Existing Production Source**。
+Production working tree **不是普通 Authoring Source Store**。
 
-Source catalog 从当前本地 `production/` working tree 中读取合法的同 Component Kind rows：
+过渡期若需要继续使用既有 Production Profile，应先在 Editor 外完成显式数据准备：
 
-- 作为只读 compatibility source；
-- 不因此成为 Shared Asset；
-- 不推导“属于哪个 Fish / Quality”；
-- UI 直接显示 Production 原英文 `name`；
-- workspace load / explicit refresh 时重建 catalog；
-- Publish 过程中不动态把刚写出的 row 注入当前 Picker。
+```text
+production/ 中既有 row
+        ↓
+explicit import / bootstrap / preparation
+        ↓
+authoring/ 中 Imported Source Snapshot
+        ↓
+普通 Source Picker / Resolve
+```
 
-这条轻量边界足以避免同一 Publish 事务内形成 output → source 循环，不需要 managed/pass-through ownership graph。
+Imported Source Snapshot：
+
+- 属于 Authoring durable state；
+- 保存冻结的完整 Source value；
+- 保留原 Production 英文 `name`、原 row identity / generation 等 provenance；
+- 日常 binding 指向 Authoring 内稳定 snapshot identity；
+- Production working tree 后续变化不会自动改变 snapshot。
+
+因此 V1.0 的运行时数据方向是：
+
+```text
+日常 Authoring
+authoring/ ↔ Editor
+
+Publish / Verify
+authoring/ → Materializer → production/
+                           ↘ reread touched output
+```
+
+Production → Authoring 不是常规运行通道；若需要发生，只能在显式外部数据准备 / import / bootstrap 边界完成。Source Picker 不扫描 `production/`，Publish 生成的新 row 也不会自动成为 Source。
+
+## 8. Workspace 启动检查
+
+Host 解析出 `WorkspaceRoot` 后：
+
+1. `authoring/` 必须存在且 canonical Authoring persistence 可读取；
+2. 普通 Edit / Resolve 不要求读取 Production Source catalog；
+3. 执行 Publish 时 `production/` 必须存在，并按当前事务要求可读 / 可写；
+4. `.git/` 服务团队协作，但 Git metadata 不是 Editor Truth，也不是 Publish verify 的替代品。

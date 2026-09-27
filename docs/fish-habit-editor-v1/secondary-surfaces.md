@@ -513,6 +513,8 @@ Blocking ERROR 可以来自：
 
 V1.0 不维护 Editor 内的 Production generation / baseline 协议。点击 Execute 时直接重新读取**当前本地 Production working tree**，作为本次非破坏性 patch 的输入。
 
+这里读取 Production 只服务 **Publish materialization / verify**。它不会建立普通 Authoring Source catalog，也不会把 Production 内容反向写入 Authoring Truth。
+
 ### 7.4 Preflight layout
 
 中栏：
