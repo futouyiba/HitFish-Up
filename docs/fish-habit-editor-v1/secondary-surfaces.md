@@ -32,7 +32,7 @@
 
 左栏 Subject Navigation 在两种视角中保持一致。
 
-- 作者在 Resolve 中切换 Fish / 基础习性 / Mode 时，保持“解析预览”视角；
+- 作者在 Resolve 中切换 Fish / 常规习性 / Mode 时，保持“解析预览”视角；
 - Subject 变化后，右栏 Resolve Focus 清空，避免把旧 Subject 的 detail 静默映射到新 Subject；
 - 从 Edit → Resolve 时，如果当前 Focus 属于同一 Subject 且可映射到 Component / Field / Policy，可保留 focus identity；
 - 如果 Edit Focus 处于 Detached 状态，进入 Resolve 时不保留 detached focus；
@@ -64,7 +64,7 @@ Global Topbar 继续只显示全局 Editor 状态和 Publish，不增加第二�
 Context Header 仍使用当前 Subject breadcrumb：
 
 ```text
-鱼习性 › 大口黑鲈 › 中鱼习性模式 › 成年及以上 [兼容]     [编辑] [解析预览]
+鱼习性 › 大口黑鲈 › 特殊习性 › 大个体 [兼容]     [编辑] [解析预览]
 ```
 
 ### 1.5 中栏：Resolved Overview
@@ -182,7 +182,7 @@ Compat Mode：Source pin + 继承 Species operation：
 来源值 0.60
 
 操作
-沿用基础习性 → 调整 -0.20
+沿用常规习性 → 调整 -0.20
 
 结果
 0.60 + (-0.20) = 0.40
@@ -198,12 +198,12 @@ Compat Mode CLEAR：
 本模式设置 → Rock Cover
 来源值 0.60
 
-基础习性操作
+常规习性操作
 调整 -0.20
 
 本模式意图
 仅用当前来源
-→ 已取消基础习性操作
+→ 已取消常规习性操作
 
 结果
 0.60
@@ -238,7 +238,7 @@ Effective Operation relation
 → Effective Value
 ```
 
-不能把“跟随基础习性 Source”和“沿用基础习性 Operation”压成一个模糊的“继承”。
+不能把“跟随常规习性 Source”和“沿用常规习性 Operation”压成一个模糊的“继承”。
 
 ### 2.4 Policy Role 解析说明
 
@@ -250,7 +250,7 @@ Species Base：
 策略模板
 Predator Policy → SECONDARY
 
-基础习性意图
+常规习性意图
 设置为 CORE
 
 最终角色
@@ -263,11 +263,11 @@ Compat Mode inherit：
 策略模板
 Predator Policy → SECONDARY
 
-基础习性
+常规习性
 设置为 CORE
 
 本模式
-沿用基础习性角色
+沿用常规习性角色
 
 最终角色
 CORE
@@ -279,12 +279,12 @@ Compat Mode CLEAR：
 策略模板
 Predator Policy → SECONDARY
 
-基础习性
+常规习性
 设置为 CORE
 
 本模式
 使用策略模板原始角色
-→ 已取消基础习性 Role override
+→ 已取消常规习性 Role override
 
 最终角色
 SECONDARY
@@ -300,7 +300,7 @@ SECONDARY
 策略模板原始值
 0.010
 
-基础习性
+常规习性
 调整 +0.005
 → 0.015
 
@@ -380,7 +380,7 @@ Profile 不删除，也不禁用查看。
 
 若 Resolver 无法给出该字段 / Component 的 Effective 结果，则显示“无法解析”；不得因为某个字段看起来存在 SET 就由 UI 自己假设它可以绕过 broken source。
 
-不 fallback 到基础习性 / 默认 Template / 最近似 Source。
+不 fallback 到常规习性 / 默认 Template / 最近似 Source。
 
 ### 3.7 Cross-field invalid but numerically resolvable
 
@@ -543,7 +543,7 @@ Warnings 不形成 acknowledgement debt，不要求“我已阅读”复选框�
 Blocker 列表使用人类 breadcrumb：
 
 ```text
-大口黑鲈 › 成年及以上 › 结构习性 › Rock
+大口黑鲈 › 大个体 › 结构习性 › Rock
 有效值低于允许范围
 ```
 
