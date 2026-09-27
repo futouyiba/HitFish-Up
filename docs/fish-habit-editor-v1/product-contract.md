@@ -290,28 +290,27 @@ Template 英文名虽然在 Editor 中是可编辑 metadata，但它会影响下
 
 不是 disabled placeholder；没有当前作者价值的入口默认不出现。
 
-__PLACEHOLDER__
-
-
+## 10. Golden Path
 
 ```text
 打开 Editor
-→ 已有 Habit：直接选择 Fish
-→ 无 Habit：从 Fish Basic 选择 Species
-   → 选择四个 Component Source + Policy Template
-   → atomic create Species Base + system default Affinity projection
+→ 选择已有 Habit 的 Fish
 → 左栏选择基础习性 / 已有中鱼习性模式
 → 中栏查看四个 Component + Policy
 → 选择 Component
 → 右栏 Inline Field Authoring
 → 必要时在 Card 换 Source
+   → Shared Template / Existing Production Profile
    → Candidate / Preview / Confirm
 → 普通字段 / Policy Autosave
 → 处理 Validation
 → 解析预览
 → Publish
+   → 非破坏性 create / update Production working tree
+   → reread / verify
+→ 外部 Git diff / commit / merge / push
 ```
 
 V1 Review 的核心问题：
 
-> 在不依赖后续能力的情况下，一个作者能否从 Fish Basic 选择已有 Species，创建或编辑完整 Species Base，并安全地验证、解析和发布；同时继续编辑已有 Compat Mode？
+> 在不引入 Species Base fresh-create、多人协作或 Production GC 的情况下，一个作者能否在本机稳定编辑已有习性、理解结果，并安全地物化到可由 Git 管理的 Production working tree？
