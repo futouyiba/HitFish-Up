@@ -1,75 +1,91 @@
 # 方案三｜实鱼总权重锚点与空鱼权重扩张｜开发需求
 
-> **文档状态：开发需求草案**
->
-> 本文描述方案三的运行逻辑、FishStock 配置改动、区域权重池叠加、与现有挤占 / clipping 的执行顺序，以及调试与测试要求。
->
-> 本文**不负责**说明 `real_fish_weight_anchor` 与 `none_fish_weight_expansion_rate` 应该配置成多少，也不展开 Wolong 配置校验规则；相关内容另写《权重池参数配置与校验指导》。
->
-> 本版本暂不处理交验、服务端权威与跨端一致性改造，后续统一处理。
+> **Document Role：** Development Specification  
+> **Status：** Working / Candidate  
+> **Version：** v0.2  
+> **Last Updated：** 2026-10-15（Asia/Taipei）  
+> **Scope：** 权重池（FishStock）/ 空鱼权重扩张 / 区域权重池叠加  
+> **Authority：** 本文是本期局部开发规格，不覆盖「中鱼升级」Mainline Current。原生候选（Native Candidate）、TrueRoll、交验与服务端权威等跨域边界，以 Router 当前指向的 Current 为准。
+
+本文只回答：**方案三如何配置、在运行链的哪一步计算、多个区域权重池如何叠加、以及如何与现有挤占和裁剪衔接。**
+
+本文不负责回答 `real_fish_weight_anchor` 与 `none_fish_weight_expansion_rate` 应该配置成多少，也不展开卧龙（Wolong）配置校验；这部分另写《权重池参数配置与校验指导》。
+
+本版本暂不处理交验、服务端权威与跨端一致性改造，后续统一处理。
 
 ---
 
-## 0. 本期改动摘要
+## 0. 一分钟摘要
 
-本期只在现有权重池流程上增加一层**空鱼权重补偿**，并修正区域权重池叠加时的空鱼权重合并规则。
+方案三包含两个相互关联、但应分别理解的改动。
 
-### 配置改动
+### 改动 A｜实鱼总权重过高时扩张空鱼权重
 
-`FishStock` 在现有 `none_fish_weight` 基础上新增两列：
+每个权重池（`FishStock`）在已有 `none_fish_weight` 基础上新增：
 
 | 字段 | 中文名 | 类型 | 默认值 |
 |---|---|---:|---:|
-| `none_fish_weight` | 基础空鱼权重 | 现有类型 | 现有值 |
 | `real_fish_weight_anchor` | 实鱼总权重锚点 | `INT32` | `0` |
 | `none_fish_weight_expansion_rate` | 空鱼权重扩张率 | `FLOAT` | `0.0` |
 
-### Runtime 改动
+对权重池 $k$：
 
-对每一个有效 `FishStock`：
-
-\[
+$$
 W_{\Sigma,k}=\sum_i W_{i,k}
-\]
+$$
 
-\[
+$$
 X_k=\max(0,W_{\Sigma,k}-A_k)
-\]
+$$
 
-\[
-E_{c,k}=E_{0,k}+S_kX_k
-\]
+$$
+E_{e,k}=E_{0,k}+S_kX_k
+$$
 
-多个 `FishStock` 叠加时：
+其中：
 
-\[
-E_{\text{stack}}=\sum_k E_{c,k}
-\]
+- $W_{\Sigma,k}$：实鱼总权重；
+- $A_k$：实鱼总权重锚点；
+- $E_{0,k}$：基础空鱼权重；
+- $S_k$：空鱼权重扩张率；
+- $E_{e,k}$：扩张后空鱼权重。
 
-之后继续执行现有：
+`S = 0` 时，**仅对改动 A 而言**，扩张后空鱼权重仍等于原基础空鱼权重。
+
+### 改动 B｜区域权重池叠加时，空鱼权重也叠加
+
+历史逻辑中，局部权重池（LocalStock）的实鱼会参与叠加，但其空鱼权重不生效。
+
+本期改为：
+
+$$
+E_{\text{stack}}=\sum_k E_{e,k}
+$$
+
+也就是：**每个有效 FishStock 同时携带自己的实鱼贡献和空鱼贡献。**
+
+> 因此，`A=0 / S=0` 只能保证“新增扩张公式本身”不改变旧行为；LocalStock 空鱼开始参与叠加，是本期明确引入的另一项行为变化。
+
+### 运行顺序
 
 ```text
-挤占
-→ clipping
-→ 圆桌抽奖
+上游原生候选求值
+→ 原生候选闭合（保留 source FishStock provenance）
+→ 按 FishStock.id 去重 / 分组
+→ 每个 FishStock 计算空鱼权重扩张
+→ 各 FishStock 的实鱼贡献与空鱼贡献叠加
+→ 现有挤占
+→ 现有裁剪（clipping）
+→ 圆桌抽奖 / TrueRoll
 ```
 
-### 不改的部分
-
-- 不修改任意单鱼最终实鱼权重；
-- 不修改鱼种之间的相对权重；
-- 不替代现有挤占逻辑；
-- 不删除现有 clipping；
-- 不新增“目标鱼 / 保底鱼”Runtime 标签；
-- 不要求逐鱼计算“权重释放度”。
+方案三不修改任意单鱼实鱼权重，也不替代现有挤占与裁剪。
 
 ---
 
 # 1. 背景与目标
 
-## 1.1 当前问题
-
-当前权重体系具有一个合理但存在上侧风险的性质：
+当前权重体系有一个合理的基本反馈：
 
 ```text
 单鱼实鱼权重提高
@@ -78,106 +94,201 @@ E_{\text{stack}}=\sum_k E_{c,k}
 → 中鱼更快
 ```
 
-单条鱼因为环境、空间、饵、钓组等因素变得更容易中，是我们希望保留的反馈。
+这个方向应当保留。
 
-问题在于：当多个权重池叠加、或多条鱼同时具有较高权重时，**实鱼总权重可能显著增加**。如果空鱼权重没有随之得到控制，总体鱼口可能被放大得过快。
+问题发生在上侧：当同一个权重池中多条鱼同时拥有较高权重，或者多个区域权重池同时生效时，实鱼总权重可能显著增长。如果空鱼侧完全不随之调整，“中任意鱼”的效率可能增长过快，压缩正常作钓节奏。
 
-方案三只处理这一件事：
+方案三只解决这个窄问题：
 
-> **当一个 FishStock 的实鱼总权重超过其配置锚点后，按超额部分增加空鱼权重，使实鱼总量继续增长时仍能带来更旺的鱼口，但不必完全线性兑换成“中任意鱼”的加速。**
+> **当某个 FishStock 的实鱼总权重超过配置锚点后，按超额部分扩张该 FishStock 的空鱼权重，使更高的实鱼总权重仍然有价值，但不必继续完全线性地兑换成“中任意鱼”的加速。**
 
-## 1.2 设计边界
-
-方案三属于**权重池级节奏整形**。
-
-它不重新解释：
-
-- 某条鱼为什么权重高；
-- 某个环境系数是否合理；
-- 哪些鱼是目标鱼；
-- 哪些鱼是保底鱼；
-- 哪个 Response 应该是多少。
-
-这些仍由上游机制产生。
-
-方案三只消费已经形成的最终实鱼权重，并对空鱼侧做处理。
+方案三属于**权重池级节奏整形**。它不重新解释某条鱼为什么权重高，也不负责目标鱼 / 保底鱼分类、鱼类习性、Bake、Response 等上游语义。
 
 ---
 
 # 2. 概念与符号
 
-正式文档先建立中文概念，再给英文名词和数学表示。
-
 | 中文概念 | 英文名词 | 含义 | 数学表示 | KaTeX |
 |---|---|---|---|---|
-| **权重池** | Weight Pool | 一组参与同一次中鱼权重计算的实鱼权重与空鱼权重。当前生产配置中由 `FishStock` 承载。 | — | — |
-| **实鱼权重** | Real Fish Weight | 单条候选鱼经过上游计算后，准备进入后续权重池流程的最终权重。 | \(W_{i,k}\) | `W_{i,k}` |
-| **实鱼总权重** | Total Real Fish Weight | 某个 FishStock 内全部有效实鱼权重之和。 | \(W_{\Sigma,k}\) | `W_{\Sigma,k}=\sum_i W_{i,k}` |
-| **基础空鱼权重** | Base No-Fish Weight | FishStock 配置的原始空鱼权重。 | \(E_{0,k}\) | `E_{0,k}` |
-| **实鱼总权重锚点** | Real Fish Weight Anchor | FishStock 内实鱼总权重超过该值后，开始增加额外空鱼权重。 | \(A_k\) | `A_k` |
-| **超额实鱼权重** | Excess Real Fish Weight | 实鱼总权重超过锚点的部分。 | \(X_k\) | `X_k=\max(0,W_{\Sigma,k}-A_k)` |
-| **空鱼权重扩张率** | No-Fish Weight Expansion Rate | 每增加 1 单位超额实鱼权重，需要增加多少单位空鱼权重。 | \(S_k\) | `S_k` |
-| **补偿后空鱼权重** | Compensated No-Fish Weight | 单个 FishStock 执行方案三后、进入多池叠加前的空鱼权重。 | \(E_{c,k}\) | `E_{c,k}=E_{0,k}+S_kX_k` |
-| **叠加空鱼权重** | Stacked No-Fish Weight | 所有有效 FishStock 的补偿后空鱼权重之和。 | \(E_{\text{stack}}\) | `E_{\text{stack}}=\sum_k E_{c,k}` |
+| **权重池** | Weight Pool / FishStock | 本需求的配置和计算单位。当前生产表中由 `FishStock` 承载。 | $k$ | `k` |
+| **局部权重池** | Local Weight Pool / LocalStock | 由区域命中后附加生效的 FishStock。 | — | — |
+| **实鱼权重** | Real Fish Weight | 单条候选鱼完成上游原生求值后，对当前权重池贡献的实鱼权重。 | $W_{i,k}$ | `W_{i,k}` |
+| **实鱼总权重** | Total Real Fish Weight | 某个 FishStock 内有效实鱼权重之和。 | $W_{\Sigma,k}$ | `W_{\Sigma,k}=\sum_i W_{i,k}` |
+| **基础空鱼权重** | Base No-Fish Weight | FishStock 已配置的 `none_fish_weight`。 | $E_{0,k}$ | `E_{0,k}` |
+| **实鱼总权重锚点** | Real Fish Weight Anchor | 实鱼总权重超过该值后开始扩张空鱼权重。 | $A_k$ | `A_k` |
+| **超额实鱼权重** | Excess Real Fish Weight | 实鱼总权重超过锚点的部分。 | $X_k$ | `X_k=\max(0,W_{\Sigma,k}-A_k)` |
+| **空鱼权重扩张率** | No-Fish Weight Expansion Rate | 每 1 单位超额实鱼权重带来多少单位新增空鱼权重。 | $S_k$ | `S_k` |
+| **扩张后空鱼权重** | Expanded No-Fish Weight | 单个 FishStock 执行方案三后的空鱼权重。 | $E_{e,k}$ | `E_{e,k}=E_{0,k}+S_kX_k` |
+| **叠加空鱼权重** | Stacked No-Fish Weight | 所有有效 FishStock 的扩张后空鱼权重之和。 | $E_{\text{stack}}$ | `E_{\text{stack}}=\sum_kE_{e,k}` |
+| **原生候选快照** | NativeCandidateSnapshot | 上游原生候选完成合法闭合后的候选表面。方案三只能发生在其之后。 | — | — |
 
-> **命名说明**
->
-> 本文使用“补偿后空鱼权重”，不称“最终空鱼权重”，因为后续仍需要执行现有挤占与 clipping。
+本文后续统一使用“**空鱼权重扩张**”。“补偿”“膨胀”只作为自然语言解释，不作为另一套正式术语。
 
 ---
 
-# 3. 机制总览
+# 3. 核心机制
 
-## 3.1 一张图先看完整流程
+## 3.1 单个 FishStock
+
+对权重池 $k$，在原生候选已经闭合、且仍能识别其 `source FishStock` 的前提下，统计该池贡献的所有实鱼权重：
+
+$$
+W_{\Sigma,k}=\sum_i W_{i,k}
+$$
+
+超额实鱼权重为：
+
+$$
+X_k=\max(0,W_{\Sigma,k}-A_k)
+$$
+
+扩张后空鱼权重为：
+
+$$
+E_{e,k}=E_{0,k}+S_kX_k
+$$
+
+直观上：
+
+```text
+实鱼总权重 ≤ 锚点
+→ 只使用基础空鱼权重
+
+实鱼总权重 > 锚点
+→ 只对超过锚点的部分计算额外空鱼权重
+```
+
+方案三**不修改** $W_{i,k}$。
+
+因此，方案三自身不会改变同一批实鱼之间的相对权重。
+
+## 3.2 多个 FishStock
+
+假设本次有效权重池集合为：
+
+```text
+基础权重池
++ 局部权重池 A
++ 局部权重池 B
+```
+
+每个 FishStock 先独立计算自己的 $E_{e,k}$，之后再叠加：
+
+$$
+E_{\text{stack}}=\sum_k E_{e,k}
+$$
+
+实鱼侧继续沿用现有权重池拼接 / 聚合规则。
+
+这样不需要发明“多个 FishStock 的 Anchor 怎么合”“多个扩张率怎么平均”等跨池规则：**每个 FishStock 只解释自己的配置，最终只叠加贡献。**
+
+---
+
+# 4. 运行时契约
+
+## 4.1 架构边界
+
+方案三是原生候选闭合后的节奏整形，不属于原生候选求值本身。
+
+语义顺序固定为：
 
 ```mermaid
 flowchart TD
-    A[检测基础 Stock 与命中的 LocalStock] --> B[按 Stock 身份去重]
-    B --> C[各 Stock 内完成单鱼最终权重计算]
-    C --> D[按 Stock 分组求实鱼总权重 WΣ,k]
-    D --> E[方案三：计算每个 Stock 的补偿后空鱼权重 Ec,k]
-    E --> F[叠加所有 Stock 的实鱼 rows]
-    E --> G[叠加所有 Stock 的空鱼权重]
-    F --> H[形成叠加权重池]
-    G --> H
-    H --> I[执行现有挤占]
-    I --> J[执行现有 clipping]
-    J --> K[圆桌抽奖]
+    A[上游 Spatial / Interaction / 其它原生求值] --> B[Candidate Resolver / Assembly]
+    B --> C[原生候选快照 NativeCandidateSnapshot]
+    C --> D[保留 source FishStock provenance]
+    D --> E[按 FishStock.id 分组]
+    E --> F[方案三：逐 FishStock 计算空鱼权重扩张]
+    F --> G[实鱼贡献 / 空鱼贡献叠加]
+    G --> H[现有挤占]
+    H --> I[现有裁剪 clipping]
+    I --> J[圆桌抽奖 / TrueRoll]
 ```
 
-若当前 Markdown 阅读器不支持 Mermaid，可按下列顺序理解：
+若阅读器不支持 Mermaid：
 
 ```text
-有效 FishStock
-    ↓
-按 Stock 去重
-    ↓
-各 Stock 内完成实鱼权重计算
-    ↓
-每个 Stock 单独计算空鱼补偿
-    ↓
-实鱼 + 空鱼分别叠加
-    ↓
-现有挤占
-    ↓
-现有 clipping
-    ↓
-圆桌抽奖
+上游原生求值
+→ Candidate Resolver / Assembly
+→ NativeCandidateSnapshot 闭合
+→ 按 source FishStock 分组
+→ 方案三
+→ 多池叠加
+→ 挤占
+→ 裁剪
+→ 圆桌抽奖
+```
+
+### 关键要求：不能过早丢失来源池信息
+
+原生候选闭合后，至少到方案三计算结束前，运行时必须能够回答：
+
+> 某一份最终实鱼权重贡献来自哪个 `FishStock.id`？
+
+实现不要求必须保留独立行表，也不要求存在名为 `CandidateResolver` 或 `FishStockAccumulator` 的类。
+
+只要求语义上能够恢复：
+
+```text
+FishStock.id
+→ 本池实鱼权重贡献
+→ 本池 E0 / A / S
+```
+
+否则无法按每个 FishStock 自己的参数执行方案三。
+
+## 4.2 去重单位
+
+权重池去重键固定为：
+
+```text
+FishStock.id
+```
+
+一个逻辑区域可能由多个 Collider / Trigger 表达。如果这些空间对象都指向同一个 `FishStock.id`，则该 FishStock 只参与一次。
+
+```mermaid
+flowchart LR
+    A[Collider A] --> S[FishStock X]
+    B[Collider B] --> S
+    C[Collider C] --> S
+    S --> D[按 FishStock.id 去重]
+    D --> E[FishStock X 只计算一次]
+```
+
+反之，如果空间上同时命中多个不同的 `FishStock.id`，则它们是多个独立权重池，全部参与叠加。
+
+> **空间切片方式不能凭空复制同一个权重池；不同 FishStock.id 则代表明确的独立权重池。**
+
+## 4.3 运行步骤
+
+```text
+1. 得到本次有效 FishStock.id 集合并去重
+
+2. NativeCandidateSnapshot 闭合
+   - 保留足够的 source FishStock provenance
+
+3. 对每个 FishStock k：
+   WΣ,k = Σ Wi,k
+   Xk   = max(0, WΣ,k - Ak)
+   Ee,k = E0,k + Sk × Xk
+
+4. 叠加：
+   - 实鱼：沿用现有实鱼拼接 / 聚合规则
+   - 空鱼：Estack = Σ Ee,k
+
+5. 执行现有挤占
+
+6. 执行现有裁剪（clipping）
+
+7. 进入现有圆桌抽奖 / TrueRoll
 ```
 
 ---
 
-# 4. FishStock 配置改动
+# 5. FishStock 配置变更
 
-## 4.1 配置对象
-
-方案三的配置单位是：
-
-> **FishStock**
-
-原因是现有权重池已经由 `FishStock` 承载，且 `none_fish_weight` 已经属于该对象。
-
-方案三新增的两个字段应与 `none_fish_weight` 保持相同作用域。
+现有 `FishStock` 已承载 `none_fish_weight`，因此新增字段与其保持同作用域。
 
 建议字段排列：
 
@@ -193,15 +304,15 @@ FishStock
 └─ time_expect_factor
 ```
 
-## 4.2 字段定义
+字段定义：
 
-| 字段 | 中文名 | 类型 | 默认值 | Runtime 用途 |
+| 字段 | 中文名 | 类型 | 默认值 | 运行时用途 |
 |---|---|---|---|---|
-| `none_fish_weight` | 基础空鱼权重 | 沿用现有类型 | 沿用现有值 | \(E_0\) |
-| `real_fish_weight_anchor` | 实鱼总权重锚点 | `INT32` | `0` | \(A\) |
-| `none_fish_weight_expansion_rate` | 空鱼权重扩张率 | `FLOAT` | `0.0` | \(S\) |
+| `none_fish_weight` | 基础空鱼权重 | 沿用现有类型 | 沿用现有值 | $E_0$ |
+| `real_fish_weight_anchor` | 实鱼总权重锚点 | `INT32` | `0` | $A$ |
+| `none_fish_weight_expansion_rate` | 空鱼权重扩张率 | `FLOAT` | `0.0` | $S$ |
 
-### 默认值语义
+## 5.1 默认值只关闭“扩张公式”
 
 当：
 
@@ -209,387 +320,17 @@ FishStock
 none_fish_weight_expansion_rate = 0
 ```
 
-时：
-
-\[
-E_c=E_0
-\]
-
-因此方案三不会改变旧数据行为。
-
-旧配置迁移时建议显式补齐：
-
-```text
-real_fish_weight_anchor = 0
-none_fish_weight_expansion_rate = 0.0
-```
-
-而不是让 Runtime 依赖“字段缺失”来猜测默认语义。
-
-> 参数合法范围、推荐值、参数之间的约束及 Wolong 校验，放在独立配置指导文档中，不在本文展开。
-
----
-
-# 5. 单个 FishStock 如何计算
-
-## 5.1 输入
-
-对 FishStock \(k\)，先完成该 Stock 内所有单鱼的正常上游权重计算。
-
-得到：
-
-\[
-W_{1,k},W_{2,k},...,W_{n,k}
-\]
-
-方案三不参与这些权重的生成。
-
-## 5.2 求实鱼总权重
-
-\[
-\boxed{
-W_{\Sigma,k}=\sum_i W_{i,k}
-}
-\]
-
-这里的权重必须是：
-
-> **方案三执行前，真正准备进入后续权重池流程的有效实鱼权重。**
-
-不使用：
-
-- 基础权重；
-- Bake 中间值；
-- Response 中间值；
-- 尚未完成合法性处理的 Candidate。
-
-## 5.3 求超额实鱼权重
-
-\[
-\boxed{
-X_k=\max(0,W_{\Sigma,k}-A_k)
-}
-\]
-
-当：
-
-\[
-W_{\Sigma,k}\le A_k
-\]
-
 则：
 
-\[
-X_k=0
-\]
+$$
+E_e=E_0
+$$
 
-方案三不额外增加空鱼权重。
+所以新增字段默认 `A=0, S=0` 时，**方案三的扩张公式本身不改变该 FishStock 的空鱼权重。**
 
-## 5.4 求补偿后空鱼权重
+但这不等于整个版本完全保持旧行为，因为本期同时修改了 LocalStock 空鱼权重的叠加规则，见下一章。
 
-\[
-\boxed{
-E_{c,k}=E_{0,k}+S_kX_k
-}
-\]
-
-展开为：
-
-\[
-\boxed{
-E_{c,k}
-=
-E_{0,k}
-+
-S_k\max(0,W_{\Sigma,k}-A_k)
-}
-\]
-
-### 直观解释
-
-```text
-锚点以内
-→ 只使用原有空鱼权重
-
-超过锚点
-→ 超出多少实鱼权重
-× S
-→ 增加多少空鱼权重
-```
-
-## 5.5 不修改实鱼
-
-方案三只计算 \(E_{c,k}\)。
-
-它不执行：
-
-\[
-W_{i,k}\rightarrow W'_{i,k}
-\]
-
-因此单个 Stock 内各实鱼之间的相对关系保持不变。
-
----
-
-# 6. 多个区域权重池如何叠加
-
-## 6.1 历史规则
-
-历史《中鱼0.2.2.3+-权重池拆分》中：
-
-- 钓场基础池与命中的 LocalStock 会拼接实鱼 rows；
-- 相同 `fish_quality` 可以在不同池重复出现；
-- **空鱼权重只保留钓场全局池，LocalStock 的空鱼权重不生效。**
-
-本需求修改其中最后一条：
-
-> **区域权重池叠加时，空鱼权重也必须随 FishStock 一起叠加。**
-
-其它已有实鱼拼接 / 合并行为，本期不主动改造。
-
-## 6.2 新规则
-
-假设本次命中：
-
-```text
-基础 Stock
-LocalStock A
-LocalStock B
-```
-
-三个 Stock 分别先完成自己的方案三计算：
-
-```text
-基础 Stock     → Ec,base
-LocalStock A   → Ec,A
-LocalStock B   → Ec,B
-```
-
-最终叠加：
-
-\[
-\boxed{
-E_{\text{stack}}
-=
-E_{c,\text{base}}
-+
-E_{c,A}
-+
-E_{c,B}
-}
-\]
-
-一般形式：
-
-\[
-\boxed{
-E_{\text{stack}}
-=
-\sum_k
-\left[
-E_{0,k}
-+
-S_k\max(0,W_{\Sigma,k}-A_k)
-\right]
-}
-\]
-
-实鱼侧仍按现有规则叠加：
-
-\[
-\boxed{
-\text{FishRows}_{\text{stack}}
-=
-\bigcup_k \text{FishRows}_k
-}
-\]
-
-这里的“并集”表达逻辑拼接，不要求实现层一定使用集合数据结构。
-
----
-
-# 7. 为什么必须按 FishStock 分别计算，再叠加空鱼
-
-不能先把多个 Stock 合成一份后，再尝试合并：
-
-- Anchor；
-- Expansion Rate；
-- Base No-Fish Weight。
-
-否则会出现没有清晰语义的问题：
-
-```text
-两个 Stock 的 Anchor 怎么合？
-取和？
-取最大值？
-平均？
-```
-
-方案三直接避免这个问题：
-
-```text
-每个 Stock 只解释自己的参数
-→ 独立得到 Ec,k
-→ 最后只做加法
-```
-
-因此 `A` 与 `S` 永远不需要跨 Stock 合并。
-
----
-
-# 8. Stock 去重：空间切片不能重复制造权重
-
-历史 LocalStock 允许用多个 Collider / Trigger 表达同一个逻辑区域。
-
-例如一个凹形区域可能由多个 Box 拼成：
-
-```text
-Box 1 ─┐
-Box 2 ─┼─→ stock_watergrass_01
-Box 3 ─┘
-```
-
-如果一次抛投同时命中三个 Box，它们仍然只是**一个 FishStock**。
-
-必须：
-
-```text
-命中的区域对象
-→ 按 Stock identity 去重
-→ 再进入权重计算
-```
-
-不能：
-
-```text
-3 个 Collider
-→ 同一 Stock 计算 3 次
-```
-
-否则会同时造成：
-
-```text
-实鱼权重 × 3
-空鱼权重 × 3
-```
-
-### 图示
-
-```mermaid
-flowchart LR
-    A[Collider A] --> S[LocalStock X]
-    B[Collider B] --> S
-    C[Collider C] --> S
-    S --> D[去重后只保留 1 个 Stock X]
-    D --> E[计算一次实鱼权重与空鱼权重]
-```
-
----
-
-# 9. 与现有挤占、clipping 的执行顺序
-
-方案三**不替代**现有挤占，也**不删除** clipping。
-
-当前顺序约定为：
-
-```text
-① 单鱼最终权重计算
-② 每个 Stock 的空鱼权重补偿
-③ 多 Stock 叠加
-④ 现有挤占
-⑤ 现有 clipping
-⑥ 圆桌抽奖
-```
-
-## 9.1 为什么方案三在挤占前
-
-本期新增逻辑先决定：
-
-> 这个权重池在当前实鱼规模下，应当提供多少空鱼权重。
-
-之后再让既有挤占机制继续处理收益期望、权重与最终结果之间的关系。
-
-因此：
-
-```text
-先补偿 / 膨胀空鱼
-→ 再走原有挤占
-```
-
-## 9.2 clipping 不改
-
-clipping 当前与方案三没有直接冲突。
-
-即使在现有数据下可能很少触发，也不在本需求中删除或重定义：
-
-> 保留既有 clipping 作为后续流程的一部分。
-
-这样未来即使方案三参数或机制继续变化，也不会因为本期顺手删除旧保护逻辑而增加额外风险。
-
----
-
-# 10. Runtime 完整顺序
-
-## 10.1 流程图
-
-```mermaid
-flowchart TD
-    A[获取钓场基础 Stock] --> C
-    B[检测命中的 LocalStock] --> C[按 Stock identity 去重]
-    C --> D{遍历有效 Stock}
-
-    D --> E[生成 / 解析本 Stock 的有效实鱼 rows]
-    E --> F[完成每条鱼最终权重 Wi,k]
-    F --> G[求 WΣ,k]
-    G --> H[读取 E0,k / A,k / S,k]
-    H --> I[计算 Xk = max 0, WΣ,k - Ak]
-    I --> J[计算 Ec,k = E0,k + Sk × Xk]
-
-    J --> K[所有 Stock 处理完成]
-    K --> L[拼接 / 合并实鱼 rows]
-    K --> M[Estack = Σ Ec,k]
-    L --> N[形成叠加基础池]
-    M --> N
-
-    N --> O[现有挤占]
-    O --> P[现有 clipping]
-    P --> Q[圆桌抽奖]
-```
-
-## 10.2 纯文本版本
-
-```text
-钓场基础 Stock
-+ 命中的 LocalStock
-        ↓
-Stock identity 去重
-        ↓
-对每个 Stock：
-    解析有效实鱼 rows
-        ↓
-    得到最终 W_i,k
-        ↓
-    WΣ,k = ΣW_i,k
-        ↓
-    Ec,k = E0,k + S_k × max(0, WΣ,k-A_k)
-        ↓
-所有 Stock 完成
-        ↓
-实鱼 rows 叠加
-空鱼 Ec,k 叠加
-        ↓
-现有挤占
-        ↓
-现有 clipping
-        ↓
-圆桌抽奖
-```
-
----
-
-# 11. 数值类型与取整
-
-## 11.1 配置类型
+## 5.2 数值类型与取整
 
 本期约定：
 
@@ -601,290 +342,270 @@ none_fish_weight_expansion_rate
 → FLOAT
 ```
 
-## 11.2 方案三本身不新增取整
+方案三自身不新增 floor / ceil / round。
 
-计算：
+$$
+E_{e,k}=E_{0,k}+S_kX_k
+$$
 
-\[
-E_{c,k}
-=
-E_{0,k}+S_kX_k
-\]
+允许在中间过程得到浮点结果。
 
-允许得到浮点结果。
-
-方案三内部不要求：
-
-- floor；
-- ceil；
-- round；
-- 每个 Stock 单独量化。
-
-原则：
-
-> **保持连续值计算，到现有圆桌数值边界时，沿用圆桌当前已有的权重数值规范。**
-
-如果现有圆桌支持浮点累计权重，则直接使用。
-
-如果现有圆桌必须使用整数，则只在进入该既有边界时按统一规则转换，不在方案三中重复增加一套取整政策。
+进入现有圆桌数值边界时，继续沿用现有权重数值规范；如果现有圆桌要求整数，只在既有边界统一转换，不在每个 FishStock 内反复取整。
 
 ---
 
-# 12. 示例：基础池 + 两个区域池
+# 6. 区域权重池规则变化与迁移
 
-> 以下数字只用于解释运行过程，不代表配置建议。
+## 6.1 历史行为
 
-假设命中三个 Stock：
+历史《中鱼0.2.2.3+-权重池拆分》中：
 
-| Stock | 实鱼总权重 \(W_\Sigma\) | 基础空鱼 \(E_0\) | 锚点 \(A\) | 扩张率 \(S\) |
-|---|---:|---:|---:|---:|
-| 基础 Stock | 120 | 100 | 100 | 0.5 |
-| LocalStock A | 70 | 30 | 50 | 1.0 |
-| LocalStock B | 40 | 20 | 60 | 0.5 |
+- 基础权重池与命中的局部权重池会叠加实鱼贡献；
+- 同一鱼品质 / 候选可以按既有规则保留来自多个池的贡献；
+- LocalStock 的空鱼权重不参与最终空鱼。
 
-### Step 1：分别计算超额
+## 6.2 本期行为
 
-基础 Stock：
+本期改为：
 
-\[
-X=120-100=20
-\]
+> **所有有效 FishStock 的空鱼贡献都参与叠加。**
 
-LocalStock A：
+即：
 
-\[
-X=70-50=20
-\]
+$$
+E_{\text{stack}}=\sum_kE_{e,k}
+$$
 
-LocalStock B：
-
-\[
-X=\max(0,40-60)=0
-\]
-
-### Step 2：分别计算补偿后空鱼
-
-基础 Stock：
-
-\[
-E_c=100+0.5\times20=110
-\]
-
-LocalStock A：
-
-\[
-E_c=30+1.0\times20=50
-\]
-
-LocalStock B：
-
-\[
-E_c=20
-\]
-
-### Step 3：叠加空鱼
-
-\[
-E_{\text{stack}}=110+50+20=180
-\]
-
-然后：
+一个权重池从此同时携带：
 
 ```text
-实鱼 rows 叠加
-+ 空鱼权重 180
-        ↓
-现有挤占
-        ↓
-现有 clipping
-        ↓
-圆桌
+实鱼贡献
++
+空鱼贡献
 ```
 
-### 计算表
+而不再只有实鱼贡献。
 
-| Stock | \(W_\Sigma\) | \(X\) | \(E_0\) | \(S\) | \(E_c\) |
-|---|---:|---:|---:|---:|---:|
-| 基础 Stock | 120 | 20 | 100 | 0.5 | 110 |
-| LocalStock A | 70 | 20 | 30 | 1.0 | 50 |
-| LocalStock B | 40 | 0 | 20 | 0.5 | 20 |
-| **叠加** | **230** | — | — | — | **180** |
+## 6.3 这是独立的行为变化
 
----
+必须区分：
 
-# 13. 伪代码
-
-以下只表达语义，不要求程序采用同名类或数据结构。
+**扩张公式兼容性**
 
 ```text
-effectiveStocks =
-    ResolveBaseAndLocalStocks()
-
-effectiveStocks =
-    DistinctByStockIdentity(effectiveStocks)
-
-stackedFishRows = []
-stackedCompensatedNoneFishWeight = 0.0
-
-for stock in effectiveStocks:
-
-    fishRows =
-        ResolveFinalFishRows(stock)
-
-    realFishWeightTotal =
-        Sum(row.finalWeight for row in fishRows)
-
-    baseNoneFishWeight =
-        stock.noneFishWeight
-
-    anchor =
-        stock.realFishWeightAnchor
-
-    expansionRate =
-        stock.noneFishWeightExpansionRate
-
-    excessRealFishWeight =
-        Max(
-            0,
-            realFishWeightTotal - anchor
-        )
-
-    compensatedNoneFishWeight =
-        baseNoneFishWeight
-        + expansionRate * excessRealFishWeight
-
-    stackedFishRows.Append(fishRows)
-
-    stackedCompensatedNoneFishWeight +=
-        compensatedNoneFishWeight
-
-
-stackedPool =
-    BuildStackedPool(
-        stackedFishRows,
-        stackedCompensatedNoneFishWeight
-    )
-
-stackedPool =
-    ApplyExistingSqueeze(stackedPool)
-
-stackedPool =
-    ApplyExistingClipping(stackedPool)
-
-return RoundtableRoll(stackedPool)
+S = 0
+→ Ee = E0
 ```
 
----
+与：
 
-# 14. 必须保持的行为
-
-## 14.1 单鱼权重不因方案三改变
-
-对任意鱼：
-
-\[
-W_{i,k}^{\text{before}}
-=
-W_{i,k}^{\text{after scheme 3}}
-\]
-
-方案三只增加空鱼侧。
-
-## 14.2 鱼与鱼之间的相对权重不因方案三改变
-
-若同一阶段还没有执行其它会改变实鱼权重的既有逻辑，则方案三本身满足：
-
-\[
-\frac{W_i}{W_j}
-\]
-
-保持不变。
-
-## 14.3 锚点以下不增加空鱼
-
-当：
-
-\[
-W_{\Sigma,k}\le A_k
-\]
-
-则：
-
-\[
-E_{c,k}=E_{0,k}
-\]
-
-## 14.4 Expansion Rate 为 0 时保持旧行为
-
-当：
-
-\[
-S_k=0
-\]
-
-则：
-
-\[
-E_{c,k}=E_{0,k}
-\]
-
-因此新增字段默认 `0 / 0.0` 时，不改变旧 Stock 的空鱼权重。
-
-## 14.5 区域池空鱼开始参与叠加
-
-这是相对历史规则的明确变化：
+**区域池空鱼叠加变化**
 
 ```text
 旧：
-只有基础池空鱼生效
+LocalStock.none_fish_weight 不生效
 
 新：
-所有有效 Stock 的补偿后空鱼权重都参与叠加
+LocalStock.none_fish_weight 进入 Estack
+```
+
+因此旧数据迁移不能只写成“补 0 / 0 即完全兼容”。
+
+开发 / 数据迁移需要显式处理两件事：
+
+```text
+新增字段：
+real_fish_weight_anchor = 0
+none_fish_weight_expansion_rate = 0.0
+
+历史 LocalStock.none_fish_weight：
+从“历史上不生效的数据”变成“新版本会生效的数据”
+→ 需要纳入迁移核对
+```
+
+本文不规定各 LocalStock 最终应该配置成多少；具体值与 Wolong 校验由独立配置指导负责。
+
+Runtime 不应为了模拟旧逻辑而自动忽略 LocalStock 的 `none_fish_weight`。
+
+---
+
+# 7. 与现有挤占、裁剪的关系
+
+方案三不替代现有挤占，也不删除现有裁剪。
+
+执行顺序固定为：
+
+```text
+空鱼权重扩张
+→ 多 FishStock 叠加
+→ 现有挤占
+→ 现有裁剪
+→ 圆桌抽奖
+```
+
+现有挤占仍负责其原有职责，包括保持收益期望与权重调整之间的可预估性 / 可调性。
+
+现有裁剪当前与方案三不冲突，即使在现有数据下可能较少触发，本期也不修改或删除，避免把无关的 Legacy 清理绑进本需求。
+
+---
+
+# 8. 边界行为
+
+## 8.1 锚点以下
+
+当：
+
+$$
+W_{\Sigma,k}\le A_k
+$$
+
+则：
+
+$$
+E_{e,k}=E_{0,k}
+$$
+
+方案三不额外扩张空鱼。
+
+## 8.2 扩张率为 0
+
+当：
+
+$$
+S_k=0
+$$
+
+则：
+
+$$
+E_{e,k}=E_{0,k}
+$$
+
+无论实鱼总权重多高，该 FishStock 都不执行额外扩张。
+
+## 8.3 FishStock 当前没有实鱼贡献
+
+当：
+
+$$
+W_{\Sigma,k}=0
+$$
+
+如果这个 FishStock 本次仍是一个有效命中的权重池，则：
+
+$$
+E_{e,k}=E_{0,k}
+$$
+
+也就是说：
+
+> **有效权重池即使当前没有任何实鱼贡献，只要它配置了基础空鱼权重，仍会向叠加池贡献空鱼权重。**
+
+这与“FishStock 同时携带实鱼贡献与空鱼贡献”的新语义一致。
+
+## 8.4 多个空间对象命中同一 FishStock
+
+按 `FishStock.id` 去重，只计算一次。
+
+## 8.5 多个不同 FishStock 空间重叠
+
+全部生效，各自计算后叠加。
+
+---
+
+# 9. 示例
+
+以下数字只用于解释运行过程，不作为配置建议。
+
+假设当前有效权重池为：
+
+| 权重池 | 实鱼总权重 $W_\Sigma$ | 基础空鱼 $E_0$ | 锚点 $A$ | 扩张率 $S$ |
+|---|---:|---:|---:|---:|
+| 基础权重池 | 120 | 100 | 100 | 0.5 |
+| 局部权重池 A | 70 | 60 | 50 | 0.5 |
+| 局部权重池 B | 40 | 20 | 60 | 0.5 |
+
+基础权重池：
+
+$$
+X=120-100=20
+$$
+
+$$
+E_e=100+0.5\times20=110
+$$
+
+局部权重池 A：
+
+$$
+X=70-50=20
+$$
+
+$$
+E_e=60+0.5\times20=70
+$$
+
+局部权重池 B：
+
+$$
+X=\max(0,40-60)=0
+$$
+
+$$
+E_e=20
+$$
+
+因此：
+
+$$
+E_{\text{stack}}=110+70+20=200
+$$
+
+计算表：
+
+| 权重池 | $W_\Sigma$ | $X$ | $E_0$ | $S$ | $E_e$ |
+|---|---:|---:|---:|---:|---:|
+| 基础权重池 | 120 | 20 | 100 | 0.5 | 110 |
+| 局部权重池 A | 70 | 20 | 60 | 0.5 | 70 |
+| 局部权重池 B | 40 | 0 | 20 | 0.5 | 20 |
+| **叠加结果** | **230** | — | — | — | **200** |
+
+之后继续：
+
+```text
+实鱼贡献 + 空鱼 200
+→ 现有挤占
+→ 现有裁剪
+→ 圆桌抽奖
 ```
 
 ---
 
-# 15. Debug / Trace
+# 10. 调试、测试与验收
 
-为了能区分：
+## 10.1 建议调试输出
 
-- 上游鱼权重变化；
-- Stock 叠加变化；
-- 方案三空鱼补偿；
-- 现有挤占；
-- clipping；
-
-建议 Trace 分阶段保留信息。
-
-## 15.1 Stock 级
-
-每个有效 Stock 至少可观测：
+单个 FishStock 至少应能观测：
 
 | 字段 | 含义 |
 |---|---|
-| `stock_id` | FishStock 身份 |
-| `stock_name` | 调试名称 |
-| `real_fish_weight_total` | \(W_{\Sigma,k}\) |
-| `base_none_fish_weight` | \(E_{0,k}\) |
-| `real_fish_weight_anchor` | \(A_k\) |
-| `none_fish_weight_expansion_rate` | \(S_k\) |
-| `excess_real_fish_weight` | \(X_k\) |
-| `compensated_none_fish_weight` | \(E_{c,k}\) |
+| `fish_stock_id` | 当前权重池身份，也是去重键 |
+| `real_fish_weight_total` | $W_{\Sigma,k}$ |
+| `base_none_fish_weight` | $E_{0,k}$ |
+| `real_fish_weight_anchor` | $A_k$ |
+| `none_fish_weight_expansion_rate` | $S_k$ |
+| `excess_real_fish_weight` | $X_k$ |
+| `expanded_none_fish_weight` | $E_{e,k}$ |
 
-## 15.2 叠加级
-
-建议可观测：
+叠加级至少应能观测：
 
 ```text
-effective_stock_ids
-stacked_fish_rows
+effective_fish_stock_ids
 stacked_real_fish_weight
-stacked_compensated_none_fish_weight
+stacked_none_fish_weight
 ```
 
-## 15.3 后续阶段
-
-为了排查现有机制影响，建议能区分：
+为区分后续既有机制影响，调试 / 模拟环境建议能看到：
 
 ```text
 before_squeeze
@@ -893,254 +614,80 @@ after_clipping
 roundtable_input
 ```
 
-不要求 Production 热路径一定长期 materialize 完整对象，但 Simulator / Debug / Test 应能够获得等价信息。
+## 10.2 最小测试集
 
----
-
-# 16. 测试与验收
-
-## 16.1 单 Stock 基本 Case
-
-| Case | 条件 | 期望 |
+| Case | 输入 / 场景 | 关键期望 |
 |---|---|---|
-| A | \(W_\Sigma < A\) | `Ec == E0` |
-| B | \(W_\Sigma = A\) | `Ec == E0` |
-| C | \(W_\Sigma > A\) | `Ec == E0 + S*(WΣ-A)` |
-| D | `S = 0` | 无论 WΣ 多大，`Ec == E0` |
-| E | 无实鱼 | 空鱼侧仍按当前权重池流程工作 |
+| 单池：低于锚点 | $W_\Sigma<A$ | $E_e=E_0$ |
+| 单池：等于锚点 | $W_\Sigma=A$ | $E_e=E_0$ |
+| 单池：高于锚点 | $W_\Sigma>A$ | $E_e=E_0+S(W_\Sigma-A)$ |
+| 扩张关闭 | $S=0$ | $E_e=E_0$ |
+| 无实鱼贡献 | $W_\Sigma=0$，FishStock 有效 | 仍贡献 $E_0$ |
+| 基础池 + 1 LocalStock | 两个不同 FishStock.id | 两个空鱼贡献都叠加 |
+| 基础池 + 多 LocalStock | 多个不同 FishStock.id | $E_{\text{stack}}=\sum E_e$ |
+| Collider 重复命中 | 多个 Collider 指向同一 FishStock.id | 只计算一次 |
+| 空间重叠 | 命中多个不同 FishStock.id | 各自计算并叠加 |
+| 顺序检查 | 固定 Fixture | 扩张 → 叠加 → 挤占 → 裁剪 → 圆桌 |
+| 实鱼保真 | 同一 Native 输入 | 方案三阶段不修改任意 $W_{i,k}$ |
 
-## 16.2 多 Stock Case
+另外需要一组迁移回归：
 
-至少覆盖：
-
-```text
-基础 Stock only
-基础 + 1 个 LocalStock
-基础 + 2 个 LocalStock
-多个 LocalStock 均超过各自 Anchor
-只有部分 LocalStock 超过 Anchor
-```
-
-必须验证：
-
-\[
-E_{\text{stack}}=\sum_k E_{c,k}
-\]
-
-## 16.3 去重 Case
-
-构造：
-
-```text
-3 个 Collider
-→ 同一个 LocalStock
-```
-
-期望：
-
-```text
-Stock 只参与一次
-```
-
-不能出现：
-
-```text
-fish rows ×3
-none-fish weight ×3
-```
-
-## 16.4 兼容旧数据
-
-旧 Stock：
-
-```text
-real_fish_weight_anchor = 0
-none_fish_weight_expansion_rate = 0
-```
-
-期望在方案三阶段：
-
-```text
-compensated_none_fish_weight
-==
-none_fish_weight
-```
-
-## 16.5 与既有机制顺序
-
-固定输入 Fixture，验证：
-
-```text
-方案三
-→ 挤占
-→ clipping
-→ roundtable
-```
-
-不得误实现为：
-
-```text
-挤占
-→ 方案三
-```
-
-或：
-
-```text
-clipping
-→ 方案三
-```
-
-## 16.6 鱼权重保真
-
-同一输入下，启用方案三前后：
-
-```text
-方案三阶段自身不得修改任何 fish row 的 finalWeight
-```
+> LocalStock 历史上已有非零 `none_fish_weight` 时，新版本应明确验证这些值开始生效后的结果，而不是把 `S=0` 误判为“整套旧行为不变”。
 
 ---
 
-# 17. 本版本不处理
+# 11. 本版本不处理
 
-以下事项明确不在本文开发范围内：
+本开发需求不展开以下内容：
 
-## 17.1 参数配置指导
-
-不在本文定义：
-
-- Anchor 应配多少；
-- Expansion Rate 应配多少；
-- 推荐区间；
-- 参数组合的体验风险；
-- 单调性等配置约束；
-- Wolong Warning / Error 规则。
-
-另文处理。
-
-## 17.2 交验 / Server Replay
-
-本文记录这一边界，但本版本暂不处理：
-
+- `real_fish_weight_anchor` 应如何配置；
+- `none_fish_weight_expansion_rate` 应如何配置；
+- 参数推荐范围与体验标定；
+- 参数组合的数学约束；
+- 卧龙（Wolong）Warning / Error 校验；
 - 服务端 authoritative replay；
-- client / server config version 对齐；
-- RNG / replay payload 改造；
-- 最终交验协议。
+- Client / Server 配置版本对齐；
+- RNG / replay payload；
+- 现有挤占公式的重设计；
+- 现有裁剪算法的重设计。
 
-后续统一处理。
-
-## 17.3 现有挤占算法本身
-
-本期只规定方案三在挤占之前。
-
-不重新设计现有挤占公式。
-
-## 17.4 clipping 算法
-
-本期保留现有 clipping：
-
-- 不删除；
-- 不重新定义；
-- 不因当前“可能较少触发”而做清理。
+这些内容由独立配置指导或对应 Current / 后续需求处理。
 
 ---
 
-# 18. 相对历史权重池规则的变化
+# 12. 实现摘要
 
-历史《中鱼0.2.2.3+-权重池拆分》的核心叠加规则是：
+最终实现契约可以压缩为：
 
-```text
-多 LocalStock 命中
-→ 实鱼 rows 拼接
-
-但：
-LocalStock 的空鱼权重不生效
-只使用钓场全局池空鱼权重
-```
-
-本需求将其调整为：
-
-```text
-多 FishStock 命中
-→ 实鱼 rows 按现有规则叠加
-→ 每个 Stock 独立执行方案三
-→ 每个 Stock 的空鱼权重也参与叠加
-```
-
-因此权重池作为一个整体，开始同时携带：
-
-```text
-实鱼贡献
-+
-空鱼贡献
-```
-
-而不是只叠加实鱼侧。
-
----
-
-# 19. 开发实现检查表
-
-- [ ] FishStock 新增 `real_fish_weight_anchor`
-- [ ] FishStock 新增 `none_fish_weight_expansion_rate`
-- [ ] 旧数据迁移默认填 `0 / 0.0`
-- [ ] 基础 Stock 与 LocalStock 按 Stock identity 去重
-- [ ] 能保留 / 恢复 fish row 的 source Stock 身份，足以完成 Stock 级计算
-- [ ] 每个 Stock 独立求 \(W_{\Sigma,k}\)
-- [ ] 每个 Stock 独立计算 \(E_{c,k}\)
-- [ ] LocalStock 的空鱼权重开始参与叠加
-- [ ] 叠加完成后执行现有挤占
-- [ ] 挤占后执行现有 clipping
-- [ ] 方案三不修改 fish row 最终权重
-- [ ] `S` 使用 Float
-- [ ] 方案三内部不新增取整规则
-- [ ] Simulator / Debug 能看到 Stock 级补偿前后数据
-- [ ] 自动测试覆盖单池、多池、去重、默认值、执行顺序
-- [ ] 本期不展开 Replay / 交验
-- [ ] 参数配置与 Wolong 校验另文处理
-
----
-
-# 20. 最小实现契约
-
-如果只保留最关键的实现信息，方案三可以压缩成：
-
-\[
-\boxed{
+$$
 W_{\Sigma,k}=\sum_iW_{i,k}
-}
-\]
+$$
 
-\[
-\boxed{
+$$
 X_k=\max(0,W_{\Sigma,k}-A_k)
-}
-\]
+$$
 
-\[
-\boxed{
-E_{c,k}=E_{0,k}+S_kX_k
-}
-\]
+$$
+E_{e,k}=E_{0,k}+S_kX_k
+$$
 
-\[
-\boxed{
-E_{\text{stack}}=\sum_kE_{c,k}
-}
-\]
+$$
+E_{\text{stack}}=\sum_kE_{e,k}
+$$
 
-执行顺序：
+并满足：
 
 ```text
-Stock 去重
-→ 单鱼最终权重
-→ 每 Stock 空鱼补偿
-→ 多 Stock 实鱼 / 空鱼叠加
+NativeCandidateSnapshot 已闭合
+→ 保留 source FishStock provenance
+→ 按 FishStock.id 去重 / 分组
+→ 每 FishStock 独立扩张空鱼权重
+→ 实鱼 / 空鱼叠加
 → 现有挤占
-→ 现有 clipping
+→ 现有裁剪
 → 圆桌抽奖
 ```
 
 核心原则：
 
-> **每个 FishStock 自己解释自己的实鱼规模和空鱼参数；区域池叠加时，鱼和空鱼一起叠加。方案三只补偿空鱼，不改实鱼，并完整保留后续既有挤占与 clipping。**
+> **每个 FishStock 自己解释自己的实鱼规模和空鱼参数；区域权重池叠加时，实鱼贡献和空鱼贡献一起叠加。方案三只扩张空鱼，不改写原生实鱼权重，并完整保留后续既有挤占与裁剪。**
