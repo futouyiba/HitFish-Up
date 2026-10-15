@@ -2,7 +2,7 @@
 
 > **Document Role：** Development Specification  
 > **Status：** Working / Candidate  
-> **Version：** v0.2  
+> **Version：** v0.3  
 > **Last Updated：** 2026-10-15（Asia/Taipei）  
 > **Scope：** 权重池（FishStock）/ 空鱼权重扩张 / 区域权重池叠加  
 > **Authority：** 本文是本期局部开发规格，不覆盖「中鱼升级」Mainline Current。原生候选（Native Candidate）、TrueRoll、交验与服务端权威等跨域边界，以 Router 当前指向的 Current 为准。
@@ -69,14 +69,17 @@ $$
 ### 运行顺序
 
 ```text
-上游原生候选求值
-→ 原生候选闭合（保留 source FishStock provenance）
-→ 按 FishStock.id 去重 / 分组
+命中基础 / 局部权重池
+→ 按 FishStock.id 去重，确定有效权重池集合
+→ 上游实鱼权重求值并完成候选合法闭合
+→ 若 Incomplete / NotRollable：停止，不进入方案三
+→ 到达“现有挤占之前”的方案三切点
+→ 按 FishStock 汇总实鱼总权重 WΣ,k
 → 每个 FishStock 计算空鱼权重扩张
 → 各 FishStock 的实鱼贡献与空鱼贡献叠加
 → 现有挤占
 → 现有裁剪（clipping）
-→ 圆桌抽奖 / TrueRoll
+→ 后续圆桌 / Resolution
 ```
 
 方案三不修改任意单鱼实鱼权重，也不替代现有挤占与裁剪。
@@ -112,7 +115,8 @@ $$
 |---|---|---|---|---|
 | **权重池** | Weight Pool / FishStock | 本需求的配置和计算单位。当前生产表中由 `FishStock` 承载。 | $k$ | `k` |
 | **局部权重池** | Local Weight Pool / LocalStock | 由区域命中后附加生效的 FishStock。 | — | — |
-| **实鱼权重** | Real Fish Weight | 单条候选鱼完成上游原生求值后，对当前权重池贡献的实鱼权重。 | $W_{i,k}$ | `W_{i,k}` |
+| **有效权重池** | Effective FishStock | 由现有基础池 / 区域命中规则选中，并按 `FishStock.id` 去重后的本次参与权重池集合。方案三不重新定义其 Eligibility。 | $K$ | `K` |
+| **实鱼权重** | Real Fish Weight | 方案三切点处，来自某个 FishStock 的单条实鱼权重贡献；此时所有应在现有挤占之前完成的实鱼权重处理均已完成。 | $W_{i,k}$ | `W_{i,k}` |
 | **实鱼总权重** | Total Real Fish Weight | 某个 FishStock 内有效实鱼权重之和。 | $W_{\Sigma,k}$ | `W_{\Sigma,k}=\sum_i W_{i,k}` |
 | **基础空鱼权重** | Base No-Fish Weight | FishStock 已配置的 `none_fish_weight`。 | $E_{0,k}$ | `E_{0,k}` |
 | **实鱼总权重锚点** | Real Fish Weight Anchor | 实鱼总权重超过该值后开始扩张空鱼权重。 | $A_k$ | `A_k` |
@@ -130,7 +134,7 @@ $$
 
 ## 3.1 单个 FishStock
 
-对权重池 $k$，在原生候选已经闭合、且仍能识别其 `source FishStock` 的前提下，统计该池贡献的所有实鱼权重：
+对权重池 $k$，只有在候选已经**合法闭合且可进入后续 Resolution**，并到达“现有挤占之前”的方案三切点后，才统计该池在此切点上的实鱼权重贡献：
 
 $$
 W_{\Sigma,k}=\sum_i W_{i,k}
@@ -186,66 +190,22 @@ $$
 
 # 4. 运行时契约
 
-## 4.1 架构边界
+## 4.1 两个不同动作：先去重，再聚合
 
-方案三是原生候选闭合后的节奏整形，不属于原生候选求值本身。
+“按 FishStock 处理”包含两个不同动作，不能混为一谈。
 
-语义顺序固定为：
+### A. 权重池去重：发生在贡献被重复制造之前
 
-```mermaid
-flowchart TD
-    A[上游 Spatial / Interaction / 其它原生求值] --> B[Candidate Resolver / Assembly]
-    B --> C[原生候选快照 NativeCandidateSnapshot]
-    C --> D[保留 source FishStock provenance]
-    D --> E[按 FishStock.id 分组]
-    E --> F[方案三：逐 FishStock 计算空鱼权重扩张]
-    F --> G[实鱼贡献 / 空鱼贡献叠加]
-    G --> H[现有挤占]
-    H --> I[现有裁剪 clipping]
-    I --> J[圆桌抽奖 / TrueRoll]
-```
-
-若阅读器不支持 Mermaid：
+现有逻辑先得到：
 
 ```text
-上游原生求值
-→ Candidate Resolver / Assembly
-→ NativeCandidateSnapshot 闭合
-→ 按 source FishStock 分组
-→ 方案三
-→ 多池叠加
-→ 挤占
-→ 裁剪
-→ 圆桌抽奖
+基础权重池引用
++ 命中的 LocalStock 引用
 ```
 
-### 关键要求：不能过早丢失来源池信息
+然后按 `FishStock.id` 去重，得到本次**有效权重池集合**。
 
-原生候选闭合后，至少到方案三计算结束前，运行时必须能够回答：
-
-> 某一份最终实鱼权重贡献来自哪个 `FishStock.id`？
-
-实现不要求必须保留独立行表，也不要求存在名为 `CandidateResolver` 或 `FishStockAccumulator` 的类。
-
-只要求语义上能够恢复：
-
-```text
-FishStock.id
-→ 本池实鱼权重贡献
-→ 本池 E0 / A / S
-```
-
-否则无法按每个 FishStock 自己的参数执行方案三。
-
-## 4.2 去重单位
-
-权重池去重键固定为：
-
-```text
-FishStock.id
-```
-
-一个逻辑区域可能由多个 Collider / Trigger 表达。如果这些空间对象都指向同一个 `FishStock.id`，则该 FishStock 只参与一次。
+如果多个 Collider / Trigger 都指向同一个 `FishStock.id`，该 FishStock 只能进入集合一次；不能等实鱼贡献已经重复计算以后再做去重。
 
 ```mermaid
 flowchart LR
@@ -253,36 +213,120 @@ flowchart LR
     B[Collider B] --> S
     C[Collider C] --> S
     S --> D[按 FishStock.id 去重]
-    D --> E[FishStock X 只计算一次]
+    D --> E[FishStock X 只参与一次]
 ```
 
-反之，如果空间上同时命中多个不同的 `FishStock.id`，则它们是多个独立权重池，全部参与叠加。
+不同 `FishStock.id` 即使空间重叠，也视为不同权重池，全部参与后续计算。
 
-> **空间切片方式不能凭空复制同一个权重池；不同 FishStock.id 则代表明确的独立权重池。**
+### B. 实鱼总权重聚合：发生在方案三切点
 
-## 4.3 运行步骤
+候选与实鱼权重完成既有上游计算后，在方案三切点按 FishStock 汇总：
+
+$$
+W_{\Sigma,k}=\sum_iW_{i,k}
+$$
+
+这里是**聚合**，不是去重。
+
+同一鱼种 / 鱼品质如果按现有规则从多个 FishStock 获得贡献，各 Stock 的贡献仍分别计入自己的 $W_{\Sigma,k}$；后续实鱼如何拼接 / 聚合继续沿用现有规则。
+
+## 4.2 方案三的精确切点
+
+方案三有两个边界：
+
+1. **不得早于候选合法闭合。**它不是原生 Cause 求值，也不属于 Candidate Resolver 的 Native Assembly。
+2. **必须早于现有挤占。**$W_{i,k}$ 必须使用现有挤占之前、且所有应在挤占之前发生的既有实鱼权重处理都已完成后的值。
+
+生产语义顺序固定为：
+
+```mermaid
+flowchart TD
+    A[基础 / LocalStock 命中] --> B[按 FishStock.id 去重]
+    B --> C[上游实鱼权重求值]
+    C --> D[候选合法闭合]
+    D --> E{Complete / Rollable?}
+    E -- 否 --> X[按既有 Incomplete / NotRollable 路径退出]
+    E -- 是 --> F[现有挤占前：按 FishStock 汇总 WΣ,k]
+    F --> G[方案三：计算 Ee,k]
+    G --> H[实鱼 / 空鱼贡献叠加]
+    H --> I[现有挤占]
+    I --> J[现有裁剪]
+    J --> K[后续圆桌 / Resolution]
+```
+
+> `NativeCandidateSnapshot` 在这里表达语义下界：方案三不得侵入 Native Candidate。本文**不要求**生产代码为了本需求新增或重构出同名数据结构。
+
+如果 Native 之后、挤占之前存在其它已经合法存在的实鱼权重处理，方案三消费这些处理后的结果；不要把方案三提前到这些既有步骤之前。
+
+## 4.3 Incomplete / Unknown 不能变成“空鱼”
+
+方案三只处理已经合法闭合、可进入后续 Resolution 的权重表面。
+
+如果上游结果是：
 
 ```text
-1. 得到本次有效 FishStock.id 集合并去重
-
-2. NativeCandidateSnapshot 闭合
-   - 保留足够的 source FishStock provenance
-
-3. 对每个 FishStock k：
-   WΣ,k = Σ Wi,k
-   Xk   = max(0, WΣ,k - Ak)
-   Ee,k = E0,k + Sk × Xk
-
-4. 叠加：
-   - 实鱼：沿用现有实鱼拼接 / 聚合规则
-   - 空鱼：Estack = Σ Ee,k
-
-5. 执行现有挤占
-
-6. 执行现有裁剪（clipping）
-
-7. 进入现有圆桌抽奖 / TrueRoll
+ResolutionIncomplete
+NotRollable
+Unknown / Unsupported 导致 required input 未闭合
 ```
+
+则：
+
+```text
+不计算 WΣ,k
+不计算 Ee,k
+不进入空鱼叠加
+不进入后续圆桌
+```
+
+特别禁止把“无法得到实鱼权重”解释成：
+
+```text
+WΣ = 0
+→ 只剩 E0
+→ 抽成空鱼
+```
+
+本文后文的 `WΣ = 0` 只指**合法闭合后的真实零实鱼贡献**。
+
+## 4.4 最小运行时载体：只需要每池总量
+
+方案三公式只依赖每个 FishStock 的实鱼总权重，不要求每条 Candidate 永久携带 `FishStock.id`。
+
+最小实现可以只是一个临时聚合结果：
+
+```text
+realFishWeightTotalByStock[fish_stock_id] = WΣ,k
+```
+
+只要在跨 Stock 丢失来源信息之前得到这个结果即可。
+
+因此：
+
+- 不要求把 `FishStock.id` 升级成 Candidate identity；
+- 不要求长期保存在 `NativeCandidateSnapshot` 公共 Contract 中；
+- 不要求新增持久 provenance 字段；
+- 可以通过逐 Stock resolve、临时 accumulator、或其它等价实现获得 $W_{\Sigma,k}$。
+
+## 4.5 对现有圆桌链的最小改造点
+
+本需求最核心的工程替换可以表达为：
+
+```text
+旧：
+noneFishWeightForSqueeze = 基础权重池的 none_fish_weight
+
+新：
+noneFishWeightForSqueeze = Σ expandedNoneFishWeight[k]
+```
+
+其中：
+
+$$
+E_{e,k}=E_{0,k}+S_k\max(0,W_{\Sigma,k}-A_k)
+$$
+
+实鱼侧继续沿用现有拼接 / 聚合规则；`noneFishWeightForSqueeze` 形成之后，现有挤占、裁剪与后续圆桌逻辑继续执行。
 
 ---
 
@@ -329,6 +373,10 @@ $$
 所以新增字段默认 `A=0, S=0` 时，**方案三的扩张公式本身不改变该 FishStock 的空鱼权重。**
 
 但这不等于整个版本完全保持旧行为，因为本期同时修改了 LocalStock 空鱼权重的叠加规则，见下一章。
+
+`S = 0` 是本机制的明确关闭开关；此时 `A` 不参与扩张结果。
+
+旧数据迁移应在数据侧 / 导出侧**显式补齐** `A=0, S=0.0`。Runtime 不应把“缺列、解析失败或非法值”静默解释为业务默认值，也不应为参数做自动 clamp；参数合法性和卧龙校验另文处理。
 
 ## 5.2 数值类型与取整
 
@@ -483,7 +531,11 @@ $$
 
 无论实鱼总权重多高，该 FishStock 都不执行额外扩张。
 
-## 8.3 FishStock 当前没有实鱼贡献
+## 8.3 上游未闭合
+
+如果本次候选仍为 `ResolutionIncomplete / NotRollable`，方案三不运行，不能把它等价成 $W_\Sigma=0$。
+
+## 8.4 FishStock 当前没有实鱼贡献
 
 当：
 
@@ -491,7 +543,7 @@ $$
 W_{\Sigma,k}=0
 $$
 
-如果这个 FishStock 本次仍是一个有效命中的权重池，则：
+如果候选已经合法闭合，且这个 FishStock 本次仍是一个有效权重池，则：
 
 $$
 E_{e,k}=E_{0,k}
@@ -503,11 +555,11 @@ $$
 
 这与“FishStock 同时携带实鱼贡献与空鱼贡献”的新语义一致。
 
-## 8.4 多个空间对象命中同一 FishStock
+## 8.5 多个空间对象命中同一 FishStock
 
 按 `FishStock.id` 去重，只计算一次。
 
-## 8.5 多个不同 FishStock 空间重叠
+## 8.6 多个不同 FishStock 空间重叠
 
 全部生效，各自计算后叠加。
 
@@ -600,6 +652,7 @@ $$
 叠加级至少应能观测：
 
 ```text
+matched_fish_stock_ids
 effective_fish_stock_ids
 stacked_real_fish_weight
 stacked_none_fish_weight
@@ -616,19 +669,23 @@ roundtable_input
 
 ## 10.2 最小测试集
 
-| Case | 输入 / 场景 | 关键期望 |
+| 用例 | 输入 / 场景 | 关键期望 |
 |---|---|---|
 | 单池：低于锚点 | $W_\Sigma<A$ | $E_e=E_0$ |
 | 单池：等于锚点 | $W_\Sigma=A$ | $E_e=E_0$ |
 | 单池：高于锚点 | $W_\Sigma>A$ | $E_e=E_0+S(W_\Sigma-A)$ |
 | 扩张关闭 | $S=0$ | $E_e=E_0$ |
-| 无实鱼贡献 | $W_\Sigma=0$，FishStock 有效 | 仍贡献 $E_0$ |
+| 合法零实鱼贡献 | 候选 Complete，$W_\Sigma=0$，FishStock 有效 | 仍贡献 $E_0$ |
+| 上游未闭合 | `ResolutionIncomplete / NotRollable` | 方案三不运行，不得转成空鱼 |
 | 基础池 + 1 LocalStock | 两个不同 FishStock.id | 两个空鱼贡献都叠加 |
 | 基础池 + 多 LocalStock | 多个不同 FishStock.id | $E_{\text{stack}}=\sum E_e$ |
-| Collider 重复命中 | 多个 Collider 指向同一 FishStock.id | 只计算一次 |
+| Collider 重复命中 | 多个 Collider 指向同一 FishStock.id | 在产生重复贡献前去重；$W_\Sigma$ 与 $E_0$ 均只计算一次 |
+| 同鱼跨池贡献 | 同一鱼种 / 鱼品质来自两个不同 FishStock.id | 分别进入各自 $W_{\Sigma,k}$，不因同鱼而跨池去重 |
 | 空间重叠 | 命中多个不同 FishStock.id | 各自计算并叠加 |
 | 顺序检查 | 固定 Fixture | 扩张 → 叠加 → 挤占 → 裁剪 → 圆桌 |
-| 实鱼保真 | 同一 Native 输入 | 方案三阶段不修改任意 $W_{i,k}$ |
+| 实鱼保真 | 同一方案三切点输入 | 方案三阶段不修改任意 $W_{i,k}$ |
+| 小数扩张率 | $S$ 为非整数 | 每池计算不额外取整，只在既有数值边界统一转换 |
+| 关闭开关 | $S=0$，$A$ 任意 | 扩张公式始终返回 $E_e=E_0$ |
 
 另外需要一组迁移回归：
 
@@ -678,16 +735,17 @@ $$
 并满足：
 
 ```text
-NativeCandidateSnapshot 已闭合
-→ 保留 source FishStock provenance
-→ 按 FishStock.id 去重 / 分组
+FishStock.id 先去重，确定有效池集合
+→ 上游实鱼权重求值并合法闭合
+→ Incomplete / NotRollable 则退出
+→ 现有挤占前，按 FishStock 汇总 WΣ,k
 → 每 FishStock 独立扩张空鱼权重
 → 实鱼 / 空鱼叠加
 → 现有挤占
 → 现有裁剪
-→ 圆桌抽奖
+→ 后续圆桌 / Resolution
 ```
 
 核心原则：
 
-> **每个 FishStock 自己解释自己的实鱼规模和空鱼参数；区域权重池叠加时，实鱼贡献和空鱼贡献一起叠加。方案三只扩张空鱼，不改写原生实鱼权重，并完整保留后续既有挤占与裁剪。**
+> **每个 FishStock 自己解释自己的实鱼规模和空鱼参数；区域权重池叠加时，实鱼贡献和空鱼贡献一起叠加。方案三只扩张空鱼，不改写方案三切点上的实鱼权重，并完整保留后续既有挤占与裁剪。**
