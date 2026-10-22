@@ -2,7 +2,8 @@
 
 日期：2026-10-22  
 状态：设计探针；公式、参数和状态隔离均为人工假设，尚未标定或晋升为生产规则。  
-讨论入口：[阶段记录与计算缺口](lure-feeding-response-joint-evaluation.md)。
+讨论入口：[阶段记录与计算缺口](lure-feeding-response-joint-evaluation.md)。  
+后续扩展：[有限目标解释与响应探针](lure-feeding-target-interpretation.md)已补从感知几何和运动到目标权重的数值规则；本篇保留固定小鱼解释的局部推导，便于单独核对。
 
 ## 1. 这次实际解决什么
 
