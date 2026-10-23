@@ -62,10 +62,7 @@ BaseWeight × EnvCoeff
 
 ## 概述
 
-在处理数据的运算时，围绕着多个因子进行。
-
-- 各个因子基本各自处理和计算
-- 再对多个因子进行聚合
+系数的计算围绕因子进行：各因子独立计算，再把结果聚合成更高层系数。
 
 因子举例：
 
@@ -109,12 +106,10 @@ BaseWeight × EnvCoeff
 
 ### 习性组件
 
-习性组件按两个维度组织：
+习性组件表按两个维度组织：行是因子，列是中鱼习性模式（Engagement Mode）。每个格子是一个组件的配置，可以包含门控规则、亲和度规则、响应曲线以及聚合参数，对应“计算条目 × 模式 × 因子”的交叉点。
 
 - 行对应一个因子；
 - 列对应一个中鱼习性模式（Engagement Mode）。
-
-一个习性组件是“鱼的计算条目 × 中鱼习性模式 × 因子”的交叉配置。它可以包含门控规则、亲和度规则、响应曲线以及参与聚合所需的参数。
 
 示意（列＝隶属鱼种的模式，行＝因子，单元格＝该习性组件的配置区间）：
 
@@ -198,7 +193,7 @@ Structure / Cover / Substrate 对应关系：
 - **开放游弋模式下**：鱼在开阔水域主动巡游觅食，活动范围大，跟随食物与水温分布移动；搜索半径大，对饵的响应相对平缓但持续，愿意追踪并试探。
 - **护巢护卵模式下**：鱼守卫巢穴与卵块，活动范围收缩到巢区附近；对靠近巢区的饵反应剧烈，但以驱逐入侵者为主、进食意愿低；越过巢区边界的饵容易被攻击。
 
-一个中鱼习性模式的内部结构：该模式下的每个因子各对应一个习性组件（门控规则、亲和度规则、响应曲线、聚合参数），全部因子组件共同构成该模式的配置。框架文档文首“一图流”画板中的“习性模式1”即为此结构的示意。
+一个中鱼习性模式由一组习性组件构成：每个因子对应一个组件（含门控规则、亲和度规则、响应曲线、聚合参数）。框架文档文首“一图流”画板中的“习性模式1”就是这张配置表的示意。存储时不必按嵌套树，可平铺成表格：每行一个“中鱼习性模式 × 因子”的组件条目，查询时按模式和因子直接定位行。
 
 出于运行时性能，习性模式不必按嵌套树存储，可以做成平铺表格：每行是一个“中鱼习性模式 × 因子”的习性组件条目，列出所属模式、因子、门控规则、亲和度规则、响应曲线与聚合参数；查询时按模式和因子直接定位行。
 
@@ -250,7 +245,7 @@ Pond
 
 环境习性组件：一条 Engagement Mode 针对某个环境 Factor 的完整鱼侧评价配置。典型环境 Factor：水温、结构类型、遮蔽物类型、底质类型、觅食生态水层、时段、光照、水流、溶氧。
 
-响应习性组件：一条 Engagement Mode 针对玩家输入、饵料、窝料、呈现方式或其它刺激的独立响应配置单元。Response 的内部配置与求值结构不默认复用 Environment 的 Profile → Affinity → Fit 结构。
+响应习性组件：一条 Engagement Mode 中，针对玩家输入、饵料、窝料、呈现方式或其它刺激的独立响应配置单元。它的内部配置不默认复用环境侧的 Profile → Affinity → Fit 结构。
 
 # 中间数据
 
@@ -270,7 +265,7 @@ Pond
 
 ## 鱼况
 
-鱼况（Fish Condition）＝鱼侧动态参数：随天气、时段及其它动态输入变化，描述鱼当前时刻的活跃、摄食与警觉情况，作为后续 Response 等计算的基础输入。
+鱼况（Fish Condition）：鱼侧动态参数。随天气、时段等输入变化，描述鱼当前的活跃、摄食与警觉状态，供后续 Response 等计算使用。
 
 | **中文** | **英文 / Identifier** | **说明** |
 |-|-|-|
@@ -281,7 +276,7 @@ Pond
 
 ## 响应阶段
 
-响应阶段（Response Stage）：在环境权重形成之后，根据 Engagement Mode 的响应习性、当前鱼况以及玩家 / 刺激输入，对候选权重进行后续调整。
+响应阶段（Response Stage）：环境权重形成之后，系统按 Engagement Mode 的响应习性、当前鱼况和玩家刺激，调整候选权重。它分两路：持久响应处理持续生效的玩家行为（如打窝）；姿态响应处理当前姿态、饵和操作的即时计算。
 
 ```text
 SpatialDistributionWeight
@@ -304,7 +299,7 @@ SpatialDistributionWeight
 
 ## 附录·条件分级明细
 
-<table><colgroup><col/><col/><col/></colgroup><tbody><tr><td vertical-align="top"><b>条件 ＼ 分级</b></td><td vertical-align="top"><b>原始条件</b><br/>直接配置、编辑、采样或运行时得到的数据。</td><td vertical-align="top"><b>派生条件</b><br/>由原始条件预处理、预烘焙、采样或组合得到（如无特殊说明，指特定饵点 &amp; 特定策划选择下的数据）。</td></tr><tr><td vertical-align="top"><b>烘焙条件</b></td><td vertical-align="top"><ul><li>时段</li><li>天气<ul><li>水表温度</li><li>风力、风向</li><li>气温</li><li>天光强度</li><li>气压</li></ul></li><li>结构体类型</li><li>掩蔽物类型</li><li>底质类型</li><li>钓场水底温度</li><li>深度</li><li>到附近结构距离</li><li>离岸距离</li><li>季节/月份/日期</li><li>特殊事件，例如 果树掉落、大量洄游等</li></ul></td><td vertical-align="top"><ul><li>水温</li><li>觅食生态水层</li><li>光照</li><li>溶氧</li><li>水流流速</li><li>浮游生物含量</li><li>历史、未来天气序列摘要</li></ul></td></tr><tr><td vertical-align="top"><b>响应条件</b></td><td vertical-align="top"><ul><li>饵<ul><li>饵种</li><li>饵id</li></ul></li><li>姿态<ul><li>分为原子姿态和分子姿态</li><li>包含姿态种类和姿态得分</li></ul></li><li>窝料</li><li>线/引线</li><li>（玩家位置、声音）</li></ul></td><td vertical-align="top"><ul><li>饵轮廓</li><li>饵味型</li><li>饵速度</li><li>闪光</li><li>颜色</li><li>震动</li><li>声音</li><li>线透明度、线颜色</li><li>受伤、停顿</li><li>等等……</li></ul></td></tr></tbody></table>
+<table><colgroup><col/><col/><col/></colgroup><tbody><tr><td vertical-align="top"><b>顺序</b><b> ＼ 分级</b></td><td vertical-align="top"><b>原始条件</b><br/>直接配置、编辑、采样或运行时得到的数据。</td><td vertical-align="top"><b>派生条件</b><br/>由原始条件预处理、预烘焙、采样或组合得到（如无特殊说明，指特定饵点 &amp; 特定策划选择下的数据）。</td></tr><tr><td vertical-align="top"><b>烘焙条件</b></td><td vertical-align="top"><ul><li>时段</li><li>天气<ul><li>水表温度</li><li>风力、风向</li><li>气温</li><li>天光强度</li><li>气压</li></ul></li><li>环境实体<ul><li>产氧</li><li>水流影响</li><li>光照遮蔽</li><li>……</li></ul></li><li>结构体类型</li><li>掩蔽物类型</li><li>底质类型</li><li>钓场水底温度</li><li>深度</li><li>到附近结构距离</li><li>离岸距离</li><li>季节/月份/日期</li><li>特殊事件，例如 果树掉落、大量洄游等</li><li>实体影响系数（隐蔽系数、光照遮挡系数、水流遮挡、溶氧供给强度 / 距离）</li></ul></td><td vertical-align="top"><ul><li>水温</li><li>觅食生态水层</li><li>光照</li><li>溶氧</li><li>水流流速</li><li>浮游生物含量</li><li>历史、未来天气序列摘要</li></ul></td></tr><tr><td vertical-align="top"><b>响应条件</b></td><td vertical-align="top"><ul><li>饵<ul><li>饵种</li><li>饵id</li></ul></li><li>姿态<ul><li>分为原子姿态和分子姿态</li><li>包含姿态种类和姿态得分</li></ul></li><li>窝料</li><li>线/引线</li><li>（玩家位置、声音）</li></ul></td><td vertical-align="top"><ul><li>饵轮廓</li><li>饵味型</li><li>饵速度</li><li>闪光</li><li>颜色</li><li>震动</li><li>声音</li><li>线透明度、线颜色</li><li>受伤、停顿</li><li>等等……</li></ul></td></tr></tbody></table>
 
 
 
