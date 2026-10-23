@@ -8,7 +8,7 @@
 | 提案 | 内容与状态 |
 |---|---|
 | [方案B](lure-feeding-target-interpretation.md) | 已有明确公式、局部原型与轨迹失败记录；保留其规则和数值 |
-| [方案C](lure-feeding-response-proposal-c.md) | 独立推导猎物支持map、类型条件状态、鱼侧评价与响应；先推机制再提炼数据契约 |
+| [方案C](lure-feeding-response-proposal-c.md) | 当前展开实际呈现到猎物解释：饵侧／猎物侧分工、独立证据配置与汇总，以及可追溯的对照算例 |
 
 后续对话沿方案C推进。下文保留方案B的范围与未决问题，不作为方案C默认规则。
 
