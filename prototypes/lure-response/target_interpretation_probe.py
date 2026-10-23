@@ -108,6 +108,35 @@ def state_matches(target, facts, cues):
     return {"status":"Resolved","state":best[1],
             "fit":exp(-best[0]/2),"gain":best[2]}
 
+def aggregate_feeding_responses(support, outputs):
+    """Max of complete alternative responses to the same presentation.
+
+    This is a candidate response rule, not classification by preference
+    and not a union of independent bite probabilities.
+    """
+    supported = [t for t,v in support.items() if v["status"]=="Supported"]
+    if any(v["status"]=="Unknown" for v in support.values()):
+        return {"status":"ResolutionIncomplete"}
+    if not supported:
+        return {"status":"UnsupportedTarget"}
+    if any(outputs.get(t,{}).get("evaluation_status")!="Resolved" for t in supported):
+        return {"status":"ResolutionIncomplete"}
+    values = {t:outputs[t].get("local_response") for t in supported}
+    if any(v is None for v in values.values()):
+        return {"status":"ResolutionIncomplete"}
+    if any(not isinstance(v,(int,float)) or not isfinite(v) or not 0<=v<=1
+           for v in values.values()):
+        return {"status":"Invalid"}
+    best = max(values.values())
+    return {
+        "status":"Resolved",
+        "local_response":best,
+        "aggregation":"max_complete_alternative_feeding_responses",
+        "supported_interpretation_count":len(supported),
+        # Explain only: never used to overwrite support or perceived identity.
+        "dominant_response_targets":[t for t,v in values.items() if v==best],
+    }
+
 def evaluate(cues, facts, capacity, feeding_motivation, preferences=None):
     preferences = PREFERENCES if preferences is None else preferences
     # Typed numeric inputs only; Unknown remains distinct from known absence.
@@ -159,21 +188,8 @@ def evaluate(cues, facts, capacity, feeding_motivation, preferences=None):
                    support_strength=support_strength,
                    local_response=u/(1+u))
         outputs[target] = out
-    supported = [t for t,v in support.items() if v["status"]=="Supported"]
-    incomplete = any(v["status"]=="Unknown" for v in support.values()) or any(
-        outputs[t].get("evaluation_status")!="Resolved" for t in supported)
-    if incomplete:
-        status = "ResolutionIncomplete"
-    elif not supported:
-        status = "UnsupportedTarget"
-    elif len(supported) > 1:
-        status = "MultipleInterpretations"
-    else:
-        status = "SingleInterpretation"
-    packet = {"status":status, "targets":outputs}
-    if status == "SingleInterpretation":
-        packet["local_response"] = outputs[supported[0]]["local_response"]
-    # Multiple interpretations have no final scalar: aggregation remains open.
+    packet = aggregate_feeding_responses(support,outputs)
+    packet["targets"] = outputs
     return packet
 
 def cues(r=4.0,filaments=0.0,front_pair=0.0,rear_pair=0.0,
@@ -221,6 +237,44 @@ def checks(results):
     assert results["minnow_swim"]["local_response"] > results["minnow_pause"]["local_response"]
     assert results["minnow_swim_reduced"]["local_response"] < results["minnow_pause_reduced"]["local_response"]
     assert "local_response" not in results["tube_falling"]
+
+    crawl=results["tube_bottom_crawl"]
+    assert crawl["status"]=="Resolved"
+    branch_values=[v["local_response"] for v in crawl["targets"].values()
+                   if v.get("evaluation_status")=="Resolved"]
+    assert crawl["local_response"]==max(branch_values)
+    # Preference may change the dominant response; support and state stay fixed.
+    crawl_cues=cues(r=2.8,filaments=.8,bottom=.15)
+    crawl_facts=facts(v=.04)
+    alternate=deepcopy(PREFERENCES)
+    alternate["fish"]=(.30,.08)
+    alternate["crustacean"]=(1.0,.04)
+    shifted=evaluate(crawl_cues,crawl_facts,1.0,1.0,alternate)
+    assert crawl["dominant_response_targets"]==["fish"]
+    assert shifted["dominant_response_targets"]==["crustacean"]
+    for t in ("fish","crustacean"):
+        assert crawl["targets"][t]["routes"]==shifted["targets"][t]["routes"]
+        assert crawl["targets"][t]["presentation"]==shifted["targets"][t]["presentation"]
+    def agg(values):
+        sup={k:{"status":"Supported"} for k in values}
+        out={k:{"evaluation_status":"Resolved","local_response":v} for k,v in values.items()}
+        return aggregate_feeding_responses(sup,out)
+    assert agg({"a":.6,"b":.4})["local_response"]==.6
+    assert agg({"a":.6,"b":.4,"duplicate_a":.6})["local_response"]==.6
+    assert agg({"a":.6,"b":.4,"weak":.01})["local_response"]==.6
+    assert agg({"a":0.0,"b":0.0})["local_response"]==0
+    assert set(agg({"a":.6,"b":.6})["dominant_response_targets"])=={"a","b"}
+    assert agg({"a":float("nan")})["status"]=="Invalid"
+    unresolved=aggregate_feeding_responses(
+        {"a":{"status":"Supported"},"b":{"status":"Supported"}},
+        {"a":{"evaluation_status":"Resolved","local_response":.6},
+         "b":{"evaluation_status":"Unknown"}})
+    assert unresolved["status"]=="ResolutionIncomplete" and "local_response" not in unresolved
+    unknown_support=aggregate_feeding_responses(
+        {"a":{"status":"Supported"},"b":{"status":"Unknown"}},
+        {"a":{"evaluation_status":"Resolved","local_response":.6}})
+    assert unknown_support["status"]=="ResolutionIncomplete"
+
     changed = deepcopy(PREFERENCES)
     changed["fish"]=(0.0,.08)
     a=evaluate(cues(),facts(),1.0,1.0)
@@ -247,7 +301,8 @@ if __name__=="__main__":
     checks(results)
     brief={}
     for name,out in results.items():
-        brief[name]={"status":out["status"],"targets":{}}
+        brief[name]={"status":out["status"],"R":out.get("local_response"),
+                     "dominant_response_targets":out.get("dominant_response_targets"),"targets":{}}
         for target,entry in out["targets"].items():
             if entry["status"]=="Supported":
                 brief[name]["targets"][target] = {
