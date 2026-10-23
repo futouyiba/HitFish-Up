@@ -1,9 +1,9 @@
 # 中鱼升级｜Terminology / 术语表
 
-> **Status: Working Terminology Ledger**  
-> **Scope:** 中鱼升级 / FCF 相关的跨模块命名收敛。  
-> **Authority boundary:** 本文维护术语的推荐名称、定义、层级与禁止混淆项，**不自动替代各 Design Branch / Product Current / Runtime Contract 的现行 Authority**。当本文与 Current Contract 冲突时，以对应 Current Contract 为准，直到发生显式 Adoption / Migration。  
-> **Notion terminology owner:** `中鱼升级｜Glossary / 术语表｜Working`。
+> **状态：Working Terminology Ledger**  
+> **范围：** 中鱼升级 / FCF 相关的跨模块命名收敛。  
+> **权威边界：** 本文维护术语的推荐名称、定义、层级与禁止混淆项，**不自动替代各 Design Branch / Product Current / Runtime Contract 的现行 Authority**。当本文与 Current Contract 冲突时，以对应 Current Contract 为准，直到发生显式 Adoption / Migration。  
+> **Notion 术语 Owner：** `中鱼升级｜Glossary / 术语表｜Working`。
 
 本文只保留当前有用的术语状态，不记录完整推演历史。历史变化从 Git commit / diff 查询。
 
@@ -14,11 +14,11 @@
 | 层 | 用途 |
 |---|---|
 | 业务 / 策划语言 | 人如何理解这个对象或机制 |
-| Authoring Model | 编辑器实际编辑、继承、覆盖的对象 |
-| Resolved Model | Authoring 解析后的稳定投影 |
-| Runtime / Algorithm | 游戏运行与算法求值时使用的语义 |
-| Physical Schema | XLSX / JSON / ID / 字段的历史或物理命名 |
-| Workflow | Resolve / Validate / Publish 等数据流动作 |
+| 配置模型 | 编辑器实际编辑、继承、覆盖的对象（Authoring Model） |
+| 解析模型 | 配置解析后的稳定投影（Resolved Model） |
+| 运行 / 算法 | 游戏运行与算法求值时使用的语义（Runtime / Algorithm） |
+| 物理数据结构 | XLSX / JSON / ID / 字段的历史或物理命名（Physical Schema） |
+| 工作流 | Resolve / Validate / Publish 等数据流动作 |
 
 原则：**业务概念名与历史物理表名允许不同。不要为了命名纯洁性强制迁移稳定 Schema。**
 
@@ -26,7 +26,7 @@
 
 ## 2. 鱼与中鱼习性身份
 
-| 中文正式名 | English / Identifier | 定义 | 状态 / 边界 |
+| 中文正式名 | 英文 / Identifier | 定义 | 状态 / 边界 |
 |---|---|---|---|
 | 鱼种 | `Species` | 生物 / 内容层的鱼种身份，是习性、鱼品质和其它鱼侧配置的上层归属。 | 正式业务概念。 |
 | 鱼品质 | `Fish Quality` / `FishQualityRef` | 长期既有的鱼品质身份。 | **保留既有名称**；不因为当前小个体 / 大个体组织方式改名为 Fish Spec。 |
@@ -57,33 +57,33 @@ FishEnvAffinityRef
 
 ### 3.1 总类
 
-**中鱼习性组件｜Engagement Component**
+**中鱼习性组件（Engagement Component）**
 
 定义：一条 Engagement Mode 中，围绕一个相对独立的评价或响应语义组织的一组鱼侧配置。
 
-`Component` 单独作为正式英文名过泛；完整英文使用 **Engagement Component**。在上下文足够明确时，代码 / 文档内部可以简称 `Component`。
+`Component` 单独作为正式英文名过泛；正式总类使用 **Engagement Component**。在上下文足够明确时，可以简称 `Component`。
 
 ```text
-Engagement Mode
-├─ Environment Components
-└─ Response Components
+中鱼习性组件 Engagement Component
+├─ 环境习性组件 Environment Component
+└─ 响应习性组件 Response Component
 ```
 
 ### 3.2 环境习性组件
 
-**环境习性组件｜Environment Component**
+**环境习性组件（Environment Component）**
 
 定义：一条 Engagement Mode 针对某个环境 Factor 的完整鱼侧评价配置。
 
 当前已存在 / 已讨论的环境 Factor / Component 包括：
 
-- Temperature
-- Structure Type
-- Feeding Layer
-- Period
-- Cover Type（候选扩展）
-- Substrate Type（候选扩展）
-- Light / Flow / Oxygen（候选扩展）
+- 水温（Temperature）
+- 结构类型（Structure Type）
+- 觅食生态水层（Feeding Layer）
+- 时段（Period）
+- 遮蔽物类型（Cover Type，候选扩展）
+- 底质类型（Substrate Type，候选扩展）
+- 光照 / 水流 / 溶氧（Light / Flow / Oxygen，候选扩展）
 
 其中 `Structure Type / Cover Type / Substrate Type` 明确属于鱼侧评价的 **Factor**；对应的世界实体、地形与材质数据主要负责提供 Raw Condition，必要时再解析为 Derived Condition。
 
@@ -91,7 +91,7 @@ Engagement Mode
 
 ### 3.3 响应习性组件
 
-**响应习性组件｜Response Component**
+**响应习性组件（Response Component）**
 
 定义：一条 Engagement Mode 针对外部刺激、饵料、呈现方式等响应语义的鱼侧配置单元。
 
@@ -103,7 +103,7 @@ Engagement Mode
 
 ### 4.1 环境实体
 
-**环境实体｜Environment Entity**
+**环境实体（Environment Entity）**
 
 场景中实际存在、具有位置 / 形态并可参与环境计算的对象。
 
@@ -139,30 +139,30 @@ Structure Type / Cover Type / Substrate Type Factor
 
 ### 4.3 典型分类
 
-| 候选 | 世界侧表示 | 对应鱼侧 Factor |
+| 中文对象 / 特征 | 世界侧表示 | 对应鱼侧 Factor |
 |---|---|---|
-| Point / 岬角 | Structure 相关地形 / 几何 | Structure Type |
-| Hump / 水下隆起 | Structure 相关地形 / 几何 | Structure Type |
-| Drop-off / 陡坎 | Structure 相关地形 / 几何 | Structure Type |
-| Ledge / 台坎 | Structure 相关地形 / 几何 | Structure Type |
-| Channel / 沟槽 | Structure 相关地形 / 几何 | Structure Type |
-| Flat / 平坦区 | Structure 相关地形 / 几何 | Structure Type |
-| Weed / 水草 | Environment Entity | Cover Type |
-| Brush / 灌木 | Environment Entity | Cover Type |
-| Stump / 树桩 | Environment Entity | Cover Type |
-| Laydown / 倒木 | Environment Entity | Cover Type |
-| Dock / 码头 | Environment Entity / 场景构筑物 | Cover Type |
-| Boulder / 孤立巨石 | Environment Entity | 通常 Cover Type |
-| Rock reef / 岩脊 | Structure 相关地形 / 几何 | Structure Type |
-| Sand / Gravel / Mud | Surface / Material Property | Substrate Type |
+| 岬角（Point） | Structure 相关地形 / 几何 | Structure Type |
+| 水下隆起（Hump） | Structure 相关地形 / 几何 | Structure Type |
+| 陡坎（Drop-off） | Structure 相关地形 / 几何 | Structure Type |
+| 台坎（Ledge） | Structure 相关地形 / 几何 | Structure Type |
+| 沟槽（Channel） | Structure 相关地形 / 几何 | Structure Type |
+| 平坦区（Flat） | Structure 相关地形 / 几何 | Structure Type |
+| 水草（Weed） | Environment Entity | Cover Type |
+| 灌木（Brush） | Environment Entity | Cover Type |
+| 树桩（Stump） | Environment Entity | Cover Type |
+| 倒木（Laydown） | Environment Entity | Cover Type |
+| 码头（Dock） | Environment Entity / 场景构筑物 | Cover Type |
+| 孤立巨石（Boulder） | Environment Entity | 通常 Cover Type |
+| 岩脊（Rock reef） | Structure 相关地形 / 几何 | Structure Type |
+| 沙 / 砾石 / 泥（Sand / Gravel / Mud） | Surface / Material Property | Substrate Type |
 
 这里的关键边界是：**世界侧分类描述数据从哪里来；Factor 描述鱼在评价什么。**
 
 ---
 
-## 5. Condition、Factor 与求值
+## 5. 条件、因子与求值
 
-| 中文正式名 | English / Identifier | 定义 | 禁止混淆 |
+| 中文正式名 | 英文 / Identifier | 定义 | 禁止混淆 |
 |---|---|---|---|
 | 原始条件 | `Raw Condition` | 直接编辑、采样或由世界状态提供的事实。 | 例：实体类型、位置、形态、地形高度、材质、天气。主要由世界对象 / 环境系统提供。 |
 | 派生条件 | `Derived Condition` | 从 Raw Condition 或其它 Derived Condition 确定性计算得到的环境事实。 | 例：水深、距 Structure、Cover 密度、局部光照、流速、溶氧。 |
@@ -212,26 +212,151 @@ Cover Fit
 
 ---
 
-## 6. 已确认的既有机制术语
+## 6. 计算域与空间机会
 
-| 中文正式名 | English / Identifier | 定义 / 边界 |
+### 6.1 计算域
+
+**计算域（Calculation Surface）**
+
+定义：一套配置、角色或规则所作用的**计算问题范围**。它回答的是“这个配置在哪一类计算里生效”，而不是“数据从哪条通道流过”。
+
+因此不推荐翻译为“计算通道”。`Channel / Pipeline` 更适合描述运行路径；`Surface` 在这里强调的是**作用范围 / 求值上下文**。
+
+当前典型例子：
+
+- **空间机会计算域（Spatial Opportunity Surface）**：回答“某 Fish Quality 在某空间条件下相对有多大机会被选中 / 分布到这里”。
+- **响应计算域（Response Surface）**：未来用于回答“面对饵料、窝料、呈现方式或其它刺激时，这条鱼如何响应”。当前仍属 Working。
+
+`AggregationRole` 必须放在某个 Calculation Surface 中理解；同一个 Component 在不同 Surface 中理论上可以有不同角色。
+
+### 6.2 空间机会
+
+**空间机会（Spatial Opportunity）**
+
+定义：描述某个鱼侧 Subject 在某个钓场 / 空间条件下，进入后续中鱼选择的相对机会强度。
+
+它不是最终概率，而是一类中间计算语义。空间机会计算可以消费：
+
+- 基础机会强度；
+- 环境习性评价结果；
+- Background / Gate 等策略；
+- 其它该计算域显式拥有的修正项。
+
+### 6.3 基础机会强度
+
+**基础机会强度（Base Opportunity Intensity）**  
+物理字段：`baseOpportunityIntensity`
+
+定义：在环境与其它动态修正介入之前，某 `FishPond × FishQualityRef` 的基础机会量级。
+
+它与环境适配度正交：环境习性决定“当前位置有多适合”，基础机会强度决定“这条鱼在该钓场原本有多少机会量级”。
+
+推荐因果：
+
+```text
+Base Opportunity Intensity
+× Environment Coefficient
+× other explicit policy terms
+→ Spatial Distribution Weight
+```
+
+### 6.4 空间机会强度
+
+**空间机会强度（Spatial Opportunity Intensity）**
+
+状态：**概念可用，正式 Contract 名称待核。**
+
+它可以用来泛指空间机会计算中的某个中间强度值，但当前术语表不把它强制设为独立 Runtime 字段，也不要求它位于固定的一步。若当前 Contract 已直接输出 `SpatialDistributionWeight`，不要为了术语完整再新增一层物理量。
+
+### 6.5 空间分布权重
+
+**空间分布权重（Spatial Distribution Weight）**  
+物理字段：`SpatialDistributionWeight`
+
+定义：空间机会相关因素合成后的**未归一化权重**。
+
+它不是 Probability；只有与其它候选鱼一起进入归一化 / 抽样后，才可能转化为概率意义上的结果。
+
+---
+
+## 7. 配置、策略与 Gate
+
+### 7.1 Profile
+
+**习性配置（Profile）**
+
+定义：一个 Environment Component 中真正描述“这个 Factor 如何偏好 / 如何响应”的结构化配置内容。
+
+它通常包含 Affinity、阈值、区间或其它该 Factor 所需参数，但具体字段由不同 Component 决定。
+
+边界：
+
+- `Component` 是配置单元；
+- `Profile` 是这个 Component 内的主要评价配置内容；
+- `Source` 可以提供 Profile；
+- `Profile absent` 表示当前没有可消费的 Profile，不等于整个 Component 不存在。
+
+### 7.2 Gate
+
+**门槛判定（Gate）**
+
+定义：在连续评分 / 权重聚合之前或之外，对某项条件是否满足最低要求进行的离散判定。
+
+Gate 通常回答“能不能正常通过”，而 Fit / EnvCoeff 回答“通过后有多适合”。
+
+不要把 Gate 和普通低 Fit 混为一谈。Gate fail 可以根据当前计算域的 Policy 进入特殊处理，例如使用 `fail_env_coeff`。
+
+### 7.3 Gate 策略
+
+**门槛策略（Gate Policy）**
+
+状态：Working。
+
+定义：规定 Gate 如何触发、Gate fail 后如何处理、是否允许特殊兜底等规则集合。
+
+如果这些规则未来没有独立配置 / 生命周期，不必强行创建独立 `GatePolicy` Domain object；术语层先保留规则集合含义。
+
+### 7.4 保底策略
+
+**保底策略（Background Policy）**
+
+状态：Working。
+
+定义：在空间机会计算中，为被标记为 Background Fish 的 Subject 提供最低可见机会或其它兜底行为的策略。
+
+当前相关字段包括：
+
+```text
+FishPond × FishQualityRef
+├─ isBackgroundFish
+└─ envCoeffMin
+```
+
+是否最终形成独立 `BackgroundPolicy` 对象，取决于它是否真的需要独立配置、复用和生命周期；术语表不提前制造该 identity。
+
+---
+
+## 8. 已确认的既有机制术语
+
+| 中文正式名 | 英文 / Identifier | 定义 / 边界 |
 |---|---|---|
 | 觅食生态水层 | `Feeding Layer` | 描述鱼在表层 / 中层 / 底层觅食空间上的习性。暂不改为 `Foraging Layer`。 |
 | 结构类型 | `Structure Type` | 鱼侧环境评价 Factor：评价当前位置 / 条件对应的地形结构类型。世界侧 Structure 实体 / 地形几何只负责提供其条件数据。 |
 | 遮蔽物类型 | `Cover Type` | 鱼侧环境评价 Factor：评价当前位置 / 条件对应的遮蔽物类型。世界侧 Cover 实体负责提供原始条件数据。 |
 | 底质类型 | `Substrate Type` | 鱼侧环境评价 Factor：评价当前位置 / 条件对应的水底基质类型。世界侧材质 / 区域数据负责提供原始条件数据。 |
 | 时段 | `Period` | 一天中的时间区段，本身不预设 Activity 或 Opportunity ownership。 |
-| 聚合角色 | `AggregationRole` | 某个 Engagement Component 在某个 Calculation Surface 中采用的聚合角色。枚举可为 `CORE / SECONDARY / IGNORED`。 |
-| 忽略 | `IGNORED` | 当前 Calculation Surface 不消费该 Component；不表示鱼没有该习性，也不删除其 Profile。 |
-| 最小环境系数 | `envCoeffMin` / Min Env Coeff | 保底政策下的最低环境系数值。字段名保留，不另造 `BackgroundMinEnvCoeff`。 |
-| 空间分布权重 | `SpatialDistributionWeight` | 环境与基础权重合成后的未归一化空间分布权重；不是 Probability。 |
+| 聚合角色 | `AggregationRole` | 某个 Engagement Component 在某个计算域（Calculation Surface）中采用的聚合角色。枚举可为 `CORE / SECONDARY / IGNORED`。 |
+| 忽略 | `IGNORED` | 当前计算域不消费该 Component；不表示鱼没有该习性，也不删除其 Profile。 |
+| Gate 失败环境系数 | `fail_env_coeff` | 非 Background 等普通 Gate fail 路径下使用的环境系数。当前常用默认值为 `0.01`，允许按 Contract 配置到 `0`。 |
+| 最小环境系数 | `envCoeffMin` / Min Env Coeff | Background 兜底政策下的最低环境系数值。字段名保留，不另造 `BackgroundMinEnvCoeff`。 |
+| 空间分布权重 | `SpatialDistributionWeight` | 环境与基础机会强度等因素合成后的未归一化空间分布权重；不是 Probability。 |
 | 固定烘焙程序 / 固定烘焙逻辑 | `Fixed Bake Program` | 系统拥有的固定多组件聚合流程；Author 不编辑其控制流、顺序或聚合算子。当前为工作命名。 |
 
 ---
 
-## 7. Opportunity / Background（Working）
+## 9. 保底鱼（Working）
 
-**保底鱼｜Background Fish** 目前仍是工作术语。
+**保底鱼（Background Fish）** 目前仍是工作术语。
 
 推荐边界：它不是 Species / FishQuality 的固有身份，而是某个钓场 / Opportunity 配置下赋予某 FishQuality 的稳定背景供给角色。
 
@@ -246,11 +371,13 @@ FishPond × FishQualityRef
 
 ---
 
-## 8. Authoring / Workflow 术语
+## 10. 配置与工作流术语
 
-| 中文 | English | 定义 |
+| 中文 | 英文 | 定义 |
 |---|---|---|
 | 配方 | `Recipe` | 描述一个 Authoring 对象如何由 Source + Operations 形成的表达。Base 是对象，Recipe 是形成方式。 |
+| 来源 | `Source` | 为 Component / Profile 提供原始配置值的上游来源。 |
+| 操作 | `Operation` | 在 Source value 上表达继承、调整或设置等作者意图的操作。 |
 | 解析 | `Resolve` | Source + Operations + overrides → effective resolved truth。 |
 | 物化 | `Materialize` | effective truth → 完整 Production rows。 |
 | 校验 | `Validate` | 对 Authoring / Resolved / Production 约束进行检查。 |
@@ -261,18 +388,22 @@ FishPond × FishQualityRef
 
 ---
 
-## 9. 当前需要继续推敲
+## 11. 当前需要继续推敲
 
 1. `Factor` 是否作为 Environment / Response 共用总概念，还是明确拆成 `Environmental Factor` 等子类。
 2. Response Component 的输入、内部配置和输出是否复用 `Profile / Affinity / Fit`，目前不预设。
 3. `Structure Type / Cover Type / Substrate Type` 的具体 Runtime 输入形式：是单一枚举、集合、权重分布，还是由距离 / 密度等 Derived Condition 共同决定；术语层暂不预设。
-4. `Background Fish` 的英文是否最终保留，还是未来改成更偏 Policy 的名称。
-5. `Fixed Bake Program` 是否足够直观，仍可继续替换。
+4. `Spatial Opportunity Intensity` 是否有必要成为独立正式 Runtime 量；当前不要为了概念对称新增字段。
+5. `Gate Policy / Background Policy` 是否需要独立 Domain identity；只有在它们真的独立配置、复用、演进时再升级。
+6. `Background Fish` 的英文是否最终保留，还是未来改成更偏 Policy 的名称。
+7. `Fixed Bake Program` 是否足够直观，仍可继续替换。
+8. 更底层的 Resolved / Runtime 名称（如曾出现过的 `ResolvedSpatialOpportunitySubject`、`ResolvedOpportunitySeed`）需在当前 Contract 中重新取证后再决定是否进入正式术语区。
 
 ---
 
-## 10. 维护规则
+## 12. 维护规则
 
+- **中文必须是术语表中的主名称**；英文放在括号或独立英文列中，不让英文承担主阅读路径。
 - 只在出现真实语义冲突时改名；稳定既有术语优先保留。
 - 业务名、Authoring 名、Runtime 名、Physical Schema 名允许不同，不强求逐字一致。
 - 只有能独立变化、独立被引用、拥有独立生命周期的东西，才值得拥有独立 identity 名词。
