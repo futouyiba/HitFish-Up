@@ -75,15 +75,17 @@ Engagement Mode
 
 定义：一条 Engagement Mode 针对某个环境 Factor 的完整鱼侧评价配置。
 
-当前已存在 / 已讨论的环境组件包括：
+当前已存在 / 已讨论的环境 Factor / Component 包括：
 
 - Temperature
-- Structure
+- Structure Type
 - Feeding Layer
 - Period
-- Cover（候选扩展）
-- Substrate（候选扩展）
+- Cover Type（候选扩展）
+- Substrate Type（候选扩展）
 - Light / Flow / Oxygen（候选扩展）
+
+其中 `Structure Type / Cover Type / Substrate Type` 明确属于鱼侧评价的 **Factor**；对应的世界实体、地形与材质数据主要负责提供 Raw Condition，必要时再解析为 Derived Condition。
 
 不要把“环境习性组件”当成所有 Engagement Component 的总称。
 
@@ -97,87 +99,64 @@ Engagement Mode
 
 ---
 
-## 4. 世界、环境事实与钓鱼环境语义
+## 4. 世界对象与环境条件来源
 
 ### 4.1 环境实体
 
 **环境实体｜Environment Entity**
 
-场景中实际存在、具有位置 / 形态并可影响环境计算的对象。
+场景中实际存在、具有位置 / 形态并可参与环境计算的对象。
 
-例：水草、树桩、沉木、孤立巨石、桥墩、码头构件。
+例：水草、树桩、沉木、孤立巨石、桥墩、码头构件，以及用于表达地形结构的场景对象。
+
+环境实体首先是**条件数据来源**：它提供类型、位置、形态、尺寸、材质等 Raw Condition；是否以及如何被归纳成某个 Factor 的当前值，是后续条件处理 / 求值层的责任。
 
 `Spatial Environment Entity` 信息增益不足，且容易与 Spatial Opportunity 混淆，因此不推荐作为正式名。
 
-### 4.2 地形结构
+### 4.2 Structure / Cover / Substrate 的世界侧表达
 
-**地形结构｜Structure**
+世界侧可以存在承担不同环境语义的实体或几何 / 材质数据，例如：
 
-水体底部地形、轮廓、深度变化相对周围形成的结构性特征。
+- **Structure 相关实体 / 地形几何**：岬角、陡坎、台坎、沟槽、水下隆起等；
+- **Cover 相关实体**：水草、倒木、树桩、孤立巨石、码头等；
+- **Substrate 数据**：Sand / Gravel / Mud 等水底材质或区域属性。
 
-典型：
+这些世界侧对象 / 数据**不是 Factor 本身**。它们主要提供 Raw Condition；条件处理层再根据当前评价位置、范围或采样规则形成可用于鱼侧评价的数据。
 
-- Point / 岬角
-- Hump / 水下隆起
-- Drop-off / 陡坎
-- Ledge / 台坎
-- Channel / 沟槽
-- Flat / 平坦区
-- Rock reef / 岩脊（当其形成明显底部轮廓时）
+因此：
 
-Structure 主要描述**底部 contour / terrain semantic**，不是所有可以藏鱼的物体。
+```text
+Structure Entity / Terrain Geometry
+Cover Entity
+Substrate Material / Region
+        ↓ provide
+Raw Condition
+        ↓ optional derivation
+Derived Condition
+        ↓ evaluated as
+Structure Type / Cover Type / Substrate Type Factor
+```
 
-### 4.3 遮蔽物
+### 4.3 典型分类
 
-**遮蔽物｜Cover**
-
-为鱼提供贴靠、隐藏、伏击、遮光或避流条件的对象或区域语义。
-
-典型：
-
-- Weed / 水草
-- Brush / 灌木
-- Stump / 树桩
-- Laydown / 倒木
-- Dock / 码头
-- Boulder / 孤立巨石（通常）
-
-同一个 Environment Entity 可以同时影响多个环境语义。例如一片水草既可以形成 Cover，也可以影响 Light / Flow / Oxygen。
-
-### 4.4 底质
-
-**底质｜Substrate**
-
-水底表层材料 / 基质语义。
-
-典型：
-
-- Sand
-- Gravel
-- Mud
-
-Substrate 不属于 Structure 或 Cover。世界里存在 Substrate，也**不代表它必须立即成为中鱼 Factor**。
-
-### 4.5 世界表示与钓鱼语义是两条轴
-
-不要用单一分类列把 `Environment Entity` 与 `Structure / Cover / Substrate` 混在一起。
-
-| 候选 | 世界表示 | 钓鱼环境语义 |
+| 候选 | 世界侧表示 | 对应鱼侧 Factor |
 |---|---|---|
-| Point / 岬角 | 地形 / 几何特征 | Structure |
-| Hump / 水下隆起 | 地形 / 几何特征 | Structure |
-| Drop-off / 陡坎 | 地形 / 几何特征 | Structure |
-| Ledge / 台坎 | 地形 / 几何特征 | Structure |
-| Channel / 沟槽 | 地形 / 几何特征 | Structure |
-| Flat / 平坦区 | 地形 / 几何特征 | Structure |
-| Weed / 水草 | Environment Entity | Cover；也可影响 Light / Flow / Oxygen |
-| Brush / 灌木 | Environment Entity | Cover |
-| Stump / 树桩 | Environment Entity | Cover |
-| Laydown / 倒木 | Environment Entity | Cover |
-| Dock / 码头 | Environment Entity / 场景构筑物 | Cover |
-| Boulder / 孤立巨石 | Environment Entity | 通常 Cover |
-| Rock reef / 岩脊 | 地形 / 几何特征 | Structure |
-| Sand / Gravel / Mud | Surface / Material Property | Substrate |
+| Point / 岬角 | Structure 相关地形 / 几何 | Structure Type |
+| Hump / 水下隆起 | Structure 相关地形 / 几何 | Structure Type |
+| Drop-off / 陡坎 | Structure 相关地形 / 几何 | Structure Type |
+| Ledge / 台坎 | Structure 相关地形 / 几何 | Structure Type |
+| Channel / 沟槽 | Structure 相关地形 / 几何 | Structure Type |
+| Flat / 平坦区 | Structure 相关地形 / 几何 | Structure Type |
+| Weed / 水草 | Environment Entity | Cover Type |
+| Brush / 灌木 | Environment Entity | Cover Type |
+| Stump / 树桩 | Environment Entity | Cover Type |
+| Laydown / 倒木 | Environment Entity | Cover Type |
+| Dock / 码头 | Environment Entity / 场景构筑物 | Cover Type |
+| Boulder / 孤立巨石 | Environment Entity | 通常 Cover Type |
+| Rock reef / 岩脊 | Structure 相关地形 / 几何 | Structure Type |
+| Sand / Gravel / Mud | Surface / Material Property | Substrate Type |
+
+这里的关键边界是：**世界侧分类描述数据从哪里来；Factor 描述鱼在评价什么。**
 
 ---
 
@@ -185,9 +164,9 @@ Substrate 不属于 Structure 或 Cover。世界里存在 Substrate，也**不�
 
 | 中文正式名 | English / Identifier | 定义 | 禁止混淆 |
 |---|---|---|---|
-| 原始条件 | `Raw Condition` | 直接编辑、采样或由世界状态给出的事实。 | 例：实体类型 / 位置、地形高度、天气。 |
-| 派生条件 | `Derived Condition` | 从 Raw Condition 或其它 Derived Condition 计算得到的环境事实。 | 例：水深、遮蔽度、局部光照、流速、溶氧。 |
-| 因子 | `Factor` | 在一次鱼侧评价中具有独立语义、可独立产生评价结果的评价维度。 | 不要把每个原始字段都升格为 Factor。 |
+| 原始条件 | `Raw Condition` | 直接编辑、采样或由世界状态提供的事实。 | 例：实体类型、位置、形态、地形高度、材质、天气。主要由世界对象 / 环境系统提供。 |
+| 派生条件 | `Derived Condition` | 从 Raw Condition 或其它 Derived Condition 确定性计算得到的环境事实。 | 例：水深、距 Structure、Cover 密度、局部光照、流速、溶氧。 |
+| 因子 | `Factor` | 对鱼而言具有独立评价语义、可独立产生评价结果的环境评价维度。 | `Structure Type / Cover Type / Substrate Type` 都属于 Factor；不要把世界实体或每个 Raw 字段直接等同于 Factor。 |
 | 亲和度 | `Affinity` | 鱼自身静态配置中，对某个离散环境项的偏好值。 | 与当前条件求值得到的 `Fit` 不同。 |
 | 适配值 | `Fit` | 把当前条件代入某个环境习性配置后得到的单组件求值结果。 | `Affinity` 是配置；`Fit` 是求值结果。 |
 | 环境系数 | `EnvCoeff` | 多个环境组件求值结果经过聚合后，对结果施加的整体环境倍率。 | 位于单组件 Fit 与最终 Weight 之间。 |
@@ -200,9 +179,9 @@ Environment Entity / Terrain / Material
         ↓
 Raw Condition
         ↓
-Derived Condition
+Derived Condition (when needed)
         ↓
-Factor
+Factor Value / Factor Input
         ↕ evaluated by
 Environment Component
         ↓
@@ -211,7 +190,25 @@ Fit
 EnvCoeff
 ```
 
-`Structure / Cover / Substrate` 属于环境领域语义层，帮助组织 Condition / Factor；不要机械要求它们都直接对应一个 Runtime Condition。
+判别法：
+
+> **Entity 是世界里有什么；Condition 是当前事实是什么；Factor 是鱼评价什么；Environment Component 是这条 Engagement Mode 怎么评价它。**
+
+例如：
+
+```text
+水草实体
+  ↓ 提供
+类型 / 位置 / 范围等 Raw Conditions
+  ↓ 条件处理
+当前点的 Cover Type / Cover 密度等评价输入
+  ↓
+Cover Type Factor
+  ↕
+该 Engagement Mode 的 Cover Environment Component
+  ↓
+Cover Fit
+```
 
 ---
 
@@ -220,7 +217,9 @@ EnvCoeff
 | 中文正式名 | English / Identifier | 定义 / 边界 |
 |---|---|---|
 | 觅食生态水层 | `Feeding Layer` | 描述鱼在表层 / 中层 / 底层觅食空间上的习性。暂不改为 `Foraging Layer`。 |
-| 结构类型 | `Structure Type` | 既有中鱼配置中的结构类别术语。后续如果正式拆分 Structure 与 Cover，需要单独做 Schema / migration 判断，不能仅凭术语表静默改义。 |
+| 结构类型 | `Structure Type` | 鱼侧环境评价 Factor：评价当前位置 / 条件对应的地形结构类型。世界侧 Structure 实体 / 地形几何只负责提供其条件数据。 |
+| 遮蔽物类型 | `Cover Type` | 鱼侧环境评价 Factor：评价当前位置 / 条件对应的遮蔽物类型。世界侧 Cover 实体负责提供原始条件数据。 |
+| 底质类型 | `Substrate Type` | 鱼侧环境评价 Factor：评价当前位置 / 条件对应的水底基质类型。世界侧材质 / 区域数据负责提供原始条件数据。 |
 | 时段 | `Period` | 一天中的时间区段，本身不预设 Activity 或 Opportunity ownership。 |
 | 聚合角色 | `AggregationRole` | 某个 Engagement Component 在某个 Calculation Surface 中采用的聚合角色。枚举可为 `CORE / SECONDARY / IGNORED`。 |
 | 忽略 | `IGNORED` | 当前 Calculation Surface 不消费该 Component；不表示鱼没有该习性，也不删除其 Profile。 |
@@ -266,7 +265,7 @@ FishPond × FishQualityRef
 
 1. `Factor` 是否作为 Environment / Response 共用总概念，还是明确拆成 `Environmental Factor` 等子类。
 2. Response Component 的输入、内部配置和输出是否复用 `Profile / Affinity / Fit`，目前不预设。
-3. 既有 `Structure Type` 是否历史上混合了 Structure 与 Cover；如要拆分，需要独立设计 / migration，而不是术语替换。
+3. `Structure Type / Cover Type / Substrate Type` 的具体 Runtime 输入形式：是单一枚举、集合、权重分布，还是由距离 / 密度等 Derived Condition 共同决定；术语层暂不预设。
 4. `Background Fish` 的英文是否最终保留，还是未来改成更偏 Policy 的名称。
 5. `Fixed Bake Program` 是否足够直观，仍可继续替换。
 
