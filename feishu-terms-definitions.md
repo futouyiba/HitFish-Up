@@ -304,63 +304,7 @@ SpatialDistributionWeight
 
 ## 附录·条件分级明细
 
-- 原始条件，指的是直接配置、编辑、采样或运行时得到的数据。包括：
-
-  - 烘焙条件
-  
-    - 时段
-    - 天气
-    
-      - 水表温度
-      - 风力、风向
-      - 气温
-      - 天光强度
-      - 气压
-    - 结构体类型
-    - 掩蔽物类型
-    - 底质类型
-    - 钓场水底温度
-    - 深度
-    - 到附近结构距离
-    - 离岸距离
-    - 季节/月份/日期
-    - 特殊事件，例如 果树掉落、大量洄游等
-  - 响应条件
-  
-    - 饵
-    
-      - 饵种
-      - 饵id
-    - 姿态
-    
-      - 分为原子姿态和分子姿态
-      - 包含姿态种类和姿态得分
-    - 窝料
-    - 线/引线
-    - （玩家位置、声音）
-- 派生条件，指的是由原始条件预处理、预烘焙、采样或组合出来的数据。包括：（如无特殊说明，这些条件数据指的都是特定饵点&特定策划选择下的数据）
-
-  - 烘焙条件
-  
-    - 水温
-    - 觅食生态水层
-    - 光照
-    - 溶氧
-    - 水流流速
-    - 浮游生物含量
-    - 历史、未来天气序列摘要
-  - 响应条件
-  
-    - 饵轮廓
-    - 饵味型
-    - 饵速度
-    - 闪光
-    - 颜色
-    - 震动
-    - 声音
-    - 线透明度、线颜色
-    - 受伤、停顿
-    - 等等……
+<table><colgroup><col/><col/><col/></colgroup><tbody><tr><td vertical-align="top"><b>条件 ＼ 分级</b></td><td vertical-align="top"><b>原始条件</b><br/>直接配置、编辑、采样或运行时得到的数据。</td><td vertical-align="top"><b>派生条件</b><br/>由原始条件预处理、预烘焙、采样或组合得到（如无特殊说明，指特定饵点 &amp; 特定策划选择下的数据）。</td></tr><tr><td vertical-align="top"><b>烘焙条件</b></td><td vertical-align="top"><ul><li>时段</li><li>天气<ul><li>水表温度</li><li>风力、风向</li><li>气温</li><li>天光强度</li><li>气压</li></ul></li><li>结构体类型</li><li>掩蔽物类型</li><li>底质类型</li><li>钓场水底温度</li><li>深度</li><li>到附近结构距离</li><li>离岸距离</li><li>季节/月份/日期</li><li>特殊事件，例如 果树掉落、大量洄游等</li></ul></td><td vertical-align="top"><ul><li>水温</li><li>觅食生态水层</li><li>光照</li><li>溶氧</li><li>水流流速</li><li>浮游生物含量</li><li>历史、未来天气序列摘要</li></ul></td></tr><tr><td vertical-align="top"><b>响应条件</b></td><td vertical-align="top"><ul><li>饵<ul><li>饵种</li><li>饵id</li></ul></li><li>姿态<ul><li>分为原子姿态和分子姿态</li><li>包含姿态种类和姿态得分</li></ul></li><li>窝料</li><li>线/引线</li><li>（玩家位置、声音）</li></ul></td><td vertical-align="top"><ul><li>饵轮廓</li><li>饵味型</li><li>饵速度</li><li>闪光</li><li>颜色</li><li>震动</li><li>声音</li><li>线透明度、线颜色</li><li>受伤、停顿</li><li>等等……</li></ul></td></tr></tbody></table>
 
 
 
