@@ -2,8 +2,9 @@
 
 > **Status:** Working Design / Review Candidate  
 > **Authority:** NONE. 本文用于整理 Environment Entity 的 Raw Condition 设计，不替代 Notion `Population / Spatial Current Contract`、Project Current 或其它 Semantic Owner。  
-> **Version:** 0.1  
-> **Last Updated:** 2026-10-22（Asia/Taipei）  
+> **Version:** 0.2  
+> **Last Updated:** 2026-10-23（Asia/Taipei）  
+> **Changelog（0.2）:** 2026-10-23 Design Owner 裁定（飞书《中鱼中层框架-逻辑模块与相互关系》评论）：**影响系数（`CoverStrength` / `LightCoeff` / `FlowCoeff` / `OxygenCoeff` 等）是实体直接配置的 Entity Raw Condition**；**Derived Condition 指由影响系数＋世界上下文＋空间位置算出的点级实际值**（如饵点实际光照强度＝遮光程度 × 天光强度 × 深度衰减）。0.1 中“影响系数都不是 Entity Raw Condition、应由 Resolver 推导”的论断被本版取代。Unity 几何自动读取、不重复配置的边界不变。  
 > **Related:** `docs/terminology.md`、`docs/fish-habit-editor-v1/common-semantics.md`
 
 ## 1. 结论
@@ -21,22 +22,23 @@ Unity GameObject + Components
 Unity Scene-native Raw Facts
 
 EnvironmentEntity semantic component
-└─ 只补 Unity 场景本身无法可靠表达、但 Environment Resolver 确实需要的稀疏语义 Trait
+└─ 补 Unity 场景本身无法可靠表达、但 Environment Resolver 确实需要的信息：
+   稀疏语义 Trait ＋ 实体影响系数（CoverStrength / LightCoeff / FlowCoeff / OxygenCoeff 等）
         ↓
-Entity Semantic Raw Conditions
+Entity Raw Conditions（语义参数与影响系数，均由实体配置）
 
 Scene-native Raw Facts
-+ Entity Semantic Raw Conditions
++ Entity Raw Conditions（语义参数与影响系数）
 + Terrain / Water / Weather 等其它 World Raw Conditions
         ↓
 Environment Resolver
         ↓
-Derived Conditions
-├─ Cover
-├─ Light / Shade
-├─ Local Flow / Flow Shelter / Turbulence
-├─ Oxygen
-├─ Depth / Submergence
+Derived Conditions（点级实际值）
+├─ 实际光照强度（遮光程度 × 天光强度 × 深度衰减）
+├─ 实际溶氧
+├─ 局部流速 / 避流 / 湍流
+├─ 掩蔽程度
+├─ 水深 / 浸没比例
 └─ ...
         ↓
 Fish-side Factor / Environment Component
@@ -47,8 +49,8 @@ Fish-side Factor / Environment Component
 - **位置、旋转、缩放**不应在 Environment Entity 数据里再配一份；Unity `Transform` 已经拥有。
 - **形状、尺寸、包围范围、占据空间**优先从 `Mesh / Renderer / Collider` 读取或计算，不重复 author。
 - **Volume 不是 GameObject 的一个通用原生字段**，但可由附着的几何 / Collider 计算或用 Bounds 近似；它仍属于 Unity 场景可提取事实，而不是策划重复配置字段。
-- 只有 **类型、亚分辨率密度 / 孔隙率、复杂度、柔性、透光性、生命周期状态**等无法从场景几何可靠推出的属性，才考虑进入额外 Raw Condition。
-- `CoverStrength`、`LightCoeff`、`FlowCoeff`、`OxygenCoeff`、鱼类亲和度等都不是 Entity Raw Condition。
+- 语义 Trait（**类型、亚分辨率密度 / 孔隙率、复杂度、柔性、透光性、生命周期状态**等无法从场景几何可靠推出的属性）与**影响系数**（`CoverStrength`、`LightCoeff`、`FlowCoeff`、`OxygenCoeff` 等）都由实体配置，属于 Entity Raw Condition。
+- `CoverStrength`、`LightCoeff`、`FlowCoeff`、`OxygenCoeff` 是实体直接配置的 Entity Raw Condition（**2026-10-23 Design Owner 裁定**，取代 0.1 的相反论断）；鱼类亲和度等鱼侧评价仍不属于 Entity Raw Condition。点级的实际光照 / 流速 / 溶氧 / 掩蔽是 Derived Condition，由影响系数＋世界上下文＋空间位置计算。
 
 Unity 官方语义：`Transform` 保存 GameObject 的 Position / Rotation / Scale / parent state；`Bounds` 被 `Collider.bounds`、`Mesh.bounds`、`Renderer.bounds` 使用。参考：
 
@@ -63,9 +65,9 @@ Unity 官方语义：`Transform` 保存 GameObject 的 Position / Rotation / Sca
 | 来源层 | 是否属于 Raw Condition | 是否人工配置 | 示例 |
 |---|---:|---:|---|
 | **Unity Scene-native Facts** | 是 | 否，自动提取 | Position、Rotation、Scale、Hierarchy、Mesh、Collider、Bounds、Footprint、Height、Volume proxy |
-| **Entity Semantic Raw Conditions** | 是 | 是，但应稀疏 | EntityType、Vegetation GrowthForm、Patch Density、Porosity、DecayState、LightTransmittance |
+| **Entity Raw Conditions（语义参数与影响系数）** | 是 | 是（语义 Trait 应稀疏；影响系数按需） | EntityType、Vegetation GrowthForm、Patch Density、Porosity、DecayState、LightTransmittance、CoverStrength、LightCoeff、FlowCoeff、OxygenCoeff |
 | **Other World Raw Conditions** | 是 | 由其它 World System 提供 | Terrain、Water Level、基础流场、天气、时段、温度、浊度 |
-| **Derived Conditions** | 否 | 不直接配置 | Cover、Shade、局部流速、避流程度、湍流、溶氧、水深、浸没比例 |
+| **Derived Conditions（点级实际值）** | 否 | 不直接配置 | 实际光照强度、实际溶氧、局部流速 / 避流 / 湍流、掩蔽程度、水深、浸没比例 |
 
 关键规则：**Raw / Derived 描述数据来源，不描述重要性，也不要求只有两层计算。Derived Condition 可以继续参与其它 Derived Condition 的计算。**
 
@@ -129,16 +131,7 @@ Woody.position
 ...
 ```
 
-以及避免每个实体都拥有一套互相漂移的：
-
-```text
-coverCoeff
-lightCoeff
-flowCoeff
-oxygenCoeff
-```
-
-后者应该由统一 Environment Resolver 根据 Raw Cause 推导。
+以及避免每类实体各自发明一套互相漂移的影响系数字段名。影响系数本身是实体配置的 Entity Raw Condition（2026-10-23 裁定），但字段名与语义应统一在共享 vocabulary（§6），由统一 Environment Resolver 消费、算出点级实际值。
 
 ---
 
@@ -161,25 +154,22 @@ oxygenCoeff
 | `GrowthState / Phenology` | Semantic / state | Future / conditional | 只有生长 / 枯萎会在玩法时间尺度变化时需要 |
 | `BiomassProxy` | Semantic | Future | 只有 Oxygen / biological process 真正建模时需要 |
 
-**不直接配置：**
+**影响系数（实体直接配置的 Raw Condition，2026-10-23 裁定）：**
 
 ```text
-CoverStrength
-LightOcclusionCoeff
-FlowReductionCoeff
-OxygenBonus
+CoverStrength（隐蔽系数）
+LightOcclusionCoeff（光照遮挡系数）
+FlowReductionCoeff（水流遮挡）
+OxygenBonus（溶氧供给强度 / 距离）
 ```
 
 建议因果链：
 
 ```text
-Geometry + GrowthForm + Density (+ Porosity / Complexity when admitted)
-→ Cover
-→ Light / Shade
-→ Local Flow
-
-Biomass / GrowthState + Light + Temperature + Water Exchange ...
-→ Oxygen consequence
+影响系数（Raw）
+＋世界上下文（天光强度 / 时段 / 天气 / 水温）
+＋空间位置（深度 / 距离）
+→ 点级实际值：实际光照强度 / 局部流速 / 实际溶氧 / 掩蔽程度
 ```
 
 ### 5.2 Boulder / Isolated Rock｜孤立巨石 / 石块
@@ -194,13 +184,13 @@ Biomass / GrowthState + Light + Temperature + Water Exchange ...
 | `SurfaceRoughness` | Semantic | Future | 只有水动力模型证明需要时才加入 |
 | `HydroProxyShape` | Approximation metadata | Future | 只有 Resolver 不直接消费 Collider / Mesh，而使用简化 shape class 时需要；它是近似代理，不是新的世界 Truth |
 
-**默认不需要**人为配置 Boulder 的 Cover 或 Flow 数值。应由：
+**影响系数（Raw）：** Boulder 可按需配置水流遮挡、溶氧影响强度、光照遮挡系数等影响系数（同 5.1，属 Entity Raw Condition）。Resolver 用几何事实＋影响系数＋流场 / 水位上下文算出点级结果：
 
 ```text
 Collider / Mesh geometry
-+ Terrain relationship
-+ current flow
-→ Cover geometry / wake / shelter / turbulence
++ 影响系数（Raw）
++ Terrain relationship + current flow
+→ 点级 wake / shelter / turbulence / 掩蔽程度
 ```
 
 ### 5.3 Stump｜树桩
@@ -254,20 +244,14 @@ Brush 本质上是一个 **高复杂度、多孔 aggregate object**。
 | `HydroProxyShape` | Approximation metadata | Conditional | 仅当实际 Resolver 使用 cylinder / rectangle 等简化模型时需要 |
 | `SurfaceRoughness` | Semantic | Future | 只有模型确实敏感时加入 |
 
-**不直接配置：**
+**影响系数（Raw）：** `FlowObstruction` / `WakeStrength` / `TurbulenceStrength` 等由实体按需配置（Entity Raw Condition）；`FishCover` 属鱼侧评价，不配置在实体上。
+
+点级计算：
 
 ```text
-FlowObstruction
-WakeStrength
-TurbulenceStrength
-FishCover
-```
-
-应该是：
-
-```text
-Pier geometry + current flow field + water depth
-→ local flow / wake / shelter / turbulence
+Pier geometry + 影响系数（Raw）
++ current flow field + water depth
+→ local flow / wake / shelter / turbulence（点级实际值）
 ```
 
 ### 5.7 Dock / Platform / Bridge Deck｜码头平台 / 桥面 / 浮台
@@ -340,6 +324,19 @@ Piles + flow field
 | `BiomassProxy` | 生物过程不能由 Geometry 推出 | Vegetation | Future; only if Oxygen modeled |
 | `HydroProxyShape` | 运行时不消费真实 Mesh 时的简化水动力形状 | Pier / Boulder | Approximation metadata only |
 
+### 影响系数组（Entity Raw Condition，2026-10-23 裁定）
+
+除语义 Trait 外，实体直接配置以下影响系数（原始条件），供 Environment Resolver 计算点级实际值：
+
+| 系数 | 说明 | 典型实体 |
+|---|---|---|
+| `CoverStrength` | 隐蔽系数，对点级掩蔽程度的贡献强度 | Vegetation / Brush / Reef |
+| `LightOcclusionCoeff` | 光照遮挡系数 | Vegetation / Boulder / Platform |
+| `FlowReductionCoeff` / `FlowObstruction` | 水流遮挡 / 阻流强度 | Vegetation / Boulder / Pier |
+| `OxygenBonus`（含作用距离） | 溶氧供给强度与作用距离 | Vegetation / Boulder |
+
+这些系数的**点级结果**（实际光照强度、实际溶氧、局部流速、掩蔽程度）是 Derived Condition，不配置在实体上。
+
 ### Trait Admission Rule
 
 新增 Trait 前至少回答：
@@ -402,26 +399,24 @@ Piles + flow field
 | Temperature | Environment Field |
 | Turbidity | Water Condition |
 | 当前水深 | Terrain + Water Level → Derived Condition |
-| Cover | Entity / Terrain facts → Derived environment semantic / condition |
-| Light / Shade | Scene + weather + entities → Derived Condition |
-| Local Flow / Shelter / Turbulence | base flow + entity geometry → Derived Condition |
-| Oxygen | biological + physical context → Derived Condition |
+| 点级掩蔽程度 | 实体影响系数（Raw）＋几何＋空间位置 → Derived Condition；实体上的 `CoverStrength` 本身是 Raw |
+| 实际光照强度 / 阴影 | 实体 `LightOcclusionCoeff`（Raw）＋天光 / 时段 / 深度 → Derived Condition |
+| 点级局部流速 / 避流 / 湍流 | 基础流场＋实体几何＋`FlowReductionCoeff`（Raw）→ Derived Condition |
+| 实际溶氧 | 世界上下文＋实体 `OxygenBonus`（Raw）＋空间位置 → Derived Condition |
 | Structure affinity | Fish-side Environment Component |
 | Cover affinity | Fish-side Environment Component |
 | Environment Fit / EnvCoeff | Fish-side evaluation result |
 
-因此不要出现：
+2026-10-23 裁定后，`coverCoeff / lightCoeff / flowCoeff / oxygenCoeff` 是 EnvironmentEntity 直接配置的 Raw Condition，可以出现在实体上；**不应**出现在实体上的仍然是两类——**点级派生值**（由 Resolver 计算）与**鱼侧评价**（属鱼配置）：
 
 ```text
 EnvironmentEntity
-├ coverCoeff
-├ lightCoeff
-├ flowCoeff
-├ oxygenCoeff
-└ fishAffinity
+├ coverCoeff / lightCoeff / flowCoeff / oxygenCoeff   # Raw（影响系数，2026-10-23 裁定）
+├ （点级实际光照 / 流速 / 溶氧 / 掩蔽 → 不落实体，由 Resolver 算出）
+└ （fishAffinity / EnvCoeff → 鱼侧评价，属鱼配置，不落实体）
 ```
 
-这会把 World Truth、Derived Condition 和 Fish Response 三层重新揉回一个对象。
+这保证 World Truth（几何）、Raw Condition（语义与影响系数）、Derived Condition（点级实际值）和 Fish Response 四层各归其位。
 
 ---
 
@@ -436,14 +431,19 @@ GameObject
 ├─ child GameObjects             # Unity-owned hierarchy
 └─ EnvironmentEntity             # 中鱼环境语义标记
    ├─ entityType
-   └─ sparse traits
-      ├─ growthForm?
-      ├─ density?
-      ├─ porosity?
-      ├─ complexity?
-      ├─ embeddedness?
-      ├─ lightTransmittance?
-      └─ ...
+   ├─ sparse traits
+   │  ├─ growthForm?
+   │  ├─ density?
+   │  ├─ porosity?
+   │  ├─ complexity?
+   │  ├─ embeddedness?
+   │  ├─ lightTransmittance?
+   │  └─ ...
+   └─ influence coefficients（Raw）
+      ├─ coverStrength?
+      ├─ lightCoeff?
+      ├─ flowCoeff?
+      └─ oxygenCoeff?
 ```
 
 这里的 `EnvironmentEntity` **不是另一份 geometry database**。
@@ -473,6 +473,8 @@ GameObject
 
 其余全部先从 Unity Scene / World Context 自动取得或留到后续 admission。
 
+影响系数（`CoverStrength` 等）按 Owner 2026-10-23 裁定属于实体配置项（Raw Condition）；V0 是否立即全部纳入由实现排期决定，schema 语义上它们是 Raw Condition。
+
 这使第一版真正需要人工 author 的参数非常少，同时保留了以后扩张 Light / Flow / Oxygen / Cover resolver 的语义接口。
 
 ---
@@ -494,6 +496,8 @@ GameObject
 进一步说：
 
 > **额外 Raw Condition 的价值，在于补足 Scene Representation 中缺失、且 Environment Resolver 真正需要的信息；不是为了把现实世界所有属性都参数化。**
+
+> **影响系数是实体配置的 Raw；点级实际值是 Resolver 算出的 Derived。（2026-10-23）**
 
 最终目标不是让 Environment Entity “信息最完整”，而是让：
 

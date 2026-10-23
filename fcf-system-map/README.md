@@ -117,7 +117,7 @@ python3 build/test_roundtrip.py     # 该抓的 8 类 / 该忽略的 2 类，逐
 | 行 | 内容 | 可折叠 |
 |---|---|---|
 | 一、数据 | 环境上下文 · 钓场投鱼配置 · 鱼的习性配置 | ✗ 常显 section |
-| 二、烘焙 | 烘焙 → 派生环境场 → 空间分布权重 + 鱼侧动态参数 | ✓ |
+| 二、烘焙 | 烘焙 → 派生环境场 → 环境权重（即空间分布强度） + 鱼侧动态参数 | ✓ |
 | 三、玩家策略与操作数据 | 钓具 / 钓组 · 姿态 → 呈现刺激（整体向右错开） | ✓ |
 | 四、响应 | 响应模块（适配系数） | ✓ |
 | 五、圆桌抽鱼 | 品质抽取调整 · 圆桌权重表构建 · 硬保底 · 动态权重调整 | ✓ |
@@ -130,15 +130,15 @@ python3 build/test_roundtrip.py     # 该抓的 8 类 / 该忽略的 2 类，逐
 行三整体右缩 `marginLeft`，把左边 gutter 让给「派生环境场」，后者用 `movable=0`
 钉在 gutter 里：不进栈、不计入行高，但随行三一起移动、随行三一起收起。
 
-## 2. 术语与流向的两条修正（2026-09-17 Design Owner）
+## 2. 术语与流向的两条修正（2026-09-17 Design Owner；2026-10-22 术语更新）
 
-**① 术语。** 原「环境权重 / EnvironmentWeight」**已废弃**。现行术语是 **「空间分布权重 / spatial distribution weight」**——当前版本与远期规划**同名同概念**。旧文档可能尚未更新。
+**① 术语。** 2026-10-22 Design Owner 更新：现行统一术语为 **「环境权重（即空间分布强度）」**，原「空间分布权重」不再作为术语使用。此前 2026-09-17 的裁定（「环境权重」已废弃、改用「空间分布权重」）已被本次更新取代。旧文档可能尚未更新。
 
-**② 流向。** 温度类环境事实**只流向烘焙**，在烘焙中转变为「空间分布权重」与「鱼侧动态参数」（活性 / 进食动机 / 食性偏好）；**温度不直接流向响应阶段**。图上的边按此绘制：
+**② 流向。** 温度类环境事实**只流向烘焙**，在烘焙中转变为「环境权重（即空间分布强度）」与「鱼侧动态参数」（活性 / 进食动机 / 食性偏好）；**温度不直接流向响应阶段**。图上的边按此绘制：
 
 ```
 环境上下文 ─┐
-鱼的习性配置 ─┴→ 烘焙 → 派生环境场 ─┬→ 空间分布权重 ──────────┐
+鱼的习性配置 ─┴→ 烘焙 → 派生环境场 ─┬→ 环境权重（即空间分布强度） ──┐
                                     └→ 鱼侧动态参数 ─┐        │
 钓场投鱼配置（基础机会强度）───────────────────────────┤        │
 玩家策略与操作数据 → 呈现刺激 ─────────────────────────┼→ 响应 ─┤
@@ -152,7 +152,7 @@ python3 build/test_roundtrip.py     # 该抓的 8 类 / 该忽略的 2 类，逐
 
 | 文件 | 职责 |
 |---|---|
-| `graph.json` | 73 个节点（stable ID + **中文 label** + 英文 caption + 行归属 + lane + `kind` 形状）+ 31 条语义边（只标"流过去的是什么"；跨模块的边锚在**模块标题**上，见 LAYOUT.md §6.4） |
+| `graph.json` | 79 个节点（stable ID + **中文 label** + 英文 caption + 行归属 + lane + `kind` 形状）+ 41 条语义边（只标"流过去的是什么"；跨模块的边锚在**模块标题**上，见 LAYOUT.md §6.4） |
 | `layout.json` | **版面**：容器包纳树（`C:` 前缀的容器 + `graph.json` 节点作叶子；轴线 / 间距 / 缩进 / 侧钉 / 折叠态） |
 | `scopes.json` | Scope = 压缩阶梯 + 透明度；`OVERALL`（不裁剪）+ `0.3.4.0-B`（lens，逐节点归类） |
 | `views.json` | View = 展开粒度 + 可选 lens |
@@ -163,10 +163,11 @@ python3 build/test_roundtrip.py     # 该抓的 8 类 / 该忽略的 2 类，逐
 
 **压缩阶梯**：`中鱼升级（本体）→ FCF v1 → Simplified V0 → 0.3.4 → 0.3.4.0-B（当前版本投影）`。每一层是范围更小的投影，不是不同系统。
 
-**0.3.4.0-B** 是唯一登记完毕的 lens：**21 ACTIVE / 8 BOUNDARY / 44 OUT**。
+**0.3.4.0-B** 是唯一登记完毕的 lens：**27 ACTIVE / 8 BOUNDARY / 44 OUT**。
 
-- ACTIVE：行2 / 烘焙 / **通道 1 及其全部分解**（三种因子各自的形状 / 栖息地动态偏好 /
-  门控与条件判断失败 / 汇聚漏斗：系数聚合 · 是否背景鱼 · 系数下限 · 权重聚合 · 通道返回值）
+- ACTIVE：行2 / 烘焙 / **通道 1 及其全部分解**（五个因子各一条窄竖列 / 栖息地动态偏好 /
+  每个核心因子各自的门控 / 每因子一个亲和度计算 / 汇聚漏斗：核心贡献 · 次要贡献 ·
+  原始环境系数 · 是否背景鱼 · 最终环境系数 · 最终合成 · 基础机会强度 · 通道返回值）
 - BOUNDARY：行1 及其三块与 L1 细节（B 消费的输入）
 - OUT：通道 2–5（活性·进食动机·警戒度·动态进食偏好，全在 B 的「不交付」清单里）、行3–7 全域
 
@@ -197,7 +198,7 @@ python3 build/test_roundtrip.py     # 该抓的 8 类 / 该忽略的 2 类，逐
 stable IDs:            73 (unique, syntax-safe)
 edges:                 31 semantic (层级关系由容器嵌套表达，不再另画结构线)
 views:                 overall, 0340b (default overall)
-scope lens:            0.3.4.0-B — 21 ACTIVE / 8 BOUNDARY / 44 OUT, all nodes classified once
+scope lens:            0.3.4.0-B — 27 ACTIVE / 8 BOUNDARY / 44 OUT, all nodes classified once
 ladder declared, unassigned: 0.3.4, SIMPLIFIED-V0, FCF-V1
 contracts:             9 entries (refs valid)
 determinism:           consecutive builds byte-identical; committed artifact fresh
@@ -215,8 +216,8 @@ rename stability:      cell ID set and geometry invariant under label rename
 | ID | 缺口 |
 |---|---|
 | 001 | 压缩阶梯其余三层（0.3.4 / Simplified V0 / FCF v1）的 per-node scope 归属未登记——不足的阅读量下归类等于编造 |
-| 002 | 「空间分布权重」的 Current 归属页待登记（术语已确认，页面未确认） |
-| 003 | 时段归向**已闭合**：当前版本汇入空间分布权重；后续版本汇入 Activity + FeedingMotivation + **警戒度**（Design Owner 确认）。条目保留作 provenance |
+| 002 | 「环境权重（即空间分布强度）」的 Current 归属页待登记（术语已确认，页面未确认） |
+| 003 | 时段归向**已闭合**：当前版本汇入环境权重（即空间分布强度）；后续版本汇入 Activity + FeedingMotivation + **警戒度**（Design Owner 确认）。条目保留作 provenance |
 | 004 | 圆桌四件的**语义已确认**（见 Notion 清单），但各自的 Current 归属页未逐一登记；其中「动态权重调整」的具体规则仍未细化 |
 | 005 | 环境上下文、钓场投鱼配置的 Current 归属页未读 |
 
