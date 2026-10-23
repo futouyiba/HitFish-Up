@@ -1,6 +1,7 @@
-# 路亚猎物解释：线索支持、呈现状态与鱼的响应
+# 方案 B：路亚猎物解释、呈现状态与鱼的响应
 
 更新：2026-10-23  
+提案标识：方案B。与独立的[方案C](lure-feeding-response-proposal-c.md)并列保留；本页公式和原型属于方案B，不自动成为方案C规则。  
 状态：主体设计候选与可执行探针；不是已标定的生物学模型或生产规范。  
 本页替代本文件此前的“五维统一距离＋跨类型归一化”方案，旧稿从 Git history 查阅。  
 代码：[target_interpretation_probe.py](../../prototypes/lure-response/target_interpretation_probe.py)。前置单目标推导见[黑鲈局部案例](lure-feeding-response-bass-worked-case.md)。
