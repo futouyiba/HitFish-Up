@@ -34,7 +34,7 @@ def simulate(kind,dt=.01,capacity=.45):
             cue_prev=v
         out=m.evaluate(m.cues(),m.facts(v=v,j=memory*.08,age=0,d=d),capacity,.6)
         target=out["targets"]["fish"]
-        rows.append(dict(t=t,v=v,d=d,M=memory,state=target["presentation"].get("state"),
+        rows.append(dict(t=t,v=v,d=d,e=memory,state=target["presentation"].get("state"),
                          status=out["status"],R=out.get("local_response"),
                          B=target.get("benefit"),E=target.get("cost")))
         last_v=v
