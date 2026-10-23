@@ -37,7 +37,7 @@
 
 ## 一图流
 
-<whiteboard comment-refs="c1 c2" token="VoEUw6v9Eh5ajgbkRwmcxGc7nQf"></whiteboard>
+<whiteboard comment-refs="c1 c2 c3" token="VoEUw6v9Eh5ajgbkRwmcxGc7nQf"></whiteboard>
 
 
 
@@ -205,33 +205,41 @@ DEF ───────────────┐
 
 ### 环境实体
 
-空间环境实体（Spatial Environment Entity，简称环境实体）是 3D 钓场中承载环境语义的 Unity 对象。其数据边界遵循“Unity 已知的几何不重复配置”：位置、朝向、缩放、层级由 Transform 自动读取；形状、尺寸、包围范围、体积由 Mesh / Collider 自动读取或计算。环境实体只负责补充 Unity 场景无法可靠表达、且条件推导确实需要的环境语义。
+空间环境实体（Spatial Environment Entity，简称环境实体）是 3D 钓场中承载环境语义的 Unity 对象。几何事实遵循“Unity 已知的几何不重复配置”：位置、朝向、缩放、层级由 Transform 自动读取；形状、尺寸、包围范围、体积由 Mesh / Collider 自动读取或计算。实体自身配置的语义参数与影响系数，作为原始条件参与计算。
 
-数据边界分为三层：
+数据分为三类：
 
 - **Unity 原生事实（自动读取，不配置）**：位置 / 朝向 / 缩放（Transform）、父子层级、网格几何、包围盒、footprint、体积近似等。
-- **实体语义参数（稀疏配置）**：如 EntityType（必需）、GrowthForm、PatchDensity、Porosity、LightTransmittance 等；新增参数前须通过准入规则——能否从场景自动取得、能否由已有条件派生、是否有明确消费者。
-- **派生条件（不直接配置）**：掩蔽程度、光照 / 阴影、局部流速 / 避流、溶氧等由 Environment Resolver 从原生事实与语义参数推导；隐蔽系数、光照遮挡、水流遮挡、溶氧影响等数值不应作为实体参数直接配置。
+- **实体参数（原始条件）**：由实体直接配置，包括实体类型等语义参数（EntityType、GrowthForm、PatchDensity 等）与影响系数——隐蔽系数、光照遮挡系数、水流遮挡、溶氧供给强度 / 距离等。
+- **派生条件（计算得到）**：由实体影响系数（原始条件）、世界上下文（课程表天光强度、时段、天气、水温等）与空间位置（深度、距离）共同计算出的点级实际值。例如当前饵点的实际光照强度＝遮光程度 × 天光强度 × 深度衰减；实际溶氧、局部流速、掩蔽程度同理。
 
-语义参数示例：
+实体参数（原始条件）示例：
 
-| **实体类型** | **配置的语义参数** | **示例** |
+| **实体类型** | **参数** | **示例值** |
 |-|-|-|
-| 水草实体 | EntityType=Vegetation、GrowthForm、PatchDensity | PatchDensity 0.8；几何由 Mesh / Collider 自动读取 |
-| 石头实体 | EntityType=Boulder | 几何全部自动读取；Embeddedness 仅在无法自动求出时配置 |
+| 水草实体 | 水草密度 | 0.8 |
+| 水草实体 | 隐蔽系数 | 1.0 |
+| 水草实体 | 光照遮挡系数 | 0.5 |
+| 水草实体 | 溶氧供给强度 | 0.5 |
+| 水草实体 | 溶氧供给距离 | 2.0 |
+| 石头实体 | 水流遮挡 | 0.3 |
+| 石头实体 | 溶氧影响强度 | 0.5 |
+| 石头实体 | 光照遮挡系数 | 0.4 |
 
-派生条件示例（由 Resolver 推导的结果示意，非实体配置项）：
+派生条件示例（点级实际值，示意）：
 
-| **派生条件** | **示意值** |
+| **派生条件** | **示意值（饵点处）** |
 |-|-|
-| 掩蔽程度（隐蔽系数） | 1.0 |
-| 光照遮挡 | 0.5 |
-| 溶氧供给强度（距离 2.0） | 0.5 |
-| 水流遮挡 | 0.3 |
+| 实际光照强度 | 3200lx（遮光程度 × 天光强度 × 深度衰减） |
+| 实际溶氧 | 8.2mg/L |
+| 局部流速 | 0.1m/s |
+| 掩蔽程度 | 0.9 |
 
-来源层的完整定义、各类实体的参数表与 Trait 准入规则，见仓库《Environment Entity Raw Condition Schema》：https://github.com/futouyiba/HitFish-Up/blob/main/docs/environment-entity-raw-condition-schema.md
+几何数据边界的完整论证与各类实体的参数设计参考，见仓库《Environment Entity Raw Condition Schema》：https://github.com/futouyiba/HitFish-Up/blob/main/docs/environment-entity-raw-condition-schema.md
 
-这些原生事实与语义参数用于派生掩蔽程度、可视性、光照、溶氧、水流等条件，并参与栖息波动组的形成。
+这些实体参数（原始条件）与世界上下文、空间位置一起，派生点级的实际光照、溶氧、流速、掩蔽等条件，并参与栖息波动组的形成。
+
+数据边界分为三层：
 
 ### 空间条件输入
 
