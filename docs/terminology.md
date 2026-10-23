@@ -14,11 +14,10 @@
 |---|---|---|
 | 鱼种 | `Species` | 鱼种本身的稳定定义。包含名称、体长—体重关系、可用中鱼习性模式等鱼种级数据。 |
 | 鱼品质 | `Fish Quality` / `FishQualityRef` | 既有的鱼品质身份，用于表达同一鱼种下的品质 / 个体规格差异。 |
-| 中鱼习性模式 | `Engagement Mode` | 某鱼种可复用的一套中鱼习性定义，描述这类鱼在环境和玩家刺激下如何表现。 |
+| 中鱼习性模式 | `Engagement Mode` | 某鱼种可复用的一套中鱼习性定义，描述这类鱼在环境和玩家刺激下如何表现。可包含模式自身的基础强度，以及环境习性、响应习性等配置。 |
 | 基础习性 | `Species Base` | 一个 Species 的默认中鱼习性模式。当前 Production 中由一条特殊 `FishEnvAffinity` 承载。 |
 | 习性档案 | `FishEnvAffinity` / `FishEnvAffinityRef` | 当前 Production 中承载 Engagement Mode 的持久记录 / 引用。 |
 | 投鱼条目 | `Stocking Entry` | 某钓场中对一种鱼 / Fish Quality 的投放配置。负责表达这条鱼在该钓场中的基础权重及相关钓场级配置。 |
-| 模式分配 | `Mode Allocation` | 某个投鱼条目对 Engagement Mode 的引用及其数量 / 权重分配。它描述“这个钓场里有多少按该模式计算”，不是 Engagement Mode 本体。 |
 
 推荐关系：
 
@@ -26,20 +25,19 @@
 Species
 ├─ Species Base
 └─ Engagement Mode(s)
+   ├─ Mode Base Intensity
    ├─ Environment Components
    └─ Response Components
 
 Pond
 └─ Stocking Entry
    ├─ Fish / FishQuality reference
-   ├─ BaseWeight
-   └─ Mode Allocation
-      └─ EngagementModeRef + allocation
+   └─ BaseWeight
 ```
 
 判别：
 
-> **Species 说明鱼是什么；Engagement Mode 说明鱼怎么表现；Stocking Entry 说明这个钓场投了什么、投多少；Mode Allocation 说明这次投鱼如何使用不同模式。**
+> **Species 说明鱼是什么；Engagement Mode 说明鱼怎么表现；Stocking Entry 说明这个钓场投了什么、投多少。**
 
 ---
 
@@ -166,7 +164,7 @@ Fit
 
 ---
 
-## 5. 权重
+## 5. 权重与模式分布
 
 ### 5.1 基础权重
 
@@ -208,26 +206,85 @@ BaseWeight × EnvCoeff
 
 `SpatialDistributionWeight` 不是 Probability；只有与其它候选项共同归一化 / 抽样后，才进入概率意义上的结果。
 
----
+### 5.3 模式基础强度
 
-## 6. 模式分配
+**模式基础强度（Mode Base Intensity）**
 
-**模式分配（Mode Allocation）** 属于投鱼上下文，不属于 Engagement Mode 定义本身。
+定义：配置在 Engagement Mode 上的基础强度，用作该模式在当前上下文中参与权重计算的起始量。
 
-它至少表达：
+环境条件、鱼况以及后续响应逻辑可以在各自阶段影响该模式最终参与计算的权重；具体求值公式由对应 Contract 定义。
+
+### 5.4 模式权重
+
+**模式权重（Mode Weight）**
+
+定义：某个 Engagement Mode 在当前求值上下文下计算得到的权重。
+
+它是一个计算结果，不代表一个新的鱼群实体。
+
+### 5.5 模式分布
+
+**模式分布（Mode Distribution）**
+
+定义：在某个具体求值上下文中，同一鱼侧 Subject 的各个 Engagement Mode 及其模式权重组成的整体分布。
+
+示例：
 
 ```text
-Stocking Entry
-└─ Mode Allocation
-   ├─ EngagementModeRef
-   └─ allocation / share / weight
+模式分布 Mode Distribution
+├─ 小个体模式 → 300
+├─ 大个体模式 → 100
+└─ 其它模式   → 50
 ```
 
-模式分配回答：
+模式分布可以在后续阶段被归一化或继续参与其它权重计算；是否以及何时归一化由对应 Contract 决定。
 
-> **某投鱼条目的基础权重中，有多少按这个 Engagement Mode 参与后续计算。**
+### 5.6 模式分布条目
 
-具体使用 share、weight 还是其它参数，以及是否要求归一化，由后续 Contract 决定。
+**模式分布条目（Mode Distribution Entry）**
+
+定义：模式分布中的单个条目，表达某个 Engagement Mode 在当前上下文中的模式权重。
+
+最小语义：
+
+```text
+Mode Distribution Entry
+├─ EngagementModeRef
+└─ ModeWeight
+```
+
+模式分布条目是运行 / 求值结果，不是独立长期业务身份。
+
+---
+
+## 6. 鱼况
+
+**鱼况（Fish Condition）**
+
+定义：随天气、时段及其它动态输入变化的一组鱼侧动态参数，用于描述鱼在当前时刻的活跃、摄食与疲劳等情况，并作为后续 Response 等计算的基础输入。
+
+鱼况及鱼侧动态参数当前包括：
+
+| 中文 | 英文 / Identifier | 说明 |
+|---|---|---|
+| 活跃度 | `Activity` | 当前整体活跃程度；除参与 Response 外，也可向刺鱼、搏鱼等后续模块提供输入。 |
+| 摄食动机 | `Feeding Motivation` | 当前摄食意愿 / 驱动力。 |
+| 食性偏移 | `Diet Shift` | 当前相对于基础食性的动态偏移。 |
+| 疲劳 / 警觉累积 | `Weariness` | 随过程变化、会影响后续响应的疲劳或警觉性量。 |
+
+基本关系：
+
+```text
+天气 / 时段 / 其它动态输入
+        ↓
+      鱼况 Fish Condition
+        ↓
+     Response 计算
+        ↓
+后续中鱼、刺鱼、搏鱼等模块
+```
+
+`Fish Condition` 是一个鱼侧动态信息集合；具体参数的更新公式、时间粒度与下游消费关系由对应机制 Contract 定义。
 
 ---
 
@@ -237,10 +294,11 @@ Stocking Entry
 
 **响应阶段（Response Stage）**
 
-定义：在环境权重形成之后，根据 Engagement Mode 的响应习性和当前玩家 / 刺激输入，对候选权重进行后续调整。
+定义：在环境权重形成之后，根据 Engagement Mode 的响应习性、当前鱼况以及玩家 / 刺激输入，对候选权重进行后续调整。
 
 ```text
 SpatialDistributionWeight
++ Fish Condition
 + Response Components
 + current stimulus / presentation
 → response evaluation
