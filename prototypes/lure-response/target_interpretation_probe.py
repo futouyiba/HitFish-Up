@@ -108,15 +108,17 @@ def state_matches(target, facts, cues):
     return {"status":"Resolved","state":best[1],
             "fit":exp(-best[0]/2),"gain":best[2]}
 
-def evaluate(cues, facts, capacity, preferences=None):
+def evaluate(cues, facts, capacity, feeding_motivation, preferences=None):
     preferences = PREFERENCES if preferences is None else preferences
     # Typed numeric inputs only; Unknown remains distinct from known absence.
-    for value in list(cues.values()) + list(facts.values()) + [capacity]:
+    for value in list(cues.values()) + list(facts.values()) + [capacity, feeding_motivation]:
         if value is not None and (not isinstance(value,(float,int)) or not isfinite(value)):
             return {"status":"Invalid"}
     if facts.get("L") is not None and facts["L"] <= 0:
         return {"status":"Invalid"}
     if capacity is not None and capacity <= 0:
+        return {"status":"Invalid"}
+    if feeding_motivation is not None and not 0 <= feeding_motivation <= 1:
         return {"status":"Invalid"}
     if any(facts.get(k) is not None and facts[k] < 0
            for k in ("v","j","age","d","v_away")):
@@ -135,7 +137,7 @@ def evaluate(cues, facts, capacity, preferences=None):
         if state["status"] != "Resolved":
             outputs[target] = out
             continue
-        if (preferences.get(target) is None or capacity is None
+        if (preferences.get(target) is None or capacity is None or feeding_motivation is None
                 or facts.get("d") is None or facts.get("v_away") is None):
             out["evaluation_status"] = "Unknown"
             outputs[target] = out
@@ -143,11 +145,18 @@ def evaluate(cues, facts, capacity, preferences=None):
         affinity, preferred_length = preferences[target]
         size = exp(-0.5*(log(facts["L"]/preferred_length)/0.70)**2)
         # Each fitted state has a conditional authored value. No global M bonus.
-        benefit = affinity*size*state["fit"]*state["gain"]
+        # The current probe uses state fit once as the numeric support proxy.
+        # A future joint support S must replace this proxy, not multiply it again.
+        support_strength = state["fit"]
+        benefit_before_motivation = affinity*size*support_strength*state["gain"]
+        benefit = feeding_motivation*benefit_before_motivation
         demand = facts["d"]/1.0 + facts["v_away"]
         cost = 0.50*(demand/capacity)**2
         u = max(0.0,benefit-cost)
         out.update(evaluation_status="Resolved",benefit=benefit,cost=cost,
+                   benefit_before_motivation=benefit_before_motivation,
+                   feeding_motivation=feeding_motivation,
+                   support_strength=support_strength,
                    local_response=u/(1+u))
         outputs[target] = out
     supported = [t for t,v in support.items() if v["status"]=="Supported"]
@@ -214,18 +223,27 @@ def checks(results):
     assert "local_response" not in results["tube_falling"]
     changed = deepcopy(PREFERENCES)
     changed["fish"]=(0.0,.08)
-    a=evaluate(cues(),facts(),1.0)
-    b=evaluate(cues(),facts(),1.0,changed)
+    a=evaluate(cues(),facts(),1.0,1.0)
+    b=evaluate(cues(),facts(),1.0,1.0,changed)
     assert a["targets"]["fish"]["presentation"]==b["targets"]["fish"]["presentation"]
     assert a["local_response"]>b["local_response"]
     missing=deepcopy(PREFERENCES)
     del missing["fish"]
-    assert evaluate(cues(),facts(),1.0,missing)["status"]=="ResolutionIncomplete"
+    assert evaluate(cues(),facts(),1.0,1.0,missing)["status"]=="ResolutionIncomplete"
+    weak=evaluate(cues(),facts(),1.0,0.3)
+    weak_pause=evaluate(cues(),facts(v=0,j=.6,age=.5),1.0,0.3)
+    assert weak["local_response"] < weak_pause["local_response"]
+    assert weak["targets"]["fish"]["cost"] == a["targets"]["fish"]["cost"]
+    assert weak["targets"]["fish"]["presentation"] == a["targets"]["fish"]["presentation"]
+    assert evaluate(cues(),facts(),1.0,None)["status"]=="ResolutionIncomplete"
+    zero=evaluate(cues(),facts(),1.0,0.0)
+    assert zero["targets"]["fish"]["status"]=="Supported" and zero["local_response"]==0
+    assert evaluate(cues(),facts(),1.0,1.1)["status"]=="Invalid"
     # Known false conjunct blocks a route even if another conjunct is missing.
     assert route_support({"r":4.0},(("r","le",2.5),("impact","ge",.5))) is False
 
 if __name__=="__main__":
-    results={name:evaluate(*inputs) for name,inputs in build_cases().items()}
+    results={name:evaluate(*inputs,feeding_motivation=1.0) for name,inputs in build_cases().items()}
     checks(results)
     brief={}
     for name,out in results.items():
