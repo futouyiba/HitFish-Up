@@ -1,11 +1,10 @@
 # 中鱼升级｜术语表
 
-> **状态：Working Terminology Ledger**  
-> **范围：** 中鱼升级 / FCF 相关的当前术语。  
-> **权威边界：** 本文维护当前推荐术语、定义与边界，不自动替代各 Design Branch / Product Current / Runtime Contract 的现行 Authority。  
+> **范围：** 中鱼升级 / FCF 当前术语。
+> **权威边界：** 本文维护推荐术语、定义和边界，不替代各 Design Branch、Product Current 或 Runtime Contract。
 > **双视图：** 飞书《中鱼术语与名词定义》（docx/OyeSdkaheoIAfKxiW13cKZsknLd）是本文的飞书视图，结构同为：术语地图 → 核心对象总览 → 权重的分类 → 重要相关·系数 → 中间数据 → 逻辑模块 → 附录 → 维护规则。同步机制见 §7。
 
-本文按认知顺序组织：先看地图（§0），再按索引查词（§1），正文从权重中枢展开（§2–§5）。只描述当前可用语义；术语演进、旧名称和调整原因由 Git commit / diff 承载。
+本文按认知顺序组织：先看地图（§0），再按索引查词（§1），正文从权重展开（§2-§5）。本文只描述当前语义；术语演进和旧名称由 Git commit / diff 记录。
 
 ---
 
@@ -70,7 +69,7 @@
 
 ### 2.1 基础权重
 
-**基础权重（Base Weight）**：在环境影响介入之前，某投鱼条目的基础数量 / 中鱼机会量级。来源（简述）：投鱼条目。
+**基础权重（Base Weight，基础机会强度）**：在环境影响介入之前，某投鱼条目的基础数量 / 中鱼机会量级。来源（简述）：投鱼条目。
 
 当前对应：
 
@@ -113,11 +112,11 @@ BaseWeight × EnvCoeff
 
 ### 2.4 模式基础强度与模式分布
 
-**模式基础强度（Mode Base Intensity）**：配置在 Engagement Mode 上的相对量，例如一个模式 6.0、另一个 3.0；用作该模式在当前上下文中参与权重计算的起始值。注意量级差异：基础强度是相对量，最终权重可达十万、百万量级。
+**模式基础强度（Mode Base Intensity）**：配置在中鱼习性模式（Engagement Mode）上的相对量，例如一个模式 6.0、另一个 3.0；用作该模式在当前上下文中参与权重计算的起始值。注意量级差异：基础强度是相对量，最终权重可达十万、百万量级。
 
 环境侧条件、鱼况以及后续响应逻辑可以在各自阶段影响该模式最终参与计算的权重；具体求值公式由对应 Contract 定义。
 
-**模式分布（Mode Distribution）**：在某个具体求值上下文中，同一鱼侧 Subject 的各个 Engagement Mode 及其计算得到的权重组成的整体分布；权重是计算结果，不是新的鱼群实体。
+**模式分布（Mode Distribution）**：在某个具体求值上下文中，同一鱼侧主体（Subject）的各个中鱼习性模式（Engagement Mode） 及其计算得到的权重组成的整体分布；权重是计算结果，不是新的鱼群实体。
 
 ```text
 模式分布 Mode Distribution
@@ -128,7 +127,7 @@ BaseWeight × EnvCoeff
 
 模式分布可以在后续阶段被归一化或继续参与其它权重计算；是否以及何时归一化由对应 Contract 决定。
 
-**模式分布条目（Mode Distribution Entry）**：模式分布中的单个条目，表达某个 Engagement Mode 在当前上下文中的权重值。
+**模式分布条目（Mode Distribution Entry）**：模式分布中的单个条目，表达某个中鱼习性模式（Engagement Mode）在当前上下文中的权重值。
 
 ```text
 Mode Distribution Entry
@@ -148,7 +147,7 @@ Mode Distribution Entry
 
 | 中文正式名 | 英文 / Identifier | 定义 |
 |---|---|---|
-| 习性配置 | `Profile` | 一个 Engagement Component 内用于描述偏好 / 响应规则的结构化配置。 |
+| 习性配置 | `Profile` | 一个中鱼习性组件（Engagement Component）内用于描述偏好 / 响应规则的结构化配置。 |
 | 亲和度 | `Affinity` | 鱼侧静态配置中，对某个离散环境项的偏好值。 |
 | 适配值 | `Fit` | 当前条件代入某个环境习性组件后得到的单组件评价结果。 |
 | 环境系数 | `EnvCoeff` | 多个环境习性组件评价结果聚合后的整体环境倍率。 |
@@ -168,22 +167,22 @@ Mode Distribution Entry
 **因子（Factor）**：对鱼而言具有独立评价语义、可独立产生评价结果的评价维度。
 
 ```text
-Environment Entity / Terrain / Material
+Environment Entity / Terrain / Material（环境实体 / 地形 / 材质）
         ↓
-Raw Condition
+Raw Condition（原始条件）
         ↓
-Derived Condition（需要时）
+Derived Condition（派生条件）
         ↓
-Factor Input / Value
+Factor Input / Value（因子输入 / 值）
         ↕
-Environment Component
+Environment Component（环境习性组件）
         ↓
-Fit
+Fit（适配值）
 ```
 
 判别：
 
-> **Entity 是世界里有什么；Condition 是当前事实是什么；Factor 是鱼评价什么；Environment Component 是这条 Engagement Mode 怎么评价它。**
+> **实体（Entity）是世界里有什么；条件（Condition）是当前事实是什么；因子（Factor）是鱼评价什么；环境习性组件（Environment Component）是这条中鱼习性模式（Engagement Mode）如何评价它。**
 
 因子、条件、习性组件与系数的关系可以概括为：
 
@@ -248,10 +247,10 @@ Structure / Cover / Substrate 对应关系：
 
 | 中文正式名 | 英文 / Identifier | 定义 |
 |---|---|---|
-| 鱼种 | `Species` | 鱼种本身的稳定定义。包含名称、体长—体重关系、可用中鱼习性模式等鱼种级数据。 |
+| 鱼种 | `Species` | 鱼种本身的稳定定义，包含名称、体长与体重关系和可用的中鱼习性模式。 |
 | 中鱼习性模式 | `Engagement Mode` | 某鱼种可复用的一套中鱼习性定义，描述这类鱼在环境和玩家刺激下如何表现。可包含模式自身的基础强度，以及环境习性、响应习性等配置。 |
 | 基础习性 | `Species Base` | 一个 Species 的默认中鱼习性模式。当前 Production 中由一条特殊 `FishEnvAffinity` 承载。 |
-| 习性档案 | `FishEnvAffinity` / `FishEnvAffinityRef` | 当前 Production 中承载 Engagement Mode 的持久记录 / 引用。 |
+| 习性档案 | `FishEnvAffinity` / `FishEnvAffinityRef` | 当前 Production 中承载中鱼习性模式（Engagement Mode）的持久记录 / 引用。 |
 
 推荐关系：
 
@@ -260,13 +259,13 @@ Species
 ├─ Species Base
 └─ Engagement Mode(s)
    ├─ Mode Base Intensity
-   ├─ Environment Components
-   └─ Response Components
+   ├─ 环境习性组件（Environment Components）
+   └─ 响应习性组件（Response Components）
 ```
 
 判别：
 
-> **Species 说明鱼是什么；Engagement Mode 说明鱼怎么表现；Stocking Entry 说明这个钓场投了什么、投多少。**
+> **Species（鱼种）说明鱼是什么；Engagement Mode（中鱼习性模式）说明鱼怎么表现；Stocking Entry（投鱼条目）说明这个钓场投了什么、投多少。**
 
 **中鱼习性模式（叙述）**：一个鱼种在本质上行为由其脑部神经网络驱动，不同情况下会做不同的取舍，过于复杂。为解决此问题，我们将鱼的习性分为几种习性模式，从而简化问题。
 
@@ -283,17 +282,17 @@ Species
 | 鲈鱼的开放游弋模式 | 水温 | 水温 18~26℃ | … | … |
 | 鳡鱼的伏击模式 | 饵速度 | 0.2~0.8 m/s | … | … |
 
-**中鱼习性组件（Engagement Component）**：一条 Engagement Mode 中，围绕一个相对独立的评价或响应语义组织的一组鱼侧配置。
+**中鱼习性组件（Engagement Component）**：一条中鱼习性模式（Engagement Mode）中，围绕一个相对独立的评价或响应语义组织的一组鱼侧配置。
 
 ```text
-中鱼习性组件 Engagement Component
-├─ 环境习性组件 Environment Component
-└─ 响应习性组件 Response Component
+中鱼习性组件（Engagement Component）
+├─ 环境习性组件（Environment Component）
+└─ 响应习性组件（Response Component）
 ```
 
-**环境习性组件（Environment Component）**：一条 Engagement Mode 针对某个环境 Factor 的完整鱼侧评价配置。典型环境 Factor：水温（Temperature）、结构类型（Structure Type）、遮蔽物类型（Cover Type）、底质类型（Substrate Type）、觅食生态水层（Feeding Layer）、时段（Period）、光照（Light）、水流（Flow）、溶氧（Oxygen）。
+**环境习性组件（Environment Component）**：一条中鱼习性模式（Engagement Mode）针对某个环境因子（Factor）的完整鱼侧评价配置。典型环境因子包括：水温（Temperature）、结构类型（Structure Type）、遮蔽物类型（Cover Type）、底质类型（Substrate Type）、觅食生态水层（Feeding Layer）、时段（Period）、光照（Light）、水流（Flow）、溶氧（Oxygen）。
 
-**响应习性组件（Response Component）**：一条 Engagement Mode 中，针对玩家输入、饵料、窝料、呈现方式或其它刺激的独立响应配置单元。它的内部配置不默认复用环境侧的 `Profile → Affinity → Fit` 结构。
+**响应习性组件（Response Component）**：一条中鱼习性模式（Engagement Mode）中，针对玩家输入、饵料、窝料、呈现方式或其它刺激的独立响应配置单元。它的内部配置不默认复用环境侧的 `Profile → Affinity → Fit` 结构。
 
 习性组件表按两个维度组织：行是因子，列是中鱼习性模式（Engagement Mode）。每个格子是一个组件的配置，可以包含门控规则、亲和度规则、响应曲线以及聚合参数，对应"计算条目 × 模式 × 因子"的交叉点。示意（列＝隶属鱼种的模式，行＝因子，单元格＝该习性组件的配置区间）：
 
@@ -330,35 +329,35 @@ Species
 
 ### 5.1 烘焙（预烘焙）
 
-**烘焙（Bake）**：resolved fish config + environment facts → 环境评价输出。
+**烘焙（Bake）**：已解析的鱼配置 + 环境事实 → 环境评价输出。
 
 **预烘焙（Pre-bake）**：烘焙派生环境场之前，先把原始条件烘焙成派生条件的过程。
 
 ### 5.2 响应（持久响应 ｜ 姿态响应）
 
-**响应阶段（Response Stage）**：环境权重形成之后，系统按 Engagement Mode 的响应习性、当前鱼况和玩家刺激，调整候选权重。它分两路：持久响应处理持续生效的玩家行为（如打窝）；姿态响应处理当前姿态、饵和操作的即时计算。
+**响应阶段（Response Stage）**：环境权重形成之后，系统按中鱼习性模式（Engagement Mode）的响应习性、当前鱼况和玩家刺激，调整候选权重。它分两路：持久响应处理持续生效的玩家行为（如打窝）；姿态响应处理当前姿态、饵和操作的即时计算。
 
 ```text
-SpatialDistributionWeight
-+ Fish Condition
-+ Response Components
-+ current stimulus / presentation
-→ response evaluation
-→ downstream candidate weight
+空间分布权重（SpatialDistributionWeight）
++ 鱼况（Fish Condition）
++ 响应习性组件（Response Components）
++ 当前刺激 / 呈现信号（Presentation Signal）
+→ 响应评价
+→ 下游候选权重
 ```
 
 当前可表达为：
 
 ```text
-SpatialDistributionWeight × AdaptationCoeff
-→ downstream candidate weight
+空间分布权重（SpatialDistributionWeight）× 适配系数（AdaptationCoeff）
+→ 下游候选权重
 ```
 
-**鱼况（Fish Condition）**：鱼侧动态参数。随天气、时段等输入变化，描述鱼当前的活跃、摄食与警觉状态，供后续 Response 等计算使用。
+**鱼况（Fish Condition）**：鱼侧动态参数。随天气、时段等输入变化，描述鱼当前的活跃、摄食与警觉状态，供后续响应（Response）等计算使用。
 
 | 中文 | 英文 / Identifier | 说明 |
 |---|---|---|
-| 活跃度 | `Activity` | 当前整体活跃程度；除参与 Response 外，也可向刺鱼、搏鱼等后续模块提供输入。 |
+| 活跃度 | `Activity` | 当前整体活跃程度；除参与响应（Response）外，也可向刺鱼、搏鱼等后续模块提供输入。 |
 | 摄食动机 | `Feeding Motivation` | 当前摄食意愿 / 驱动力。 |
 | 食性偏移 | `Diet Shift` | 当前相对于基础食性的动态偏移。 |
 | 警戒度 | `Wariness` | 当前警觉程度；随过程累积变化，影响后续响应。 |
@@ -368,9 +367,9 @@ SpatialDistributionWeight × AdaptationCoeff
 ```text
 天气 / 时段 / 其它动态输入
         ↓
-      鱼况 Fish Condition
+      鱼况（Fish Condition）
         ↓
-     Response 计算
+     响应（Response）计算
         ↓
 后续中鱼、刺鱼、搏鱼等模块
 ```
@@ -381,7 +380,7 @@ SpatialDistributionWeight × AdaptationCoeff
 
 ### 5.3 圆桌抽鱼（挤占）
 
-**挤占（Crowding-out）**：圆桌抽鱼中候选之间按权重竞争抽取机会的关系。参见中鱼 0.32 文档（措辞待后续更新）。
+**挤占（Crowding-out）**：圆桌抽鱼中，候选按权重竞争抽取机会的关系。
 
 ---
 
@@ -411,22 +410,24 @@ SpatialDistributionWeight × AdaptationCoeff
 
 | 中文 | 英文 | 定义 |
 |---|---|---|
-| 配方 | `Recipe` | 描述一个配置对象如何由 Source + Operations 形成。 |
-| 来源 | `Source` | 为 Component / Profile 提供原始配置值的上游来源。 |
-| 操作 | `Operation` | 在 Source value 上表达继承、调整或设置等作者意图的操作。 |
-| 解析 | `Resolve` | Source + Operations + overrides → effective resolved truth。 |
-| 物化 | `Materialize` | effective truth → 完整 Production rows。 |
-| 校验 | `Validate` | 对 Authoring / Resolved / Production 约束进行检查。 |
-| 发布 | `Publish` | 将通过发布条件的结果写入 Production。 |
+| 配方 | `Recipe` | 描述一个配置对象如何由来源（Source）+ 操作（Operations）形成。 |
+| 来源 | `Source` | 为组件（Component）/习性配置（Profile）提供原始配置值的上游来源。 |
+| 操作 | `Operation` | 在来源值（Source value）上表达继承、调整或设置等作者意图的操作。 |
+| 解析 | `Resolve` | 来源 + 操作 + 覆盖 → 生效后的解析结果（effective resolved truth）。 |
+| 物化 | `Materialize` | 生效后的配置 → 完整的生产行（Production rows）。 |
+| 校验 | `Validate` | 对编辑态（Authoring）/解析态（Resolved）/生产态（Production）约束进行检查。 |
+| 发布 | `Publish` | 将通过发布条件的结果写入生产环境（Production）。 |
 
 （烘焙 / 预烘焙作为工作流步骤见 §5.1。）
 
-### 6.4 命名和语义讨论（进行中）
+### 6.4 命名边界
+
+以下名称仍需由对应 Owner 在具体 Contract 中确定：
 
 - 掩蔽物 / 遮蔽物
-- 一级条件、二级条件，是否应当更名，例如：基础 / 衍生 / 派生 等等
+- 原始条件、派生条件是否需要替代旧的层级称呼
 - 因子、条件、习性组件的命名
-- 响应内容 加入 / 不加入 因子 / 条件
+- 响应内容是否纳入因子或条件
 
 ---
 
