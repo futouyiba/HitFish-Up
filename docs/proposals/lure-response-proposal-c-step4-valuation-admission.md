@@ -21,6 +21,8 @@
 
 可执行 probe：`../../prototypes/lure-response/proposal_c_step4_valuation_admission_probe.py`。
 
+本轮已在 ChatGPT 本地 Python 环境实际执行通过；当前结果：cadence 与 vulnerability 均为 `CandidateUnresolved`，匿名 `generic_state_bonus` 为 `Rejected`。
+
 ## 2. Admission gate
 
 独立 Valuation mechanism 至少同时满足：
