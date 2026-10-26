@@ -20,6 +20,8 @@ Complete Response Modes
 
 ## 2. Current Authority 对齐
 
+本轮对齐版本：Interaction / Capture Current v15（2026-08-28 17:24）；Candidate Resolver / Assembly Current v8（2026-08-28 20:28）；Candidate Pre-Roll Gameplay Policy Current v1（2026-08-28 14:51）；Candidate Weight Calibration Current v8（2026-08-28 22:49）。时间均为 Asia/Taipei。
+
 ### Interaction / Capture Current v15
 
 Current 明确冻结：
@@ -68,6 +70,10 @@ NativeCandidateSnapshot
 ```
 
 因此 Native Interaction response 不得再次包装成 MassTransform、Eligibility tweak 或匿名 Candidate Weight modifier。
+
+### Candidate Weight Calibration Current v8
+
+Calibration Current 将 Native baseline 明确为 raw Spatial + raw Capture + Roster / World Presence；Calibration 不取得 Interaction Cause authority。因此 `captureRetention` 属 Native Candidate Assembly，不是 `W_i^opp` 之后的 calibration correction。
 
 ## 3. Canonical Bridge
 
