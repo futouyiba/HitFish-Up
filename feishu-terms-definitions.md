@@ -160,20 +160,20 @@ BaseWeight × EnvCoeff
 条件定义见上方"条件分类"；因子（Factor）：对鱼而言具有独立评价语义、可独立产生评价结果的评价维度。
 
 ```text
-Environment Entity / Terrain / Material
+Environment Entity / Terrain / Material（环境实体 / 地形 / 材质）
         ↓
-Raw Condition
+Raw Condition（原始条件）
         ↓
-Derived Condition（需要时）
+Derived Condition（派生条件，需要时）
         ↓
-Factor Input / Value
+Factor Input / Value（因子输入 / 值）
         ↕
-Environment Component
+Environment Component（环境习性组件）
         ↓
-Fit
+Fit（适配值）
 ```
 
-判别：Entity 是世界里有什么；Condition 是当前事实是什么；Factor 是鱼评价什么；Environment Component 是这条 Engagement Mode 怎么评价它。
+判别：实体（Entity）是世界里有什么；条件（Condition）是当前事实是什么；因子（Factor）是鱼评价什么；环境习性组件（Environment Component）是这条中鱼习性模式（Engagement Mode）如何评价它。
 
 Structure / Cover / Substrate 对应关系：
 
@@ -269,31 +269,31 @@ Pond
 
 ## 烘焙（预烘焙）
 
-- 烘焙（Bake）：resolved fish config + environment facts → 环境评价输出。
+- 烘焙（Bake）：已解析的鱼配置 + 环境事实 → 环境评价输出。
 - 预烘焙（Pre-bake）：烘焙派生环境场之前，先把原始条件烘焙成派生条件的过程。
 
 ## 鱼况
 
-鱼况（Fish Condition）：鱼侧动态参数。随天气、时段等输入变化，描述鱼当前的活跃、摄食与警觉状态，供后续 Response 等计算使用。
+**鱼况（Fish Condition）**：鱼侧动态参数。随天气、时段等输入变化，描述鱼当前的活跃、摄食与警觉状态，供后续响应（Response）等计算使用。
 
 | **中文** | **英文 / Identifier** | **说明** |
 |-|-|-|
-| 活跃度 | \`Activity\` | 当前整体活跃程度；除参与 Response 外，也可向刺鱼、搏鱼等后续模块提供输入。 |
+| 活跃度 | \`Activity\` | 当前整体活跃程度；除参与响应（Response）外，也可向刺鱼、搏鱼等后续模块提供输入。 |
 | 摄食动机 | \`Feeding Motivation\` | 当前摄食意愿 / 驱动力。 |
 | 食性偏移 | \`Diet Shift\` | 当前相对于基础食性的动态偏移。 |
 | 警戒度 | \`Wariness\` | 当前警觉程度；随过程累积变化，影响后续响应。 |
 
 ## 响应阶段
 
-响应阶段（Response Stage）：环境权重形成之后，系统按 Engagement Mode 的响应习性、当前鱼况和玩家刺激，调整候选权重。它分两路：持久响应处理持续生效的玩家行为（如打窝）；姿态响应处理当前姿态、饵和操作的即时计算。
+响应阶段（Response Stage）：环境权重形成之后，系统按中鱼习性模式（Engagement Mode）的响应习性、当前鱼况和玩家刺激，调整候选权重。它分两路：持久响应处理持续生效的玩家行为（如打窝）；姿态响应处理当前姿态、饵和操作的即时计算。
 
 ```text
-SpatialDistributionWeight
-+ Fish Condition
-+ Response Components
-+ current stimulus / presentation
-→ response evaluation
-→ downstream candidate weight
+空间分布权重（SpatialDistributionWeight）
++ 鱼况（Fish Condition）
++ 响应习性组件（Response Components）
++ 当前刺激 / 呈现信号（Presentation Signal）
+→ 响应评价
+→ 下游候选权重
 ```
 
 **适配系数**（Adaptation Coefficient）：响应阶段产生的最终系数，表达当前 Engagement Mode 对本次玩家刺激 / 呈现的响应强弱；按鱼种聚合为鱼适配系数集（鱼种 × 中鱼习性模式 → 适配系数）。
@@ -320,14 +320,14 @@ SpatialDistributionWeight
 
 | **中文** | **英文** | **定义** |
 |-|-|-|
-| 配方 | \`Recipe\` | 描述一个配置对象如何由 Source + Operations 形成。 |
-| 来源 | \`Source\` | 为 Component / Profile 提供原始配置值的上游来源。 |
-| 操作 | \`Operation\` | 在 Source value 上表达继承、调整或设置等作者意图的操作。 |
-| 解析 | \`Resolve\` | Source + Operations + overrides → effective resolved truth。 |
-| 物化 | \`Materialize\` | effective truth → 完整 Production rows。 |
-| 校验 | \`Validate\` | 对 Authoring / Resolved / Production 约束进行检查。 |
-| 发布 | \`Publish\` | 将通过发布条件的结果写入 Production。 |
-| 烘焙 | \`Bake\` | resolved fish config + environment facts → 环境评价输出。 |
+| 配方 | \`Recipe\` | 描述一个配置对象如何由来源（Source）+ 操作（Operations）形成。 |
+| 来源 | \`Source\` | 为组件（Component）/习性配置（Profile）提供原始配置值的上游来源。 |
+| 操作 | \`Operation\` | 在来源值（Source value）上表达继承、调整或设置等作者意图的操作。 |
+| 解析 | \`Resolve\` | 来源 + 操作 + 覆盖 → 生效后的解析结果（effective resolved truth）。 |
+| 物化 | \`Materialize\` | 生效后的配置 → 完整的生产行（Production rows）。 |
+| 校验 | \`Validate\` | 对编辑态（Authoring）/解析态（Resolved）/生产态（Production）约束进行检查。 |
+| 发布 | \`Publish\` | 将通过发布条件的结果写入生产环境（Production）。 |
+| 烘焙 | \`Bake\` | 已解析的鱼配置 + 环境事实 → 环境评价输出。 |
 
 # 命名和语义讨论：
 
