@@ -99,10 +99,24 @@ Motivation
 
 系统没有具体鱼点，只有拟饵具体位置，因此不虚构鱼的世界坐标。
 
-用 latent relative angle `θ` 表示潜在鱼相对拟饵运动方向的未知微观方位：
+`intercept_capacity` 第一版定义为 **EffectiveInterceptCapacity**：当前这条鱼在本次短时追赶语境下，用于阻止目标径向间距继续拉大的有效 Closing 能力。它不是物种资料表里的“最高游速”，也不把 burst speed、critical speed、cruising speed 当成同一个量。
+
+Working ownership：
 
 ```text
-q = lure_speed / intercept_capacity
+LocomotorBaseline(species, size/stage)
+        ×
+CapacityStateModifier(FunctionalCapacity)
+        ↓
+EffectiveInterceptCapacity
+```
+
+这里的乘法只表示 ownership 拆分，不冻结 `CapacityStateModifier` 为恒等或线性。若 FunctionalCapacity 的标尺未定义，不能直接假设 `capacity = baseline × FunctionalCapacity`。
+
+能力与拟饵速度使用同一参考系，第一版推荐都采用相对水体速度：
+
+```text
+q = lure_speed_relative_to_water / EffectiveInterceptCapacity
 u_close(θ) = max(0, q * cosθ)
 ```
 
@@ -128,9 +142,11 @@ else:
 
 当前优先 `u²`，不是长期物理定律。probe 比较表明，一旦 `u>=1` 已经 angle-local hard-zero，继续从二次升到四次主要增加拟合自由度，没有购买新的策略语义。
 
-绝对鱼距 `D` 当前不准入首版。随便假设 1m / 3m / 5m 会产生玩法级差异，而系统没有权威个体距离事实。
+绝对鱼距 `D` 当前不准入首版。随便假设 1m / 3m / 5m 会产生玩法级差异，而系统没有权威个体距离事实。由于同样缺少 reaction distance 与 pursuit horizon，第一版也不显式拆 acceleration；其影响暂时由 EffectiveInterceptCapacity 的短时有效能力口径吸收。若未来获得合法距离与时间尺度，再重新评估是否拆回 burst speed + acceleration + horizon。
 
-Functional Capacity 已通过 `intercept_capacity` 进入 q；不得再按“强鱼 / 弱鱼身份”重复处罚。
+Functional Capacity 只通过 EffectiveInterceptCapacity 进入 Closing。温度、低氧、疲劳等如果已经被上游编译进 FunctionalCapacity，不得在 Closing 再按同一原因重复处罚。
+
+与 Motivation 的边界固定：FunctionalCapacity 回答“能不能做到”，Feeding Motivation 回答“愿不愿意出手”。Motivation 不修改 locomotor capacity。
 
 ### 4.2 Prediction Challenge
 
@@ -355,7 +371,7 @@ State Trigger 的 Working budget 倾向约 `0.10～0.15` 的 Decision-Margin 尺
 
 Prediction Cost 的 Working budget 倾向约 `0.08～0.12`：默认不强于 State Trigger；中等 dart 不因 Prediction alone 反转成负收益；hard turn 可以削薄即时 Trigger；极端动作的负面结果由多条真实路径共同形成。
 
-Closing 的形状先冻结为 `K_close × u_close²` + angle-local hard infeasible；`K_close` 尚未 calibration。
+Closing 的形状先冻结为 `K_close × u_close²` + angle-local hard infeasible；`K_close` 尚未 calibration。EffectiveInterceptCapacity 的生产数据源与 FunctionalCapacity 映射也尚未闭合。
 
 需要保持的体验排序：
 
@@ -365,7 +381,7 @@ Closing 的形状先冻结为 `K_close × u_close²` + angle-local hard infeasib
 - good bite 下 faster retrieve 可以接近 reference-good；
 - moderate prey-appropriate darting 明显优于机械直线；
 - 极端高速乱窜可以因 Closing / Prediction / temporal consequences 重新变差，但不是由匿名 erratic penalty 强制实现；
-- 同 presentation 下 Functional Capacity 更强的鱼，不应因 identity 再被重复惩罚。
+- 同 presentation 下 Functional Capacity 更强的鱼，只能通过更高 EffectiveInterceptCapacity 自然少受 Closing 惩罚，不得再按 identity 重复加减。
 
 ## 14. 已拒绝 / 已撤回
 
@@ -379,6 +395,11 @@ Closing 的形状先冻结为 `K_close × u_close²` + angle-local hard infeasib
 - `CadenceValue` / 通用 `CadenceBonus` / `CadencePenalty`；
 - 具体鱼世界坐标；
 - 随便指定米制鱼距 `D`；
+- 直接把资料表 maximum speed 当 EffectiveInterceptCapacity；
+- 把 burst speed / critical speed / cruising speed 当成同一个量；
+- Motivation 修改 locomotor capacity；
+- FunctionalCapacity 已影响 capacity 后再按同一环境/生理原因重复处罚 Closing；
+- 在没有 reaction distance / pursuit horizon 时伪造完整 acceleration pursuit；
 - prey support 当 prey probability；
 - prey support 归一化成 mixture；
 - support 只做 binary admission gate；
@@ -398,8 +419,12 @@ Closing 的形状先冻结为 `K_close × u_close²` + angle-local hard infeasib
 
 - FoodValue production anchors；
 - Motivation → Threshold production mapping；
-- `K_close` 与 `intercept_capacity` production calibration；
+- `K_close` production calibration；
+- `LocomotorBaseline(species, size/stage)` 的数据来源与生成方法；
+- FunctionalCapacity 的生产标尺与 `CapacityStateModifier` 映射；
+- 是否需要 fish-quality / individual variation；
 - latent-angle prior 的生产定义；
+- 若未来获得 reaction distance / pursuit horizon authority，是否拆出 acceleration；
 - PredictionChallenge 的 production event extraction；
 - `τ_recover` 与 `K_pred` production calibration；
 - `M0 / M1`；
@@ -424,6 +449,7 @@ Cadence scalar 已从默认 OPEN 列表移除；只有满足 residual admission 
 - `lure-response-proposal-c-task-cost-rho.md`
 - `lure-response-proposal-c-angle-only-intercept.md`
 - `lure-response-proposal-c-closing-cost-shape.md`
+- `lure-response-proposal-c-intercept-capacity-semantics.md`
 - `lure-response-proposal-c-maneuver-input-routing.md`（历史 Working，其中通用 ManeuverCost 已被后续工作替代）
 - `lure-response-proposal-c-prediction-challenge.md`
 - `lure-response-proposal-c-prediction-cost-budget.md`
