@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import math
 
-# Working experience-budget cases. These are calibration fixtures, not production truth.
+# Seven hand-authored experience-budget cases.
+# They compare projection families; they are not production calibration.
 CASES = [
     ("bad_fast", -0.0482421875, (0.15, 0.25)),
     ("bad_slow", 0.0611328125, (0.50, 0.65)),
@@ -40,6 +41,7 @@ def bucket_projection(margin: float) -> float:
 
 
 def center(bounds: tuple[float, float]) -> float:
+    # RMSE target only: compare each projection with the fixture interval midpoint.
     return sum(bounds) / 2.0
 
 
@@ -53,7 +55,8 @@ def rmse(projector) -> float:
 def main() -> None:
     assert linear_projection(-1.0) == 0.0
     assert linear_projection(1.0) == 1.0
-    assert sigmoid_projection(-1.0) > 0.0  # important semantic difference
+    # Sigmoid has no exact zero or one at finite margins.
+    assert sigmoid_projection(-1.0) > 0.0
     assert sigmoid_projection(1.0) < 1.0
 
     print("case\tmargin\ttarget\tlinear\tsigmoid\tbucket")
