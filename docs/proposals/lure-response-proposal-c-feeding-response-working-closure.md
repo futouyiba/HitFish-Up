@@ -4,31 +4,32 @@
 
 对齐基线：
 
-- 最新 `main`：`cd74d363d0478d7c7aecfeb7320ff0419b1b6fd0`
-- 本分支审计前 head：`511755f016133d6264492103adfc79e087c8c519`
+- 最新已检查 `main`：`cd74d363d0478d7c7aecfeb7320ff0419b1b6fd0`
 - 当前 RESPONSE Authority 仍由 `fcf-system-map/contracts.json` 指向外部中层样板 v8；本页只承接 Proposal C 的 Candidate Delta。
+- 远端对齐与清理检查见 `lure-response-proposal-c-remote-alignment-audit-2026-10-26.md`。
 
-## 1. 一句话主线
+## 1. 当前主线
 
 ```text
 ActualPresentation
 → prey support
 → prey-conditioned current state
-→ fish-side value / task / motivation evaluation
-→ latent-microstate response
+→ fish-side value / closing / prediction / motivation evaluation
+→ latent-angle conditional response
 → prey-mode response
+→ Feeding composition
 → Interaction composition
 → captureRetention
 → Candidate native retention join
 ```
 
-本页只处理 Feeding family 内部的 Working 结构，以及它和既有 Interaction/Candidate seam 的关系。
+本页只收当前仍承重的 Working 结论。窄主题 probe / 文档继续保留证据，不把历史推导重新塞回总入口。
 
 ## 2. 类型与状态先于鱼侧价值
 
 ### 2.1 Prey support
 
-第2步输出每个 prey interpretation 的支持强度：
+第2步输出每个 prey interpretation 的支持强度，例如：
 
 ```text
 baitfish: 0.90
@@ -36,7 +37,7 @@ crayfish: 0.75
 frog: 0
 ```
 
-其语义是“当前呈现有多少依据可以按该猎物理解”。
+语义是“当前呈现有多少依据可以按该猎物理解”。
 
 必须保持：
 
@@ -89,24 +90,24 @@ Preferred > Good > Marginal > Poor > Reject
 
 它不是通用 `ErraticBonus`。
 
-通用正向状态证据的第一版最小底座：
+第一版通用正向证据只保留：
 
 - sudden redirection event；
 - burst / sudden acceleration event。
 
 左右交替、时序不规则等更适合作为 prey-state pattern 的解释可信度，不默认直接加分。
 
-`burst → pause` 不作为整体 bonus；pause 的作用由 temporal/task 路径承接。
+`burst → pause` 不作为整体 bonus；pause 的作用由 Closing / Prediction / temporal support 等各自承接。
 
 State Trigger 属于 prey + current state local value，不修改 fish-global Motivation threshold。
 
-Working topology：
+解释上可以写：
 
 ```text
 AttackValue = FoodValue + StateTriggerValue
 ```
 
-`AttackValue` 目前仅为解释概念，不要求成为独立 production object。
+`AttackValue` 目前不需要成为独立 production object。
 
 ### 3.3 Feeding Motivation
 
@@ -125,11 +126,11 @@ Motivation
 
 Motivation 不改写 prey identity，也不被某一 prey-local trigger 反向修改。
 
-## 4. Capture Task
+## 4. Capture / Prediction 侧
 
 ### 4.1 Closing / Intercept
 
-当前系统没有具体鱼点，只有饵的具体位置。因此不虚构某条鱼的世界坐标。
+当前系统没有具体鱼点，只有拟饵的具体位置。因此不虚构某条鱼的世界坐标。
 
 用 latent relative angle `θ` 表示潜在鱼相对拟饵运动方向的未知微观方位。
 
@@ -148,41 +149,65 @@ u_close(θ) = max(0, q * cosθ)
 
 绝对鱼距 `D` 当前不准入首版 Intercept。之前灵敏度检查表明，随便假设 1m / 3m / 5m 会产生玩法级差异，而系统没有权威个体距离事实。
 
-### 4.2 Maneuver / Steering
+Closing 可以在特定 `θ` 下 hard infeasible；该角度的 conditional response 为0。部分角度 infeasible 不等于 whole mode hard-zero。
 
-没有鱼点时，横向速度本身不能推出鱼必须转多少角，因此不直接进入 Maneuver。
+### 4.2 Prediction Challenge
 
-当前可稳定从拟饵自身轨迹得到的通用 proxy：
+通用 `ManeuverCost(ω_traj / fish_turn_capacity)` 已撤回作为第一版 numeric core。
 
-```text
-ω_traj = v * κ
-```
+原因：没有具体鱼点、鱼朝向和截获路径时，拟饵自身转向角速度不能推出鱼必须以同样速度转弯。规则圆周也可能转得很快却高度可预测。
 
-其中 `κ` 为轨迹曲率。
-
-它描述拟饵运动方向改变得有多快。
-
-边界：
+当前更窄的 Working semantic 是：
 
 ```text
-ω_traj / fish_turn_capacity > 1
+sudden direction-change event
+→ existing attack prediction temporarily degrades
+→ PredictionChallenge
+→ soft PredictionCost
 ```
 
-当前不能推出 hard Infeasible，因为鱼不需要逐点复制拟饵轨迹，可以切弯或截击。
+Working event proxy：
 
-因此 Maneuver 当前只有 soft-cost authority。
+```text
+TurnStrength(Δψ) = (1 - cosΔψ) / 2
+P(t) = max_recent[TurnStrength × exp(-age / τ_recover)]
+```
 
-### 4.3 TaskCost
+这只是 topology probe，不是生产公式。
 
-当前仍是 Working Hypothesis：
+PredictionChallenge：
 
-- Closing 可对某些 latent angle 形成 hard infeasible；
-- Steering/Maneuver 只做 soft cost；
-- 不再默认“任一 Task axis >1 → whole mode hard zero”。
+- 是暂态；
+- 只允许 soft cost；
+- 不产生 hard infeasible；
+- 连续 zig-zag 首版只通过不断刷新近期 challenge 生效，不另叠 `CadencePenalty`。
 
-旧的双轴 surcharge `rho` 当前推荐 `rho=0`，除非未来 controlled fixture 证明同一 Closing bottleneck 下，第二轴需要独立玩家可感知效应。
+如果未来 controlled fixture 证明：在相同近期最大 turn、相同 Closing 与 temporal support 下，多次反向仍有独立负效应，再准入 event accumulation / frequency semantic。
 
-TaskCost 的生产函数和参数仍未冻结。
+### 4.3 Prediction effect-size
+
+当前 Working：
+
+```text
+PredictionCost = K_pred × PredictionChallenge
+```
+
+其中 `K_pred` 的 probe budget 约为 `0.08～0.12` 的 Decision-Margin 尺度。
+
+它被刻意限制为小修正项：
+
+- 一次 prey-appropriate 的中等 dart 通常仍应净正向；
+- 急转可以明显削薄 Trigger 收益；
+- 极端高速乱窜是否最终变差，应由 Prediction + Closing + favorable-window 等真实后果共同形成；
+- Prediction 不单独把所有 erratic action 判成坏动作。
+
+当前护栏：
+
+```text
+K_pred <= Working TriggerBudget
+```
+
+这是当前复杂度护栏，不是长期物理定律。
 
 ## 5. 折线运动的双路径
 
@@ -193,8 +218,9 @@ trajectory event
     ├→ prey-conditioned escape/distress interpretation
     │      → StateTriggerValue (+)
     │
-    └→ steering / prediction / capture consequence
-           → Task / temporal cost (-)
+    └→ prediction disruption
+           → PredictionChallenge
+           → PredictionCost (-)
 ```
 
 这不是重复计权，因为两条链回答不同问题。
@@ -202,18 +228,20 @@ trajectory event
 不手工设计“中等 erratic 最好”的钟形 bonus。当前 Working 解释是：
 
 - Trigger 随 prey-appropriate escape state 增强后饱和；
-- 高强度 movement 的 capture/prediction cost 上升；
-- 二者共同形成中间最优。
+- Prediction 让突然转向的即时收益变薄；
+- Closing、temporal support 等其它真实后果继续保留独立因果权力；
+- 最终是否形成中间最优，由这些路径共同决定。
 
 ## 6. Decision Margin 与 Projection
 
-Working numeric topology：
+当前 Working numeric topology：
 
 ```text
 DecisionMargin(θ)
 = FoodValue
 + StateTriggerValue
-- TaskCost(θ)
+- ClosingCost(θ)
+- PredictionCost
 - WillingnessThreshold(Motivation)
 ```
 
@@ -224,13 +252,13 @@ C_conditional(θ)
 = ResponseProjection(DecisionMargin(θ))
 ```
 
-当前第一版 projection 倾向 clipped linear：
+第一版 projection 倾向 clipped linear：
 
 ```text
 C = clamp((Margin - M0) / (M1 - M0), 0, 1)
 ```
 
-原因是当前 sigmoid 只带来很小拟合改善，没有购买新的策略语义。
+当前 sigmoid 只带来很小拟合改善，没有购买新的策略语义。
 
 `M0 / M1` 仍是 calibration anchors，不是物理常数。
 
@@ -242,25 +270,27 @@ C = clamp((Margin - M0) / (M1 - M0), 0, 1)
 
 ```text
 θ
-→ TaskCost(θ)
+→ ClosingCost(θ)
 → DecisionMargin(θ)
 → C_conditional(θ)
 → Eθ[C_conditional(θ)]
 ```
 
+PredictionCost、FoodValue、StateTriggerValue、MotivationThreshold 若在该微观角度分布上不变，可以在每个 `θ` 的 margin 中复用同一值，但不能先把 Closing 非线性结果平均掉。
+
 错误：
 
 ```text
-Eθ[TaskCost]
+Eθ[ClosingCost]
 → one average Margin
 → one C
 ```
 
-因为中间存在 hard infeasible、非线性 TaskCost 与截断 projection。先平均会把不同微观角度的混合压成不存在的“平均鱼”。
+因为中间存在 angle-local hard infeasible、非线性 cost 与截断 projection。先平均会制造不存在的“平均鱼”。
 
 ## 8. Prey support 如何进入 response
 
-当前第一版最小结构：
+第一版最小结构：
 
 ```text
 C_prey
@@ -273,7 +303,7 @@ C_prey
 
 > `support=0.7` 不表示“70%概率它是这种猎物”。
 
-这里只表示这套 interpretation 以 0.7 的解释强度贡献其条件响应。
+这里只表示这套 interpretation 以0.7的解释强度贡献其条件响应。
 
 当前不增加额外 `RecognitionProjection` / soft gate / S-curve。若未来反例证明 support 的线性 retention 失真，再准入新的 `R(support)`。
 
@@ -343,6 +373,8 @@ Trigger 与高 Motivation 都不能救活 Reject。
 
 只对对应 latent angle 局部置零；不因为部分角度 infeasible 就默认 whole mode hard zero。
 
+PredictionChallenge 不拥有 hard-zero authority。
+
 ## 11. pause / cadence 去重
 
 pause 不获得匿名 `PauseBonus`。
@@ -350,17 +382,17 @@ pause 不获得匿名 `PauseBonus`。
 它可以分别通过：
 
 - Closing Demand 降低；
+- `PredictionChallenge` 随时间自然衰减；
 - favorable dwell / temporal support；
-- prediction break / reset；
 - prey-conditioned process interpretation；
 
 产生后果。
 
-同一后果只结算一次。
+不再增加独立 `PredictionResetBonus`。
 
 `burst → pause` 不能整体再增加一次 State Trigger。
 
-Cadence motif 仍未完全闭合，不在本页伪造统一节律系数。
+Cadence motif 仍未完全闭合。当前也不增加通用 `CadencePenalty`。
 
 ## 12. Feeding → Interaction → Candidate
 
@@ -416,7 +448,16 @@ Working budget 倾向约 `0.10～0.15` 的 Decision-Margin 尺度，目标是：
 - 不能把 Poor 普遍抬成主力；
 - 不能救活 Reject。
 
-这不是生产数值。
+### Prediction Cost
+
+Working budget 倾向约 `0.08～0.12`：
+
+- 默认不强于 State Trigger；
+- 中等 dart 不因 Prediction alone 反转成负收益；
+- hard turn 可以显著削薄即时 Trigger；
+- 极端动作的负面结果由多条真实路径共同形成。
+
+以上均不是生产数值。
 
 ### Reference fishing stories
 
@@ -426,6 +467,8 @@ Working budget 倾向约 `0.10～0.15` 的 Decision-Margin 尺度，目标是：
 - poor bite + slow/pause 有显著 rescue；
 - normal bite 下 normal-fast 仍有竞争力；
 - good bite 下 faster retrieve 可以接近 reference-good；
+- moderate prey-appropriate darting 能明显优于机械直线；
+- 极端高速乱窜可以因 Closing / Prediction / temporal consequences 重新变差，但不是由匿名 erratic penalty 强制实现；
 - 同 presentation 下 Functional Capacity 更强的鱼，不应因 identity 再被重复惩罚。
 
 ## 14. 已拒绝 / 已撤回的结构
@@ -434,13 +477,17 @@ Working budget 倾向约 `0.10～0.15` 的 Decision-Margin 尺度，目标是：
 
 - `Drive = FoodValue × Motivation` 作为默认核心；
 - 匿名 `PauseBonus`；
+- `PredictionResetBonus`；
 - 通用 `ErraticBonus`；
+- 通用 `CadencePenalty`；
 - 具体鱼世界坐标；
 - 随便指定米制鱼距 `D`；
 - `prey support` 当 prey probability；
 - `prey support` 归一化成 mixture；
 - support 只做 binary admission gate；
+- `ω_traj / fish_turn_capacity` 直接作为通用 ManeuverCost；
 - Maneuver utilization >1 就 whole-mode hard zero；
+- 任意 PredictionChallenge threshold 直接 hard-zero；
 - Candidate Resolver 逐 mode 解释 Feeding / Defense 语义；
 - Interaction response 在 Candidate 侧二次相乘。
 
@@ -450,13 +497,15 @@ Working budget 倾向约 `0.10～0.15` 的 Decision-Margin 尺度，目标是：
 
 - FoodValue production anchors；
 - Motivation → Threshold production mapping；
-- TaskCost production function；
-- Maneuver / prediction consequence 的最终数学形式；
+- ClosingCost production function；
+- PredictionChallenge 的 production event extraction；
+- `τ_recover` 与 `K_pred` production calibration；
 - `M0 / M1`；
 - State Trigger production budget；
 - support × conditional response 的 production calibration；
 - prey-family-specific escape/distress state rules；
-- cadence motif；
+- favorable dwell / temporal support 如何进入 Feeding numeric core；
+- cadence motif 是否仍需要独立 semantic；
 - Feeding / Defense / Investigation 的最终 route graph 与 operators；
 - runtime hot-path struct / representation；
 - production calibration 与自动回归阈值。
@@ -471,7 +520,9 @@ Working budget 倾向约 `0.10～0.15` 的 Decision-Margin 尺度，目标是：
 - `lure-response-proposal-c-task-cost-structure.md`
 - `lure-response-proposal-c-task-cost-rho.md`
 - `lure-response-proposal-c-angle-only-intercept.md`
-- `lure-response-proposal-c-maneuver-input-routing.md`
+- `lure-response-proposal-c-maneuver-input-routing.md`（历史 Working，关于通用 ManeuverCost 的部分已被后续 PredictionChallenge 工作替代）
+- `lure-response-proposal-c-prediction-challenge.md`
+- `lure-response-proposal-c-prediction-cost-budget.md`
 - `lure-response-proposal-c-erratic-state-trigger.md`
 - `lure-response-proposal-c-escape-feature-routing.md`
 - `lure-response-proposal-c-state-trigger-budget.md`
