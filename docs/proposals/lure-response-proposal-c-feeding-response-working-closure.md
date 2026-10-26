@@ -99,18 +99,38 @@ Motivation
 
 系统没有具体鱼点，只有拟饵具体位置，因此不虚构鱼的世界坐标。
 
-用 latent relative angle `θ` 表示潜在鱼相对拟饵运动方向的未知微观方位。第一版 reduced proxy：
+用 latent relative angle `θ` 表示潜在鱼相对拟饵运动方向的未知微观方位：
 
 ```text
 q = lure_speed / intercept_capacity
 u_close(θ) = max(0, q * cosθ)
 ```
 
-含义：拟饵正背离潜在鱼时 Closing Demand 最大；横切不自动形成径向 closing burden；朝鱼运动时 Closing Demand 可为0。
+第一版 Closing Working closure：
+
+```text
+if u_close(θ) >= 1:
+    C_conditional(θ) = 0
+else:
+    ClosingCost(θ) = K_close × u_close(θ)^2
+```
+
+含义：
+
+- 拟饵正背离潜在鱼时 Closing Demand 最大；
+- 横切不自动形成径向 closing burden；
+- 朝鱼运动时 Closing Demand 可为0；
+- 中低 utilization 只产生较轻 cost；
+- 接近能力边界时 cost 快速抬升；
+- 明确超过 Closing capacity 时，只把对应 latent angle 判为 hard infeasible。
+
+`q >= 1` 不能推出 whole mode hard-zero，因为其它角度仍可能可行。最终仍按 `θ → C(θ) → Eθ[C(θ)]` 聚合。
+
+当前优先 `u²`，不是长期物理定律。probe 比较表明，一旦 `u>=1` 已经 angle-local hard-zero，继续从二次升到四次主要增加拟合自由度，没有购买新的策略语义。
 
 绝对鱼距 `D` 当前不准入首版。随便假设 1m / 3m / 5m 会产生玩法级差异，而系统没有权威个体距离事实。
 
-Closing 可以在特定 `θ` 下 hard infeasible；该角度 conditional response 为0。部分角度 infeasible 不等于 whole mode hard-zero。
+Functional Capacity 已通过 `intercept_capacity` 进入 q；不得再按“强鱼 / 弱鱼身份”重复处罚。
 
 ### 4.2 Prediction Challenge
 
@@ -131,8 +151,6 @@ Working probe：
 TurnStrength(Δψ) = (1 - cosΔψ) / 2
 P(t) = max_recent[TurnStrength × exp(-age / τ_recover)]
 ```
-
-这只是 topology probe，不是生产公式。
 
 PredictionChallenge 是暂态，只允许 soft cost，不产生 hard infeasible。连续 zig-zag 首版只通过不断刷新近期 challenge 生效，不另叠 CadencePenalty。
 
@@ -175,7 +193,9 @@ DecisionMargin(θ)
 - WillingnessThreshold(Motivation)
 ```
 
-再做：
+对 Closing infeasible 的 latent angle，不进入普通 margin，而是直接得到 `C_conditional(θ)=0`。
+
+其它角度再做：
 
 ```text
 C_conditional(θ)
@@ -196,13 +216,14 @@ C = clamp((Margin - M0) / (M1 - M0), 0, 1)
 
 ```text
 θ
-→ ClosingCost(θ)
+→ u_close(θ)
+→ [hard infeasible or ClosingCost(θ)]
 → DecisionMargin(θ)
 → C_conditional(θ)
 → Eθ[C_conditional(θ)]
 ```
 
-不能先平均 ClosingCost 再做 nonlinear projection。否则会把部分角度 hard-zero、部分角度高响应的混合压成不存在的“平均鱼”。
+不能先平均 `u_close` 或 ClosingCost 再做 nonlinear projection。否则会把部分角度 hard-zero、部分角度高响应的混合压成不存在的“平均鱼”。
 
 ## 8. Prey support 如何进入 response
 
@@ -301,7 +322,7 @@ resolved response state
 
 第一版不准入独立 `CadenceValue` / `CadenceBonus` / `CadencePenalty`。
 
-不是因为节奏不重要，而是当前已有更具体的 owner 承接其大部分可解释效果：StateTrigger、Prediction、Closing、attention/history、temporal exposure。
+当前已有更具体的 owner 承接其大部分可解释效果：StateTrigger、Prediction、Closing、attention/history、temporal exposure。
 
 只有在这些量全部相同、唯一稳定变化是 temporal motif，且仍产生可复现、可解释、玩家可学习的 ranking difference 时，才重新打开 cadence scalar。当前 cadence 只保留为事件历史 / Explain feature。
 
@@ -334,6 +355,8 @@ State Trigger 的 Working budget 倾向约 `0.10～0.15` 的 Decision-Margin 尺
 
 Prediction Cost 的 Working budget 倾向约 `0.08～0.12`：默认不强于 State Trigger；中等 dart 不因 Prediction alone 反转成负收益；hard turn 可以削薄即时 Trigger；极端动作的负面结果由多条真实路径共同形成。
 
+Closing 的形状先冻结为 `K_close × u_close²` + angle-local hard infeasible；`K_close` 尚未 calibration。
+
 需要保持的体验排序：
 
 - poor bite + fast retrieve 明显差；
@@ -359,6 +382,9 @@ Prediction Cost 的 Working budget 倾向约 `0.08～0.12`：默认不强于 Sta
 - prey support 当 prey probability；
 - prey support 归一化成 mixture；
 - support 只做 binary admission gate；
+- whole-mode `q>1` hard-zero；
+- 先平均 `u_close` / ClosingCost 再做 response projection；
+- 为拟合效果直接采用高次 Closing 幂；
 - `ω_traj / fish_turn_capacity` 直接作为通用 ManeuverCost；
 - Maneuver utilization >1 就 whole-mode hard zero；
 - 任意 PredictionChallenge threshold 直接 hard-zero；
@@ -372,7 +398,8 @@ Prediction Cost 的 Working budget 倾向约 `0.08～0.12`：默认不强于 Sta
 
 - FoodValue production anchors；
 - Motivation → Threshold production mapping；
-- ClosingCost production function；
+- `K_close` 与 `intercept_capacity` production calibration；
+- latent-angle prior 的生产定义；
 - PredictionChallenge 的 production event extraction；
 - `τ_recover` 与 `K_pred` production calibration；
 - `M0 / M1`；
@@ -396,6 +423,7 @@ Cadence scalar 已从默认 OPEN 列表移除；只有满足 residual admission 
 - `lure-response-proposal-c-task-cost-structure.md`
 - `lure-response-proposal-c-task-cost-rho.md`
 - `lure-response-proposal-c-angle-only-intercept.md`
+- `lure-response-proposal-c-closing-cost-shape.md`
 - `lure-response-proposal-c-maneuver-input-routing.md`（历史 Working，其中通用 ManeuverCost 已被后续工作替代）
 - `lure-response-proposal-c-prediction-challenge.md`
 - `lure-response-proposal-c-prediction-cost-budget.md`
