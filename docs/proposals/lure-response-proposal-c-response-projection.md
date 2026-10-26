@@ -3,7 +3,7 @@
 日期：2026-10-26  
 状态：Working Closure，非 Current，非生产参数。
 
-相关护栏：[`lure-response-proposal-c-anti-design-guardrails.md`](./lure-response-proposal-c-anti-design-guardrails.md)。其中集中记录本主线已被反例击穿、后续不应静默回退的反设计与重开条件。
+相关护栏：[`../design-guardrails/lure-response.md`](../design-guardrails/lure-response.md)。其中集中记录本主线已被反例击穿、后续不应静默回退的反设计与重开条件。
 
 ## 1. 本轮问题
 
