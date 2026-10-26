@@ -97,7 +97,7 @@ Preferred > Good > Marginal > Poor > Reject
 
 左右交替、时序不规则等更适合作为 prey-state pattern 的解释可信度，不默认直接加分。
 
-`burst → pause` 不作为整体 bonus；pause 的作用由 Closing / Prediction / temporal support 等各自承接。
+`burst → pause` 不作为整体 bonus；pause 的作用由 Closing、Prediction 和 prey-state 等各自承接。
 
 State Trigger 属于 prey + current state local value，不修改 fish-global Motivation threshold。
 
@@ -182,7 +182,7 @@ PredictionChallenge：
 - 不产生 hard infeasible；
 - 连续 zig-zag 首版只通过不断刷新近期 challenge 生效，不另叠 `CadencePenalty`。
 
-如果未来 controlled fixture 证明：在相同近期最大 turn、相同 Closing 与 temporal support 下，多次反向仍有独立负效应，再准入 event accumulation / frequency semantic。
+如果未来 controlled fixture 证明：在相同近期最大 turn、相同 Closing 与 temporal exposure 下，多次反向仍有独立负效应，再准入 event accumulation / frequency semantic。
 
 ### 4.3 Prediction effect-size
 
@@ -198,7 +198,7 @@ PredictionCost = K_pred × PredictionChallenge
 
 - 一次 prey-appropriate 的中等 dart 通常仍应净正向；
 - 急转可以明显削薄 Trigger 收益；
-- 极端高速乱窜是否最终变差，应由 Prediction + Closing + favorable-window 等真实后果共同形成；
+- 极端高速乱窜是否最终变差，应由 Prediction、Closing 和其它真实后果共同形成；
 - Prediction 不单独把所有 erratic action 判成坏动作。
 
 当前护栏：
@@ -229,7 +229,7 @@ trajectory event
 
 - Trigger 随 prey-appropriate escape state 增强后饱和；
 - Prediction 让突然转向的即时收益变薄；
-- Closing、temporal support 等其它真实后果继续保留独立因果权力；
+- Closing 等其它真实后果继续保留独立因果权力；
 - 最终是否形成中间最优，由这些路径共同决定。
 
 ## 6. Decision Margin 与 Projection
@@ -375,24 +375,46 @@ Trigger 与高 Motivation 都不能救活 Reject。
 
 PredictionChallenge 不拥有 hard-zero authority。
 
-## 11. pause / cadence 去重
+## 11. pause / dwell / cadence 去重
 
 pause 不获得匿名 `PauseBonus`。
 
-它可以分别通过：
+它可以通过：
 
-- Closing Demand 降低；
-- `PredictionChallenge` 随时间自然衰减；
-- favorable dwell / temporal support；
-- prey-conditioned process interpretation；
-
-产生后果。
+- lure speed 下降 → Closing Demand 降低；
+- 没有新的 abrupt redirection → `PredictionChallenge` 随时间自然衰减；
+- prey-conditioned process interpretation 改变 → 若有独立证据则改变 StateTriggerValue。
 
 不再增加独立 `PredictionResetBonus`。
 
 `burst → pause` 不能整体再增加一次 State Trigger。
 
-Cadence motif 仍未完全闭合。当前也不增加通用 `CadencePenalty`。
+### Favorable dwell
+
+`favorable dwell` 不进入 Feeding `DecisionMargin`，也不新增 `DwellBonus` / `PauseDurationCoeff`。
+
+受控条件下，如果两个状态当前的 FoodValue、Trigger、Closing、Prediction、Motivation 都相同，只是有利状态已经持续的时长不同，则它们的**瞬时 Feeding response `C` 相同**。
+
+更长 dwell 的优势属于：
+
+```text
+resolved response state
+× temporal exposure / opportunity support
+→ cumulative opportunity
+```
+
+不是：
+
+```text
+longer dwell
+→ fish-side instantaneous value increases
+```
+
+当前仓内 `main` 没找到已承接 temporal support / exposure integration 的 Current Markdown Contract。因此这是明确缺口：Feeding 不接管，后续需要由 Opportunity / temporal exposure 的合法 Owner 承接。
+
+Duration 仍可作为上游事实进入已存在的语义，例如 PredictionChallenge 的恢复时间、prey-specific process state 或 attention history；但不变成通用 duration bonus。
+
+Cadence motif 仍未完全闭合。当前也不增加通用 `CadencePenalty`。未来若要准入 cadence residual effect，必须在 current speed / Closing、Prediction、StateTrigger、attention、total temporal exposure、Motivation 都相同后仍产生稳定 ranking difference。
 
 ## 12. Feeding → Interaction → Candidate
 
@@ -477,6 +499,7 @@ Working budget 倾向约 `0.08～0.12`：
 
 - `Drive = FoodValue × Motivation` 作为默认核心；
 - 匿名 `PauseBonus`；
+- `PauseDurationCoeff` / `DwellBonus`；
 - `PredictionResetBonus`；
 - 通用 `ErraticBonus`；
 - 通用 `CadencePenalty`；
@@ -488,6 +511,7 @@ Working budget 倾向约 `0.08～0.12`：
 - `ω_traj / fish_turn_capacity` 直接作为通用 ManeuverCost；
 - Maneuver utilization >1 就 whole-mode hard zero；
 - 任意 PredictionChallenge threshold 直接 hard-zero；
+- 为补 temporal exposure 缺口而提高 Feeding `C`；
 - Candidate Resolver 逐 mode 解释 Feeding / Defense 语义；
 - Interaction response 在 Candidate 侧二次相乘。
 
@@ -504,7 +528,7 @@ Working budget 倾向约 `0.08～0.12`：
 - State Trigger production budget；
 - support × conditional response 的 production calibration；
 - prey-family-specific escape/distress state rules；
-- favorable dwell / temporal support 如何进入 Feeding numeric core；
+- Opportunity / temporal exposure 的 Current Owner 与 cumulative operator；
 - cadence motif 是否仍需要独立 semantic；
 - Feeding / Defense / Investigation 的最终 route graph 与 operators；
 - runtime hot-path struct / representation；
@@ -523,6 +547,7 @@ Working budget 倾向约 `0.08～0.12`：
 - `lure-response-proposal-c-maneuver-input-routing.md`（历史 Working，关于通用 ManeuverCost 的部分已被后续 PredictionChallenge 工作替代）
 - `lure-response-proposal-c-prediction-challenge.md`
 - `lure-response-proposal-c-prediction-cost-budget.md`
+- `lure-response-proposal-c-favorable-dwell-ownership.md`
 - `lure-response-proposal-c-erratic-state-trigger.md`
 - `lure-response-proposal-c-escape-feature-routing.md`
 - `lure-response-proposal-c-state-trigger-budget.md`
