@@ -3,6 +3,8 @@
 日期：2026-10-26  
 状态：Working Probe，不是 Current，不规定最终 response aggregation。
 
+> Counterfactual closure 已完成：见 [Step 4 Counterfactual Closure](lure-response-proposal-c-step4-counterfactual-closure.md)。Q1/Q2/Q3 已编码并在本地 Python 实际执行通过；本页以下内容保留为进入该 closure 前的设计推导。
+
 ## 1. 本轮只问一个问题
 
 固定：
@@ -227,4 +229,4 @@ Step 4 下一轮不要扩大鱼种，先攻击以下反事实：
 
 目标：如果两者 TaskDemand 相同，那么任何差异都必须明确来自 target / valuation interpretation；不能再伪装成 capture feasibility。
 
-这三组通过后，再决定 Step 4 是否需要新增独立 `Vulnerability` 语义，还是 `Actual motion → TaskDemand` 已经购买了大部分需要的表达能力。
+这三组已由 closure probe 执行；当前结论以 closure 文档为准。
