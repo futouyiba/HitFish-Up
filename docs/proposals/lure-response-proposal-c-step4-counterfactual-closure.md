@@ -233,7 +233,9 @@ C_mode
 - Higham 2007, *Feeding, fins and braking maneuvers: locomotion during prey capture in centrarchid fishes*, PMID 17170154.
 - Gardiner & Motta 2012, *Largemouth bass switch feeding modalities in response to sensory deprivation*, PMID 22285791.
 - Holzman et al. 2014, *Modelled three-dimensional suction accuracy predicts prey capture success in three species of centrarchid fishes*, PMCID PMC4006267.
-- Feeding in Flow 2026, largemouth bass modulate prey-capture kinematics across flow speeds, PMID 42868420.
+- *Feeding in Flow* 2026, largemouth bass modulate prey-capture kinematics across flow speeds, PMID 42868420.
+
+Bassmaster 等钓鱼经验资料常见“pause / cadence 有时改变咬口”的叙述；这里只把它们视为 temporal-trigger Candidate evidence。此类资料通常同时改变当前速度、位置、结构物附近停留和注意触发，不能隔离证明 `recent_move_then_pause` 本身拥有独立 bonus。
 
 ## 9. 下一步
 
