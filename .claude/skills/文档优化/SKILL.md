@@ -1,5 +1,5 @@
 ---
-name: document-optimization
+name: 文档优化
 description: 按固定顺序优化技术文档：先诊断文档腐化，再整理结构与事实边界，然后中文优先改写，最后清理模型腔。用于组合文档优化四件套。
 license: MIT
 compatibility: claude-code opencode
