@@ -4,33 +4,41 @@
 
 ## 1. 结论
 
-当前：
-
-```text
-u_close(theta) = max(0, q * cos(theta))
-```
-
-其中：
+当前第一版使用：
 
 ```text
 q = lure_speed_horizontal_relative_to_water / InterceptSpeedLimit
+u_close(theta) = max(0, q * cos(theta))
 ```
 
-几何上可以解释为：
+`u_close` 只表达：
 
-> 拟饵沿鱼到拟饵视线方向继续远离时，对鱼造成的**径向分离速度占能力边界的比例**。
+> 拟饵沿潜在鱼→拟饵视线方向继续远离时，径向分离速度相对于鱼短时截获速度尺度的比例。
 
-它不是完整的 interception 求解，也不表达鱼到拟饵之间的实际距离、横向交会距离、反应延迟或加速度过程。
+它是 **RadialSeparationLoad** 的输入，不是完整 interception feasibility。
 
-因此第一版必须把它正式命名/解释为：
+本次修正：
 
 ```text
-RadialSeparationLoad
+u_close >= 1
 ```
 
-或继续保留 `ClosingCost` 名称，但文档必须明确其含义是“由当前运动造成的额外追赶负担”，不是“追上拟饵的全部运动代价”。
+**不再直接产生 hard-zero。**
 
-## 2. 为什么 `max(0, q cosθ)` 几何上成立
+第一版统一改为 soft Closing burden：
+
+```text
+ClosingCost(theta)
+= K_close
+  * u_close(theta)^2
+  * ActivityCostMultiplier(Activity)
+```
+
+随后照常进入 `DecisionMargin(theta)` 与 response projection。
+
+真正的 hard interception zero 只有未来拿到合法 encounter geometry / reaction-window contract 后才允许恢复。
+
+## 2. 为什么 `max(0, q cosθ)` 仍成立
 
 若只关心拟饵相对潜在鱼的瞬时径向分离速度：
 
@@ -44,7 +52,7 @@ v_radial = v_lure * cos(theta)
 cos(theta) > 0
 ```
 
-拟饵正在沿视线方向远离鱼，鱼必须至少补偿这部分径向分离速度，才能避免距离继续拉大。
+拟饵正在沿视线方向远离鱼，鱼必须补偿这部分径向分离，才能阻止距离继续拉大。
 
 当：
 
@@ -60,7 +68,7 @@ cos(theta) = 0
 cos(theta) < 0
 ```
 
-拟饵正在朝鱼方向接近，当前运动本身不制造“继续远离”的追赶负担。
+拟饵正在朝鱼方向接近，当前运动本身不制造继续远离负担。
 
 因此：
 
@@ -68,178 +76,223 @@ cos(theta) < 0
 max(0, q cosθ)
 ```
 
-作为**径向分离负担 proxy** 是一致的。
+作为径向分离 proxy 成立。
 
 ## 3. 它不等于完整 interception problem
 
-缺少真实鱼点后，我们不知道：
+当前没有合法事实描述：
 
 - fish-lure 初始距离；
 - 鱼的真实朝向；
+- strike reach；
+- reaction latency；
 - 目标交会点；
 - 鱼为了横切截获需要游多远；
-- 反应延迟；
 - 加速度 / 转向能力；
-- pursuit horizon。
+- pursuit horizon；
+- presentation 离开有效 interaction region 的剩余时间。
 
-所以不能宣称：
+所以不能从 `u_close` 推出完整追击是否物理可行。
 
-```text
-u_close
-= total interception effort
-```
-
-尤其横切 case：
+尤其：
 
 ```text
 cosθ = 0
 → u_close = 0
 ```
 
-只意味着“拟饵没有在径向上继续逃离”。
+只表示当前没有额外径向逃离负担，不表示鱼无需运动。
 
-它不意味着鱼无需运动。
+## 4. 为什么撤掉 `u_close >= 1 → hard-zero`
 
-## 4. 为什么第一版仍可接受
+`u_close >= 1` 最多说明：
 
-Proposal C 当前没有真实鱼点，也明确禁止采样虚构鱼点。
+> 目标当前径向远离速度达到或超过鱼的短时截获速度尺度，鱼无法靠持续同向游动让两者径向距离停止增加。
 
-如果为了补横切距离而新增：
+但它不能推出：
+
+> 当前 interaction 已经不可能发生。
+
+反例：鱼与拟饵已经非常接近。即使拟饵开始以高于鱼持续追赶能力的速度远离，鱼仍可能在目标离开 strike / interaction window 前完成攻击。
+
+要裁 hard-zero，至少还需要类似：
 
 ```text
-assumed encounter radius
-assumed starting distance
-assumed reaction point
+current_gap
+strike_reach
+reaction_latency
+time_to_exit_interaction_region
 ```
 
-就会重新制造一组不可验证的隐藏几何参数。
+当前这些量没有合法 owner。因此把 `u_close >= 1` 直接设成 `C=0`，会把“无法持续追上”错误升级成“当前无法攻击”。
 
-第一版更稳妥的职责切分是：
+## 5. 第一版 soft Closing
+
+第一版冻结：
+
+```text
+q
+= lure_speed_horizontal_relative_to_water
+  / InterceptSpeedLimit
+
+u_close(theta)
+= max(0, q * cos(theta))
+
+ClosingCost(theta)
+= K_close
+  * u_close(theta)^2
+  * ActivityCostMultiplier(Activity)
+```
+
+`ClosingCost` 可以大于 1；它是 `DecisionMargin` 中的 cost，不是概率。
+
+因此高 `u_close` 仍会强烈压低响应，但不会绕过 FoodValue、Motivation、Trigger 等其它合法输入直接判死。
+
+例如高速度在普通条件下完全可能通过：
+
+```text
+DecisionMargin <= 0
+→ C = 0
+```
+
+得到数值上的零响应。这里的零来自完整决策链，而不是一个缺少 encounter geometry 的伪物理 hard gate。
+
+## 6. InterceptSpeedLimit 的语义同步收窄
+
+`InterceptSpeedLimit` 仍可以表示鱼的结构性短时截获速度能力尺度，并继续用于 species × size calibration。
+
+但在当前第一版中：
+
+```text
+lure radial speed > InterceptSpeedLimit
+```
+
+不等价于：
+
+```text
+interaction impossible
+```
+
+因此 `InterceptSpeedLimit` 是 Closing load 的能力尺度，而不是单独足够的 encounter feasibility gate。
+
+如果未来觉得名称会持续误导，可以在 production schema 评审时考虑改名为：
+
+```text
+ReferenceInterceptSpeed
+```
+
+或其它不暗示单变量 hard gate 的名称。当前不因命名问题提前改 schema。
+
+## 7. 与 Opportunity 的边界
+
+职责切分：
 
 ```text
 Candidate / Spatial / Opportunity
-→ 决定鱼与当前 presentation 是否处在可发生交互的有效局部范围
-
-Closing
-→ 只计算当前 lure motion 是否正在把这个可交互目标快速带离鱼
+→ 鱼与 presentation 是否处在可发生 interaction 的局部机会范围
+→ exposure / residency / encounter window
 ```
-
-因此横切 `ClosingCost≈0` 的语义是：
-
-> 在已经进入有效交互范围这一前提下，横切运动本身没有额外增加径向逃离负担。
-
-不是“鱼不需要游”。
-
-## 5. Hard infeasible 的语义也要同步收窄
-
-当前：
 
 ```text
-if u_close(theta) >= 1:
-    C_conditional(theta) = 0
+Closing
+→ 当前 lure motion 正在多强地把这个机会带离潜在鱼
 ```
 
-应解释为：
+如果未来 Opportunity Owner 能输出标准化 encounter geometry，例如：
 
-> 当前拟饵沿潜在鱼→拟饵方向的远离速度，已经达到或超过鱼的短时截获速度边界，因此该 bearing 下鱼无法阻止距离继续拉大。
+```text
+current_gap
+interaction_radius
+remaining_exposure_window
+```
 
-它不是对完整三角拦截问题的严格物理解。
+再讨论真正的 interception hard gate。
 
-如果未来有真实局部几何，应替换成真正 interception feasibility，而不是继续堆 proxy。
+在此之前 Closing 不自行假设距离或 reaction window。
 
-## 6. 不能因此新增横向速度 penalty
+## 8. 不新增横向速度 penalty
 
-不建议把：
+撤掉 hard-zero 不意味着要补：
 
 ```text
 v_tangential = v_lure * sin(theta)
-```
-
-再直接加入：
-
-```text
 ClosingCost += K_tangent * |v_tangential|
 ```
 
-原因：
+仍然不建议这样做，因为：
 
 - 没有鱼点时，横向速度并不唯一对应需要鱼横移的距离；
 - 会把 Prediction / maneuver 与 Closing 再次混合；
 - `K_tangent` 会成为新的自由参数；
-- 容易把所有横切高速 presentation 无依据地重复处罚。
+- 容易对高速横切 presentation 重复处罚。
 
-只有未来拿到真实 encounter geometry / pursuit horizon 后，才应升级到二维 interception model。
+只有未来拿到真实 encounter geometry / pursuit horizon 后，才应整体升级到二维 interception model。
 
-## 7. 与其它 owner 的关系
+## 9. Explain / regression
 
-```text
-speed magnitude + latent horizontal bearing
-→ RadialSeparationLoad / ClosingCost
-```
-
-```text
-sudden direction change
-→ PredictionChallenge
-```
-
-```text
-鱼是否位于能发生 interaction 的有效局部范围
-→ Candidate / Spatial / Opportunity owner
-```
-
-```text
-持续暴露时间 / encounter duration
-→ Temporal Exposure / Opportunity owner
-```
-
-Closing 不重新承担这些职责。
-
-## 8. 第一版公式保留
-
-在上述语义收窄后，第一版继续使用：
-
-```text
-q = lure_speed_horizontal_relative_to_water / InterceptSpeedLimit
-
-u_close(theta) = max(0, q * cos(theta))
-
-if u_close(theta) >= 1:
-    C_conditional(theta) = 0
-else:
-    ClosingCost(theta)
-    = K_close
-      * u_close(theta)^2
-      * ActivityCostMultiplier(Activity)
-```
-
-但 Explain 应能明确输出：
+Explain 至少输出：
 
 ```text
 radial_separation_ratio
 bearing
+closing_cost
+```
+
+不再输出：
+
+```text
 hard_radial_escape_infeasible
 ```
 
-避免把它解释成完整 pursuit simulation。
+第一版需要新增 regression case：
 
-## 9. 升级条件
+1. `u_close < 1`：普通 soft burden；
+2. `u_close ≈ 1`：连续过渡，不出现不连续 hard cliff；
+3. `u_close > 1`：高 burden，但仍由完整 DecisionMargin 决定是否归零；
+4. 高 Motivation / Preferred / strong Trigger 能否在部分高 `u_close` case 中保留小幅响应；
+5. ordinary Good target 在高 `u_close` 下是否自然降为 0。
 
-只有满足以下任一条件，才建议替换第一版 proxy：
+## 10. 对既有 Working calibration 的影响
+
+此前文档中关于：
+
+```text
+q > 1
+→ hard-infeasible bearing share
+```
+
+的统计不再代表第一版运行时 hard-zero 比例。
+
+这些数值最多保留为：
+
+> bearing 上 `radial_separation_ratio > 1` 的占比。
+
+它仍可作为速度压力诊断指标，但不能直接当作 response hard-zero share。
+
+因此：
+
+- `HighClosing / GeneralClosing / LowClosing` 的 Working `q_ref` 可以继续作为分档 seed；
+- `K_close` 需要在新的纯 soft 模型下重新跑完整 response basket；
+- Fast / Burst 的旧 hard-infeasible 叙述必须按 soft Closing 重新解释。
+
+## 11. 升级条件
+
+只有满足以下任一条件，才重新讨论 hard interception gate：
 
 1. 系统能合法取得真实/局部 fish-lure encounter geometry；
-2. Opportunity owner 输出标准化 encounter radius / distance distribution；
-3. runtime 需要表达 pursuit horizon、加速度、持续追逐或真实横切截获；
-4. controlled fixtures 证明径向 proxy 无法复现关键玩家策略排序。
+2. Opportunity Owner 输出标准化 encounter radius / distance distribution；
+3. 有明确 reaction latency / strike reach / time-to-exit contract；
+4. controlled fixtures 证明纯 soft radial proxy 无法复现关键玩家策略排序。
 
-升级时应整体替换为新的 interception contract，不在当前公式上继续追加 tangential / distance / acceleration 匿名 penalty。
+升级时应整体替换为新的 interception contract，不在当前公式上继续追加匿名 hard threshold。
 
-## 10. 当前判定
+## 12. 当前判定
 
-本轮结论：
+第一版当前 Working 裁定：
 
-- `max(0, q cosθ)` 作为径向分离 proxy 成立；
-- 它不是完整 interception 几何；
-- 横切 `u=0` 只表示无额外径向逃离，不表示无需运动；
-- 第一版保留公式，但收窄语义；
-- 不新增 tangential penalty；
-- 完整 interception 留给未来有合法 encounter geometry 时整体升级。
+- `max(0, q cosθ)` 保留，作为径向分离 load proxy；
+- Closing 改为纯 soft burden；
+- `u_close >= 1 → C=0` 撤回；
+- `InterceptSpeedLimit` 不再单独充当 encounter hard gate；
+- 真正 hard interception zero 等合法 encounter geometry / reaction-window owner；
+- 不新增 tangential penalty。
