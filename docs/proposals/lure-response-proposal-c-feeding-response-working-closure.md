@@ -117,13 +117,12 @@ u_close(θ) = max(0, q * cosθ)
 Closing Working closure：
 
 ```text
-if u_close(θ) >= 1:
-    C_conditional(θ) = 0
-else:
-    ClosingCost(θ)
-    = K_close × u_close(θ)^2
-      × ActivityCostMultiplier(Activity)
+ClosingCost(θ)
+= K_close × u_close(θ)^2
+  × ActivityCostMultiplier(Activity)
 ```
+
+第一版不把 `u_close >= 1` 直接变成 hard-zero。当前 `u_close` 只表示径向分离负担，不是完整 interception feasibility。没有合法的 current gap、strike reach、reaction latency 和 interaction-region exit window 时，高 `u_close` 仍由完整 `DecisionMargin` 与 response projection 决定是否得到数值 0。真正的 hard interception gate 只有在未来取得 encounter geometry / reaction-window contract 后才允许恢复。
 
 Activity soft-cost 候选：
 
@@ -132,17 +131,16 @@ ActivityCostMultiplier(A)
 = 1 + K_activity × (1 - A)
 ```
 
-`A=1` 不增加额外 pursuit soft cost。Activity 越低，已经物理可行的主动追赶成本越高。`u_close=0` 时 `ClosingCost=0`，不产生匿名 Activity 惩罚。`K_close` 与 `K_activity` 尚未 production calibration。
+`A=1` 不增加额外 pursuit soft cost。Activity 越低，主动追赶的 soft cost 越高。`u_close=0` 时 `ClosingCost=0`，不产生匿名 Activity 惩罚。`K_close` 与 `K_activity` 尚未 production calibration。
 
 Closing 的含义：
 
 - 拟饵正背离潜在鱼时 Closing Demand 最大；
 - 横切不自动产生径向 closing burden；
 - 朝鱼运动时 Closing Demand 可为 0；
-- 中低 utilization 产生较轻 cost；
-- 接近 `InterceptSpeedLimit` 时 cost 抬升；
-- 超过上限时，只把对应 latent angle 判为 hard infeasible；
-- Activity 只影响 physically-feasible Closing 的 soft cost，不改变 hard feasibility。
+- `u_close` 越高时 soft burden 越高，但不绕过完整 DecisionMargin 直接判死；
+- `Activity` 只影响 Closing 的 soft cost，不改变 `InterceptSpeedLimit`；
+- 真正的 hard interception gate 需要 encounter geometry / reaction-window contract。
 
 `q >= 1` 不会让整个 mode hard-zero，因为其它角度仍可能可行。首版优先 `u_close²`，这是 Working shape，不是长期物理定律。没有 reaction distance 与 pursuit horizon 时，首版不显式拆 acceleration；其影响暂由短时 `InterceptSpeedLimit` 的口径吸收。
 
@@ -210,13 +208,13 @@ latent-angle 的固定顺序是：
 ```text
 θ
 → u_close(θ)
-→ [hard infeasible or ClosingCost(θ)]
+→ ClosingCost(θ)
 → DecisionMargin(θ)
 → C_conditional(θ)
 → Eθ[C_conditional(θ)]
 ```
 
-不能先平均 `u_close` 或 `ClosingCost`，再做 nonlinear projection。否则会把部分角度 hard-zero 和部分角度高响应压成不存在的“平均鱼”。
+当前不在 Closing 层对 `u_close >= 1` 设置 hard-zero。不能先平均 `u_close` 或 `ClosingCost`，再做 nonlinear projection。否则会把不同 bearing 的负担压成不存在的“平均鱼”。
 
 ## 6. Prey response 与 Feeding composition
 
@@ -271,9 +269,9 @@ Target Relation = Reject
 
 Trigger 和高 Motivation 不能救活 Reject。
 
-### Closing Infeasible
+### Closing hard gate
 
-只对对应 latent angle 置零。PredictionChallenge 不拥有 hard-zero authority。
+当前不设置 Closing hard gate。`u_close` 只进入 soft Closing cost。未来只有在取得 encounter geometry / reaction-window contract 后，才可定义 hard interception gate。
 
 ## 8. Pause、dwell 与 cadence
 
@@ -328,7 +326,7 @@ Interaction response 只结算一次。禁止 `L × C → W → W × C`，也不
 
 - State Trigger 的 Working budget 约为 `0.10～0.15` 的 Decision-Margin 尺度。它可以帮助 Marginal、增强 Good，但不能普遍把 Poor 抬成主力，也不能救活 Reject。
 - Prediction Cost 的 Working budget 约为 `0.08～0.12`。它默认不强于 State Trigger；中等 dart 不应仅因 Prediction 反转成负收益。
-- Closing 使用 `K_close × u_close² × ActivityCostMultiplier(Activity)` 与 angle-local hard infeasible。`K_close`、`K_activity`、`InterceptSpeedLimit` 生产数据、代表长度规则和 cohort 拆分阈值都未闭合。
+- Closing 使用 `K_close × u_close² × ActivityCostMultiplier(Activity)`。`K_close`、`K_activity`、`InterceptSpeedLimit` 生产数据、代表长度规则和 cohort 拆分阈值都未闭合。
 
 需要保持的体验排序：
 
@@ -355,6 +353,7 @@ Interaction response 只结算一次。禁止 `L × C → W → W × C`，也不
 - 同一环境或生理原因已进入 Activity 后，再在 Closing 重复处罚；
 - 没有 reaction distance / pursuit horizon 时伪造完整 acceleration pursuit；
 - 把 prey support 当 prey probability、归一化 mixture 或 binary admission gate；
+- `u_close >= 1` 直接产生 hard-zero；
 - whole-mode `q>1` hard-zero；
 - 先平均 `u_close` / `ClosingCost` 再做 response projection；
 - 为拟合效果直接使用高次 Closing 幂；
