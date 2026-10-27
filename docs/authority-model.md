@@ -99,3 +99,17 @@ V1 Common Semantics ──────┘
 4. 发布后，Notion 只作为这份 Git 规范的阅读投影；人工在 Notion 发现的修正先回流 Markdown，不能在页面上形成第二份长期规范。
 
 本页只维护仓内 Authority / versioning policy 与发布投影边界，不替代具体 Product Contract。公开仓不保存外部页面 id、内网链接、凭据或同步状态。
+
+## 参考实现仓关联
+
+本仓是 **Contract Authority**：V1 产品语义、范围、Source / Operation / Resolve / Publish 及编辑器 Surface 的现行 Git Markdown 权威。
+
+参考实现与验证仓为 [`futouyiba/programaticHitFish`](https://github.com/futouyiba/programaticHitFish)：
+
+- FCF / Species Funnel 参考运行时；
+- Response / Condition 原型、实验与 harness；
+- 实现证据与编辑器 tracker 的承载仓。
+
+`programaticHitFish` 的实现与实验**不得反向覆盖本仓 Contract**。实现与契约发生冲突时，先以本仓现行 Contract 为准，再在实现仓开 issue 或发起契约修订。每次实现验证必须记录本仓的具体 `contract_ref`，不能只引用 `main`。
+
+关联关系采用「文档链接 + commit pin + GitHub issue/PR 互引」，不使用 submodule；这样一个 Contract 可以对应多个实现或实验分支。
