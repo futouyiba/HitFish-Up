@@ -1,0 +1,23 @@
+---
+name: document-optimization
+description: 按固定顺序优化技术文档：先诊断文档腐化，再整理结构与事实边界，然后中文优先改写，最后清理模型腔。用于组合文档优化四件套。
+license: MIT
+compatibility: claude-code opencode
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Grep
+  - Glob
+---
+
+# 文档优化总流程
+
+按需调用以下 Skill，默认顺序如下：
+
+1. `doc-cleanup`：诊断历史残留、状态漂移、矛盾、死链和权威漂移。先报告，获批准后再改。
+2. `plain-language-editor`：整理主线、结构、主谓关系、术语和事实边界。
+3. `zh-first-technical-editor`：中文优先，首次术语用“中文（English）”，保护技术标识。
+4. `humanizer`：最后清理模型腔、套话和不自然节奏，不覆盖前一步的术语和标识。
+
+用户只要求其中一项时，只调用对应 Skill。完成后检查链接、结构、术语、事实、公式、代码标识和裸英文。
