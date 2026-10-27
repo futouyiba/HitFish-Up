@@ -2,7 +2,7 @@
 
 状态：Working Review Entry / Candidate。不是 Current，不是生产参数。
 
-用途：给其他 Agent / Reviewer 作为当前 Proposal C 的统一审阅入口。本文承接 2026-10-26 版，并吸收 2026-10-27 对 Closing hard-zero 的修正。历史推演、已关闭问题和过时状态不在这里重复。
+用途：给其他 Agent / Reviewer 作为当前 Proposal C 的统一审阅入口。本文只保留当前仍成立的主链、最新 Working seed、已闭合边界和开放项。
 
 > 若本文与更高 Authority 冲突，以 `docs/authority-model.md` 与已合并 Current Owner 为准。本文所在分支为 `docs/lure-response-joint-evaluation`。
 
@@ -22,11 +22,9 @@ ActualPresentation
 → TrueRoll
 ```
 
-当前判断：核心分层基本成立，但仍有少数语义级问题没有完全闭合，不能把现有 Working seed 当作 production calibration。
+核心分层基本成立，但仍有少数语义级接口和 production/calibration 缺口，不能把现有 Working seed 当作生产参数。
 
 ## 2. Feeding Decision
-
-核心式：
 
 ```text
 DecisionMargin(theta)
@@ -38,7 +36,7 @@ DecisionMargin(theta)
 - WillingnessThreshold(FeedingMotivation)
 ```
 
-当前 Working：
+FoodValue：
 
 ```text
 CurrentFoodValue
@@ -61,11 +59,12 @@ Poor      = 0.00
 Reject    = typed hard semantic boundary
 ```
 
-Motivation：
+最新 Working Motivation：
 
 ```text
 WillingnessThreshold(M)
-= 0.40 + 0.40 * (0.5 - M)
+= 0.40 + 0.60 * (0.5 - M)
+= 0.70 - 0.60M
 ```
 
 StateTrigger Working budget：
@@ -75,17 +74,64 @@ ordinary ≈ 0.10
 upper guardrail ≈ 0.15
 ```
 
-这些均是 Working seed。
+这些都是 Working calibration seed。
 
-## 3. Closing：当前最新裁定
+## 3. Poor 与 Reject：已闭合的 Working 区分
+
+旧 `K_mot=0.40` 会导致 Poor 在所有合法条件下都无法跨线，行为上与 Reject 塌缩。
+
+当前 Working 改为：
+
+```text
+K_mot = 0.60
+```
+
+因此：
+
+```text
+M = 1
+→ threshold = 0.10
+```
+
+普通 Trigger：
+
+```text
+Poor + M=1 + Trigger=0.10 + Costs=0
+→ Margin = 0
+→ C = 0
+```
+
+强 Trigger：
+
+```text
+Poor + M=1 + Trigger=0.15 + Costs=0
+→ Margin = 0.05
+→ weak C > 0
+```
+
+Poor 只有在：
+
+```text
+M > 0.9167
++ upper-range legal Trigger
++ almost no negative burden
+```
+
+时才可能弱响应。
+
+Reject 仍然是 typed hard zero，任何 Motivation / Trigger 都不能复活。
+
+这个调整不改变 `M=0.5` 时的 reference threshold，因此 reference-Motivation 的旧 burden calibration 不需要重标。
+
+详细 closure：`lure-response-proposal-c-poor-reject-separation.md`。
+
+## 4. Closing：最新裁定
 
 第一版只处理水平 latent bearing：
 
 ```text
 theta ~ Uniform(0, 2pi)
 ```
-
-使用：
 
 ```text
 q
@@ -98,7 +144,7 @@ u_close(theta)
 
 `u_close` 只表达径向分离负担，不是完整 interception feasibility。
 
-当前最新 Working：
+当前：
 
 ```text
 ClosingCost(theta)
@@ -106,8 +152,6 @@ ClosingCost(theta)
   * u_close(theta)^2
   * ActivityCostMultiplier(Activity)
 ```
-
-### 关键修正
 
 旧规则：
 
@@ -118,7 +162,7 @@ u_close >= 1
 
 已撤回。
 
-原因：缺少：
+原因是当前没有合法的：
 
 ```text
 current fish-lure gap
@@ -127,22 +171,11 @@ reaction latency
 time-to-exit interaction region
 ```
 
-所以“目标径向远离速度超过鱼的短时截获速度尺度”只能说明鱼无法持续阻止距离拉大，不能推出当前 interaction 已经不可能发生。
+所以 `u_close>1` 只能表示径向分离压力超过结构速度尺度，不能单独推出 interaction 已不可能。
 
-真正 hard interception gate 只有未来拿到合法 encounter geometry / reaction-window contract 后才允许恢复。
+真正 hard interception gate 只有未来拿到 encounter geometry / reaction-window contract 后才允许恢复。
 
-此前任何：
-
-```text
-q > 1
-→ hard-infeasible bearing share
-```
-
-的统计不再代表第一版 hard-zero 比例，只可作为 `radial_separation_ratio > 1` 的诊断比例。
-
-## 4. Activity 与 InterceptSpeedLimit
-
-当前 Owner 边界仍成立：
+## 5. Activity 与 InterceptSpeedLimit
 
 ```text
 Species / size cohort
@@ -156,8 +189,6 @@ Activity
 
 Activity 不降低 `InterceptSpeedLimit`。
 
-`InterceptSpeedLimit` 当前是结构性短时截获能力尺度，不再单独充当 encounter hard gate。
-
 第一版 locomotor profiles：
 
 ```text
@@ -166,7 +197,7 @@ GeneralClosing
 LowClosing
 ```
 
-Working q anchors 仍保留为 calibration seed：
+Working q anchors：
 
 ```text
 HighClosing    q_ref = 0.45
@@ -174,9 +205,9 @@ GeneralClosing q_ref = 0.65
 LowClosing     q_ref = 0.90
 ```
 
-但 Fast / Burst 的旧 hard-infeasible 解释已失效，需要按纯 soft Closing 重新跑完整 response basket。
+由于 Closing hard-zero 已撤回，Fast / Burst 需要按纯 soft Closing 重新跑完整 response basket；旧 hard-infeasible share 只保留为诊断统计。
 
-## 5. Prediction
+## 6. Prediction
 
 ```text
 sudden direction change
@@ -202,14 +233,16 @@ PredictionCost
 
 Prediction 不 hard-zero。Pause 只通过时间推进让 challenge 衰减，不加额外 PauseBonus。
 
-## 6. Wariness / Suspicion
+## 7. Wariness / Suspicion
 
 ```text
 RiskCost
 = K_wary * Wariness * SuspicionLoad
 ```
 
-SuspicionLoad 只能来自具名、独立拥有的风险 cue。禁止：
+SuspicionLoad 只能来自具名、独立拥有的风险 cue。
+
+禁止：
 
 ```text
 1 - prey_support → SuspicionLoad
@@ -219,7 +252,7 @@ frequent turns → SuspicionLoad
 
 除非未来有独立证据与 owner。
 
-## 7. Margin → Response
+## 8. Margin → Response
 
 Working projection：
 
@@ -240,7 +273,7 @@ theta
 
 不能先平均 Margin 再投影。
 
-## 8. prey support × response
+## 9. prey support × response
 
 每个 prey interpretation：
 
@@ -259,11 +292,9 @@ C_feed
 
 只适用于同一 Feeding route 下声明为 sibling alternatives 的路径。
 
-## 9. Temporal Opportunity
+## 10. Temporal Opportunity
 
 瞬时 `C(t)` 不是每秒 bite probability，也不是最终 candidate probability。
-
-当前 seam：
 
 ```text
 instantaneous response C(t)
@@ -278,39 +309,9 @@ instantaneous response C(t)
 
 Temporal Opportunity / exposure → Candidate 的正式 Current Owner 仍未落仓。
 
-## 10. 当前真正仍开的 P0
+## 11. 当前真正仍开的 P0
 
-### P0-A｜Poor 与 Reject 的行为区分
-
-当前 Working seed 下：
-
-```text
-Poor = 0
-WillingnessThreshold(M=1) = 0.20
-StateTrigger upper guardrail ≈ 0.15
-```
-
-即使最高 Motivation、最大 Trigger、无任何负 burden：
-
-```text
-Margin = 0 + 0.15 - 0.20 = -0.05
-```
-
-所以 Poor 在当前 Working 数值下永远 `C=0`。
-
-这会让 Poor 与 Reject 在行为上塌成同一类，只剩 typed semantics 不同。
-
-需要联合调整：
-
-```text
-Poor anchor
-Motivation threshold range
-StateTrigger budget
-```
-
-目标不是让 Poor 常规可用，而是至少保留“极端有利状态下可跨线”的连续语义。
-
-### P0-B｜Unknown sibling 的 max aggregation
+### P0｜Unknown sibling 的 max aggregation
 
 当前同时有：
 
@@ -333,7 +334,7 @@ unresolved sibling = Unknown
 
 时能否输出最终 `0.45`。
 
-第一版需要正式定义 partial-resolution semantics。推荐方向是 lower/upper bound：
+推荐方向是 partial-resolution bounds：
 
 ```text
 known_lower_bound
@@ -348,7 +349,7 @@ possible_upper_bound
 
 只有 unresolved path 已不可能改变 winner，或上下界收敛时，才输出最终 scalar；否则保持 `ResolutionIncomplete`。
 
-## 11. 当前 P1
+## 12. 当前 P1
 
 ### P1-A｜Horizontal2D 对 vertical-dominant presentation 的适用边界
 
@@ -363,7 +364,7 @@ vertical dart
 
 可能低估逃离负担。
 
-第一版至少需要明确：Horizontal2D 是 horizontal-dominant presentation 的 approximation；vertical-dominant presentation 不能静默宣称已被统一解决。
+第一版至少需要明确 Horizontal2D 的 applicability；vertical-dominant presentation 不能静默宣称已被统一解决。
 
 ### P1-B｜Prediction 的 max_recent 是否低估持续 erratic movement
 
@@ -391,7 +392,20 @@ Opportunity geometry
 
 需要联合验证，而不是把 Opportunity 当成纯后处理。
 
-## 12. 当前仍成立的结构边界
+### P1-D｜K_mot=0.60 的低 Motivation regression
+
+Poor/Reject 已恢复区分，但必须检查：
+
+```text
+Good at M≈0.2–0.4
+Preferred at very low M
+```
+
+是否被新的 Motivation swing 过度压低。
+
+若 regression 不通过，应重新标定 `K_mot`，而不是回头修改 Poor / Reject 的 typed semantics。
+
+## 13. 当前仍成立的结构边界
 
 以下不应被 Reviewer 无反例地重新打开：
 
@@ -399,21 +413,22 @@ Opportunity geometry
 2. FunctionalCapacity 删除；
 3. Activity 只影响 soft Closing cost；
 4. Reject 与 Poor typed semantics 分离；
-5. CurrentFoodValue 完整连续域 `[0,1]`；
-6. sudden turn 可同时产生 Trigger 正效应与 Prediction 负效应；
-7. 第一版 RelativeBearingPrior 使用显式 `Isotropic2D` modeling convention；
-8. Closing 只解释径向分离负担，不冒充完整 interception simulation；
-9. `u_close >= 1 → hard-zero` 已撤回；
-10. high speed / low prey support / pause 不产生匿名 Suspicion 或 bonus；
-11. combined soft burden 不加 runtime total cap；
-12. temporal duration 不进入 DecisionMargin。
+5. Poor 在极端有利条件下允许弱响应，Reject 永不复活；
+6. CurrentFoodValue 完整连续域 `[0,1]`；
+7. sudden turn 可同时产生 Trigger 正效应与 Prediction 负效应；
+8. 第一版 RelativeBearingPrior 使用显式 `Isotropic2D` modeling convention；
+9. Closing 只解释径向分离负担，不冒充完整 interception simulation；
+10. `u_close >= 1 → hard-zero` 已撤回；
+11. high speed / low prey support / pause 不产生匿名 Suspicion 或 bonus；
+12. combined soft burden 不加 runtime total cap；
+13. temporal duration 不进入 DecisionMargin。
 
-## 13. Reviewer 建议攻击点
+## 14. Reviewer 建议攻击点
 
 优先攻击：
 
-1. Poor 是否应该保留连续可响应语义，怎样最小改动恢复；
-2. Unknown sibling 的 partial-resolution aggregation；
+1. Unknown sibling 的 partial-resolution aggregation；
+2. `K_mot=0.60` 是否让低 Motivation 下 Good / Preferred 行为失真；
 3. 纯 soft Closing 在 Fast / Burst 下是否仍能形成正确策略排序；
 4. Horizontal2D 对哪些 presentation 必须标 NotApplicable / Incomplete；
 5. `max_recent` Prediction 是否低估持续 erratic pattern；
@@ -422,16 +437,17 @@ Opportunity geometry
 
 Reviewer 必须区分事实、Candidate、Working seed、建议；不能把缺少 owner 的内容补造成生产规则。
 
-## 14. 深挖入口
+## 15. 深挖入口
 
 - `lure-feeding-response-proposal-c.md`：实际呈现 → prey interpretation / state；
 - `lure-response-proposal-c-current-food-value-bounds.md`：FoodValue 域；
-- `lure-response-proposal-c-feeding-motivation-threshold.md`：Motivation；
+- `lure-response-proposal-c-feeding-motivation-threshold.md`：Motivation topology；
+- `lure-response-proposal-c-poor-reject-separation.md`：Poor / Reject 最新 Working closure；
 - `lure-response-proposal-c-feature-ownership-matrix.md`：feature ownership；
 - `lure-response-proposal-c-latent-bearing-prior.md`：bearing prior；
 - `lure-response-proposal-c-latent-bearing-dimensionality-decision.md`：Horizontal2D decision；
 - `lure-response-proposal-c-closing-geometry-interpretation.md`：最新 Closing 几何与 hard-zero 撤回；
 - `lure-response-proposal-c-intercept-speed-production-contract.md`：InterceptSpeed production topology；
-- `lure-response-proposal-c-reference-intercept-speed-working-anchors.md`：Working anchors，注意其中旧 hard-infeasible 解释已被最新 Closing decision supersede；
+- `lure-response-proposal-c-reference-intercept-speed-working-anchors.md`：Working anchors，注意旧 hard-infeasible 解释已被最新 Closing decision supersede；
 - `lure-response-proposal-c-combined-burden-stress-test.md`：联合 burden；
 - `lure-response-proposal-c-temporal-exposure-opportunity.md`：Temporal Opportunity seam。
