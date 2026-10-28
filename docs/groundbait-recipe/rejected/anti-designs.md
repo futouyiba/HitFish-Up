@@ -1,18 +1,16 @@
-# 台钓配方机制 Anti-designs / 已排除方向
+# 台钓配方机制 Anti-designs / 当前排除方向
 
-> 状态：Historical Design Boundary / Rejected for current candidate
-> 
-> 日期：2026-10-28
-> 
-> 用途：记录已经讨论过、当前不应被后续 Agent 直接重新采用的退化方案。这里只保留“为什么不能这么做”的承重结论，不保存聊天流水账。
+> 状态：Rejected / Deferred Design Boundaries  
+> 日期：2026-10-28  
+> 用途：记录已经讨论过、当前不应被后续 Agent 直接重新采用的退化方案。这里只保留“为什么不能这么做”的承重结论，不保存聊天流水账。`Deferred` 表示首版不采用，不代表永久禁止。
 
-## 1. 全 Ingredient 线性加权
+## 1. 全 Ingredient 线性加权作为完整方案
 
 ```text
 Q_f = Σ share_i × E[i,f]
 ```
 
-### 为什么不采用为完整方案
+### 为什么不采用
 
 在固定预算、单目标鱼情况下，最优解通常把全部可分配份额给单位系数最高 Ingredient。混配只是在两个端点之间做加权平均，容易退化为查表题。
 
@@ -48,8 +46,8 @@ Flavor 尤其不适合按“腥 + 奶 + 果 + 蒜各领一份 Bonus”的方式�
 
 ### 当前替代
 
-- Food：仍候选使用同 Target 合并 + 边际递减，但配合稀疏偏好和有限 Recipe Grammar。
-- Flavor：整体 Composition / Profile + Intensity，再由鱼评价。
+- Food：Active Candidate 为同 Target 合并 + 边际递减，并用稀疏偏好和有限 Recipe Grammar 做 Fixture 攻击。
+- Flavor：先由 Ingredient 用量 / 剂量与 Cue Potency 生成 Cue Exposure，再得到整体 Composition + Intensity。
 
 ---
 
@@ -77,7 +75,7 @@ RecipeScore = BaseRecipeScore + AttractantBonus
 
 ### 当前替代
 
-小药作为高 Potency 的 Chemical Cue Modifier，改写 Flavor Profile / Intensity；新味型会改变和稀释原有味型，未必总是改善目标鱼响应。
+小药作为高 Potency 的 Chemical Cue Modifier，改变 Cue Exposure / Flavor Profile / Intensity；新味型可能改善，也可能破坏原配方。
 
 ---
 
@@ -89,7 +87,7 @@ RecipeScore = BaseRecipeScore + AttractantBonus
 
 ### 当前替代
 
-状态饵占固体质量份额，用 Food / Flavor 信号预算换取物理性质和释放行为。
+状态饵占固体质量份额，用 Food / Flavor 机会成本换取物理性质和释放行为。
 
 ---
 
@@ -104,11 +102,11 @@ RecipeScore = BaseRecipeScore + AttractantBonus
 
 ### 为什么排除
 
-这种做法无法解释什么时候高雾化是坏事，也无法形成开窝、守窝、杂鱼、补窝频率等真实策略。
+这种做法无法解释什么时候高雾化是坏事，也无法形成开窝、守窝、杂鱼、补窝频率等策略。
 
 ### 当前替代
 
-雾化、黏度等先影响 Breakdown / Release / Spread / Persistence，再通过 Feeding Place 间接影响鱼的响应。
+雾化、黏度等先影响 Breakdown / Release / Spread / Sinking / Persistence。具体物理关系仍需后续 Fixture，不能把“高黏度一定更集中、更持久”提前写死。
 
 ---
 
@@ -118,12 +116,12 @@ RecipeScore = BaseRecipeScore + AttractantBonus
 
 - 参数量大。
 - 容易出现假精度。
-- 同一鱼种成长后需要重新配。
-- 无法解释数据来源。
+- 同一鱼种成长后需要重复配置。
+- 难以说明数据来源。
 
 ### 当前替代
 
-Body Size + Morphology Ratio + Feeding Mechanism Catalog 生成默认 Size Response；少量关系 Override。
+Body Linear Size + Morphology Profile + Feeding Mechanism Catalog 生成默认 Size Response；少量关系 Override。
 
 ---
 
@@ -131,11 +129,11 @@ Body Size + Morphology Ratio + Feeding Mechanism Catalog 生成默认 Size Respo
 
 ### 为什么排除
 
-嘴部 / gape 是重要上游证据，但不是所有摄食方式的完整解释。滤食、吸食、吞食等对尺寸的响应曲线形状不同，FILTER 甚至需要不同的结构 Reference。
+嘴部 / gape 是重要上游证据，但不是所有摄食方式的完整解释。滤食、吸食、吞食等对尺寸的响应曲线形状不同；FILTER 甚至可能更直接依赖鳃耙 / 过滤结构，而不是 Mouth Reference。
 
 ### 当前替代
 
-嘴部 / filter morphology 用于生成 `Intake Reference`，再由 Feeding Mechanism Curve 解释。
+普通口部路径可以由线性体尺与 Oral Morphology 生成 Intake Reference，再由 Feeding Mechanism Curve 解释。FILTER 允许从独立 Filter Morphology 生成 Reference / Efficiency Window。
 
 ---
 
@@ -151,13 +149,13 @@ Fit = suction_fit + pick_fit + gulp_fit
 
 ### 当前替代
 
-第一版采用 best available path：
+首轮 Fixture 测试 best available path：
 
 ```text
 EdibleSizeFit = max(proficiency_m × mode_curve_m)
 ```
 
-是否需要平滑 softmax 等待 Fixture。
+`max` 本身仍是 Active Candidate；若过于尖锐，再测试平滑 best-path，而不是退回直接求和。
 
 ---
 
@@ -174,7 +172,7 @@ EdibleSizeFit = max(proficiency_m × mode_curve_m)
 
 ### 当前保留的局部向量思想
 
-Flavor Profile 是一个低维、显式、有业务语义的 Composition Vector。当前排除的是“不可解释的统一高维 embedding”，不是所有向量运算。
+Flavor Profile 可以看作低维、显式、有业务语义的 Composition Vector。当前排除的是“不可解释的统一高维 embedding”，不是所有向量运算。
 
 ---
 
@@ -191,9 +189,9 @@ Flavor Profile 是一个低维、显式、有业务语义的 Composition Vector�
 
 现有证据不足以支持这种普遍直接因果，而且很容易形成新的明牌查表。
 
-### 当前替代
+### 当前边界
 
-天气优先影响 Feeding Readiness / Activity。Diet Shift 若存在，优先由较慢的生态 Context 和有界随机漂移承担；特定天气到特定食性偏移需要单独证据。
+天气、时段等优先进入现有 Fish Condition / Feeding Readiness / Activity 语义。Diet Shift 的具体驱动仍是 Open；不能把“慢随机漂移”提前写成已确认替代方案。
 
 ---
 
@@ -203,9 +201,9 @@ Flavor Profile 是一个低维、显式、有业务语义的 Composition Vector�
 
 玩家无法观察、推理和学习，只能试密码或查外部攻略。
 
-### 当前替代
+### 当前边界
 
-若引入随机漂移，应慢、连续、有边界、有记忆；不在每杆重新抽取。
+若未来引入随机漂移，它至少应慢、连续、有边界、有记忆；是否需要随机漂移本身仍待验证。
 
 ---
 
@@ -217,4 +215,4 @@ Pair Table 很快进入 N² 内容维护，且容易用隐藏 Bonus 掩盖原本
 
 ### 当前边界
 
-先验证 Target Saturation、Flavor Composition、Physical Release 是否已经产生足够策略。只有明确发现无法表达的重要组合关系时，才考虑极少数有证据的组合规则。
+先验证 Food Target Saturation、Flavor Composition、Physical Release 是否已经产生足够策略。只有明确发现无法表达的重要组合关系时，才考虑极少数有证据的组合规则。
