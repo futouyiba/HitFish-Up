@@ -1,10 +1,8 @@
 # Continuation Prompt｜台钓窝料 / 配方机制
 
-> 状态：Transient Handoff Context
-> 
-> 日期：2026-10-28
-> 
-> 说明：这是一份跨会话接续提示，不是机制 Contract。后续 Agent 应先读取 `../README.md` 指向的 Candidate / Working Decisions；如果本文与那些文件冲突，以 Candidate / Working Decisions 和更高层项目 Authority 为准。
+> 状态：Transient Handoff Context  
+> 日期：2026-10-28  
+> 说明：这是一份跨会话接续提示，不是机制 Contract。后续 Agent 应先读取 `../README.md` 指向的 Working Decisions / Candidate；如果本文与那些文件冲突，以 Working Decisions、Candidate 和更高层项目 Authority 为准。
 
 你现在接手「中鱼升级」中的台钓窝料 / 饵料混合机制设计。
 
@@ -20,19 +18,31 @@
 
 不要把 `rejected/` 当成候选方案列表，也不要把这份 handoff 当作 Current Authority。
 
+## 先识别成熟度
+
+`working-decisions.md` 使用三种状态：
+
+```text
+BOUNDARY          已收敛工作边界
+ACTIVE CANDIDATE  当前首测算法，但仍需 Fixture
+OPEN              尚未闭合
+```
+
+后续工作不得把 `ACTIVE CANDIDATE` 写成已确认公式。
+
 ## 当前工作位置
 
 目前最新整体方案已经形成，但尚未闭合为正式 Contract。最深入的子模块是：
 
 > `Edible Size Response｜可摄食尺寸响应`
 
-它试图让 Groundbait 粒径筛选和后续 Hookbait / 饵球尺寸筛选复用同一套鱼侧模型。
+它试图让 Groundbait 粒径筛选和后续 Hookbait / 饵球尺寸筛选复用同一套“尺寸是否适合摄食”的鱼侧语言。
 
-当前鱼侧骨架：
+当前骨架：
 
 ```text
-Body Size
-× Morphology Profile
+Body Linear Size
++ Morphology Profile
 → Intake Reference
 
 Intake Reference
@@ -40,17 +50,26 @@ Intake Reference
 → Mode Size Fit
 
 多个替代 Feeding Mechanism
-→ Best Available Path
+→ Best-path Candidate
 → Edible Size Fit
 ```
 
-Groundbait 侧：
+关键修正：
+
+- `Body Linear Size` 必须是体长等线性尺度；重量不能直接乘 Ratio 生成毫米尺度。
+- FILTER 不强制走 `BodyLength × FilterRatio`，可以从鳃耙 / Filter Morphology 直接生成 Reference / Efficiency Window。
+- Size Curve 左侧不统一降到 0。用机制特定的 `fine_utilization` 表达细小食物仍能利用到什么程度。
+- 多 Feeding Mechanism 的 `max` 只是首测候选，不是已确认公式。
+
+Groundbait 侧第一轮候选：
 
 ```text
 Particle Distribution
 × Fish Edible Size Response
-→ Edible Fraction
+→ Mass-weighted Edible Fraction
 ```
+
+`MassShare` 只是 Fixture 计量候选，未来是否按质量、数量、表面积或能量价值聚合仍是 Open。
 
 ## 下一项主任务
 
@@ -75,13 +94,14 @@ Particle Distribution
 
 Fixture 必须验证：
 
-1. 同物种长大后 Size Response 整体向更大尺寸移动。
-2. 同体长鱼可以因 Morphology Ratio 不同而不同。
-3. PICK / SUCTION / GULP 的区别来自曲线形状，不只是倍率。
-4. FILTER 使用独立 Reference Source 仍能成立。
-5. 多 Feeding Mechanism 不因数量多而叠加获利。
-6. 粗颗粒能明显降低小鱼的可利用份额。
-7. 细颗粒不会无依据地强烈排斥大鱼。
+1. 同物种线性体尺增大后，普通摄食模式的 Size Response 是否合理向更大尺寸移动。
+2. 同体长鱼是否可以因 Morphology 不同而不同。
+3. PICK / SUCTION / GULP 的区别是否真的需要曲线形状差异，而不只是倍率。
+4. FILTER 是否能脱离 Mouth Reference 工作。
+5. 多 Feeding Mechanism 是否不因数量多而叠加获利。
+6. 粗颗粒是否能明显降低小鱼的可利用份额。
+7. 细颗粒是否不会无依据地强烈排斥大鱼。
+8. `max` 是否造成不合理的不连续 / 模式跳变。
 
 ## 你需要特别警惕的设计惯性
 
@@ -91,9 +111,12 @@ Fixture 必须验证：
 
 - 每鱼手填最佳毫米数；
 - 万能 `particle < mouth × constant`；
+- 重量直接乘 Mouth Ratio 生成粒径；
+- FILTER 强行套 Mouth Reference；
 - 多 Feeding Mechanism 求和；
 - 大鱼因为嘴大就自动强烈讨厌小颗粒；
 - Food / Flavor / Particle / Physical 直接相加成 RecipeFit；
+- Flavor Composition 直接等于 Ingredient 质量占比；
 - 小药固定 Bonus；
 - Weather → Flavor 的简单密码。
 
@@ -105,10 +128,10 @@ Fixture 必须验证：
 
 ```text
 Evidence
-├─ Body-size range
+├─ Body-length / linear-size range
 ├─ Mouth / gape evidence
 ├─ Feeding mechanism
-├─ Filter structure when needed
+├─ Filter morphology when needed
 └─ Typical natural food / prey size
         ↓
 Parameter Generator
@@ -140,9 +163,35 @@ OVERRIDE
 2. 接 Groundbait Particle Distribution。
 3. 设计 Physical Release：雾化、黏度、解体、沉降如何产生 Release Rate / Spread / Persistence。
 4. 回到 Food Target，做同 Target 聚合 + 边际递减的 Fixture。
-5. 再做 Flavor Composition / Intensity、小药和 Sparse Avoidance。
-6. Groundbait 闭环以后再接 Hookbait。
+5. 再做 Flavor Cue Exposure / Composition / Intensity、小药和 Sparse Avoidance。
+6. Groundbait 闭环以后再接 Hookbait；只复用适合共用的尺寸语言，不假定完整响应相同。
 7. Diet Shift 与最终 Response Aggregation 最后处理。
+
+## 关于 Flavor
+
+不要把 Flavor Profile 的比例理解为 Ingredient 质量配比。当前候选是：
+
+```text
+Ingredient amount / dose × Cue Potency
+→ Cue Exposure by flavor family
+→ Composition + Intensity
+```
+
+因此少量高 Potency 小药可以显著改变 Flavor Profile，而无需把小药占到大量固体质量。
+
+## 关于 Diet Shift
+
+已经排除：
+
+- 每杆随机 Preference。
+- 无证据的 Weather → Flavor 固定密码。
+
+仍未确认：
+
+- 是否需要 Slow Bounded Stochastic Drift。
+- 哪些生态 Context 真正应该驱动 Preference Shift。
+
+不要把“慢随机漂移”当成已经决定的机制。
 
 ## 关于 RF4
 
