@@ -18,74 +18,180 @@ Reject    = hard semantic boundary
 
 也不扩大 `StateTrigger` 的 Working budget。
 
-为满足“Poor 在极端有利鱼情下可偶发越线，但普通高 Motivation 不能把 Poor 变成常规目标”的语义，Working `K_mot` 从：
+上一版为救活 Poor，把整个 Motivation 线性斜率从 `0.40` 提到 `0.60`。回归后发现这会把中低 Motivation 下的 Good 压得过狠，因此撤回该全轴调整。
+
+当前 Working 改为：
+
+> 普通 Motivation 区间继续使用原来的线性阈值；只有极高 Motivation 进入额外的 tail relief，使 Poor 在极端条件下出现很窄的弱响应窗口。
+
+---
+
+## 2. 当前 Working threshold
+
+基础阈值保持：
 
 ```text
-0.40
+BaseThreshold(M)
+= 0.40 + 0.40 * (0.5 - M)
+= 0.60 - 0.40M
 ```
 
-调整为：
+只在极高 Motivation 增加 tail relief：
 
 ```text
-K_mot = 0.60
+ExtremeMotivationRelief(M)
+= 0.50 * max(0, M - 0.80)
 ```
 
-因此：
+最终：
 
 ```text
 WillingnessThreshold(M)
-= 0.40 + 0.60 * (0.5 - M)
-= 0.70 - 0.60M
+= BaseThreshold(M)
+- ExtremeMotivationRelief(M)
 ```
 
-这只是 calibration seed，不是 production 参数。
-
-## 2. 为什么改 K_mot，而不是改 Poor anchor
-
-`Poor=0` 现在同时承担两个重要语义：
-
-1. 它是 `CurrentFoodValue [0,1]` 连续域的低端合法值；
-2. 它与轴外的 `Reject` 保持类型区别。
-
-如果为了让 Poor 偶发响应而把 Poor anchor 抬到正值，会改动整个 FoodValue gauge，也会影响 SizePreference / DietaryShift 的下界解释。
-
-当前问题并不是 Poor 的食物价值定义错误，而是 Working Motivation swing 太小，导致阈值在最高 Motivation 时仍高于 StateTrigger 可提供的最大正向证据。
-
-因此优先修阈值幅度更符合 owner 边界。
-
-## 3. 为什么不扩大 StateTrigger
-
-当前 StateTrigger Working budget：
+即：
 
 ```text
-ordinary ≈ 0.10
-upper guardrail ≈ 0.15
+M <= 0.80:
+    threshold = 0.60 - 0.40M
+
+M > 0.80:
+    threshold = 0.60 - 0.40M - 0.50(M - 0.80)
 ```
 
-StateTrigger 表达当前 prey-state 的具名正向攻击证据，不应该为了修复 Poor/Reject 区分而整体放大。
+这些数值只是 Working calibration seed。
 
-如果把 Trigger 上限直接提高到 `0.20+`，会同时改变 Marginal / Good 的大量普通 case，并可能让 prey-state cue 吞掉 relation class 的职责。
+---
 
-所以本轮不改 Trigger budget。
+## 3. 为什么撤回 `K_mot = 0.60`
 
-## 4. 新 Working threshold
+上一版全轴线性式：
 
 ```text
-M = 0.00 → threshold = 0.70
-M = 0.25 → threshold = 0.55
+threshold = 0.70 - 0.60M
+```
+
+虽然能让：
+
+```text
+Poor + M≈1 + strong Trigger
+→ weak response
+```
+
+但它同时扩大了低 Motivation 端的惩罚。
+
+以：
+
+```text
+Good = 0.70
+ordinary combined burden = 0.18
+Trigger = 0
+ResponseProjection M1 = 0.30
+```
+
+为例：
+
+```text
+K_mot = 0.60:
+M = 0.5 → C ≈ 0.40
+M = 0.4 → C ≈ 0.20
+M = 0.3 → C = 0
+```
+
+这与既有护栏冲突：Good 是稳定正常目标，中等偏低 Motivation 可以明显削弱它，但不应过早让普通 Good 全面失效。
+
+所以问题不是需要更大的全轴 Motivation swing，而是需要一个只服务于“极端高 Motivation 解锁 Poor”的尾部效应。
+
+---
+
+## 4. 新 threshold 的关键点
+
+当前 Working：
+
+```text
+M = 0.00 → threshold = 0.60
+M = 0.20 → threshold = 0.52
+M = 0.30 → threshold = 0.48
+M = 0.40 → threshold = 0.44
 M = 0.50 → threshold = 0.40
-M = 0.75 → threshold = 0.25
-M = 0.90 → threshold = 0.16
+M = 0.70 → threshold = 0.32
+M = 0.80 → threshold = 0.28
+M = 0.90 → threshold = 0.19
 M = 1.00 → threshold = 0.10
 ```
 
 重要性质：
 
-- `M=0.5` 时 threshold 仍等于 `Marginal=0.40`；
-- 所有 reference-Motivation burden calibration 不变；
-- Motivation 只在远离 reference 时获得更大作用范围。
+- `M=0.5` 时仍锚定 `Marginal=0.40`；
+- `M<=0.8` 完全保持旧 `K_mot=0.40` 的行为；
+- 极高 Motivation 才获得额外 relief；
+- `M=1` 时仍能达到 `threshold=0.10`，保留 Poor 的极端弱响应窗口。
 
-## 5. Poor 的可响应窗口
+---
+
+## 5. Good / Preferred regression
+
+### Good
+
+在：
+
+```text
+Good = 0.70
+ordinary burden = 0.18
+Trigger = 0
+```
+
+下：
+
+```text
+M = 0.5
+margin = 0.12
+C ≈ 0.40
+
+M = 0.4
+margin = 0.08
+C ≈ 0.27
+
+M = 0.3
+margin = 0.04
+C ≈ 0.13
+
+M = 0.2
+margin = 0
+C = 0
+```
+
+这比上一版 `K_mot=0.60` 更符合目标：
+
+- 中等偏低 Motivation 明显削弱 Good；
+- 但不会在 `M≈0.3` 就把普通 Good 完全判死；
+- 很低 Motivation 仍可以让 Good 掉到响应线下。
+
+### Preferred
+
+在同样 ordinary burden 下：
+
+```text
+M = 0
+threshold = 0.60
+margin = 1.00 - 0.18 - 0.60 = 0.22
+C ≈ 0.73
+```
+
+所以即使 Motivation 极低，Preferred 仍保留明显响应能力。
+
+这也满足：
+
+```text
+M=0
+≠ hard no-feeding state
+```
+
+---
+
+## 6. Poor 的响应窗口
 
 Poor：
 
@@ -102,13 +208,11 @@ DecisionMargin
 
 ### 普通 Trigger
 
-若：
-
 ```text
-StateTrigger = 0.10
+Trigger = 0.10
 ```
 
-由于最低 threshold 也是 `0.10`：
+最低 threshold 仍为 `0.10`，因此：
 
 ```text
 M <= 1
@@ -116,140 +220,93 @@ M <= 1
 → C = 0
 ```
 
-所以 ordinary Trigger 不会把 Poor 抬成可响应目标。
+普通 Trigger 不会让 Poor 成为可响应目标。
 
 ### 强 Trigger
 
-若：
-
 ```text
-StateTrigger = 0.15
+Trigger = 0.15
 ```
 
-需要：
+在 tail 区：
 
 ```text
-0.15 > 0.70 - 0.60M
+0.15 > 0.60 - 0.40M - 0.50(M - 0.80)
 ```
 
-即：
+得到约：
 
 ```text
-M > 0.9167
+M > 0.9444
 ```
 
-Poor 才进入正 Margin。
+才进入正 Margin。
 
-在极端端点：
+端点：
 
 ```text
 M = 1
 Trigger = 0.15
 Costs = 0
 
-Margin = 0.05
-C ≈ 0.17   # 按 Working M1=0.30
+threshold = 0.10
+margin = 0.05
+C ≈ 0.17
 ```
 
-因此 Poor 的响应窗口非常窄：
+因此 Poor 的合法响应窗口更窄：
 
 ```text
-very high Motivation
+extreme high Motivation
 + upper-range legal Trigger
-+ almost no Closing / Prediction / Risk burden
++ almost no negative burden
 → weak but non-zero response
 ```
 
-这正好保持“偶发越线”，而不是变成普通目标。
+---
 
-## 6. Reject 仍然不同
+## 7. Reject 仍然不同
 
-`Reject` 不进入上述连续计算。
+`Reject` 不进入连续阈值计算：
 
 ```text
 Reject
 → typed hard semantic zero
 ```
 
-即使：
+任何 Motivation、Trigger 或 tail relief 都不能复活。
 
-```text
-M = 1
-Trigger = 0.15
-Costs = 0
-```
-
-也不能复活。
-
-因此行为上重新形成明确区别：
+因此：
 
 ```text
 Poor
-→ 极端有利条件下可出现弱响应
+→ 极端有利条件下可弱响应
 
 Reject
-→ 所有条件下保持不可响应
+→ 永远不可响应
 ```
 
-## 7. 对其它 relation 的影响
+---
 
-由于 `M=0.5` 时 threshold 仍为 `0.40`，旧 reference-Motivation calibration 不变：
+## 8. 为什么 tail relief 属于 Motivation，而不是 Trigger
 
-```text
-Preferred margin = +0.60
-Good      margin = +0.30
-Marginal  margin =  0.00
-Poor      margin = -0.40
-```
+这个额外项回答：
 
-所以：
+> 当鱼的全局摄食意愿已经进入极端高位时，它是否愿意降低最低可接受食物价值。
 
-- combined burden stress basket 在 reference Motivation 下不需要重标；
-- `Good - Marginal` gap 不变；
-- `Marginal - Poor` gap 不变；
-- Response projection `M1=0.30` 的 reference interpretation 不变。
+它不回答：
 
-真正变化的是低 / 高 Motivation 两端。
+> 当前 prey state 是否更像逃跑、受伤或容易攻击。
 
-## 8. 需要新增的 regression
+因此它仍属于 FeedingMotivation → WillingnessThreshold 路径，不应扩大 `StateTriggerValue`。
 
-至少检查：
+同时 tail relief 只移动阈值，不改变 `FoodValue`，也不改变 prey identity。
 
-### A. Poor ordinary high Motivation
+---
 
-```text
-Poor
-M = 1
-Trigger = 0.10
-Costs = 0
-→ C = 0
-```
+## 9. Working 参数与 OPEN
 
-### B. Poor extreme favorable
-
-```text
-Poor
-M = 1
-Trigger = 0.15
-Costs = 0
-→ weak C > 0
-```
-
-### C. Poor + tiny burden
-
-确认很小的 Closing / Prediction / Risk burden 是否能快速把该弱响应压回 0，保持窗口稀窄。
-
-### D. Good at low Motivation
-
-确认 `M≈0.2–0.4` 时 Good 不会在普通 presentation 下过早全面失效。如果该 regression 不通过，应重新标定 `K_mot`，而不是修改 Poor / Reject 语义。
-
-### E. Preferred at very low Motivation
-
-确认 Preferred 在极低 Motivation 下仍保留明显高于 Good / Marginal 的结构优势。
-
-## 9. 当前 Working 裁定
-
-第一版 Working seed 更新为：
+当前 Working seed：
 
 ```text
 Preferred = 1.00
@@ -257,11 +314,53 @@ Good      = 0.70
 Marginal  = 0.40
 Poor      = 0.00
 
-K_mot     = 0.60
+Base K_mot = 0.40
+Extreme tail start = 0.80
+Extreme tail extra slope = 0.50
+
 Trigger ordinary ≈ 0.10
 Trigger upper guardrail ≈ 0.15
 ```
 
-这闭合的是 Poor 与 Reject 的行为区分，不代表这些数值已 production calibrated。
+仍未 production-closed：
 
-下一轮若真实 Fish Condition 分布显示 `M>0.92` 过于常见或几乎永远不可达，应从上游 Motivation distribution 与完整 regression 重新标定，而不是把 `Poor` 或 `Reject` 的语义偷偷改掉。
+- `0.80` 是否应是 tail start；
+- `0.50` 是否应是 tail extra slope；
+- 上游 FeedingMotivation 的真实分布；
+- `M>0.94` 在真实鱼情中出现的频率；
+- Good / Preferred 在完整 Closing + Prediction + Risk 分布下的最终 retention。
+
+如果真实 Motivation 分布表明高端 tail 太常见或几乎不可达，应重新标定 tail start / slope；不要修改 Poor / Reject 的 typed semantics。
+
+---
+
+## 10. 当前裁定
+
+撤回：
+
+```text
+K_mot = 0.60
+```
+
+作为全轴线性 Working seed。
+
+当前采用：
+
+```text
+BaseThreshold(M)
+= 0.60 - 0.40M
+
+ExtremeMotivationRelief(M)
+= 0.50 * max(0, M - 0.80)
+
+WillingnessThreshold(M)
+= BaseThreshold(M) - ExtremeMotivationRelief(M)
+```
+
+这个形状同时满足：
+
+1. reference Motivation 与旧 calibration 不变；
+2. 中低 Motivation 下 Good 不被额外过度处罚；
+3. Preferred 在极低 Motivation 下仍保留结构优势；
+4. Poor 只在极端高 Motivation + 强合法 Trigger + 极低 burden 下弱响应；
+5. Reject 永远不可复活。
