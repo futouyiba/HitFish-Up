@@ -1,5 +1,5 @@
 ---
-name: plain-language-editor
+name: 通俗化编辑
 description: |
   Turn LLM-sounding content into plain, human, low-reading-age copy that a smart
   teenager could follow, in the spirit of how Richard Feynman explained hard ideas
