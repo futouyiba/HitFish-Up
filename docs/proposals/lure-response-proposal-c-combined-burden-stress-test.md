@@ -36,7 +36,7 @@ Marginal  = 0.40
 Poor      = 0.00
 
 WillingnessThreshold(reference Motivation) = 0.40
-Response full anchor M1 = 0.30
+Response full anchor M1 = 0.40
 ```
 
 在无 Trigger、reference Motivation 下：
@@ -64,23 +64,24 @@ TotalSoftBurden
 按当前 projection：
 
 ```text
-C = clamp(Margin / 0.30, 0, 1)
+C = clamp(Margin / 0.40, 0, 1)
 ```
 
 得到：
 
 | Basket | Preferred C | Good C | Marginal C |
 |---|---:|---:|---:|
-| Light | 1.00 | 0.73 | 0 |
-| Ordinary | 1.00 | 0.40 | 0 |
-| Heavy | 0.83 | 0 | 0 |
-| Severe | 0.47 | 0 | 0 |
+| Light | 1.00 | 0.55 | 0 |
+| Ordinary | 1.00 | 0.30 | 0 |
+| Heavy | 0.625 | 0 | 0 |
+| Severe | 0.35 | 0 | 0 |
 
 这组行为符合当前 relation 语义：
 
-- Preferred 对多个 soft burden 有明显鲁棒性；
+- Preferred 对 light / ordinary burden 有明显鲁棒性；
 - Good 在 ordinary burden 下仍可用，但明显下降；
 - Good 在多个较强不利因素同时存在时可以归零；
+- Preferred 在 heavy / severe burden 下仍保留一定 response；
 - Marginal 在 reference Motivation、无 Trigger 时本来就在阈值边缘，因此普通 burden 会使其归零，需靠高 Motivation、低 burden 或合法 Trigger 翻转。
 
 ## 4. 不建立 TotalBurdenCap
@@ -96,7 +97,7 @@ TotalSoftBurden = min(Closing + Prediction + Risk, 0.25)
 原因：
 
 - 会让多个真实独立负担无法继续叠加；
-- 极端高 closing + 高 risk 本来就应明显抑制 Feeding response；
+- 极端 high closing + high risk 本来就应明显抑制 Feeding response；
 - cap 会把不同策略场景压成相同结果；
 - 之后难以判断某个单项 cost 是否过大。
 
@@ -120,20 +121,20 @@ Good - threshold
 = 0.30
 ```
 
-所以：
+当前 `M1=0.40` 下：
 
 ```text
 combined burden = 0.12
 → Good margin = 0.18
-→ C ≈ 0.60
+→ C = 0.45
 
 combined burden = 0.18
 → Good margin = 0.12
-→ C ≈ 0.40
+→ C = 0.30
 
 combined burden = 0.20
 → Good margin = 0.10
-→ C ≈ 0.33
+→ C = 0.25
 ```
 
 如果普通 gameplay 的 combined burden 经常达到 `>= 0.30`，Good 会常态化归零，说明至少一个 cost 的普通 effect-size 过大或 feature ownership 重复计权。
@@ -148,7 +149,7 @@ PredictionCost ≈ 0.08 ～ 0.12   # 较强 challenge 的工作上沿
 
 这不能被误解为“普通 Prediction 每次都约 0.10”。
 
-同理后续 K_close / K_wary 的 production calibration 必须区分：
+同理后续 `K_close / K_wary` 的 production calibration 必须区分：
 
 ```text
 ordinary value
@@ -167,11 +168,11 @@ Activity low
 → ClosingCost higher
 ```
 
-它不作为第四项独立 soft cost再相加。
+它不作为第四项独立 soft cost 再相加。
 
 否则同一“主动追赶更吃力”的后果会被重复结算。
 
-Activity 具体公式由其当前 owner / Cowork 侧维护；本页只固定 combined-burden 的消费边界。
+Activity 具体公式由其当前 owner 维护；本页只固定 combined-burden 的消费边界。
 
 ## 8. Trigger / Motivation 是合法对冲，不是补锅
 
@@ -221,11 +222,11 @@ component_contribution_share
 
 ## 10. 当前 OPEN
 
-- K_close 的生产标定与 ordinary ClosingCost 分布；
-- K_wary 的生产标定与 ordinary RiskCost 分布；
+- `K_close` 的生产标定与 ordinary ClosingCost 分布；
+- `K_wary` 的生产标定与 ordinary RiskCost 分布；
 - Activity 对 ClosingCost 的 effect-size；
 - 完整 latent-bearing integration 后 Closing burden 的真实分布；
 - 实际 presentation telemetry / simulation basket；
 - ordinary combined burden `0.12～0.20` 是否需要调整。
 
-本页冻结“不加 TotalBurdenCap、以 ordinary combined burden 做联合 guardrail”的原则，并提供一组 Working stress basket；不声明 production calibration 已完成。
+本页冻结“不加 TotalBurdenCap、以 ordinary combined burden 做联合 guardrail”的原则，并同步当前 `M1=0.40` Working projection；不声明 production calibration 已完成。
