@@ -1,5 +1,5 @@
 ---
-name: zh-first-technical-editor
+name: 中文优先
 description: 将技术 Markdown 改为中文优先。用于清理裸英文、处理中英术语首次出现方式，同时保护代码、字段、枚举、公式、路径、链接和正式标识。
 license: MIT
 compatibility: claude-code opencode

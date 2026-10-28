@@ -1,5 +1,5 @@
 ---
-name: doc-cleanup
+name: 清理文档
 description: Audit and clean Markdown documentation for context rot. Use when docs may contain completed-work logs, executed plans, stale claims, contradictions, dead paths, or drifted authorities, especially in agent-required reading.
 ---
 
