@@ -4,7 +4,7 @@
 
 用途：给其他 Agent / Reviewer 作为当前 Proposal C 的统一审阅入口。本文只保留当前仍成立的主链、最新 Working seed、已闭合边界和开放项。
 
-> 若本文与更高 Authority 冲突，以 `docs/authority-model.md` 与已合并 Current Owner 为准。本文所在分支为 `docs/lure-response-joint-evaluation`。
+> 若本文与更高 Authority 冲突，以 `docs/authority-model.md` 与已合并 Current Owner 为准。本文是 `futou-/exciting-payne-95a562` 分支的审阅入口；Proposal C 的 Working 文档保留在 `docs/lure-response-joint-evaluation` 分支。
 
 ## 1. 当前主链
 
@@ -135,7 +135,7 @@ Reject 仍然是 typed hard zero，任何 Motivation / Trigger 都不能复活�
 
 这个调整不改变 `M=0.5` 时的 reference threshold，因此 reference-Motivation 的旧 burden calibration 不需要重标。
 
-详细 closure：`lure-response-proposal-c-poor-reject-separation.md`。
+详细 closure：Proposal C Working 文档中的 `lure-response-proposal-c-poor-reject-separation.md`。该文件不在本分支复制；本页只保留其已纳入本入口的 Working 结论。
 
 ## 4. Closing：最新裁定
 
@@ -273,7 +273,9 @@ C(Margin)
 = clamp((Margin - M0) / (M1 - M0), 0, 1)
 ```
 
-`M0` 与 `M1` 是 calibration anchors，不是物理常数，也不是入口页冻结的生产分母。只有已解析的 `DecisionMargin` 才能进入 projection：
+本页不冻结 `M0 / M1` 的生产值。入口中的 Poor 示例只表达响应窗口，不提供数值投影的验收结果。Response projection probe 当前比较三类曲线的相对形状，使用的 `-0.10 / 0.23` 是独立 fixture，不是本页的生产 anchor。
+
+`M0` 与 `M1` 是 calibration anchors，不是物理常数。只有已解析的 `DecisionMargin` 才能进入 projection：
 
 ```text
 ResolutionIncomplete / Unknown
@@ -358,9 +360,7 @@ instantaneous response C(t)
 
 姿态颗粒方案沿用既有设计，不在本文重复。Temporal Opportunity / exposure → Candidate 的正式 Current Owner 仍未落仓。
 
-## 11. 当前真正仍开的 P0
-
-### P0｜Unknown sibling 的 max aggregation
+## 11. 当前 P0：Unknown sibling 的归约状态
 
 当前同时有：
 
@@ -374,20 +374,11 @@ Unknown != 0
 C_feed = max(sibling prey responses)
 ```
 
-但尚未定义：
-
-```text
-resolved sibling = 0.45
-unresolved sibling = Unknown
-```
-
-时能否输出最终 `0.45`。
-
-推荐方向是 partial-resolution bounds：
+本页将 partial-resolution bounds 记为 Working seam，不把它写成已冻结的 production aggregation contract：
 
 ```text
 known_lower_bound
-= max(resolved siblings)
+= max(known resolved sibling responses)
 
 possible_upper_bound
 = max(
@@ -396,7 +387,7 @@ possible_upper_bound
   )
 ```
 
-只有 unresolved path 已不可能改变 winner，或上下界收敛时，才输出最终 scalar；否则保持 `ResolutionIncomplete`。
+只有未解析路径不可能改变 winner，或上下界已经收敛时，才输出最终 scalar；否则保持 `ResolutionIncomplete`。该规则仍需要 Current Owner 收口。
 
 ## 12. 当前 P1
 
