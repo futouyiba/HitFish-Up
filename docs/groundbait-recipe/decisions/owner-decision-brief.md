@@ -55,18 +55,20 @@ Current 只定义到 `SpatialDistributionWeight × AdaptationCoeff → 下游候
 | C-02 | 化学强度准入 | 形状 | v1 签名集合；B/C 可裁 | 中 |
 | C-03a | Feeding Event 是否外层结构 | 形状 | 是 | 中 |
 | C-03b | Decision Margin 进入哪一步 | 形状 | D（首版可暂缓），否则 A | 中高 |
-| C-04 | Effective Ingestion Opportunity 落点 | 接口 | 暂缓，等 C-03a/b | 中 |
+| C-04a | EIO 是否为一等中间语义 | 接口 | 是，显式派生状态 | 中 |
+| C-04b | 若显式，谁消费 | 接口 | Response Component | 中 |
 | C-05a | Persistent Field 数据所有权 | 接口 | DEF 只读，响应层持有增量 | 低 |
 | C-05b | Persistent Field 是否存在独立语义 | 接口 | 存在独立持续语义 | 低中 |
-| C-06a | 环境食物浓度事实所有权 | 接口 | 背景 + 增量 | 中 |
-| C-06b | 合并在哪里发生 | 接口 | Response 前；待 C-06a | 中 |
+| C-06a | 是否存在环境背景食物浓度 | 接口 | 有 | 中 |
+| C-06b | 背景与增量是否保留独立 provenance | 接口 | 保留，消费前合并 | 中 |
+| C-06c | 合并在哪里发生 | 接口 | Response 前；待 C-06a/b | 中 |
 | C-07a1 | Overfeeding 是否首版纳入 | 边界 | 后置 | 低 |
 | C-07a2 | Overfeeding 承载层 | 边界 | 若纳入再定 | 中 |
 | C-07b | Local Population / Residence | 边界 | 首版后置 | 低 |
 | C-08 | Encounter 是否拆分 | 接口 | v1 合并；magnitude 准入后再决定 | 中 |
 | C-09 | 刺鱼 / 抽鱼接口 | 边界 | 本候选不进入刺鱼 | 低 |
 | C-10 | 多 Feeding Mechanism 聚合 | 边界 | 生产聚合 OPEN；max 仅 Fixture 上界 | 低 |
-| C-11 | 多 Food Target 聚合 | 边界 | 同 Target 合并 + 饱和，算子 OPEN | 中 |
+| C-11b | 多 Food Target 聚合 | 边界 | 保持 OPEN；具体算子待裁 | 中 |
 | C-12a1 | Diet Shift 所有权 | 边界 | Fish Condition | 低 |
 | C-12a2 | 保留或覆盖现有语义 | 边界 | 保留 | 中 |
 | C-12a3 | 不设所有权时旧语义如何处置 | 边界 | 保留为描述性候选 | 中 |
@@ -112,17 +114,17 @@ B 和 C 都是合法选项，不是被预先排除的方案。选择它们时，
 
 **请回答**：选 A / B / C？如果选 B 或 C，上述四项分别是什么？
 
-### C-03a Feeding Event 是否作为外层过程结构
+### C-03a 是否采用 Feeding Event 作为外层过程结构
 
-**背景**：Groundbait 用事件分解：`encounter → feasible action → selection → success → ingestion`。Proposal C 用决策裕量描述鱼如何比较和判断。两者未必互斥：决策裕量可以嵌在事件分解的某一步里。
+**背景**：Groundbait 用事件分解：`encounter → feasible action → selection → success → ingestion`。Proposal C 用决策裕量描述鱼如何比较和判断。两者不在同一层：事件分解是过程结构，决策裕量是某一步的比较函数。
 
 **选项**：
 
-A. 采用 Feeding Event 作为外层过程结构。
-B. 不采用；用 Decision Margin 作为外层结构。
+A. 是，采用 Feeding Event 作为外层过程结构。
+B. 否，暂不引入统一 Feeding Event 外层结构，继续沿用既有 Response / Proposal C 各自的求值结构。
 C. 其它结构，需要说明。
 
-**推荐**：A。事件分解已经有 Feeding Place、动作可行、对象状态和守恒；Decision Margin 更适合作为其中一步的决策函数。
+**推荐**：A。事件分解已经有 Feeding Place、动作可行、对象状态和守恒；Decision Margin 的位置由 C-03b 单独决定。
 
 **请回答**：选 A / B / C？如果选 C，外层步骤是什么？
 
@@ -143,20 +145,32 @@ D. 暂不决定。
 
 ## 5. 第二层：接口决策
 
-### C-04 Effective Ingestion Opportunity 落点
-
-**依赖**：C-03a 和 C-03b。
+### C-04a 是否建立 Effective Ingestion Opportunity 这个一等中间语义
 
 选项：
 
-A. Response Condition 的派生状态。
-B. Response Component 的输入。
-C. 独立因子。
-D. 只供某个既有计算消费，不单独暴露。
+A. 是，作为显式派生状态。
+B. 否，只作为某个现有计算内部量。
+C. 暂缓。
 
-**推荐**：暂缓。若 C-03a 选 A 且 C-03b 选 A，则倾向 B；若 C-03b 选 C，则可能 D。
+**推荐**：A。它是 Feeding Event 的输出，也是 Response 接入的候选接口；显式化后才有唯一生产者。
 
-**请回答**：选哪个？它的单位和量纲是什么？
+**请回答**：选哪个？如果选 A，它的单位和量纲是什么？
+
+### C-04b 若显式存在，谁消费
+
+**前提**：仅当 C-04a 选 A 时回答。
+
+选项：
+
+A. Response Component。
+B. 某个既有 Factor。
+C. Response Aggregation 内部。
+D. 其它，需要说明。
+
+**推荐**：A。Response Component 是现有响应评价的消费单元；选 B/C 需要说明为什么不走组件。
+
+**请回答**：选哪个？消费时的输入和去重规则是什么？
 
 ### C-05a Persistent Field 数据所有权
 
@@ -186,21 +200,35 @@ C. 暂不决定。
 
 **请回答**：选哪个？如果选 A，来源、范围、衰减的语义边界由谁定义？
 
-### C-06a 环境食物浓度的事实所有权
+### C-06a 环境是否存在 Groundbait 之外的背景食物浓度
 
 选项：
 
-A. 环境侧是背景事实，窝料是玩家增量。
-B. 二者是同一事实，不能分成两份。
-C. 环境侧不表达食物浓度，只由窝料表达。
+A. 有，环境侧存在背景 Food Availability / Concentration。
+B. 没有，食物浓度只由窝料表达。
+C. 暂不决定。
 
-**推荐**：A。需要显式合并规则，避免同一事实双算。
+**推荐**：A。术语把“食物浓度”列为环境因子示例，但具体口径仍需确认。
 
-**请回答**：选哪个？如果选 A/B，二者的边界如何定义？
+**请回答**：选哪个？如果选 A，背景事实的载体和口径是什么？
 
-### C-06b 合并在哪里发生
+### C-06b 背景与玩家增量是否保留独立 provenance
 
-**前提**：仅当 C-06a 选 A 或 B 时回答。若 C-06a 选 C，本题不适用。
+**前提**：仅当 C-06a 选 A 时回答。
+
+选项：
+
+A. 保留独立 provenance，消费前合并。
+B. 直接物化成一个统一状态，不再区分来源。
+C. 其它，需要说明。
+
+**推荐**：A。保留 provenance 才能查重和调试；合并可以发生在消费前。
+
+**请回答**：选哪个？如果选 A，合并后的状态是否仍保留来源引用？
+
+### C-06c 合并在哪里发生
+
+**前提**：仅当 C-06a 选 A，且 C-06b 选 A 时回答。
 
 选项：
 
@@ -292,15 +320,22 @@ C. 直接求和（已排除）。
 
 **请回答**：选哪个？
 
-### C-11 多 Food Target 聚合
+### C-11a 前提：同 Target 先合并再饱和
+
+同 Target 的 Ingredient 先合并 Exposure，再做 Target 级饱和，已作为 WD-25 工作候选。这一条不在本轮裁决；如果 Owner 要改，另行提出。
+
+### C-11b 多个 Food Target 如何聚合
+
+本项只问多个 Food Target 之间的聚合，不涉及同 Target 合并与饱和。
 
 选项：
 
-A. 同 Target 合并 + 饱和；多 Target 算子保持 OPEN。
+A. 保持 OPEN，暂不选择生产算子。
 B. 直接求和。
 C. 取最大。
 D. Noisy-OR。
 E. 求和后全局饱和。
+F. 其它，需要说明。
 
 **推荐**：A。基线 R0 禁止自行引入 B–E；需要 Owner 裁决。
 
@@ -415,11 +450,11 @@ C-01、C-02、C-03a、C-03b。
 
 **第二轮：接入现有 FCF**
 
-C-04、C-05a、C-05b、C-06a、C-06b、C-08、C-09。
+C-04a、C-04b、C-05a、C-05b、C-06a、C-06b、C-06c、C-08、C-09。
 
 **第三轮：首版边界与暂缓项**
 
-C-07a1、C-07a2、C-07b、C-10、C-11、C-12a1、C-12a2、C-12a3、C-12b、C-13a、C-13b、C-14。
+C-07a1、C-07a2、C-07b、C-10、C-11b、C-12a1、C-12a2、C-12a3、C-12b、C-13a、C-13b、C-14。
 
 每轮结束后再进入下一轮，避免把形状项和接口项混在一次回答里。
 
@@ -428,8 +463,8 @@ C-07a1、C-07a2、C-07b、C-10、C-11、C-12a1、C-12a2、C-12a3、C-12b、C-13a
 1. C-01 选 A / B / C？为什么？
 2. C-02 选 A / B / C？如果选 B/C，新增 primitive、口径、标定成本和失败边界是什么？
 3. C-03a 选 A / B / C？C-03b 选 A / B / C / D？
-4. C-04、C-05a、C-05b、C-06a、C-06b、C-08、C-09 各选哪个？若 C-06a 选 C，C-06b 是否不适用？
-5. C-07a1、C-07a2、C-07b、C-10、C-11、C-12a1、C-12a2、C-12b、C-13a、C-13b、C-14 各选哪个？若 C-07a1 选 A，C-07a2 是否不适用？
+4. C-04a、C-04b、C-05a、C-05b、C-06a、C-06b、C-06c、C-08、C-09 各选哪个？若 C-04a 不选 A，C-04b 是否不适用？若 C-06a 不选 A，C-06b/C-06c 是否不适用？若 C-06b 不选 A，C-06c 是否不适用？
+5. C-07a1、C-07a2、C-07b、C-10、C-11b、C-12a1、C-12a2、C-12a3、C-12b、C-13a、C-13b、C-14 各选哪个？若 C-07a1 选 A，C-07a2 是否不适用？C-11a 是 WD-25 前提，不在本轮回答。
 6. 若 C-12a1 选 A，C-12a2 选什么？若 C-12a2 选 B，覆盖和迁移方案是什么？若 C-12a1 选 C，C-12a3 选什么？
 7. 哪些项可以现在定，哪些必须等证据？
 8. 有没有我们没列出的冲突？
