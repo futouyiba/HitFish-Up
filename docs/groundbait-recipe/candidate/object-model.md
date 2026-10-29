@@ -37,7 +37,7 @@ Ingredient Facts
 
 ### 2.2 Particle Object
 
-`Particle Object` 表示实体食物对象，至少保留：
+`Particle Object`（颗粒对象）表示实体食物对象，至少保留：
 
 ```text
 Particle Object
@@ -53,7 +53,7 @@ Particle Object
 
 ### 2.3 Chemical Cue Field
 
-`Chemical Cue Field` 表示地点和时间中的可感知化学线索：
+`Chemical Cue Field`（化学线索场）表示地点和时间中的可感知化学线索：
 
 ```text
 Chemical Cue Field
@@ -67,7 +67,7 @@ Chemical Cue Field
 
 ### 2.4 Feeding Place State
 
-`Feeding Place State(place, t)` 是某地点、某时点对鱼可见的状态集合：
+`Feeding Place State`（摄食地点状态，`place, t` 表示地点与时点）是某地点、某时点对鱼可见的状态集合：
 
 ```text
 Feeding Place State
@@ -91,7 +91,7 @@ Fish State
 └─ Fish Condition（引用现有 Current 语义）
 ```
 
-`Feeding Event` 是一次具体摄食机会的过程，不是鱼种静态属性。它依次处理：对象是否遇到、哪些动作可行、选择哪条动作路径、动作是否成功、对象是否被有效处理。
+`Feeding Event`（摄食事件）是一次具体摄食机会的过程，不是鱼种静态属性。它依次处理：对象是否遇到、哪些动作可行、选择哪条动作路径、动作是否成功、对象是否被有效处理。
 
 ## 3. 因果所有权矩阵
 

@@ -14,7 +14,9 @@ Recipe / Ingredient Facts
   └─ Physical Properties ───────→ Physical Release → Feeding Place State
 ```
 
-同一 Ingredient 可以同时提供多类事实，但四条路径分别进入，不在末端合并成一个总分。整合的关键不是“四个都算”，而是每个事实只进入它该进的阶段。
+同一 Ingredient 可以同时提供多类事实，但四条路径分别进入，不在末端合并成一个总分。整合的重点是每个事实只进入它该进的阶段，不是让四个都算。
+
+文中的 `Feeding Place State`（摄食地点状态）、`Feeding Event`（摄食事件）、`Effective Ingestion Opportunity`（有效摄食机会）都是本目录的 Candidate-local 工作词。
 
 ## 2. 完整候选链
 

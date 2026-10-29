@@ -191,7 +191,7 @@ Flavor Profile 可以看作低维、显式、有业务语义的 Composition Vect
 
 ### 当前边界
 
-天气、时段等优先进入现有 Fish Condition / Feeding Readiness / Activity 语义。Diet Shift 的具体驱动仍是 Open；不能把“慢随机漂移”提前写成已确认替代方案。
+天气、时段等优先进入现有 Fish Condition 语义。Diet Shift 的具体驱动仍是 Open；不能把“慢随机漂移”提前写成已确认替代方案。
 
 ---
 

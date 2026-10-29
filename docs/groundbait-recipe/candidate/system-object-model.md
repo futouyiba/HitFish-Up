@@ -44,6 +44,8 @@
 
 ## 3. 对象表
 
+表中的 Candidate-local 工作词：`Feeding Place State`（摄食地点状态）、`Feeding Event`（摄食事件）、`Effective Ingestion Opportunity`（有效摄食机会）。
+
 | 对象 | 所属阶段 | 生产者 | 主要消费者 | 生命周期 | 持久化 | 成熟度 |
 |---|---|---|---|---|---|---|
 | 环境上下文 | 数据 | 世界 / 课程表 / 钓场三维数据 | 烘焙 | 场景级 | 是 | Current 术语 |

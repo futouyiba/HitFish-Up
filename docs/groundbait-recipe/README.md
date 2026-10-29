@@ -4,6 +4,29 @@
 > 日期：2026-10-29
 > 权威边界：本目录整理当前讨论形成的工作提案、工作决定、已排除方向和跨会话上下文。它不是 FCF Current Contract，不自动覆盖现有中鱼框架、Response Contract 或术语规范。正式术语与权威关系仍以 [`docs/README.md`](../README.md)、[`docs/authority-model.md`](../authority-model.md) 和对应 Current 文档为准。
 
+## 术语对照
+
+| 中文 | English / Identifier | 说明 |
+|---|---|---|
+| 基础权重 | Base Weight / Base Opportunity Intensity | 环境影响前的基础机会量级 |
+| 空间分布权重 | SpatialDistributionWeight | 基础权重乘环境系数，未归一化 |
+| 派生环境场 | DEF / Derived Environment Field | 烘焙结果，按条件组保存 |
+| 鱼况 | Fish Condition | 活跃度、摄食动机、食性偏移、警戒度 |
+| 响应阶段 | Response Stage | 读取烘焙结果和玩家刺激，输出适配系数 |
+| 持久响应场 | Persistent Response Field | 持续玩家行为的增量层 |
+| 适配系数 | Adaptation Coefficient | 响应阶段的无量纲倍率 |
+| 圆桌权重表 | Roundtable Weight List | 抽鱼前的候选权重列表 |
+| 挤占 | Crowding-out | 圆桌抽鱼中的候选竞争 |
+| 配方事实 | Recipe / Ingredient Facts | 原料和配比提供的事实 |
+| 物理释放 | Physical Release | 配方状态到摄食地点状态的转换 |
+| 摄食地点状态 | Feeding Place State | 本目录工作词，当前可接触对象与线索 |
+| 摄食事件 | Feeding Event | 本目录工作词，一次摄食机会 |
+| 有效摄食机会 | Effective Ingestion Opportunity | 本目录工作词，候选输出接口 |
+| 化学线索场 | Chemical Cue Field | 本目录工作词，可感知化学线索 |
+| 颗粒对象 | Particle Object | 本目录工作词，实体食物对象 |
+
+Current 术语以 [`docs/terminology.md`](../terminology.md) 为准；Candidate-local 词不进入正式术语表。
+
 ## 目录职责
 
 ```text
@@ -90,7 +113,7 @@ Food、Flavor、Particle、Physical Release 各自进入主脊的不同位置，
 - 小药不作为免费固定 Bonus；状态饵也必须承担固体份额或其它真实成本。
 - 雾化、黏度等首先改变释放速度、扩散范围、沉降和持续时间，不直接写成中鱼倍率。
 - Particle Size 单独抽成 `Edible Size Response`，目标是让窝料颗粒和后续钩上饵球共享同一套“可摄食尺寸”语言，但 Hookbait 仍有自己的入口性、持钩、姿态等额外因素。
-- “天气直接切换味型偏好”目前证据不足，不作为候选规则；天气等环境输入优先进入现有 Fish Condition / Feeding Readiness 语义。
+- “天气直接切换味型偏好”目前证据不足，不作为候选规则；天气等环境输入优先进入现有 Fish Condition 语义。
 - 最终是否存在单一 `RecipeFit` 尚未决定。Attraction、Retention、Ingestion、Selection 可能需要保留为不同语义，不能因为公式整齐而提前相加。
 
 当前主要算法候选仍需验证：
@@ -101,12 +124,12 @@ Food、Flavor、Particle、Physical Release 各自进入主脊的不同位置，
 
 ## 研究输入
 
-本轮主要设计输入之一：
+早期讨论引用过一份外部研究：
 
 - `futouyiba/programaticHitFish/docs/research/2026-10-27-rf4-recipe-aggregation-design-recommendation.md`
-- 已读取版本 blob：`88ac78e33f90cd55ea5c01af90406bbca084b91f`
+- 记录的 blob：`88ac78e33f90cd55ea5c01af90406bbca084b91f`
 
-该研究明确是 Research / Working Proposal，不是 RF4 内部公式事实，也不是 FCF Current。当前目录只吸收其中经本轮继续推敲后仍保留的设计结论。
+2026-10-29 复核时，本地未找到该文件或 blob，因此这份引用只能当作来源声明，不能当作可复核证据。它即使可读，也只是 Research / Working Proposal，不是 RF4 内部公式事实，也不是 FCF Current。当前目录只保留经本轮继续推敲后仍有仓内依据的设计结论。
 
 ## 当前推进顺序
 

@@ -2,7 +2,7 @@
 
 > 状态：Candidate Explainer
 > 日期：2026-10-29
-> 用途：帮助快速理解当前机制骨架。完整机制、状态和未收口问题以 [`proposal.md`](proposal.md)、[`working-decisions.md`](../decisions/working-decisions.md) 和 [`edible-size-response.md`](edible-size-response.md) 为准。
+> 用途：帮助快速理解当前机制骨架。完整机制、状态和未收口问题以 [`proposal.md`](proposal.md)、[`system-object-model.md`](system-object-model.md)、[`working-decisions.md`](../decisions/working-decisions.md) 和 [`conflict-register.md`](../decisions/conflict-register.md) 为准。
 
 ## 一句话
 
@@ -120,7 +120,7 @@ Flavor Intensity
 
 ### Groundbait
 
-窝料输入是一组粒径分布：
+窝料配方给出一组投放粒径分布：
 
 ```text
 Fine    20%
@@ -129,7 +129,9 @@ Medium  30%
 Coarse  10%
 ```
 
-小鱼对大颗粒的可利用性可能快速下降，大鱼通常可以利用更宽的尺寸范围。配方变粗后，小鱼的可利用份额下降，就能形成体型筛选，不必额外写成“大颗粒 → 大鱼概率 +30%”。
+这组比例不是鱼实际遇到的对象份额。物理释放、沉降、解体和消耗会改变当前地点可接触的对象集合，鱼侧看到的是后者的分布。
+
+小鱼对大颗粒的可利用性可能快速下降，大鱼通常可以利用更宽的尺寸范围。粗颗粒配方让小鱼的可利用份额下降，就能形成体型筛选，不必额外写成“大颗粒 → 大鱼概率 +30%”。
 
 当前模型也不默认大鱼会因为嘴大而强烈排斥小颗粒。细颗粒的利用效率应由摄食方式决定，而不是统一降到 0。
 
@@ -203,9 +205,11 @@ Flavor / Chemical Cue
 
 ```text
 天气 / 时段等环境输入
-→ 现有 Fish Condition / Feeding Readiness / Activity
+→ 现有 Fish Condition
 → 当前响应积极程度变化
 ```
+
+`Feeding Readiness` 不是术语表定义的独立状态；未裁定前只作为描述性说法，不落 Schema。
 
 不采用：
 
@@ -247,7 +251,7 @@ Diet Shift 是否需要、由什么驱动仍是 Open。较慢生态 Context 或�
 → 现有 Response Stage 的候选输入
 ```
 
-关键不是“哪条鱼得分更高”，而是：
+需要先回答的是：
 
 - 每个量由谁产生、谁消费；
 - 粒径、形状、硬度和团聚分别进入哪一步；

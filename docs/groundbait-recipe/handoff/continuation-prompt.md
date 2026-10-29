@@ -53,7 +53,7 @@ Recipe Facts
 - 跨阶段不变量：`candidate/cross-stage-invariants.md`
 - 冲突与未决项：`decisions/conflict-register.md`
 
-下一步不是继续扩写机制，而是处理 Owner 决策和证据缺口：
+下一步处理 Owner 决策和证据缺口，不再扩写机制：
 
 1. 按 `conflict-register.md` 的裁决顺序，先处理 C-01、C-02、C-03。
 2. 处理 C-04、C-05，决定 Response 接入和持久字段语义。

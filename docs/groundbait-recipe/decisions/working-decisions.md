@@ -133,7 +133,7 @@ EdibleSizeUsability = aggregate over feasible action paths
 
 **状态：BOUNDARY**
 
-“下雨就喜欢腥、晴天就喜欢果香”目前证据不足，不作为候选机制。天气、时段等环境输入优先进入现有 Fish Condition / Feeding Readiness / Activity 语义。
+“下雨就喜欢腥、晴天就喜欢果香”目前证据不足，不作为候选机制。天气、时段等环境输入优先进入现有 Fish Condition 语义。
 
 Diet Shift 的驱动方式仍是 **OPEN**。若以后保留，可测试 Contextual Shift 和慢、有界、有记忆的随机漂移，但随机漂移本身尚未确认。
 

@@ -6,6 +6,8 @@
 
 ## 1. 使用方式
 
+文中的 `Feeding Place State`（摄食地点状态）、`Feeding Event`（摄食事件）、`Effective Ingestion Opportunity`（有效摄食机会）都是本目录的 Candidate-local 工作词。
+
 每项记录五件事：冲突是什么、双方出处、影响哪些阶段、当前暂定处理、需要谁裁决。
 
 暂定处理只有三类：

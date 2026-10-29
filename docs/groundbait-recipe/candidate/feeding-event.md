@@ -6,7 +6,7 @@
 
 ## 1. 事件从哪里开始
 
-`Feeding Event` 是本目录的 Candidate-local 工作词。它不是“配方得分”，而是鱼在某个地点、某个时间对一个实体对象形成的一次处理机会。
+`Feeding Event`（摄食事件）是本目录的 Candidate-local 工作词。它不是“配方得分”，而是鱼在某个地点、某个时间对一个实体对象形成的一次处理机会。
 
 事件必须从已有 `Feeding Place State` 开始，而不是从静态配方比例开始：
 
@@ -113,6 +113,8 @@ expected_ingested_value
 `value(o)` 的单位尚未收口，可以是质量、数量、能量或其它明确声明的价值空间；不能默认为“分”。
 
 ## 4. 路径量的职责
+
+表中的 `Effective Ingestion Opportunity` 指有效摄食机会，是本目录的 Candidate-local 工作词，不是 Current 术语。
 
 | 路径量 | 回答的问题 | 主要输入 | 不负责 |
 |---|---|---|---|
