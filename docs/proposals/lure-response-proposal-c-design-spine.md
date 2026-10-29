@@ -89,6 +89,7 @@ ActualPresentation
 - [开放决策](lure-response-proposal-c-open-decisions.md)：只保留尚未有 owner、尚未闭合或存在冲突的问题；
 - [第一轮玩法闭合审查](lure-response-proposal-c-first-round-closure.md)：AttackTrigger 准入、Risk 输入实证、策略排序 probe 与判断；
 - [Escape-like Trigger v1](lure-response-proposal-c-escape-trigger-v1.md)：事件、窗口、family 适用与 TriggerIntensity 判定；
+- [机会量支持](lure-response-proposal-c-opportunity-support.md)：`L`、遭遇饱和与单位时间收益的玩具模型；
 - [设计图](../mockups/proposal-c-design-map.html)：面向阅读的图形版本。
 
 这些材料共同构成 Proposal C 的设计工作包，不替代已审核的 Current Contract。

@@ -62,6 +62,6 @@
 
 1. Escape-like 的 v1 判定已写入 [Escape-like Trigger v1](lure-response-proposal-c-escape-trigger-v1.md)；本轮不再扩展语义，但事件提取（滤波、采样、最短间隔）、family 适用表、强度缩放、窗口与刷新语义仍 OPEN，下一步是轨迹采集与这些参数的落定；
 2. 决定 Risk cue 是否立项（TackleConspicuousness / EntryDisturbance 需要字段与 owner）；在此之前 `RiskCost` 保持 0；
-3. 补机会量 `L` 的覆盖与有效窗口模型，验证快搜与隐蔽方案的外部代价；
+3. 机会量 `L` 已有玩具模型（[机会量支持](lure-response-proposal-c-opportunity-support.md)）；下一步确认快搜的收益是探索/信息覆盖，而不是单颗粒遭遇率，并决定它是否值得独立机制；
 4. 用 `proposal_c_strategy_probe.py` 的排序结果检查参数敏感度，再进入生产标定；
 5. Prediction 不进入本轮；有独立策略价值证据时再单独开题。

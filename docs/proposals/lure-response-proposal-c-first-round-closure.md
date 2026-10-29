@@ -154,7 +154,7 @@ Risk MVP 当前只能实现退化路径：
 
 ### 5.2 机制缺口
 
-1. **Closing 的角度平均削弱高速惩罚**：一半方位成本为零、有利方位响应饱和。这不是调 `K_close` 能解决的。
+1. **Closing 的角度平均削弱高速惩罚**：一半方位成本为零、有利方位响应饱和。这不是调 `K_close` 能解决的。机会量的玩具模型见[机会量支持](lure-response-proposal-c-opportunity-support.md)。
 2. **Risk 没有输入**：TackleConspicuousness 与 EntryDisturbance 在仓内都没有字段，MVP 只能输出零。
 3. **Injured / Struggling 没有生产闭合的输入映射**：不是单一姿态字段缺失，也没有可用的 cue-only 识别证据；不能用航迹不规则冒充。
 4. **Vulnerable Pause 与时间机会重复**：pause 本身不能作为 Trigger；imbalance-like vulnerability 仍是 `CandidateUnresolved`，需要 cue-only holdout。
