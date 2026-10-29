@@ -183,13 +183,12 @@ u_close(θ)
 当前 Working：
 
 ```text
-if u_close(θ) >= 1:
-    C_conditional(θ) = 0
-else:
-    ClosingCost(θ)
-    = K_close
-      * u_close(θ)^2
-      * ActivityCostMultiplier(Activity)
+ClosingCost(θ)
+= K_close
+  * u_close(θ)^2
+  * ActivityCostMultiplier(Activity)
+
+`u_close >= 1` 表示高 Closing burden；没有独立 encounter-geometry / reaction-window contract 时，不直接输出 `C_conditional(θ)=0`。
 ```
 
 hard-zero 只表示：
@@ -207,7 +206,7 @@ Owner 已裁：`FunctionalCapacity` 删除；Activity 与结构速度能力分�
 ```text
 Species / size cohort
 → InterceptSpeedLimit
-→ hard Closing feasibility
+→ Closing burden / capability scale
 
 Activity
 → ActivePursuitCostMultiplier

@@ -4,17 +4,16 @@
 
 ## 结论
 
-第一版 Closing 采用 angle-local hard infeasible + 简单凸 cost：
+第一版 Closing 采用径向分离 proxy 与简单凸 soft cost：
 
 ```text
 u_close(θ) = max(0, q cosθ)
-q = lure_speed / intercept_capacity
+q = lure_speed_relative_to_water / InterceptSpeedLimit
 
-if u_close(θ) >= 1:
-    C_conditional(θ) = 0
-else:
-    ClosingCost(θ) = K_close · u_close(θ)^2
+ClosingCost(θ) = K_close · u_close(θ)^2
 ```
+
+没有独立 encounter-geometry / reaction-window contract 时，`u_close >= 1` 仍是高 burden，不直接把 `C_conditional(θ)` 置零。
 
 `u²` 是当前最小 Working 选择。它不是长期物理定律。
 
@@ -25,8 +24,8 @@ else:
 凸 cost 的语义更合适：
 
 - 远离能力边界时，Closing 只是轻度负担；
-- 接近能力边界时，难度快速抬升；
-- 一旦明确超过 Closing capacity，该 latent angle 直接 hard-zero。
+- 接近能力尺度时，soft burden 快速抬升；
+- 是否归零由完整 DecisionMargin 和未来合法的 encounter contract 共同决定。
 
 这符合当前体验护栏：正常或较快 retrieve 在正常/好鱼口下仍可用，弱鱼口与高速度组合才显著恶化。
 
@@ -38,13 +37,7 @@ probe 比较了 `u`、`u²`、`u⁴`。一旦 `u>=1` 已经作为 angle-local ha
 
 ## hard infeasible 的作用域
 
-`u_close(θ) >= 1` 只说明当前 latent angle 下，拟饵径向拉开速度达到或超过该鱼的 Closing capacity。
-
-因此：
-
-```text
-该 θ → C_conditional(θ)=0
-```
+`u_close(θ) >= 1` 只说明当前 latent angle 下，拟饵径向拉开速度达到或超过该鱼的 Closing 能力尺度。没有 encounter geometry 时，它仍是高 Closing burden，不直接产生 `C_conditional(θ)=0`。
 
 不能推出：
 

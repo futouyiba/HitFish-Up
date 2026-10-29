@@ -24,8 +24,8 @@ def activity_cost_multiplier(activity: float, k_activity: float = 1.0) -> float:
 @dataclass(frozen=True)
 class ClosingResult:
     utilization: float
-    infeasible: bool
-    cost: float | None
+    high_burden: bool
+    cost: float
 
 
 def closing_cost(
@@ -40,25 +40,24 @@ def closing_cost(
         raise ValueError("intercept_speed_limit must be positive")
     q = lure_speed / intercept_speed_limit
     u = max(0.0, q * cos(radians(theta_deg)))
-    if u >= 1.0:
-        return ClosingResult(u, True, None)
     cost = k_close * u * u * activity_cost_multiplier(activity, k_activity)
-    return ClosingResult(u, False, cost)
+    return ClosingResult(u, u >= 1.0, cost)
 
 
 def main() -> None:
     # Bottleneck bake: one limiting cause dominates rather than multiplying penalties.
     assert bake_activity(0.9, 0.8, 0.7) == 0.7
 
-    # Activity does not alter hard feasibility.
+    # Activity changes cost, not the high-burden classification.
     high = closing_cost(1.2, 1.0, 0, 1.0)
     low = closing_cost(1.2, 1.0, 0, 0.2)
-    assert high.infeasible and low.infeasible
+    assert high.high_burden and low.high_burden
+    assert low.cost > high.cost
 
     # For physically feasible pursuit, lower Activity raises soft cost.
     high = closing_cost(0.7, 1.0, 0, 1.0)
     low = closing_cost(0.7, 1.0, 0, 0.2)
-    assert not high.infeasible and not low.infeasible
+    assert not high.high_burden and not low.high_burden
     assert low.cost > high.cost
 
     # Pause / no radial-away motion receives no Closing penalty regardless of Activity.

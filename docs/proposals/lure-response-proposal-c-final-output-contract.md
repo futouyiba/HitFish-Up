@@ -90,7 +90,7 @@ strength = 0
 
 - Resolution incomplete → block；
 - mode validity / required target semantics invalid → resolved nonresponsive；
-- TaskAffordance = Infeasible → resolved nonresponsive only when the required physical task is known to exceed its hard feasibility boundary, such as Closing beyond the applicable `InterceptSpeedLimit`；
+- TaskAffordance = Infeasible：只有在 required physical task 已有独立 hard-feasibility contract，且该 contract 已知当前任务不可达时，才输出 resolved nonresponsive；`u_close ≥ 1` 在当前缺少 encounter geometry / reaction-window contract 时不单独满足这一条件；
 - TaskAffordance = Unknown → resolution incomplete；
 - Activity may change soft cost only after physically feasible Closing is established；it must not be folded into `InterceptSpeedLimit` or create a second hard gate。
 

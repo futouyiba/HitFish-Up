@@ -15,7 +15,7 @@ Activity
 → soft Closing cost only when Closing is physically feasible
 ```
 
-`InterceptSpeedLimit` 负责物理 hard feasibility；`Activity` 只负责可行 Closing 的软成本。其它 task axis 只有在有独立物理语义和反事实证据时才可单独 admission。`Unknown` 不等于 zero、`Disabled` 或 `NotApplicable`。
+`InterceptSpeedLimit` 提供 Closing burden 的能力尺度，不单独证明完整 encounter feasibility；`Activity` 只负责 soft Closing cost。其它 task axis 只有在有独立物理语义和反事实证据时才可单独 admission。`Unknown` 不等于 zero、`Disabled` 或 `NotApplicable`。
 
 ## 结论
 
@@ -30,9 +30,9 @@ u_intercept = InterceptDemand / InterceptCapacity
 u_maneuver  = ManeuverDemand  / ManeuverCapacity
 ```
 
-2. 任一轴 `u > 1` 时，任务为 `Infeasible`，直接 hard gate；FoodValue / Motivation 不得补偿。
+2. 只有在已经拥有独立的 physical task contract 时，才允许把某个 task axis 的超限标为 `Infeasible`。当前 `u_close > 1` 只表示径向 Closing burden 很高，不能单独把完整 feeding opportunity 判为 `Infeasible`；`FoodValue` / `Motivation` 也不能把真正已知的 physical infeasibility 补回来。
 
-3. 在可行区间内，成本由最吃紧的轴主导，同时允许第二轴提供有限 surcharge：
+3. 在当前已准入的 soft Closing 区间内，成本由已确认的任务轴主导；第二轴只有在拥有独立物理语义、来源和反事实证据时才能 admission：
 
 ```text
 axisCost(u) = u^p
@@ -63,19 +63,16 @@ TaskCost = k × physically-feasible task consequence^p
 
 ## 当前 Working 形式
 
-```text
-Hard gate:
-max(u_intercept, u_maneuver) > 1
-→ Infeasible
-→ C_mode = 0
+当前第一版只承认 Closing 的 soft burden。真正的 hard gate 保留给未来的 encounter geometry / reaction-window contract：
 
-Otherwise:
-ci = u_intercept^p
-cm = u_maneuver^p
-TaskCost = k × [max(ci, cm) + rho × min(ci, cm)]
+```text
+u_close(theta) = max(0, q * cos(theta))
+ClosingCost(theta) = K_close × u_close(theta)^2 × ActivityCostMultiplier(Activity)
 ```
 
-`rho` 的含义是：第二个同时存在的任务负担，只作为有限附加成本，而不是第二次完整惩罚。
+`u_close > 1` 不自动输出 `Infeasible` 或 `C_mode = 0`。如果未来 admission 了另一个拥有独立物理 contract 的 task axis，它必须单独声明 hard-feasibility owner；不能因为采用 `rho` 就自动取得 hard-gate authority。
+
+当前的第二轴 surcharge 保持 Deferred，不进入第一版 numeric core，直到它拥有独立玩家策略故事、数据来源、owner 和不重复计权的反事实证据。
 
 ## 当前 probe 行为
 
@@ -111,20 +108,21 @@ TaskCost = k × [max(ci, cm) + rho × min(ci, cm)]
 
 后续任何 TaskCost 形式至少要满足：
 
-1. 任一轴超过能力边界时 hard gate；
-2. 固定其它量，任一利用率上升不能让 TaskCost 下降；
+1. 当前已明确的 Closing 负担不因 `u_close > 1` 自动取得完整任务的 hard-gate authority；真正的 hard gate 需要独立 physical task contract；
+2. 固定其它量，任一已准入利用率上升不能让 TaskCost 下降；
 3. 中低利用率不应被过度惩罚；
 4. 接近能力边界时成本应快速上升；
-5. 同 peak utilization 下，额外显著 maneuver 可以增加成本；
+5. 同 peak utilization 下，额外显著 maneuver 只有在独立 owner 与反事实 admission 通过后才能增加成本；
 6. 第二轴附加成本不能等价于再完整乘一遍 response penalty；
-7. Activity 的 soft Closing cost 只能在 Closing 已 physically feasible 后计算；不得把 Activity 乘入 `InterceptSpeedLimit`，也不得用它制造第二个 hard gate。
+7. Activity 的 soft Closing cost 不能修改 `InterceptSpeedLimit`，也不能制造第二个 hard gate。
 
 ## 仍未冻结
 
 - `InterceptDemand / Capacity` 的具体单位与标准化方式；
 - `ManeuverDemand / Capacity` 的具体构成；
+- encounter geometry / reaction-window contract 何时足以准入真正 hard feasibility；
 - `p` 是否真需要接近 4；
 - `rho` 是否值得成为生产参数，还是能由更底层的 task composition 自然导出；
 - 两轴是否足够，还是后续反例要求第三个独立任务轴。
 
-下一步应优先攻击 `rho`：寻找“同 peak utilization、不同第二轴负担”的玩家策略故事，判断第二轴 surcharge 是否真的购买了足够明显的玩法差异。
+在 hard-feasibility contract 缺失时，`rho` 与多轴 TaskCost 保持 Deferred，不因本轮术语迁移升格。

@@ -1,7 +1,4 @@
-"""Proposal C probe: Activity affects soft Closing cost, not hard speed limit.
-
-All values are topology fixtures only.
-"""
+"""Proposal C probe: Activity affects soft Closing cost, not speed capacity."""
 
 from dataclasses import dataclass
 
@@ -22,21 +19,12 @@ K_ACTIVITY = 1.00
 def evaluate(case: Case):
     q = case.lure_speed / case.intercept_speed_limit
     u_close = max(0.0, q * case.cos_theta)
-    if u_close >= 1.0:
-        return {
-            "name": case.name,
-            "u_close": u_close,
-            "hard_infeasible": True,
-            "closing_cost": None,
-        }
-
     activity_multiplier = 1.0 + K_ACTIVITY * (1.0 - case.activity)
     closing_cost = K_CLOSE * (u_close ** 2) * activity_multiplier
     return {
         "name": case.name,
         "u_close": u_close,
-        "hard_infeasible": False,
-        "activity_multiplier": activity_multiplier,
+        "high_burden": u_close >= 1.0,
         "closing_cost": closing_cost,
     }
 
@@ -63,7 +51,8 @@ if __name__ == "__main__":
     assert by_name["pause high activity"]["closing_cost"] == 0.0
     assert by_name["pause low activity"]["closing_cost"] == 0.0
     assert by_name["toward fish low activity"]["closing_cost"] == 0.0
-    assert by_name["over-limit high activity"]["hard_infeasible"] is True
-    assert by_name["over-limit low activity"]["hard_infeasible"] is True
+    assert by_name["over-limit high activity"]["high_burden"] is True
+    assert by_name["over-limit low activity"]["high_burden"] is True
+    assert by_name["over-limit low activity"]["closing_cost"] > by_name["over-limit high activity"]["closing_cost"]
 
-    print("PASS: Activity changes soft pursuit cost only; hard feasibility is activity-independent.")
+    print("PASS: Activity changes soft pursuit cost only; u_close >= 1 is not a hard zero.")

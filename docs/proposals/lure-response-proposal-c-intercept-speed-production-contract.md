@@ -55,9 +55,9 @@ u_close(theta) = max(0, q * directional_cosine(theta))
 u_close(theta) >= 1
 ```
 
-该 latent bearing 局部 hard infeasible。
+当前只表示该 latent bearing 的径向分离负担超过能力尺度。没有 encounter geometry / reaction-window Contract 时，不能把它直接当作本次攻击机会的完整 hard infeasibility。
 
-因此 `InterceptSpeedLimit` 决定 feasibility 边界；`K_close` 决定边界以内的 soft burden。两者不能互相代偿。
+因此 `InterceptSpeedLimit` 决定 Closing burden 的能力尺度；`K_close` 决定 soft burden。真正的 encounter hard gate 需要独立的距离、strike reach、reaction latency 和 time-to-exit 数据。
 
 ## 3. Fish Condition 不修改 InterceptSpeedLimit
 
@@ -84,7 +84,7 @@ Activity low
 
 否则同一低 Activity 会：
 
-1. 先把更多 bearing 推入 hard infeasible；
+1. 先把更多 bearing 标成高 Closing burden；
 2. 再提高剩余 bearing 的 soft cost。
 
 这会把“当前不愿 / 不积极追”误写成“物理上追不上”，并造成双重处罚。
@@ -173,7 +173,7 @@ cohort
 
 只有当验证显示 cohort 内 size variation 会系统性改变：
 
-- hard-feasible bearing 占比；
+- 若未来已有 encounter geometry contract，geometry-qualified hard-feasible bearing 占比；
 - lure-speed ranking；
 - player-learnable strategy；
 - response 分布；
@@ -253,7 +253,7 @@ Species / size locomotion evidence
 ```text
 q distribution by species/cohort
 P(q > 1)
-hard-infeasible bearing share
+geometry-qualified hard-infeasible bearing share
 median / p90 ClosingCost
 speed-limit rank by species/cohort
 cohort split sensitivity

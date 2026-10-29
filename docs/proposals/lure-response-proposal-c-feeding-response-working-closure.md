@@ -93,11 +93,11 @@ FeedingMotivation
 ```text
 species × size cohort
 → InterceptSpeedLimit
-→ hard Closing feasibility
+→ Closing burden / capability scale
 
 Fish Condition Bake
 → Activity
-→ physically-feasible Closing 的 soft-cost multiplier
+→ Closing soft-cost multiplier
 ```
 
 `Activity` 不修改 `InterceptSpeedLimit`，也不与它相乘：
@@ -192,7 +192,7 @@ DecisionMargin(θ)
 - WillingnessThreshold(FeedingMotivation)
 ```
 
-Closing infeasible 的 latent angle 不进入普通 margin，直接得到 `C_conditional(θ)=0`。其它角度使用 Working projection：
+高 `u_close` 的 latent angle 仍按 soft Closing burden 进入 `DecisionMargin`。只有未来已有 geometry-qualified hard-feasibility contract 且已知当前任务不可达时，才可在该 contract 规定的范围内输出 `C_conditional(θ)=0`。其它角度使用 Working projection：
 
 ```text
 C_conditional(θ)
@@ -353,7 +353,7 @@ Interaction response 只结算一次。禁止 `L × C → W → W × C`，也不
 - 同一环境或生理原因已进入 Activity 后，再在 Closing 重复处罚；
 - 没有 reaction distance / pursuit horizon 时伪造完整 acceleration pursuit；
 - 把 prey support 当 prey probability、归一化 mixture 或 binary admission gate；
-- `u_close >= 1` 直接产生 hard-zero；
+- 仅凭 `u_close >= 1` 直接产生 hard-zero；
 - whole-mode `q>1` hard-zero；
 - 先平均 `u_close` / `ClosingCost` 再做 response projection；
 - 为拟合效果直接使用高次 Closing 幂；

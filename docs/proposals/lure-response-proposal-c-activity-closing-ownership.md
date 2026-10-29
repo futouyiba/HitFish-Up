@@ -11,7 +11,7 @@
 ```text
 Species / size cohort configuration
 → InterceptSpeedLimit
-→ hard Closing feasibility
+→ Closing burden / capability scale
 
 Activity
 → ActivePursuitCostMultiplier
@@ -95,22 +95,11 @@ EffectiveSpeedLimit = InterceptSpeedLimit × Activity
 q = lure_speed_relative_to_water / InterceptSpeedLimit
 u_close(theta) = max(0, q * cos(theta))
 
-if u_close(theta) >= 1:
-    C_conditional(theta) = 0
-```
-
-hard infeasible 只由静态能力上限与当前运动事实决定。
-
-## 5. Activity 只进入 soft Closing cost
-
-第一版候选：
-
-```text
-ActivityCostMultiplier(A)
-= 1 + K_activity * (1 - A)
-
 ClosingCost(theta)
 = K_close * u_close(theta)^2 * ActivityCostMultiplier(A)
+
+`u_close >= 1` 表示高 Closing burden；没有独立 encounter-geometry / reaction-window contract 时，不直接输出 `C_conditional(theta)=0`。
+高 Closing burden 仍由完整 DecisionMargin 决定响应是否归零。
 ```
 
 其中：

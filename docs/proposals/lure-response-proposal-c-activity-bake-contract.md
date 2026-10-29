@@ -67,7 +67,7 @@ species + size cohort
 
 若 response 前已有具体个体长度，可使用具体长度对应的速度上限；否则使用当前 `species × size cohort` 的代表长度所烘出的速度上限。
 
-Activity 不修改该 hard limit。
+Activity 不修改该能力尺度。
 
 第一版 Closing：
 
@@ -75,12 +75,11 @@ Activity 不修改该 hard limit。
 q = lure_speed_relative_to_water / InterceptSpeedLimit
 u_close(theta) = max(0, q * cos(theta))
 
-if u_close(theta) >= 1:
-    C_conditional(theta) = 0
-else:
-    ClosingCost(theta)
-    = K_close * u_close(theta)^2
-      * ActivityCostMultiplier(Activity)
+ClosingCost(theta)
+= K_close * u_close(theta)^2
+  * ActivityCostMultiplier(Activity)
+
+`u_close >= 1` 表示高 Closing burden；没有独立 encounter-geometry / reaction-window contract 时，不直接输出 `C_conditional(theta)=0`。
 ```
 
 Activity 只影响已经物理可行的追赶任务有多吃力。

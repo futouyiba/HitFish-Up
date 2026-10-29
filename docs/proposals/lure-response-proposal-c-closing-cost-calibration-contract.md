@@ -12,11 +12,10 @@
 q = lure_speed_relative_to_water / InterceptSpeedLimit
 u_close(theta) = max(0, q * directional_cosine(theta))
 
-if u_close(theta) >= 1:
-    C_conditional(theta) = 0
-else:
-    ClosingCost(theta)
-    = K_close * u_close(theta)^2 * ActivityCostMultiplier(Activity)
+ClosingCost(theta)
+= K_close * u_close(theta)^2 * ActivityCostMultiplier(Activity)
+
+# A hard zero requires a separate encounter-geometry contract.
 ```
 
 但 `K_close` 必须与以下三项联合标定：
@@ -74,7 +73,7 @@ ordinary q = 0.7
 - 补偿 2D / 3D prior 选择；
 - 表达 Activity；Activity 只通过 `ActivityCostMultiplier` 进入；
 - 表达 Prediction / Risk；这些有独立 owner；
-- 表达 hard feasibility；`u_close >= 1` 已有独立局部 hard-zero。
+- 表达 hard feasibility；真正的 hard zero 需要独立 encounter-geometry / reaction-window contract。
 
 ## 4. 标定目标
 
@@ -112,9 +111,9 @@ Closing 的 ordinary contribution 可作为其中较大的一项，但不应默�
 
 接近能力上沿时，二次 cost 应明显抬升，使 fast presentation 对 Good / Marginal 更敏感。
 
-### Near-boundary / infeasible
+### Near-boundary / high burden
 
-`u_close >= 1` 已由 angle-local hard-zero 承担。
+`u_close >= 1` 仍按 soft Closing burden 进入 `DecisionMargin`。只有独立 encounter-geometry / reaction-window contract 已知当前任务不可达时，才允许产生 geometry-qualified hard zero。
 
 不能靠把 `K_close` 调得极大来模拟 hard infeasible，否则 soft/hard 语义会混淆。
 
@@ -188,7 +187,7 @@ G. 与 Prediction / Risk 做 combined-burden regression
 ```text
 q distribution
 u_close distribution by latent bearing
-hard-infeasible bearing share
+geometry-qualified hard-infeasible bearing share
 ClosingCost distribution
 ClosingCost share of total soft burden
 Good C=0 rate by q bucket

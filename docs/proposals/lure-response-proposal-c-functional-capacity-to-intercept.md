@@ -24,11 +24,11 @@ FunctionalCapacity
 ```text
 species × size cohort config
 → InterceptSpeedLimit
-→ hard Closing feasibility
+→ Closing burden / capability scale
 
 Fish Condition Bake
 → Activity
-→ physically-feasible Closing 的 soft-cost multiplier
+→ Closing soft-cost multiplier
 
 Fish Condition Bake
 → FeedingMotivation

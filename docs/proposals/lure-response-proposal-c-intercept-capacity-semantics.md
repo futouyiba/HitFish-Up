@@ -26,29 +26,26 @@
 
 ```text
 LocomotorBaseline(species, size/stage)
-        ×
-CapacityStateModifier(FunctionalCapacity)
         ↓
-EffectiveInterceptCapacity
+InterceptSpeedLimit
 ```
 
 其中：
 
 - `LocomotorBaseline` 表示该鱼种与体型/成长阶段的短时追赶能力基线；
-- `FunctionalCapacity` 表示当前鱼在环境与生理条件下“能做到多少”；
-- `CapacityStateModifier` 是从 FunctionalCapacity 到实际能力尺度的映射；
-- `EffectiveInterceptCapacity` 是 Closing 模块唯一消费的能力结果。
+- `InterceptSpeedLimit` 是 Closing 使用的能力尺度，不是单变量的完整 encounter feasibility proof；
+- `Activity` 不修改 `InterceptSpeedLimit`，只调制 soft Closing cost。
 
-当前不冻结 `CapacityStateModifier` 为恒等、线性或其它曲线。若上游 FunctionalCapacity 的标尺尚未定义，不能直接假设 `capacity = baseline × FunctionalCapacity`。
+本页不再建立旧的 `FunctionalCapacity` 总对象。环境和生理因素若要改变硬能力边界，必须通过一个单独命名、拥有独立 Contract 的 capability modifier 接入；不能把通用 Activity 复用为第二个 hard gate。
 
 ## 4. 与 Motivation 的边界
 
-FunctionalCapacity 与 Feeding Motivation 必须分开。
+`InterceptSpeedLimit` 与 Feeding Motivation 必须分开。
 
 ```text
-FunctionalCapacity
-→ 能不能追得上 / 做得到
-→ EffectiveInterceptCapacity
+InterceptSpeedLimit
+→ Closing 能力尺度
+→ Closing feasibility / soft Closing cost
 
 Feeding Motivation
 → 愿不愿意为这个目标出手
@@ -57,58 +54,48 @@ Feeding Motivation
 
 同一条鱼可以：
 
-- 能力高、Motivation 低：追得上，但不太愿意出手；
-- 能力低、Motivation 高：很想吃，但部分 Closing angle 仍可能物理不可行。
+- Closing 能力高、Motivation 低：追得上，但不太愿意出手；
+- Closing 能力低、Motivation 高：很想吃，但在缺少 encounter geometry 的当前版本中，高径向负担仍通过 soft Closing cost 降低响应。
 
-不得用 Motivation 提高 intercept capacity，也不得因为 FunctionalCapacity 低再额外提高 willingness threshold，除非未来有独立机制证据。
+不得用 Motivation 提高 `InterceptSpeedLimit`，也不得因为 Activity 低再额外降低 `InterceptSpeedLimit`。
 
 ## 5. 环境与生理因素只结算一次
 
-若温度、低氧、疲劳、疾病等已经由上游 Fish Condition 编译进 FunctionalCapacity，则 Closing 不得再次读取这些因素做第二次能力惩罚。
+若温度、低氧、疲劳、疾病等需要改变硬能力边界，必须先由上游写入具名的 capability modifier Contract。当前没有这样的生产 Contract，因此 Closing 不额外读取这些原因做第二次能力惩罚。
 
-合法链路是：
+合法的当前链路是：
 
 ```text
-environment / physiology
-→ FunctionalCapacity
-→ EffectiveInterceptCapacity
+species / size cohort
+→ InterceptSpeedLimit
 → q
-→ ClosingCost / angle-local infeasible
+→ ClosingCost
+
+Activity
+→ Closing soft-cost multiplier
 ```
 
-不合法：
-
-```text
-temperature
-→ FunctionalCapacity↓
-→ capacity↓
-
-同时：
-temperature
-→ ClosingCost 再乘一次 penalty
-```
-
-这会 double count。
+不能把同一个环境或生理原因同时写入能力上限和 Closing cost。
 
 ## 6. 参考系
 
-`EffectiveInterceptCapacity` 与 lure speed 必须使用同一参考系。
+`InterceptSpeedLimit` 与 lure speed 必须使用同一参考系。
 
 第一版推荐都使用**相对水体**的速度语义：
 
 ```text
-q = lure_speed_relative_to_water / EffectiveInterceptCapacity
+q = lure_speed_relative_to_water / InterceptSpeedLimit
 ```
 
 理由：能力基线描述鱼相对水体主动产生的推进能力；若分子使用世界速度、分母使用相对水体能力，水流会被错误混入 Closing utilization。
 
-环境流对鱼实际捕获动作的额外影响，如果未来需要，应先明确它是否已经进入 FunctionalCapacity 或其它独立机制，不能悄悄同时进入两边。
+环境流对鱼实际捕获动作的额外影响，如果未来需要，应先明确它是否已经进入具名的 capability modifier 或其它独立机制，不能悄悄同时进入两边。
 
 ## 7. acceleration 如何处理
 
 当前没有鱼点、起始距离与追赶 horizon，因此第一版不新增显式 acceleration state。
 
-这不等于认为 acceleration 不重要。它的作用暂时由 `EffectiveInterceptCapacity` 的校准口径吸收：
+这不等于认为 acceleration 不重要。它的作用暂时由 `InterceptSpeedLimit` 的校准口径吸收：
 
 > 这是短时捕食语境下的有效 Closing 能力，而不是稳态极速。
 
@@ -128,36 +115,33 @@ burst speed
 当前 Working：
 
 ```text
-q = lure_speed_relative_to_water / EffectiveInterceptCapacity
+q = lure_speed_relative_to_water / InterceptSpeedLimit
 u_close(θ) = max(0, q cosθ)
 
-if u_close(θ) >= 1:
-    C_conditional(θ) = 0
-else:
-    ClosingCost(θ) = K_close × u_close(θ)^2
+ClosingCost(θ)
+= K_close × u_close(θ)^2
+  × ActivityCostMultiplier(Activity)
 ```
 
-因此能力变化只有一条直接路径：
+在没有 encounter geometry / reaction-window Contract 时，`u_close ≥ 1` 只表示径向分离负担高，不单独输出 `C=0`。能力变化只有一条直接路径：
 
 ```text
-FunctionalCapacity↑
-→ EffectiveInterceptCapacity↑
+InterceptSpeedLimit↑
 → q↓
 → u_close↓
-→ ClosingCost↓ / infeasible angle 减少
+→ ClosingCost↓
 ```
 
-不得再加“强鱼 bonus”或“弱鱼 penalty”。
+Activity 只改变可行 Closing 的 soft cost，不改变 `InterceptSpeedLimit`。不得再加“强鱼 bonus”或“弱鱼 penalty”。
 
 ## 9. 仍未闭合
 
 - `LocomotorBaseline` 的生产数据来源；
 - 体长、成长阶段与 species baseline 的生成方法；
-- FunctionalCapacity 的量纲与标尺；
-- `CapacityStateModifier` 的生产映射；
+- `InterceptSpeedLimit` 的生产映射与 calibration；
 - 是否需要 fish-quality / individual variation；
 - `K_close` calibration；
-- 若未来出现 reaction distance / response horizon authority，是否拆出 acceleration。
+- 若未来出现 reaction distance / response horizon authority，是否拆出 acceleration 和真正的 interception feasibility。
 
 这些仍是缺口，不用假数字补齐。
 
@@ -166,14 +150,14 @@ FunctionalCapacity↑
 Working admitted：
 
 ```text
-EffectiveInterceptCapacity
-= 当前短时追赶语境下的有效径向 Closing 能力
+InterceptSpeedLimit
+= 当前短时追赶语境下的有效 Closing 能力尺度
 ```
 
 明确拒绝：
 
 - 直接把资料表 `maximum speed` 当 production capacity；
 - 把 Ucrit、burst speed、cruising speed 当成同一个量；
-- Motivation 修改 locomotor capacity；
-- FunctionalCapacity 已影响 capacity 后再按同一原因重复惩罚 Closing；
+- Motivation 或 Activity 修改 `InterceptSpeedLimit`；
+- 没有 encounter geometry 时，把 `u_close ≥ 1` 直接当作完整攻击机会的 hard zero；
 - 在没有距离与时间尺度时伪造完整加速追击模型。
