@@ -67,7 +67,17 @@ StateTriggerValue_p
 
 ### 准入边界
 
-只表达“目标已被解释为可接受猎物后，当前猎物状态是否额外促发出手”。可候选：逃逸样、受伤或挣扎样、虚弱停顿样。不承载领地、防御、烦躁、护巢、调查。
+只表达“目标已被解释为可接受猎物后，当前猎物状态是否额外促发出手”。
+
+第一版准入结果（见[第一轮玩法闭合审查](lure-response-proposal-c-first-round-closure.md)）：
+
+| 状态 | 结果 |
+|---|---|
+| Escape-like / 逃逸样 | 准入；用转向强度与 burst 强度，经 prey-conditioned 判定 |
+| Injured / Struggling / 受伤挣扎样 | 暂缓；缺姿态输入，不用航迹不规则冒充 |
+| Vulnerable Pause / 虚弱停顿样 | 删除作为 Trigger；停顿已由时间机会与 attention 承接 |
+
+不承载领地、防御、烦躁、护巢、调查。
 
 ### 不允许免费诱因
 
@@ -131,7 +141,13 @@ RiskCost = K_wary × Wariness × SuspicionLoad
 | TackleConspicuousness | 终端连接、线、钩等已声明事实对当前目标的可见或侵入程度 |
 | EntryDisturbance | 本次呈现进入局部区域时的已解析异常扰动 |
 
-两类当前都缺生产输入，先冻结语义，不假装 runtime 已有数据。
+两类当前都缺生产输入，先冻结语义，不假装 runtime 已有数据。第一轮玩法闭合审查的结论是：
+
+```text
+无已解析 cue → SuspicionLoad = 0 → RiskCost = 0
+```
+
+因此第一版不生产 RiskCost；保留接口，等 cue owner 与字段，不补造代理。冻结验证基线里的 `cue.contact_disturbance`、`sound_amplitude` 瞬态与「线透明度 / 线颜色」派生条件只能作为语义参考，不是生产输入。
 
 ### 不准入
 

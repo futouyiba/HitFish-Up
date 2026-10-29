@@ -8,7 +8,7 @@
 
 | 议题 | 旧口径 | joint 最新口径 | 当前处理 |
 |---|---|---|---|
-| Prediction 是否进入主体 | 在 `DecisionMargin` 内作为 `-PredictionCost` | 聚合拓扑审查与 10-29 对齐稿把它移出主体，只保留为待证明的局部代价；10-28 的联合回归仍允许双路并行 | 第一版主体不含 Prediction；触发与预测双路机制保留为可选局部实现，是否重入主体待裁定 |
+| Prediction 是否进入主体 | 在 `DecisionMargin` 内作为 `-PredictionCost` | 聚合拓扑审查与 10-29 对齐稿把它移出主体 | 第一版主体不含 Prediction；只有出现独立策略价值证据时再重开，不列为下一步首要事项 |
 | 机会表达 | `C(t) × exposure → accumulated` | `q = L × C` 一次乘，`L` 由 Spatial / Opportunity 提供 | 已按 joint 口径写入契约 |
 | 响应投影 | `Margin / 0.30` | `M0=0, M1=0.40` | 已按 `M1=0.40` 写入 |
 | 动机曲线 | `K_mot=0.60` 全轴 | 基准 `0.40` + 高 Motivation tail relief | 已按 tail relief 写入 |
@@ -23,9 +23,9 @@
 
 ## 3. 语义缺口
 
-- Prediction 是否值得作为独立局部代价重入主体；需要证明它在控制其它因素后仍产生稳定排序；
-- 攻击诱因第一版准入哪些具名猎物状态；
-- 风险顾虑第一版的最低实现层（装备暴露、呈现异常），以及是否展开完整 Naturalness；
+- Prediction：第一版主体不含；只有控制 Trigger / Closing / Risk 后仍出现稳定、独立、玩家可学习的排序差异时，才重开；
+- AttackTrigger：Escape-like 已准入；Injured / Struggling 暂缓（缺姿态输入）；Vulnerable Pause 删除作为 Trigger（与时间机会重复）；
+- 风险顾虑：当前没有任何生产输入，`RiskCost` 退化为 0；等 cue owner 与字段，不补造代理；
 - 完整自然度模型；
 - 非摄食咬击（护巢、领地、防御、烦躁）如何作为独立 family 组合；
 - Fish Condition 名单与生成方式留待专门 Bake / Owner 讨论；本轮沿用现行四个鱼况，不重定名单；
@@ -60,8 +60,8 @@
 
 ## 7. 下一轮收口顺序
 
-1. 裁定 Prediction 是否进入主体，或明确保留为可选局部代价；
-2. 为攻击诱因选定第一版准入状态；
-3. 确认风险顾虑的最低实现层；
-4. 用三个对齐案例（追赶、摄食意愿、警惕度）检查策略排序；
-5. 再进入生产标定。
+1. 为 Escape-like 选定第一版可生产事实（转向强度、burst 强度）与 prey-conditioned 判定；
+2. 决定 Risk cue 是否立项（TackleConspicuousness / EntryDisturbance 需要字段与 owner）；在此之前 `RiskCost` 保持 0；
+3. 补机会量 `L` 的覆盖与有效窗口模型，验证快搜与隐蔽方案的外部代价；
+4. 用 `proposal_c_strategy_probe.py` 的排序结果检查参数敏感度，再进入生产标定；
+5. Prediction 不进入本轮；有独立策略价值证据时再单独开题。

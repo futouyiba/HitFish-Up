@@ -87,6 +87,7 @@ ActualPresentation
 - [响应与机会契约](lure-response-proposal-c-response-opportunity.md)：投影、sibling 区间、`L × C` 与候选接入；
 - [工作案例](lure-response-proposal-c-worked-cases.md)：用反例检查每层是否真的区分了不同情况；
 - [开放决策](lure-response-proposal-c-open-decisions.md)：只保留尚未有 owner、尚未闭合或存在冲突的问题；
+- [第一轮玩法闭合审查](lure-response-proposal-c-first-round-closure.md)：AttackTrigger 准入、Risk 输入实证、策略排序 probe 与判断；
 - [设计图](../mockups/proposal-c-design-map.html)：面向阅读的图形版本。
 
 这些材料共同构成 Proposal C 的设计工作包，不替代已审核的 Current Contract。
