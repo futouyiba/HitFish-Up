@@ -2,7 +2,7 @@
 
 状态：Working Design / Candidate。本文只定义语义接口，不冻结生产参数或代码结构。
 
-口径来源：`docs/lure-response-joint-evaluation` 的 Working Closure（截至 `311ae70d`）。与旧 10-27 入口不一致处，以本文列出的来源文档为准。
+口径来源：`docs/lure-response-joint-evaluation` 的 Working Closure，按 `311ae70d` 快照核对；该分支此后仍有提交（当前 head `0d3a7de2`），本轮未逐条重新纳入。与旧 10-27 入口不一致处，以本文列出的来源文档为准。
 
 ## 1. 通用状态协议
 

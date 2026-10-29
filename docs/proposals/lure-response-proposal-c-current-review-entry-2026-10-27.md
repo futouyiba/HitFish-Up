@@ -12,11 +12,12 @@
 |---|---|
 | 主链、负向边界、计算顺序 | [设计骨架](lure-response-proposal-c-design-spine.md) |
 | 每层的输入、输出、状态与 owner | [语义契约](lure-response-proposal-c-semantic-contract.md) |
+| 五评价项的合成方式与边界 | [五评价项契约](lure-response-proposal-c-evaluation-items.md) |
 | 用反例检查设计 | [工作案例](lure-response-proposal-c-worked-cases.md) |
 | 未收口、无 owner 或冲突的问题 | [开放决策](lure-response-proposal-c-open-decisions.md) |
 | 图形化说明 | [设计图](../mockups/proposal-c-design-map.html) |
 
-口径来源：`docs/lure-response-joint-evaluation` 的 Working Closure（截至 `311ae70d`）。研究分支更新后，先回写设计包，再更新本入口。
+口径来源：本包按 `docs/lure-response-joint-evaluation` 的 `311ae70d` Working Closure 快照核对。该分支此后仍有提交（当前 head `0d3a7de2`，主要是对齐稿语义与视觉同步），本轮未逐条重新纳入；引用前先核对该分支当前 head。研究分支更新后，先回写设计包，再更新本入口。
 
 ## 2. 第一版主体
 

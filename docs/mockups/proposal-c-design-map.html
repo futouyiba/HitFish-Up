@@ -234,6 +234,24 @@
       </table>
     </section>
 
+    <section aria-labelledby="formulas-title">
+      <h2 id="formulas-title">每项怎么算</h2>
+      <table>
+        <caption>Working 形式；系数与 tail 参数仍待标定</caption>
+        <thead>
+          <tr><th scope="col">评价项</th><th scope="col">Working 合成</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>食物价值</td><td><code>clamp(BaseDietAffinity + SizePreferenceAdjustment + DietaryShiftDelta, 0, 1)</code></td></tr>
+          <tr><td>攻击诱因</td><td><code>TriggerBudget × TriggerIntensity</code>，预算约 0.10~0.15</td></tr>
+          <tr><td>追赶负担</td><td><code>K_close × u_close² × ActivityCostMultiplier</code>，其中 <code>u_close = max(0, q·cosθ)</code></td></tr>
+          <tr><td>风险顾虑</td><td><code>K_wary × Wariness × SuspicionLoad</code></td></tr>
+          <tr><td>摄食意愿门槛</td><td><code>M ≤ 0.8: 0.60 − 0.40M</code>；<code>M &gt; 0.8</code> 再减 <code>0.50(M − 0.8)</code></td></tr>
+        </tbody>
+      </table>
+      <p>食物价值不用多个匿名乘数连乘；活动度只改追赶倍率，不改速度上限；风险顾虑只放大已解析的可疑线索，没有线索就不凭空处罚。</p>
+    </section>
+
     <section aria-labelledby="status-title">
       <h2 id="status-title">状态不是零</h2>
       <ul class="chips">
@@ -285,7 +303,7 @@
       </ul>
     </section>
 
-    <p class="footnote">口径来源：<code>docs/lure-response-joint-evaluation</code> 的 Working Closure（截至 <code>311ae70d</code>）。本文与设计骨架、语义契约、工作案例、开放决策同属 Proposal C 设计包，不替代已审核的 Current Contract。</p>
+    <p class="footnote">口径来源：<code>docs/lure-response-joint-evaluation</code> 的 Working Closure，按 <code>311ae70d</code> 快照核对；该分支此后仍有提交（当前 head <code>0d3a7de2</code>）。本文与设计骨架、语义契约、五评价项契约、工作案例、开放决策同属 Proposal C 设计包，不替代已审核的 Current Contract。</p>
   </main>
 </body>
 </html>
