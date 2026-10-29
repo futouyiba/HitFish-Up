@@ -59,7 +59,7 @@ section{margin-top:34px}h2{font-size:26px;margin:0 0 10px}.lead{color:var(--mute
 <h2>3. 四条策略轴不是四个 Fish Condition</h2>
 <div class="grid g2">
   <div class="card"><span class="tag purple">现行 Fish Condition</span><div class="mini">鱼侧动态参数</div><p>Activity · Feeding Motivation · Diet Shift · Wariness</p></div>
-  <div class="card"><span class="tag blue">Response 评价结果</span><div class="mini">消费上游输入后得到</div><p>食物价值 · 攻击诱因 · 追赶负担 · 风险顾虑 · 出手门槛</p></div>
+  <div class="card"><span class="tag blue">Response 评价结果</span><div class="mini">消费上游输入后得到</div><p>食物价值 · 攻击诱因 · 追赶负担 · 风险顾虑 · 摄食意愿门槛</p></div>
 </div>
 <div class="flow" style="margin-top:16px"><div class="node"><strong>鱼况 / 静态配置 / 当前呈现</strong><span class="muted">上游输入</span></div><div class="arrow">→</div><div class="node"><strong>Response 子机制</strong><span class="muted">分责求值</span></div><div class="arrow">→</div><div class="node"><strong>五个评价结果</strong><span class="muted">进入出手余量</span></div><div class="arrow">→</div><div class="node"><strong>策略排序改变</strong><span class="muted">玩家换打法</span></div></div>
 </section>
@@ -72,8 +72,9 @@ section{margin-top:34px}h2{font-size:26px;margin:0 0 10px}.lead{color:var(--mute
 <span class="plus">+ 攻击诱因</span><br>
 <span class="minus">- 追赶负担</span><br>
 <span class="minus">- 风险顾虑</span><br>
-<span class="minus">- 摄食动机门槛</span><br><br>
+<span class="minus">- 摄食意愿门槛</span><br><br>
 出手余量 → Response C
+<div class="mini muted" style="margin-top:10px">摄食动机是 Fish Condition；摄食意愿门槛是 Response 评价项，由摄食动机移动。</div>
 </div>
 <div class="callout" style="margin-top:16px"><strong>第一版主体明确不含 Prediction。</strong> Prediction 只保留为诊断 / 待证明的局部代价；只有能证明独立、稳定的策略排序，才重新讨论是否进入主体。</div>
 </section>
@@ -95,13 +96,13 @@ section{margin-top:34px}h2{font-size:26px;margin:0 0 10px}.lead{color:var(--mute
 </section>
 
 <section>
-<h2>6. 追赶：Activity 是现行状态，CapacityModifier 只是新增假设</h2>
+<h2>6. 追赶：Activity 是现行状态，CapacityModifier 只是可选 Candidate</h2>
 <div class="split">
   <div class="side"><span class="tag green">Activity｜现行 Fish Condition</span><div class="mini">对主动追赶负荷的行为容忍</div><p class="muted">只调制 soft Closing cost，不修改物理追赶上限。</p><div class="metric">愿不愿追</div></div>
   <div class="merge">＋</div>
-  <div class="side"><span class="tag blue">CapacityModifier｜OPEN</span><div class="mini">当前可用运动能力修正</div><p class="muted">这是 90048b35 之后的新 Working Hypothesis。只有确有需要时，才由温度、溶氧等推导。</p><div class="metric">能不能追</div></div>
+  <div class="side"><span class="tag blue">CapacityModifier｜OPEN</span><div class="mini">当前可用运动能力修正</div><p class="muted">已在 <code>b2d58aab</code> 五评价项契约中列为可选 Candidate；是否需要仍 OPEN。只有确有需要时，才由温度、溶氧等推导。</p><div class="metric">能不能追</div></div>
 </div>
-<div class="formula" style="margin-top:16px">joint baseline：<br>ClosingCost = K × u_close² × ActivityCostMultiplier<br><br>新增假设（未确认）：<br>追赶状态倍率 = ActivityCostMultiplier / CapacityModifier²</div>
+<div class="formula" style="margin-top:16px">joint baseline：<br>ClosingCost = K × u_close² × ActivityCostMultiplier<br><br>可选 Candidate（未确认）：<br>追赶状态倍率 = ActivityCostMultiplier / CapacityModifier²</div>
 <div class="callout good" style="margin-top:16px"><strong>护栏：</strong>如果 ClosingLoad ≈ 0，低 Activity 不应凭空压低 Response。Activity 购买的是“有追赶要求时应该放多快”，不是泛化的“鱼懒所以什么都不咬”。</div>
 </section>
 
@@ -117,7 +118,7 @@ section{margin-top:34px}h2{font-size:26px;margin:0 0 10px}.lead{color:var(--mute
 <div class="grid g3">
   <div class="card case"><span class="tag orange">Case A｜追赶</span><div class="mini">快搜 vs 慢速 finesse</div><ul><li>适合追：快搜局部 C 仍可接受。</li><li>不适合追：高速 Closing 明显上升。</li><li>ClosingLoad≈0 时，低 Activity 不应额外扣分。</li></ul></div>
   <div class="card case"><span class="tag green">Case B｜摄食动机</span><div class="mini">普通口 vs 反应口</div><ul><li>高动机：普通优质猎物已经够。</li><li>低动机：合法攻击诱因帮助边缘目标跨线。</li><li>代价来自 Closing / Risk / L，不造 StrongStimulusPenalty。</li></ul></div>
-  <div class="card case"><span class="tag purple">Case C｜警戒度</span><div class="mini">直接强势 vs 隐蔽自然</div><ul><li>低警戒：直接方案仍有竞争力。</li><li>高警戒：同样暴露产生更强 Risk。</li><li>高速 / 转向不能自动变成匿名 Suspicion。</li></ul></div>
+  <div class="card case"><span class="tag purple">Case C｜警戒度</span><div class="mini">直接强势 vs 隐蔽自然</div><ul><li>低警戒：直接方案仍有竞争力。</li><li>高警戒：同样暴露产生更强 Risk。</li><li>高速 / 转向不能自动变成匿名 Suspicion。</li><li>环境压力若已提高警戒度，不再重复进入 SuspicionLoad。</li></ul></div>
 </div>
 </section>
 
@@ -133,7 +134,7 @@ section{margin-top:34px}h2{font-size:26px;margin:0 0 10px}.lead{color:var(--mute
 <section>
 <h2>10. 这次要对齐什么，刻意不闭合什么</h2>
 <div class="grid g2">
-<div class="card"><span class="tag green">需要对齐</span><ul><li>四个玩家策略方向与两端体验差异。</li><li>五项加性出手余量主体。</li><li>Prediction 不在第一版主体。</li><li>姿态颗粒通过一次 L × C 接入 Candidate。</li><li>垂直运动归 Opportunity seam，不进 Closing。</li><li>CapacityModifier 只作为新增假设评估。</li></ul></div>
+<div class="card"><span class="tag green">需要对齐</span><ul><li>四个玩家策略方向与两端体验差异。</li><li>五项加性出手余量主体。</li><li>Prediction 不在第一版主体。</li><li>姿态颗粒通过一次 L × C 接入 Candidate。</li><li>垂直运动归 Opportunity seam，不进 Closing。</li><li>CapacityModifier 只作为可选 Candidate 评估。</li></ul></div>
 <div class="card"><span class="tag red">刻意不闭合</span><ul><li>台钓 / 浮钓味型、混饵、窝料具体算法。</li><li>完整 Naturalness / Suspicion cue owner。</li><li>Fish Condition 的 Bake / 动态生成算法。</li><li>是否最终需要 CapacityModifier。</li><li>生产参数与最终曲线。</li><li>Opportunity / Spatial 的 L 正式 owner 与 vertical reducer。</li><li>真实 encounter geometry / reaction window / strike reach。</li><li>非摄食咬击与完整单位时间中鱼效率。</li></ul></div>
 </div>
 </section>

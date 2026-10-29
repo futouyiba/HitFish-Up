@@ -7,9 +7,10 @@
 本轮 rebase 参考：
 
 - `main@3be1dbaa81674adeab02de642d4d0941d0e4f59b`：术语、Authority、Groundbait / Recipe Candidate；
-- `90048b35ea345711807bfbe187a8bcd8388950a4`：Proposal C design package 对 joint closures 的最新整理。
+- `90048b35ea345711807bfbe187a8bcd8388950a4`：Proposal C design package 对 joint closures 的最新整理；
+- `b2d58aab`：五评价项契约，含摄食意愿门槛与 `CapacityModifier` 可选 Candidate。
 
-`90048b35` 自身仍是 Working Design / Candidate。本文吸收其已整理的 joint closure，但不把 Working seed 升格为生产规则。本文晚于该提交的新讨论，例如 `CapacityModifier`，仍明确标为 Working Hypothesis。
+`90048b35` 自身仍是 Working Design / Candidate。本文吸收其已整理的 joint closure，但不把 Working seed 升格为生产规则。`b2d58aab` 把 `CapacityModifier` 纳入可选 Candidate，仍不代表已确认需要。
 
 用途：用于一次路亚 Response 方向对齐。目标是统一体验目标、策略轴、算法骨架和第一版范围；不在这次会议里完成生产参数、完整自然度、Fish Condition 的生成算法或台钓 / 浮钓细节。
 
@@ -179,7 +180,7 @@ Candidate join
 - 风险顾虑
 
 当前出手要求
-- 摄食动机对应的出手门槛
+- 摄食意愿门槛（由摄食动机决定）
 
         ↓
       出手余量
@@ -195,8 +196,10 @@ Candidate join
 + 攻击诱因
 - 追赶负担
 - 风险顾虑
-- 摄食动机门槛
+- 摄食意愿门槛
 ```
+
+摄食动机 `Feeding Motivation` 是 Fish Condition；摄食意愿门槛是 Response 评价项，由摄食动机移动。两者分层命名，不混用。
 
 各子机制先把结果换算到统一的“出手余量”标尺，顶层只做竞争。
 
@@ -263,7 +266,7 @@ ClosingCost(theta)
 - `u_close >= 1` 不 hard-zero；
 - 没有追赶负荷时，低 Activity 不应凭空降低 Response。
 
-### CapacityModifier：本轮新增 Working Hypothesis
+### CapacityModifier：可选 Candidate（见 `b2d58aab` 五评价项契约）
 
 如果当前可用运动能力确实需要随温度、溶氧等动态修正，可以讨论一个派生中间量：
 
@@ -279,11 +282,11 @@ ClosingCost(theta)
 = ActivityCostMultiplier / CapacityModifier²
 ```
 
-但这不表示：
+`b2d58aab` 的五评价项契约已把 `CapacityModifier` 纳入可选 Candidate；是否真的需要、如何生成、是否持久化仍 OPEN。这不表示：
 
 - 已经确认需要 `CapacityModifier`；
 - `CapacityModifier` 是第五个 Fish Condition；
-- `90048b35` 已经认可这条新公式。
+- 选入 Candidate 等于已确认这条机制。
 
 ### 垂直运动的第一版边界
 
@@ -312,11 +315,11 @@ Closing
 
 希望购买：低警戒时直接 / 强势方案仍可用；高警戒时隐蔽 / 自然方案相对受益。
 
-本轮不闭合完整 Naturalness。`SuspicionLoad` 只能来自具名、独立拥有的风险线索；高速、频繁转向、低 prey support 不能自动生成匿名 Suspicion。
+本轮不闭合完整 Naturalness。`SuspicionLoad` 只能来自具名、独立拥有的风险线索；高速、频繁转向、低 prey support 不能自动生成匿名 Suspicion。风险顾虑只消费已经解析出的具体可疑线索，警戒度决定鱼对这些线索有多敏感；环境压力等上游因素如果已经改变警戒度，不再重复进入 `SuspicionLoad`，避免 `RiskCost` 被二次放大。
 
 ## 5.5 摄食动机：现在需要多强的理由才愿意为了食物出手
 
-摄食动机 `Feeding Motivation` 更适合作为门槛，而不是全局乘数。
+摄食动机 `Feeding Motivation` 更适合作为门槛，而不是全局乘数。它决定 Response 里的摄食意愿门槛；门槛本身是评价项，不是另一个 Fish Condition。
 
 ```text
 摄食动机高 → 出手门槛低
@@ -461,7 +464,7 @@ Recipe Facts
 + 攻击诱因
 - 追赶负担
 - 风险顾虑
-- 摄食动机门槛
+- 摄食意愿门槛
 → 出手余量
 → Response C
 ```
@@ -510,7 +513,7 @@ Recipe Facts
 → ClosingCost
 ```
 
-`CapacityModifier` 作为新增 Working Hypothesis 单独评估，不要求会前决定长期存在。
+`CapacityModifier` 已作为可选 Candidate 记入五评价项契约；是否需要的 OPEN 结论不影响本轮策略对齐。
 
 ### B. 攻击诱因第一版准入范围
 
