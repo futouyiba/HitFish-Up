@@ -2,9 +2,11 @@
 
 状态：Working Design / Candidate。本文只定义语义接口，不冻结生产参数或代码结构。
 
-## 1. 通用输入状态
+口径来源：`docs/lure-response-joint-evaluation` 的 Working Closure（截至 `311ae70d`）。与旧 10-27 入口不一致处，以本文列出的来源文档为准。
 
-所有层都使用以下输入状态。`ResolutionIncomplete` 是归约器对未能形成最终标量的外层输出，不是每个原子输入事实都必须携带的状态。
+## 1. 通用状态协议
+
+`ResolutionIncomplete` 是归约器对未能形成最终标量的外层输出，不是每个原子输入事实都必须携带的状态。
 
 | 状态 | 含义 | 可否当作数值 |
 |---|---|---|
@@ -16,12 +18,13 @@
 | `Reject` | 类型硬边界 | 作为 typed zero，不进入连续公式 |
 | `ResolutionIncomplete` | 归约阶段仍无法形成最终标量 | 否 |
 
-状态转移规则：
+转移规则：
 
 - `Unknown` 或 `NotConfigured` 进入可能改变输出的归约时，输出 `ResolutionIncomplete`；
-- `NoMatch` 只有在适用规则明确给出数值零或其他数值结果时，才转为对应的 `ResolvedNonResponsive` 或数值结果；否则保持非数值状态并由归约器输出 `ResolutionIncomplete`；
+- `NoMatch` 只在适用规则明确给出数值时转换：数值 `0` → `ResolvedNonResponsive`；正值 → `ResolvedResponsive`；
+- 规则只给出非数值的 NoMatch（例如“条件不成立”但没有定义输出值）时，保持 `NoMatch`，由归约器输出 `ResolutionIncomplete`；
 - 已解析的数值 `0` 与 `Unknown`、`NotConfigured` 不同；
-- `Reject` 直接产生 typed hard zero，不转成普通 `ResolvedNonResponsive`。
+- `Reject` 直接产生 typed hard zero，不转成普通 `ResolvedNonResponsive`，也不写成超大 cost。
 
 ## 2. ActualPresentation
 
@@ -29,7 +32,7 @@
 
 - 呈现实例 ID、装配版本和连续段 ID；
 - 带时间戳的主体位置、速度或可复算轨迹；
-- 环境关系，例如水面、底部和水流参照；
+- 环境关系：水面、底部、水流参照；
 - 按需提供的局部部件记录；
 - 每项事实的单位、参考系、有效时段、来源和解析状态。
 
@@ -62,28 +65,37 @@ PresentationFact = {
 
 ### 输出
 
-按猎物类型组织的支持值或支持区间：
+按猎物类型组织的 support，范围 `[0,1]`，允许区间或状态：
 
 ```text
 PreySupport[type] = value | [lower, upper] | Unknown | NotConfigured | NoMatch
 ```
 
-支持值表示当前事实支持该解释的程度。它不是概率，也不要求各类型相加为 1。
+### 数值语义
+
+support 不是排序分数，而是 interpretation retention scale（来源：`lure-response-proposal-c-support-scale-contract.md`）：
+
+```text
+support = 0    → 该解释不贡献 Feeding response
+support = 1    → reference full-support，不衰减
+0 < support < 1 → 按同一比例保留该解释的贡献
+```
+
+如果某种证据需要非线性压缩、阈值或饱和，在猎物解释层完成，不在 Response 再投影一次。
 
 ### 约束
 
 - 同一呈现可以支持多个猎物解释；
 - 同一证据重复登记不叠加；
-- 同级证据的替代组合可取最强值，但不规定后续响应也取最大值；
-- `NoMatch` 只有在适用规则已完整检查且规则明确返回零时，才能作为 `ResolvedNonResponsive` 进入连续响应；
+- 同级证据的替代组合取最强值；
 - 未覆盖的猎物类型保持 `NotConfigured`，不自动填零；
-- 已配置且规则完整检查后没有支持，才可输出 `NoMatch` 或规则定义的零。
+- 规则完整检查后没有支持，才输出 `NoMatch` 或规则定义的零。
 
 ## 4. PreyConditionedState
 
 ### 输入
 
-- PreyInterpretation 的支持结果和证据来源；
+- PreyInterpretation 的结果和证据来源；
 - ActualPresentation 的事实和持续记忆；
 - 对应猎物类型的状态规则。
 
@@ -92,25 +104,17 @@ PreySupport[type] = value | [lower, upper] | Unknown | NotConfigured | NoMatch
 状态维度、事件和时序关系分开保存：
 
 ```text
-StateDimension = {
-  name,
-  value,
-  status,
-  evidence,
-  observed_interval
-}
-
-StateEvent = {
-  name,
-  start,
-  end,
-  confirmation_time,
-  status,
-  evidence
-}
+StateDimension = { name, value, status, evidence, observed_interval }
+StateEvent     = { name, start, end, confirmation_time, status, evidence }
 ```
 
-示例状态包括水面、近底、移动、低位移、上升、下落、移动后停留和失衡样下沉。状态名称不自动代表生物原因。
+同时输出攻击触发强度：
+
+```text
+TriggerIntensity_p ∈ [0,1]
+```
+
+它由 prey-conditioned state interpreter 完成语义判断后给出，不是 raw turn magnitude、burst speed 或 event count（来源：`lure-response-proposal-c-state-trigger-intensity-contract.md`）。
 
 ### 约束
 
@@ -118,118 +122,178 @@ StateEvent = {
 - 缺少前史时，当前状态可以已知，前史保持未知；
 - 过程事件必须保存顺序、时间和连续性；
 - 不用一个窗口平均值替代有序事件；
-- 不把状态标签直接转成 bonus、penalty 或猎物身份变化。
+- 不把状态标签直接转成 bonus、penalty 或猎物身份变化；
+- 攻击诱因只表达“已被解释为可接受猎物后，当前状态是否额外促发出手”，不承载领地、护巢、烦躁、调查等非摄食语义（来源：`lure-response-proposal-c-attack-trigger-strategy-contract.md`）。
 
 ## 5. FishCondition
 
-### 输入
+### 五个评价项
 
-- 已解析的 CurrentFoodValue 或 typed `Reject`；
-- FeedingMotivation；
-- StateTriggerValue；
-- ClosingCost、PredictionCost、RiskCost；
-- 这些量的来源、适用范围和解析状态。
+```text
+FoodValue
+StateTriggerValue
+ClosingCost(theta)
+RiskCost
+WillingnessThreshold(Motivation)
+```
 
-### 输出
+Prediction 不在第一版主体内，作为待证明的局部代价保留。
 
-每个量先保留自己的语义和状态，再形成 `DecisionMargin`：
+### 5.1 食物价值
+
+```text
+CurrentFoodValue
+= clamp(BaseDietAffinity + SizePreferenceAdjustment + DietaryShiftDelta, 0, 1)
+```
+
+- `Reject` 是连续轴外的 typed hard boundary；
+- `Poor=0` 是合法连续值；
+- FoodValue 与 Motivation 分开。
+
+### 5.2 攻击诱因
+
+```text
+StateTriggerValue_p
+= TriggerBudget × TriggerIntensity_p
+
+TriggerBudget ≈ 0.10 ~ 0.15   # Working effect-size budget
+```
+
+Response 不再对原始轨迹特征做第二套 Trigger 解释。
+
+### 5.3 摄食意愿
+
+```text
+M <= 0.80:
+    threshold = 0.60 - 0.40 * M
+
+M > 0.80:
+    threshold = 0.60 - 0.40 * M - 0.50 * (M - 0.80)
+```
+
+- `M=0.5` 时 threshold 仍锚定 `Marginal=0.40`；
+- 普通区间保持基准斜率 `0.40`；
+- 只有极高 Motivation 进入额外 tail relief，让 Poor 出现窄弱响应窗口，而不压垮中低 Motivation 的 Good（来源：`lure-response-proposal-c-poor-reject-separation.md`，提交 `d656e938`）。
+
+旧 `K_mot=0.60` 的全轴调整已被撤回复。`Reject` 任何情况下不复活。
+
+### 5.4 追赶负担
+
+```text
+q = horizontal lure speed relative to water / InterceptSpeedLimit
+u_close(theta) = max(0, q * cos(theta))
+
+ClosingCost(theta) = K_close * u_close(theta)^2 * ActivityCostMultiplier(Activity)
+```
+
+- `InterceptSpeedLimit` 只表达鱼种 / size cohort 的追赶能力，不受 Activity 修改；
+- Activity 表达“愿意为追赶付出多少行为代价”，只调制负担倍率（来源：`lure-response-proposal-c-activity-closing-cost-contract.md`、`lure-response-proposal-c-activity-motivation-separation.md`）；
+- Activity 与 FeedingMotivation 是两个正交问题，不能都退化成“鱼现在积极不积极”；
+- `u_close >= 1 → hard-zero` 已撤回；
+- Closing 只解释“当前运动是否把已有机会沿径向带离鱼”，不单独承担完整高速惩罚（来源：`lure-response-proposal-c-soft-closing-fast-burst-regression.md`）；
+- 垂直运动不进入 `u_close`；它按候选归属交给 Spatial / Opportunity 的垂直可交互窗口处理。该 seam 的正式 owner 尚未落仓，见[开放决策](lure-response-proposal-c-open-decisions.md)（来源：`lure-response-proposal-c-vertical-motion-ownership.md`）。
+
+### 5.5 风险顾虑
+
+```text
+RiskCost = K_wary * Wariness * SuspicionLoad
+```
+
+`SuspicionLoad` 只能来自具名、独立拥有的风险线索。禁止 `1 - prey_support`、高速、频繁转向自动生成 SuspicionLoad。
+
+## 6. DecisionMargin
 
 ```text
 DecisionMargin(theta)
 = CurrentFoodValue
 + StateTriggerValue
 - ClosingCost(theta)
-- PredictionCost
 - RiskCost
 - WillingnessThreshold(FeedingMotivation)
 ```
 
-只有所有必需输入已解析时，才输出数值 `DecisionMargin`。任一未知输入可能改变结果时，输出 `ResolutionIncomplete`。
+若未来证明 Prediction 能产生独立策略排序，再作为额外负项加入；当前不加入主体。
 
-### 约束
+### 可补偿性
 
-- FoodValue 与 FeedingMotivation 分开；
-- Activity 只影响 soft Closing cost，不降低 `InterceptSpeedLimit`；
-- sudden turn 可以同时提供 StateTriggerValue 和 PredictionCost，但不能产生第三个匿名作用；
-- high speed、low prey support 和 pause 不自动生成 SuspicionLoad；
-- `Reject` 不能被 Motivation、Trigger 或 DietaryShift 复活。
+加法表达的是“同一出手余量标尺上的可补偿关系”（来源：`lure-response-proposal-c-decision-margin-compensability.md`）：
 
-## 6. ConditionalResponse
+- 正向 soft evidence：FoodValue、StateTriggerValue；
+- 负向 soft burden：ClosingCost、RiskCost，可被足够高的价值、触发或 Motivation 部分补偿；
+- Motivation 不是奖励项，而是移动门槛。
 
-### 输入
+不可补偿语义必须在进入 Margin 前处理：
 
-已解析的 `DecisionMargin(theta)`，以及本轮采用的 projection anchors。
+- `Reject` → typed zero；
+- `Unknown / NotConfigured` → `ResolutionIncomplete`，不输出标量；
+- 未来若拿到合法的 encounter geometry / reaction-window contract，可引入 `HardInterceptionInfeasible` typed zero，但不能用超大 ClosingCost 冒充。
 
-### 输出
+## 7. ConditionalResponse
 
 ```text
-C(theta) = clamp((Margin(theta) - M0) / (M1 - M0), 0, 1)
+C(Margin) = clamp((Margin - M0) / (M1 - M0), 0, 1)
+
+Working: M0 = 0.00, M1 = 0.40
 ```
 
-`M0` 和 `M1` 是 calibration anchors，不是物理常数或生产批准值。
+来源：`lure-response-proposal-c-margin-response-projection.md`（提交 `5af7515b`）。旧 `M1=0.30` 已被取代。
 
-### 约束
+```text
+Margin <= 0    → ResolvedNonResponsive, C = 0
+0 < Margin     → 0 < C <= 1
+```
 
-- `ResolutionIncomplete` 不进入 projection；
-- 已解析不响应输出 `C=0`；
-- 已解析响应输出 `0<C<=1`；
+约束：
+
+- `ResolutionIncomplete` 不进入投影；
 - 先在每个 latent bearing 计算，再聚合；
-- 不能先平均 Margin 再投影。
+- 不能先平均 Margin 再投影；
+- 不能先平均 Margin 再加 time bonus。
 
-## 7. PreyModeResponse
+## 8. PreyModeResponse
 
-对同一 Feeding route 的 sibling alternatives，可以使用替代聚合：
-
-```text
-C_prey = prey_support × E_theta[C(theta)]
-C_feed = max(sibling prey responses)
-```
-
-但 Unknown sibling 必须使用上下界：
+同一 Feeding route 的 sibling alternatives 使用有界部分解析（来源：`lure-response-proposal-c-sibling-partial-resolution.md`）：
 
 ```text
-known_lower_bound = max(known resolved sibling responses)
-possible_upper_bound = max(
-  known_lower_bound,
-  unresolved siblings' allowed upper bounds
-)
+每条 sibling path 携带区间：C_i ∈ [L_i, U_i]
+
+L_feed = max_i(L_i)
+U_feed = max_i(U_i)
 ```
 
-只有未解析路径不可能改变 winner，或上下界收敛时，才输出最终 scalar；否则保持 `ResolutionIncomplete`。这一规则仍是 Working seam，不是 production aggregation contract。
+- `L_feed == U_feed` 时才输出最终标量；
+- 否则保持 `ResolutionIncomplete`，携带 `response_bounds`，不可进入 roll；
+- `Unknown` 不等于 0，也不因为有已解析 sibling 就直接忽略未解析路径；
+- 已解析 sibling 可以把区间压缩，不能凭空填满。
 
-只有同一 `presentation_segment_id`、同一局部机会窗口和同一 Feeding route 的 sibling alternatives 才能进入同一次 sibling 聚合。机会记录由 TemporalOpportunity owner 创建和去重；PreyModeResponse 只提供聚合输入，不为每个猎物解释各自创建独立机会。
+## 9. Opportunity join
 
-机会去重发生在 sibling 聚合之后、Candidate retention 之前：PreyModeResponse 先把同一路径的 sibling responses 收敛成一个 `C_feed`，再由 TemporalOpportunity owner 用 opportunity key 创建或复用一条机会记录。
-## 8. TemporalOpportunity
+来源：`lure-response-proposal-c-opportunity-integration-closure.md`。
 
-### 输入
-
-- 已解析的瞬时 `C(t)`；
-- opportunity owner 提供的 exposure；
-- 明确的时间窗口、局部范围、单位和连续性。
-
-### 输出
+第一版不在 Response 内新增连续 `ExposureRate(t)`，也不由 Response 按持续时间积分。职责拆分为：
 
 ```text
-instantaneous response C(t)
-× temporal / local opportunity exposure
-→ accumulated opportunity
-→ Candidate retention
+姿态颗粒 / semantic presentation grain
+→ Response：计算该颗粒的 conditional response C
+
+姿态颗粒 → Opportunity / Spatial：计算该颗粒的 native opportunity support L
+
+Candidate join
+→ q = L × C
+→ Opportunity Reduce
+→ NativeCandidateSnapshot
 ```
 
-### 约束
+- `L × C` 只乘一次，Candidate 后段不重复乘 Response；
+- 时间、停留、穿越有效区域、覆盖范围不进入出手余量；
+- 垂直运动通过“多久处在可交互垂直区域”影响 `L`；该窗口的具体输出形态与正式 owner 由 Opportunity / Spatial 侧决定，当前尚未落仓，属候选边界；
+- 若既有 Candidate pipeline 已把 `L` 定义为 opportunity 侧的量，复用该量，不另造第二个 Exposure multiplier。
 
-- 未配置或无法解析的 exposure 不能当作零曝光；
-- 已解析的零曝光才表示没有机会；
-- 归约器必须明确按事件窗口或采样时段累积；
-- 不把停留时长直接放进 `DecisionMargin`；
-- Candidate 后段不得再次乘 Response。
+## 10. CandidateRetention
 
-## 9. CandidateRetention
+Candidate owner 接收 Opportunity Reduce 的结果，生成 native contribution。Proposal C 不重新定义生产 reducer，也不把 Candidate 结果反写成上游响应。
 
-Candidate owner 接收 Opportunity Reduce 的结果，并生成 native contribution。Proposal C 不重新定义 Candidate 的生产 reducer，也不把 Candidate 结果反写成上游响应。
-
-## 10. 证据追溯
+## 11. 证据追溯
 
 每个数值、区间或状态至少能追溯到：
 
