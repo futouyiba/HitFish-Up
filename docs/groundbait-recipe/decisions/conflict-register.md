@@ -78,7 +78,7 @@
 - **主张 B**：Groundbait Candidate 只有 `persistence / turnover`，没有 overfeed、历史累积、补窝频率和跨 session 语义。出处：`candidate/physical-release.md` §2、§6。
 - **冲突点**：如果只做“越多越好”的释放，会丢失 overfeed 这个非单调策略轴；如果直接并入，又没有仓内证据和位置。
 - **影响**：Physical Release、Feeding Place State、Fish Condition、补窝玩法。
-- **暂定处理**：`KEEP_OPEN`。外部研究只作证据线索；是否首版纳入、放在 Feeding Place 还是 Fish Condition，待 Owner 决定。
+- **暂定处理**：`KEEP_OPEN`。外部研究只作证据线索；是否首版纳入、放在 Feeding Place 还是 Fish Condition，待 Owner 决定。状态转移接口见 `candidate/physical-release.md` §8。
 - **裁决方**：Owner。
 
 ### C-08｜发现与趋近的阶段划分

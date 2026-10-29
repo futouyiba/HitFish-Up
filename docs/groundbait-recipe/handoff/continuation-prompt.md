@@ -49,8 +49,9 @@ Step 1 完成：`candidate/edible-size-gold-fixture.md`。
 Step 2 完成：`candidate/particle-distribution.md` 的 Ingredient → 配方分布、配方分布 → Feeding Place、守恒账本和载体隔离。
 Step 3 完成：`candidate/food-aggregation.md` 的同 Target 合并、Target 级饱和和多 Target 聚合边界；多 Target 算子仍为 OPEN。
 Step 4 完成：`candidate/flavor-and-avoidance.md` 的类型集合分支、小药成本和稀疏 Avoidance；连续强度分支仍阻塞。
+Step 5 完成：`candidate/physical-release.md` 的离散时间状态转移、四份守恒账本和线索分离。
 
-下一步是 Step 5 Physical Release。进入前先确认是否继续；不自动进入 Attraction、Retention 或完整 Recipe Grammar。
+下一步是 Step 6，判断 Attraction / Retention 是否需要独立模块。进入前先确认是否继续；不自动进入完整 Recipe Grammar。
 
 如果讨论开始扩张到 Attraction、Retention、Recipe Grammar、Food Taxonomy 或 Flavor Taxonomy，就停下来，说明已经偏离当前工作项。
 
