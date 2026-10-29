@@ -20,6 +20,10 @@
 | 圆桌权重表 | Roundtable Weight List | 抽鱼前的候选权重列表 |
 | 挤占 | Crowding-out | 圆桌抽鱼中的候选竞争 |
 | 配方事实 | Recipe / Ingredient Facts | 原料和配比提供的事实 |
+| 食物目标 | Food / Food Target | 可摄食目标，不是味型 |
+| 风味 / 化学线索 | Flavor / Chemical Cue | 可感知的化学线索 |
+| 可食利用 | Edible Utilization | 可食颗粒中被有效利用的份额 |
+| 响应聚合 | Response Aggregation | 候选输出到 Response Stage 的映射 |
 | 配方角色 | Recipe Role | 玩家在配方里赋予 Ingredient 的功能角色，不是原料分类 |
 | 物理释放 | Physical Release | 配方状态到摄食地点状态的转换 |
 | 可食颗粒 | Edible Particle | 进入尺寸响应的实体可食部分 |
@@ -131,18 +135,18 @@ Food、Flavor、Particle、Physical Release 各自进入主脊的不同位置，
 - “天气直接切换味型偏好”目前证据不足，不作为候选规则；天气等环境输入优先进入现有 Fish Condition 语义。
 - 最终是否存在单一 `RecipeFit` 尚未决定。Attraction、Retention、Ingestion、Selection 可能需要保留为不同语义，不能因为公式整齐而提前相加。当前判断是 Attraction 和 Retention 都不独立成模块，见 `decisions/attraction-retention-verdict.md`。
 
-当前进度停在 Step 7：
+## 当前状态
 
-- Step 0 已完成：Ingredient 与 Recipe Role、物理颗粒与可食颗粒、Edible Size 输出语义。
-- Step 1 已完成：`candidate/edible-size-gold-fixture.md`。
-- Step 2 已完成：`candidate/particle-distribution.md` 的 Ingredient → 配方分布、配方分布 → Feeding Place、守恒账本和载体隔离。
-- Step 3 已完成：`candidate/food-aggregation.md` 的同 Target 合并、Target 级饱和和多 Target 聚合边界。多 Target 算子仍为 OPEN。
-- Step 4 已完成：`candidate/flavor-and-avoidance.md` 的类型集合分支、小药成本和稀疏 Avoidance。连续强度分支仍阻塞。
-- Step 5 已完成：`candidate/physical-release.md` 的离散时间状态转移、四份守恒账本和线索分离。
-- Step 6 已完成：`decisions/attraction-retention-verdict.md` 判断 Attraction / Retention 暂不独立成模块。
-- Step 7 已完成：`candidate/response-aggregation-map.md` 把四条候选输出映射到现有 Response Stage，不建立单一 `RecipeFit`。
+候选链已在接口层闭合：
 
-候选链在接口层闭合。`AdaptationCoeff` 公式、组件聚合、模式聚合和 Owner 裁决仍是 OPEN。
+- Size：可食尺寸约束、Gold Fixture 和载体隔离已完成。
+- Food：同 Target 先合并再饱和；多 Target 算子 OPEN。
+- Flavor：签名集合分支可用；连续强度分支阻塞。
+- Physical Release：离散时间状态转移和守恒账本已定义。
+- Attraction / Retention：判断为不独立成模块。
+- Response Aggregation：四条候选输出映射到现有 Response Stage，不建立单一 `RecipeFit`。
+
+`AdaptationCoeff` 公式、组件聚合、模式聚合和冲突登记里的 OPEN 项仍未收口。
 
 ## 研究输入
 

@@ -42,18 +42,11 @@ Recipe Facts
 - Physical Release 的产物是 Feeding Place 状态，不是 `release_score`；
 - 粒径既可作为鱼侧对象属性，也可作为物理对象属性，两个影响必须经不同中间状态进入，不能跨链总加权。
 
-当前工作项：
+当前状态：
 
-Step 0 完成：Size 前置语义闭合。
-Step 1 完成：`candidate/edible-size-gold-fixture.md`。
-Step 2 完成：`candidate/particle-distribution.md` 的 Ingredient → 配方分布、配方分布 → Feeding Place、守恒账本和载体隔离。
-Step 3 完成：`candidate/food-aggregation.md` 的同 Target 合并、Target 级饱和和多 Target 聚合边界；多 Target 算子仍为 OPEN。
-Step 4 完成：`candidate/flavor-and-avoidance.md` 的类型集合分支、小药成本和稀疏 Avoidance；连续强度分支仍阻塞。
-Step 5 完成：`candidate/physical-release.md` 的离散时间状态转移、四份守恒账本和线索分离。
-Step 6 完成：`decisions/attraction-retention-verdict.md` 判断 Attraction / Retention 暂不独立成模块。
-Step 7 完成：`candidate/response-aggregation-map.md` 把四条候选输出映射到现有 Response Stage，不建立单一 `RecipeFit`。
+候选链已在接口层闭合。Size、Food、Flavor、Physical Release、Attraction / Retention 判断和 Response Aggregation 映射都已落文档。
 
-候选链在接口层闭合。剩余工作是 Owner 决策和数值公式，不是继续扩写候选结构。`AdaptationCoeff` 公式、组件聚合、模式聚合和冲突登记里的 OPEN 项仍未收口。
+剩余工作是 Owner 决策和数值公式：`AdaptationCoeff`、组件聚合、模式聚合、多 Target 算子、化学强度准入、Local Population / Residence、Overfeeding，以及冲突登记里的 OPEN 项。
 
 如果讨论开始扩张到 Attraction、Retention、Recipe Grammar、Food Taxonomy 或 Flavor Taxonomy，就停下来，说明已经偏离当前工作项。
 
