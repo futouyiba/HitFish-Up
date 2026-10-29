@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>路亚 Response 对齐稿｜图形化会议版</title>
+<style>
+  :root{
+    --bg:#f4f6f8;
+    --card:#ffffff;
+    --ink:#15202b;
+    --muted:#667085;
+    --line:#d8dee6;
+    --blue:#2563eb;
+    --blue-soft:#eaf1ff;
+    --green:#1f8a5b;
+    --green-soft:#e8f7f0;
+    --orange:#c96b18;
+    --orange-soft:#fff2e6;
+    --red:#b54747;
+    --red-soft:#fdecec;
+    --purple:#7a4db3;
+    --purple-soft:#f2ebfb;
+    --shadow:0 8px 28px rgba(17,24,39,.07);
+    --radius:18px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:linear-gradient(180deg,#f7f9fb 0,#eef2f6 100%);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.65;
+  }
+  .page{max-width:1180px;margin:0 auto;padding:44px 22px 80px}
+  .hero{
+    background:linear-gradient(135deg,#101828,#1f2f46 60%,#244b78);
+    color:#fff;border-radius:26px;padding:44px 46px;box-shadow:var(--shadow);
+  }
+  .eyebrow{font-size:13px;letter-spacing:.08em;text-transform:uppercase;opacity:.75}
+  h1{font-size:38px;line-height:1.18;margin:10px 0 14px}
+  .hero p{max-width:900px;font-size:18px;color:#dce5ef;margin:0}
+  .badge-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}
+  .badge{font-size:13px;padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.18)}
+  section{margin-top:34px}
+  .section-title{font-size:26px;margin:0 0 10px}
+  .lead{color:var(--muted);max-width:920px;margin:0 0 18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px}
+  .grid{display:grid;gap:16px}
+  .g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mini-title{font-weight:700;font-size:17px;margin-bottom:8px}
+  .muted{color:var(--muted)}
+  .tag{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:5px 9px;margin-bottom:9px}
+  .t-blue{background:var(--blue-soft);color:var(--blue)}
+  .t-green{background:var(--green-soft);color:var(--green)}
+  .t-orange{background:var(--orange-soft);color:var(--orange)}
+  .t-purple{background:var(--purple-soft);color:var(--purple)}
+  .t-red{background:var(--red-soft);color:var(--red)}
+  .flow{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+  .flow .node{flex:1 1 150px;min-width:145px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center;position:relative}
+  .flow .arrow{display:flex;align-items:center;color:#98a2b3;font-size:24px;padding:0 2px}
+  .node strong{display:block;margin-bottom:5px}
+  .formula{background:#0f172a;color:#e5eef9;border-radius:16px;padding:22px 24px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:16px;overflow:auto}
+  .formula .plus{color:#87d7a8}.formula .minus{color:#ffb3a8}.formula .eq{color:#8fb8ff}
+  .scope-card{height:100%;border-top:4px solid #98a2b3}
+  .scope-card.route{border-top-color:var(--blue)}
+  .scope-card.float{border-top-color:var(--green)}
+  .scope-card.tai{border-top-color:var(--orange)}
+  .balance-wrap{display:grid;gap:14px}
+  .balance{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px 18px;display:grid;grid-template-columns:150px 1fr 170px;gap:16px;align-items:center}
+  .balance .axis{font-weight:800}
+  .beam{position:relative;height:50px}
+  .beam:before{content:"";position:absolute;left:4%;right:4%;top:23px;height:4px;border-radius:4px;background:linear-gradient(90deg,#5b8def,#c5ccd6 50%,#58a778)}
+  .beam:after{content:"";position:absolute;left:50%;top:15px;width:18px;height:18px;background:#101828;transform:translateX(-50%) rotate(45deg);border-radius:3px}
+  .ends{display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-top:32px}
+  .shift{font-size:13px;color:var(--muted)}
+  .matrix{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border:1px solid var(--line);border-radius:16px;background:#fff}
+  .matrix th,.matrix td{padding:14px 14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+  .matrix th:last-child,.matrix td:last-child{border-right:0}.matrix tr:last-child td{border-bottom:0}
+  .matrix th{background:#f8fafc;font-size:13px;color:#475467}
+  .strategy-chain{display:grid;grid-template-columns:1fr 50px 1fr 50px 1.25fr;align-items:center;gap:8px}
+  .strategy-box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;min-height:130px}
+  .strategy-arrow{text-align:center;font-size:28px;color:#98a2b3}
+  .callout{border-left:5px solid var(--blue);background:var(--blue-soft);padding:18px 20px;border-radius:14px}
+  .warn{border-left-color:var(--orange);background:var(--orange-soft)}
+  .good{border-left-color:var(--green);background:var(--green-soft)}
+  .split{display:grid;grid-template-columns:1fr 60px 1fr;align-items:center;gap:12px}
+  .split .side{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;min-height:160px}
+  .merge{text-align:center;font-size:30px;color:#98a2b3}
+  .metric{font-size:32px;font-weight:800;letter-spacing:-.02em}
+  .small{font-size:13px;color:var(--muted)}
+  .case{border-radius:16px;border:1px solid var(--line);background:#fff;padding:20px}
+  .case h3{margin:0 0 10px;font-size:18px}
+  ul{margin:8px 0 0;padding-left:20px}
+  .footer{margin-top:42px;color:var(--muted);font-size:13px;text-align:center}
+  @media(max-width:880px){
+    .g3,.g4,.g2{grid-template-columns:1fr}
+    .balance{grid-template-columns:1fr}
+    .strategy-chain{grid-template-columns:1fr}
+    .strategy-arrow{transform:rotate(90deg)}
+    .split{grid-template-columns:1fr}.merge{transform:rotate(90deg)}
+    h1{font-size:31px}.hero{padding:32px 26px}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="hero">
+    <div class="eyebrow">Meeting Alignment Draft · Candidate</div>
+    <h1>路亚 Response：把鱼情变化转成玩家策略变化</h1>
+    <p>这次会议不审批所有数值，也不设计完整鱼类 AI。目标是先对齐：我们想让玩家根据什么鱼情改变什么打法，为了做到这一点，Response 需要拆成哪些评价问题。</p>
+    <div class="badge-row">
+      <span class="badge">本轮重点：路亚</span>
+      <span class="badge">后续带回：台钓 / 浮钓</span>
+      <span class="badge">不定生产参数</span>
+      <span class="badge">不定最终 Fish Condition 数量</span>
+    </div>
+  </header>
+
+  <section>
+    <h2 class="section-title">1. Response 是共同问题，但三种钓法的重点不同</h2>
+    <p class="lead">共同问题是：当前这个食物目标，以当前方式呈现给当前状态的鱼，鱼有多愿意出手。不同钓法只是输入重心不同。</p>
+    <div class="grid g3">
+      <div class="card scope-card route">
+        <span class="tag t-blue">路亚｜本轮重点</span>
+        <div class="mini-title">更偏运动与呈现</div>
+        <p class="muted">拟饵形态、运动、速度、停顿、贴底、水层、猎物状态。</p>
+        <strong>共同仍要解决：选什么饵。</strong>
+      </div>
+      <div class="card scope-card tai">
+        <span class="tag t-orange">台钓｜后置</span>
+        <div class="mini-title">更偏食物组合与窝点</div>
+        <p class="muted">成分、味型、混合、物性、雾化/残留、窝点，同时也有钩饵位置和状态。</p>
+        <strong>共同仍要解决：食物是否匹配。</strong>
+      </div>
+      <div class="card scope-card float">
+        <span class="tag t-green">浮钓｜后置</span>
+        <div class="mini-title">更偏钩饵、水层与漂流</div>
+        <p class="muted">钩饵 / 天然饵、水层、漂流、状态；具体玩法也可能涉及味型、混合或窝料。</p>
+        <strong>共同仍要解决：食物与鱼情匹配。</strong>
+      </div>
+    </div>
+    <div class="callout good" style="margin-top:16px"><strong>本轮策略：</strong>先用路亚把 Response 的评价骨架闭合，再把可复用的 Takeaway 带回台钓和浮钓。</div>
+  </section>
+
+  <section>
+    <h2 class="section-title">2. 我们真正想买的是四种“策略翻转”</h2>
+    <p class="lead">每个鱼侧状态轴，都应该改变两种玩家方案的相对收益。状态量存在的理由，不是“生物学上听起来重要”，而是它能改变玩家打法。</p>
+    <div class="balance-wrap">
+      <div class="balance">
+        <div class="axis">食性 / 食物价值</div>
+        <div class="beam"><div class="ends"><span>广谱 / 泛用</span><span>高匹配 / 专攻</span></div></div>
+        <div class="shift">食性越明确 → 右侧越值</div>
+      </div>
+      <div class="balance">
+        <div class="axis">追赶状态</div>
+        <div class="beam"><div class="ends"><span>快速搜索</span><span>慢速 / finesse</span></div></div>
+        <div class="shift">越不适合追 → 右侧越值</div>
+      </div>
+      <div class="balance">
+        <div class="axis">摄食意愿</div>
+        <div class="beam"><div class="ends"><span>普通呈现</span><span>强诱因 / 反应口</span></div></div>
+        <div class="shift">意愿越低 → 右侧越重要</div>
+      </div>
+      <div class="balance">
+        <div class="axis">警惕度</div>
+        <div class="beam"><div class="ends"><span>直接 / 强势</span><span>隐蔽 / 自然</span></div></div>
+        <div class="shift">警惕越高 → 右侧越值</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">3. 一张表把“鱼状态 × 玩家选择 × Response 机制”串起来</h2>
+    <table class="matrix">
+      <thead><tr><th>鱼侧状态轴</th><th>玩家选择 A</th><th>玩家选择 B</th><th>Response 内发生什么</th></tr></thead>
+      <tbody>
+        <tr><td><strong>食性匹配</strong></td><td>广谱 / 泛用</td><td>高匹配 / 专攻</td><td>食物价值改变</td></tr>
+        <tr><td><strong>追赶状态</strong></td><td>快速搜索</td><td>慢速 / finesse</td><td>追赶负担改变</td></tr>
+        <tr><td><strong>摄食意愿</strong></td><td>普通呈现</td><td>强攻击诱因</td><td>出手门槛改变</td></tr>
+        <tr><td><strong>警惕度</strong></td><td>直接 / 强势</td><td>隐蔽 / 自然</td><td>风险顾虑改变</td></tr>
+      </tbody>
+    </table>
+    <div class="strategy-chain" style="margin-top:18px">
+      <div class="strategy-box"><span class="tag t-purple">Fish Condition</span><div class="mini-title">鱼现在是什么状态</div><p class="muted">食性、追赶状态、摄食意愿、警惕度。</p></div>
+      <div class="strategy-arrow">→</div>
+      <div class="strategy-box"><span class="tag t-blue">Response</span><div class="mini-title">某个评价项发生变化</div><p class="muted">食物价值、追赶负担、门槛、风险顾虑。</p></div>
+      <div class="strategy-arrow">→</div>
+      <div class="strategy-box"><span class="tag t-green">Player Strategy</span><div class="mini-title">两种打法的相对收益翻转</div><p class="muted">玩家不是背公式，而是通过反馈学会什么时候该快、慢、刺激、隐蔽。</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">4. 快速搜索的价值：不是“多发抽奖”，而是更快收敛探索</h2>
+    <div class="flow">
+      <div class="node"><strong>更快移动</strong><span class="muted">单位时间走过更多空间</span></div>
+      <div class="arrow">→</div>
+      <div class="node"><strong>尝试更多位置</strong><span class="muted">结构 / 水层 / 区域</span></div>
+      <div class="arrow">→</div>
+      <div class="node"><strong>更快排除无效区</strong><span class="muted">得到更多探索反馈</span></div>
+      <div class="arrow">→</div>
+      <div class="node"><strong>更快收敛鱼位判断</strong><span class="muted">找到信号后再精钓</span></div>
+    </div>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card"><span class="tag t-blue">快速搜索的收益</span><div class="mini-title">空间覆盖 / 信息效率</div><p class="muted">更快知道哪里值得继续投入时间。</p></div>
+      <div class="card"><span class="tag t-orange">快速搜索的代价</span><div class="mini-title">局部 Response 质量可能下降</div><p class="muted">局部停留更短，高速呈现还可能提高追赶负担。</p></div>
+    </div>
+    <div class="callout" style="margin-top:16px"><strong>希望出现的循环：</strong>快速搜索 → 找到信号 → 降速 / finesse 深挖。Response 不需要额外给“搜索速度奖励”。</div>
+  </section>
+
+  <section>
+    <h2 class="section-title">5. 为了达到这些策略目标，鱼的评价需要拆细</h2>
+    <p class="lead">顶层保持简单：先把每个子机制换算成统一的“出手余量”，再比较值得出手的理由、需要承担的代价和当前门槛。</p>
+    <div class="formula">
+      <div><span class="eq">出手余量</span></div>
+      <div>= 食物价值</div>
+      <div><span class="plus">+ 攻击诱因</span></div>
+      <div><span class="minus">- 追赶负担</span></div>
+      <div><span class="minus">- 风险顾虑</span></div>
+      <div><span class="minus">- 摄食意愿门槛</span></div>
+      <br/>
+      <div>出手余量 → Response</div>
+    </div>
+    <div class="grid g4" style="margin-top:16px">
+      <div class="card"><span class="tag t-blue">食物价值</span><div class="mini-title">值不值得吃？</div><p class="muted">主要决定“选什么”。</p></div>
+      <div class="card"><span class="tag t-green">攻击诱因</span><div class="mini-title">现在是否特别诱发出手？</div><p class="muted">服务反应口，但不是“动作越大越加分”。</p></div>
+      <div class="card"><span class="tag t-orange">追赶负担</span><div class="mini-title">这个速度有多难接受？</div><p class="muted">主要决定“搜多快”。</p></div>
+      <div class="card"><span class="tag t-purple">风险 + 门槛</span><div class="mini-title">会不会露馅？现在有多挑？</div><p class="muted">警惕度影响风险，摄食意愿影响门槛。</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">6. Capacity + Activity：上游可分，Response 端可合</h2>
+    <p class="lead">两者语义不同，但玩家侧主要都影响“当前应该把拟饵放多快”。因此可以把它们折叠成一个追赶状态倍率。</p>
+    <div class="split">
+      <div class="side">
+        <span class="tag t-blue">Capacity｜能力</span>
+        <div class="mini-title">客观能调用多少运动能力</div>
+        <p class="muted">能力下降后，同样拟饵速度会占用更高比例的能力。</p>
+        <div class="metric">能不能</div>
+      </div>
+      <div class="merge">＋</div>
+      <div class="side">
+        <span class="tag t-green">Activity｜活性</span>
+        <div class="mini-title">对能力调用的行为容忍</div>
+        <p class="muted">活性下降后，同样的能力调用变得更“不值得”。</p>
+        <div class="metric">愿不愿</div>
+      </div>
+    </div>
+    <div class="formula" style="margin-top:16px">
+      <div>追赶负担</div>
+      <div>= K × (拟饵径向远离速度 / BaseAbility)²</div>
+      <div>  × <span class="eq">追赶状态倍率</span></div>
+      <br/>
+      <div><span class="eq">追赶状态倍率</span></div>
+      <div>= ActivityCostMultiplier / Capacity²</div>
+    </div>
+    <div class="callout good" style="margin-top:16px"><strong>关键点：</strong>这只是 Response 端的聚合。它不要求删除 Capacity 或 Activity 的上游来源。如果 Capacity 未来还被搏鱼、逃逸、迁移等系统消费，可以保留；如果它只服务这里且能直接推导，就没必要为了名字而 Bake 成一级 Fish Condition。</div>
+  </section>
+
+  <section>
+    <h2 class="section-title">7. 三个会议案例：只证明“排序翻转”</h2>
+    <div class="grid g3">
+      <div class="case">
+        <span class="tag t-orange">Case A｜追赶状态</span>
+        <h3>快速搜索 vs 慢速 finesse</h3>
+        <ul>
+          <li>追赶状态好：高速负担较低，快搜更可用。</li>
+          <li>追赶状态差：高速负担高，慢速呈现相对受益。</li>
+          <li>目标不是“高活性必须快钓”，而是改变快速探索的代价。</li>
+        </ul>
+      </div>
+      <div class="case">
+        <span class="tag t-green">Case B｜摄食意愿</span>
+        <h3>普通口 vs 反应口</h3>
+        <ul>
+          <li>摄食意愿高：普通优质猎物已经够。</li>
+          <li>摄食意愿低：普通呈现可能过不了线。</li>
+          <li>合法攻击诱因可以帮助越线，但同时可能增加追赶与风险代价。</li>
+        </ul>
+      </div>
+      <div class="case">
+        <span class="tag t-purple">Case C｜警惕度</span>
+        <h3>直接强势 vs 隐蔽自然</h3>
+        <ul>
+          <li>低警惕：同样暴露成本低。</li>
+          <li>高警惕：异常暴露更容易形成风险顾虑。</li>
+          <li>本轮只对齐方向，不审批完整 Naturalness。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">8. Fish Condition：最后由 Response 反推，不先数名词</h2>
+    <div class="flow">
+      <div class="node"><strong>先看玩家策略</strong><span class="muted">想购买什么变化？</span></div>
+      <div class="arrow">→</div>
+      <div class="node"><strong>再看 Response 职责</strong><span class="muted">哪个评价项需要状态？</span></div>
+      <div class="arrow">→</div>
+      <div class="node"><strong>判断是否可直接推导</strong><span class="muted">能算就不一定要 Bake</span></div>
+      <div class="arrow">→</div>
+      <div class="node"><strong>最后确定 Fish Condition</strong><span class="muted">保留真正有独立职责的状态</span></div>
+    </div>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card"><span class="tag t-blue">一级 Fish Condition</span><div class="mini-title">需要长期表达、生产、调试</div><p class="muted">有独立策略职责，或被多个系统共同消费。</p></div>
+      <div class="card"><span class="tag t-green">派生中间量</span><div class="mini-title">由已有输入确定性计算</div><p class="muted">例如 Functional Capacity 如果只服务一个消费点，就不必自动升级成一级状态。</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">9. 这次要对齐什么，刻意不闭合什么</h2>
+    <div class="grid g2">
+      <div class="card">
+        <span class="tag t-green">需要对齐</span>
+        <ul>
+          <li>本轮先集中路亚，后续再回到台钓 / 浮钓。</li>
+          <li>四个策略方向是否成立。</li>
+          <li>是否认可“状态 → 评价项 → 玩家策略翻转”。</li>
+          <li>是否认可加性出手余量主体。</li>
+          <li>Capacity / Activity 是否允许在追赶消费端聚合。</li>
+          <li>Fish Condition 数量由消费需求反推。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag t-red">刻意不闭合</span>
+        <ul>
+          <li>台钓 / 浮钓味型、混饵、窝料算法。</li>
+          <li>完整 Naturalness / 异常暴露模型。</li>
+          <li>最终 Fish Condition 数量。</li>
+          <li>Functional Capacity 是否最终独立 Bake。</li>
+          <li>生产参数和最终曲线。</li>
+          <li>轨迹预测困难是否保留。</li>
+          <li>非摄食攻击与完整单位时间中鱼效率。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="callout warn">
+      <strong>会议主旨</strong><br/>
+      我们不是在增加一组更复杂的中鱼系数，而是在建立一层把鱼情变化转译成玩家策略变化的 Response：让玩家根据鱼的食性、追赶状态、摄食意愿和警惕程度，改变选饵、搜索速度、刺激方式与隐蔽程度。第一版先用路亚把骨架闭合，再反推需要哪些 Fish Conditions，并把可复用框架带回台钓和浮钓。
+    </div>
+  </section>
+
+  <div class="footer">HitFish-Up · docs/alignment/lure-response · Meeting Alignment Draft · Candidate</div>
+</div>
+</body>
+</html>
