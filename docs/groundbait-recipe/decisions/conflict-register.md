@@ -74,32 +74,53 @@
 - **暂定处理**：`CANDIDATE_BRANCH`。本目录把持久字段理解为 DEF 之外的运行时叠加层：DEF 只读，响应层持有增量。
 - **裁决方**：Owner / Response Current。
 
-### C-05b｜Persistent Field 表示与消费
+### C-05b｜Persistent Field 的语义承载形态
 
-- **前提**：与 C-05a 正交。即使数据所有权选“DEF 只读”，仍需决定表示方式。
+- **前提**：与 C-05a 正交。即使数据所有权选“DEF 只读”，仍需决定语义承载形态。
 - **主张 A**：独立的 `Persistent Response Field` 对象，Response 读取时合并。
 - **主张 B**：在 Response 求值时即时投影，不持久化独立对象。
-- **冲突点**：术语已经把它命名为一个 Field，但没有规定是持久对象还是求值投影。
+- **冲突点**：表示、持久化、缓存和求值时机要分开；本项只问语义承载形态。
 - **影响**：Schema、缓存、时间与衰减、Response 读取。
 - **暂定处理**：`KEEP_OPEN`。当前倾向 A，但 B 可以作为实现优化，不改变语义。
 - **裁决方**：Owner / Response Current。
 
-### C-06｜环境食物浓度与窝料对象状态
+### C-06a｜环境食物浓度的事实所有权
 
 - **主张 A**：术语把“食物浓度”列为环境因子示例。出处：`docs/terminology.md` §3.1。
 - **主张 B**：Groundbait 产生独立的 `Feeding Place State` 与对象集合。出处：`candidate/object-model.md` §2.4。
-- **冲突点**：如果环境侧已经表达食物浓度，窝料对象状态再把同一事实作为正向响应，就是重复计权。
+- **冲突点**：环境侧和窝料侧是否在描述同一事实。
 - **影响**：环境烘焙、Response、Groundbait 全栈。
-- **暂定处理**：`KEEP_OPEN`。只保留两种解释：环境侧是背景事实、窝料是玩家增量；或二者是同一事实，需要在消费端合并。
+- **暂定处理**：`KEEP_OPEN`。可能解释：环境侧是背景事实、窝料是玩家增量；或二者是同一事实，不能分成两份；或环境侧不表达食物浓度。
 - **裁决方**：Owner / 环境与响应 Current。
 
-### C-07a｜Overfeeding
+### C-06b｜合并在哪里发生
+
+- **前提**：仅当 C-06a 选“背景 + 增量”或“同一事实”时成立。
+- **主张 A**：在 Response 之前合并，Response 只读合并后的状态。
+- **主张 B**：在 Response 内部合并，Response 同时读取两个来源。
+- **冲突点**：合并位置决定谁持有去重责任，以及 trace 放在哪里。
+- **影响**：Response 输入、持久字段、Groundbait 状态。
+- **暂定处理**：`KEEP_OPEN`。当前倾向 Response 前合并。
+- **裁决方**：Owner / Response Current。
+
+### C-07a1｜Overfeeding 是否首版纳入
 
 - **主张 A**：外部研究记录 RF4 存在 overfeeding：population 下降、咬口频率降低、需要休息和补窝。出处：`programaticHitFish/docs/research/2026-10-21-rf4-bait-groundbait-mechanism-deep-research.md` 第 22–23、243–249、636、641 行。这只是外部研究，不是本仓 Current。
 - **主张 B**：Groundbait Candidate 只有 `persistence / turnover`，没有 overfeed、历史累积、补窝频率和跨 session 语义。出处：`candidate/physical-release.md` §2、§8。
 - **冲突点**：如果只做“越多越好”的释放，会丢失 overfeed 这个非单调策略轴；如果直接并入，又没有仓内证据和位置。
 - **影响**：Physical Release、Feeding Place State、Fish Condition、补窝玩法。
-- **暂定处理**：`KEEP_OPEN`。外部研究只作证据线索；是否首版纳入、放在 Feeding Place 还是 Fish Condition，待 Owner 决定。
+- **暂定处理**：`KEEP_OPEN`。外部研究只作证据线索；是否首版纳入待 Owner 决定。
+- **裁决方**：Owner。
+
+### C-07a2｜Overfeeding 的承载层
+
+- **前提**：仅当 C-07a1 选“首版纳入”时成立。
+- **主张 A**：放进 Feeding Place（对象与线索状态）。
+- **主张 B**：放进 Fish Condition（饱食 / 警戒）。
+- **主张 C**：建立独立的 Overfeeding 模块。
+- **冲突点**：承载层决定状态键、更新和衰减归谁。
+- **影响**：Physical Release、Feeding Place State、Fish Condition。
+- **暂定处理**：`KEEP_OPEN`。当前没有证据支持具体承载层。
 - **裁决方**：Owner。
 
 ### C-07b｜Local Population / Residence
@@ -148,19 +169,29 @@
 - **暂定处理**：同 Target 合并与饱和为 `ACTIVE CANDIDATE`（WD-25）；多 Target 算子为 `OPEN`（WD-26）。
 - **裁决方**：Owner。
 
-### C-12a｜Diet Shift 所有权
+### C-12a1｜Diet Shift 的所有权
 
 - **主张 A**：术语把 `Diet Shift` 列为 `Fish Condition` 参数。出处：`docs/terminology.md` §5.2。
 - **主张 B**：Groundbait Candidate 把 Diet Shift 后置为慢变生态候选。出处：`candidate/proposal.md` §8.2、WD-14。
 - **主张 C**：Proposal C 把它作为 `CurrentFoodValue` 的加项。出处：`docs/proposals/lure-response-proposal-c-current-review-entry-2026-10-27.md` 第 45 行。
-- **冲突点**：Diet Shift 属于谁，和它影响 Food 还是 Flavor，是两个不同问题。当前容易混成一项。
+- **冲突点**：Diet Shift 属于谁，和它影响 Food 还是 Flavor，是两个不同问题。本项只问所有权。
 - **影响**：Fish Condition、Food Preference、Response。
 - **暂定处理**：`CANDIDATE_BRANCH`。本目录把所有权放在 Fish Condition：Baseline Diet 是静态配置，Diet Shift 是动态偏移。
 - **裁决方**：Owner。
 
+### C-12a2｜保留或覆盖现有 Fish Condition 语义
+
+- **前提**：仅当 C-12a1 选“所有权在 Fish Condition”时成立。
+- **主张 A**：保留现有语义：Diet Shift 是 Fish Condition 的动态偏移。
+- **主张 B**：覆盖现有语义，需要 Owner 明确。
+- **冲突点**：保留还是覆盖，是独立于所有权位置的第二个决定。
+- **影响**：Fish Condition、下游消费者、迁移。
+- **暂定处理**：`CANDIDATE_BRANCH`。当前保留现有语义。
+- **裁决方**：Owner。
+
 ### C-12b｜Diet Shift 消费语义
 
-- **前提**：仅当 C-12a 选“所有权在 Fish Condition”时成立。
+- **前提**：仅当 C-12a1 选“所有权在 Fish Condition”，且 C-12a2 选“保留”或“覆盖”时成立。
 - **主张 A**：Diet Shift 修改 Food Preference。
 - **主张 B**：Diet Shift 修改 Flavor Preference。
 - **主张 C**：两者都改，但必须分别有因果依据。
@@ -174,6 +205,7 @@
 - **主张 A**：`Wariness` 是随过程累积的 Fish Condition 状态。出处：`docs/terminology.md` §5.2。
 - **主张 B**：`Avoidance` 是稀疏配置的 Cue 排斥。出处：`candidate/proposal.md` §5.4、WD-07。
 - **冲突点**：两者都可能压低响应，容易重复扣分；但“是否不同语义”和“Avoidance 用什么表示”是两个问题。
+- **选项说明**：“只保留 Avoidance”是删除或废弃 Wariness 的决定，需要迁移方案，不是纯粹的语义区分选项。
 - **影响**：Response、Flavor、Feeding Event。
 - **暂定处理**：`CANDIDATE_BRANCH`。本目录要求两者各自保留来源和 trace，不合并成一个“负分”。
 - **裁决方**：Owner / Response Current。
@@ -201,7 +233,7 @@
 
 1. C-01、C-02、C-03a、C-03b 先决，它们决定 Groundbait 候选能否继续使用现有量。
 2. C-04、C-05a、C-05b 决定 Response 接入和持久字段语义。
-3. C-06、C-07a、C-07b、C-08、C-12a、C-12b、C-13a、C-13b、C-14 决定空间、时间与鱼况边界。
+3. C-06a、C-06b、C-07a1、C-07a2、C-07b、C-08、C-12a1、C-12a2、C-12b、C-13a、C-13b、C-14 决定空间、时间与鱼况边界。
 4. C-09、C-10、C-11 决定抽鱼、刺鱼和多目标聚合。
 
 ## 4. 不冒充裁决

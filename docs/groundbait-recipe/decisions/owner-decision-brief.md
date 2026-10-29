@@ -54,18 +54,21 @@ Current 只定义到 `SpatialDistributionWeight × AdaptationCoeff → 下游候
 | C-01 | 尺寸归属 | 形状 | 动作约束，不进 Food Value | 低 |
 | C-02 | 化学强度准入 | 形状 | v1 签名集合；B/C 可裁 | 中 |
 | C-03a | Feeding Event 是否外层结构 | 形状 | 是 | 中 |
-| C-03b | Decision Margin 进入哪一步 | 形状 | selection；首版可暂缓 | 中高 |
+| C-03b | Decision Margin 进入哪一步 | 形状 | D（首版可暂缓），否则 A | 中高 |
 | C-04 | Effective Ingestion Opportunity 落点 | 接口 | 暂缓，等 C-03a/b | 中 |
 | C-05a | Persistent Field 数据所有权 | 接口 | DEF 只读，响应层持有增量 | 低 |
-| C-05b | Persistent Field 表示与消费 | 接口 | 独立对象；即时投影是备选 | 低中 |
-| C-06 | 环境食物浓度与窝料对象 | 接口 | 背景 + 增量，显式合并 | 中 |
-| C-07a | Overfeeding | 边界 | 首版后置 | 低 |
+| C-05b | Persistent Field 语义承载形态 | 接口 | 独立对象；即时投影是备选 | 低中 |
+| C-06a | 环境食物浓度事实所有权 | 接口 | 背景 + 增量 | 中 |
+| C-06b | 合并在哪里发生 | 接口 | Response 前；待 C-06a | 中 |
+| C-07a1 | Overfeeding 是否首版纳入 | 边界 | 后置 | 低 |
+| C-07a2 | Overfeeding 承载层 | 边界 | 若纳入再定 | 中 |
 | C-07b | Local Population / Residence | 边界 | 首版后置 | 低 |
 | C-08 | Encounter 是否拆分 | 接口 | v1 合并；magnitude 准入后再决定 | 中 |
 | C-09 | 刺鱼 / 抽鱼接口 | 边界 | 本候选不进入刺鱼 | 低 |
 | C-10 | 多 Feeding Mechanism 聚合 | 边界 | max 只作上界 | 低 |
 | C-11 | 多 Food Target 聚合 | 边界 | 同 Target 合并 + 饱和，算子 OPEN | 中 |
-| C-12a | Diet Shift 所有权 | 边界 | 留在 Fish Condition | 低 |
+| C-12a1 | Diet Shift 所有权 | 边界 | Fish Condition | 低 |
+| C-12a2 | 保留或覆盖现有语义 | 边界 | 保留 | 中 |
 | C-12b | Diet Shift 消费语义 | 边界 | 暂不决定；Food/Flavor 分别取证 | 中 |
 | C-13a | Wariness 与 Avoidance 是否不同语义 | 边界 | 不同 | 低 |
 | C-13b | Avoidance 表示形式 | 边界 | 暂不决定 | 中 |
@@ -133,7 +136,7 @@ B. 进入单独的 approach / risk 步骤。
 C. 不进入；Feeding Event 使用其它选择规则。
 D. 暂不决定。
 
-**推荐**：A。selection 是鱼在可行动作之间做取舍的位置；如果首版不需要显式比较，可以先 D。
+**推荐**：D（首版不需要显式比较时），否则 A。selection 是鱼在可行动作之间做取舍的位置。
 
 **请回答**：选 A / B / C / D？如果选 A 或 B，Decision Margin 的输入和输出是什么？
 
@@ -166,9 +169,11 @@ C. 其它，需要说明。
 
 **请回答**：选哪个？如果选 A，增量的时间、范围、衰减和重叠由谁定义？
 
-### C-05b Persistent Field 表示与消费
+### C-05b Persistent Field 的语义承载形态
 
-**前提**：与 C-05a 正交。即使选 A，仍需决定表示方式。
+**前提**：与 C-05a 正交。即使选 A，仍需决定语义承载形态。
+
+本题只决定语义承载形态；持久化、缓存和求值时机是实现细节，可以随实现调整，不改变语义。
 
 选项：
 
@@ -180,17 +185,31 @@ C. 其它，需要说明。
 
 **请回答**：选哪个？如果选 A，Schema 由谁维护？如果选 B，投影的输入和缓存策略是什么？
 
-### C-06 环境食物浓度与窝料对象
+### C-06a 环境食物浓度的事实所有权
 
 选项：
 
-A. 环境侧是背景事实，窝料是玩家增量，消费端合并。
-B. 二者是同一事实，必须在消费端去重。
+A. 环境侧是背景事实，窝料是玩家增量。
+B. 二者是同一事实，不能分成两份。
 C. 环境侧不表达食物浓度，只由窝料表达。
 
 **推荐**：A。需要显式合并规则，避免同一事实双算。
 
-**请回答**：选哪个？合并发生在 Response 前还是 Response 内？
+**请回答**：选哪个？如果选 A/B，二者的边界如何定义？
+
+### C-06b 合并在哪里发生
+
+**前提**：仅当 C-06a 选 A 或 B 时回答。若 C-06a 选 C，本题不适用。
+
+选项：
+
+A. 在 Response 之前合并，Response 只读合并后的状态。
+B. 在 Response 内部合并，Response 同时读取两个来源。
+C. 暂不决定。
+
+**推荐**：A。先合并再进入响应，避免同一事实在响应里被两条路径各读一次。
+
+**请回答**：选哪个？如果选 B，去重规则和 trace 放在哪里？
 
 ### C-08 Encounter 是否拆分
 
@@ -220,18 +239,32 @@ C. 输出 Candidate retention，交给抽鱼。
 
 ## 6. 第三层：边界与内容决策
 
-### C-07a Overfeeding
+### C-07a1 Overfeeding 是否首版纳入
 
 选项：
 
 A. 首版后置，只记录缺口。
-B. 放进 Feeding Place（对象与线索状态）。
-C. 放进 Fish Condition（饱食 / 警戒）。
-D. 建立独立的 Overfeeding 模块。
+B. 首版纳入。
+C. 暂不决定。
 
 **推荐**：A。外部研究只作线索，仓内没有证据和位置。
 
 **请回答**：选哪个？如果后置，failure boundary 是什么？
+
+### C-07a2 Overfeeding 的承载层
+
+**前提**：仅当 C-07a1 选 B 时回答。
+
+选项：
+
+A. 放进 Feeding Place（对象与线索状态）。
+B. 放进 Fish Condition（饱食 / 警戒）。
+C. 建立独立的 Overfeeding 模块。
+D. 暂不决定。
+
+**推荐**：D。首版没有证据支持具体承载层；若必须选，A 更接近投喂状态。
+
+**请回答**：选哪个？状态的键、更新和衰减是什么？
 
 ### C-07b Local Population / Residence
 
@@ -272,21 +305,35 @@ E. 求和后全局饱和。
 
 **请回答**：选哪个？如果选 A，什么时候允许选具体算子？
 
-### C-12a Diet Shift 所有权
+### C-12a1 Diet Shift 的所有权
 
 选项：
 
-A. 留在 Fish Condition，作为动态偏移。
-B. 不建模。
-C. 修改现有语义，需要 Owner 明确覆盖。
+A. Fish Condition。
+B. 其它承载位置，需要说明。
+C. 明确不设所有权，不建模。
 
 **推荐**：A。术语已把 Diet Shift 列为 Fish Condition 参数。
 
-**请回答**：选哪个？如果选 C，覆盖范围和迁移方案是什么？
+**请回答**：选哪个？如果选 B，承载对象是什么？如果选 C，是否删除 Diet Shift 引用？
+
+### C-12a2 保留或覆盖现有 Fish Condition 语义
+
+**前提**：仅当 C-12a1 选 A 时回答。
+
+选项：
+
+A. 保留现有语义：Diet Shift 是 Fish Condition 的动态偏移。
+B. 覆盖现有语义，需要 Owner 明确。
+C. 暂不决定。
+
+**推荐**：A。术语已经给出该语义，覆盖需要新的裁定。
+
+**请回答**：选哪个？如果选 B，覆盖范围、迁移和旧语义处置是什么？
 
 ### C-12b Diet Shift 消费语义
 
-**前提**：仅当 C-12a 选 A 时回答。
+**前提**：仅当 C-12a1 选 A，且 C-12a2 选 A 或 B 时回答。
 
 选项：
 
@@ -305,7 +352,9 @@ D. 暂不决定。
 
 A. 不同：Wariness 是状态，Avoidance 是 Cue 反应。
 B. 相同：合并成一个负分。
-C. 只保留 Avoidance。
+C. 只保留 Avoidance；删除或废弃 Wariness，需要迁移方案。
+
+C 是删除或废弃决定，不是纯粹的语义区分选项。
 
 **推荐**：A。两者来源和 trace 不同，合并容易重复扣分。
 
@@ -343,10 +392,11 @@ C. 作为派生复合量，不落 Schema。
 1. C-01 选 A / B / C？为什么？
 2. C-02 选 A / B / C？如果选 B/C，新增 primitive、口径、标定成本和失败边界是什么？
 3. C-03a 选 A / B / C？C-03b 选 A / B / C / D？
-4. C-04、C-05a、C-05b、C-06、C-08、C-09 各选哪个？
-5. C-07a、C-07b、C-10、C-11、C-12a、C-12b、C-13a、C-13b、C-14 各选哪个？
-6. 哪些项可以现在定，哪些必须等证据？
-7. 有没有我们没列出的冲突？
+4. C-04、C-05a、C-05b、C-06a、C-06b、C-08、C-09 各选哪个？若 C-06a 选 C，C-06b 是否不适用？
+5. C-07a1、C-07a2、C-07b、C-10、C-11、C-12a1、C-12a2、C-12b、C-13a、C-13b、C-14 各选哪个？若 C-07a1 选 A，C-07a2 是否不适用？
+6. 若 C-12a1 选 A，C-12a2 选什么？若 C-12a2 选 B，覆盖和迁移方案是什么？
+7. 哪些项可以现在定，哪些必须等证据？
+8. 有没有我们没列出的冲突？
 
 ## 8. 不要做什么
 

@@ -134,7 +134,7 @@ Avoidance 应稀疏配置，不建立全量 Fish × Flavor 负数矩阵。浓度
 - `Diet Shift` 是 Fish Condition 的动态偏移。
 - `Wariness` 是状态，Sparse Avoidance 是配置；两者都压低响应，但来源和 trace 必须分开。
 
-对应冲突登记 C-12a、C-12b、C-13a、C-13b。
+对应冲突登记 C-12a1、C-12a2、C-12b、C-13a、C-13b。
 
 ## 5. 最小结构反例
 
