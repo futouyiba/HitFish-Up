@@ -204,9 +204,8 @@ Fish Condition（鱼侧动态参数）
 
 ## 9. 未决项
 
-- Prediction 是否作为独立局部代价重入主体；
-- 攻击诱因第一版准入的具体状态；
-- 风险顾虑的最低实现层与完整 Naturalness 边界；
+- Prediction：第一版主体不含；只有出现独立策略价值证据时才重开；
+- 风险顾虑的最低实现层与完整 Naturalness 边界；当前无生产输入；
 - `CapacityModifier` 是否需要，以及它是派生中间量还是持久 Fish Condition；
 - 垂直主导呈现的机会窗口形态与正式 owner；
 - 各系数的生产标定。
