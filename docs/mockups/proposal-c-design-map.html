@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Proposal C / Design map</title>
+  <meta name="description" content="Proposal C 从实际呈现到候选留存的设计骨架。">
+  <style>
+    :root {
+      --ink: #182330;
+      --muted: #5d6b79;
+      --paper: #f5f7f8;
+      --panel: #ffffff;
+      --line: #d8e0e5;
+      --blue: #2864a9;
+      --blue-soft: #e9f1fb;
+      --purple: #7452a8;
+      --purple-soft: #f1ebfa;
+      --amber: #b27016;
+      --amber-soft: #fff4df;
+      --red: #b54643;
+      --red-soft: #fbeceb;
+      --gray: #65717b;
+      --gray-soft: #edf0f2;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 16px/1.65 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main { max-width: 1120px; margin: 0 auto; padding: 56px 28px 72px; }
+    h1 { max-width: 760px; margin: 0 0 14px; font-size: clamp(34px, 5vw, 64px); line-height: .98; letter-spacing: -.045em; }
+    h2 { margin: 48px 0 16px; font-size: 24px; letter-spacing: -.02em; }
+    h3 { margin: 8px 0 7px; font-size: 22px; line-height: 1.15; }
+    p { max-width: 760px; margin: 0 0 14px; color: var(--muted); }
+    .lede { max-width: 680px; margin-bottom: 38px; font-size: 19px; color: #3c4b58; }
+    .hero-flow { display: flex; align-items: stretch; gap: 10px; margin: 34px 0 16px; overflow-x: auto; padding: 4px 2px 14px; }
+    .flow-node { min-width: 166px; padding: 18px 16px 16px; border: 1px solid var(--line); border-top: 4px solid; border-radius: 14px; background: var(--panel); box-shadow: 0 8px 22px rgba(24,35,48,.06); }
+    .flow-node strong, .flow-node small { display: block; }
+    .flow-node small { margin-top: 7px; color: var(--muted); font-size: 13px; line-height: 1.35; }
+    .node-kicker, .case-label { font: 700 11px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .08em; text-transform: uppercase; }
+    .node-kicker { color: var(--muted); }
+    .source { border-top-color: var(--blue); background: var(--blue-soft); }
+    .interpretation { border-top-color: var(--purple); background: var(--purple-soft); }
+    .state { border-top-color: var(--amber); background: var(--amber-soft); }
+    .evaluation, .response { border-top-color: var(--red); background: var(--red-soft); }
+    .opportunity { border-top-color: var(--gray); background: var(--gray-soft); }
+    .flow-arrow { align-self: center; color: #9ba8b2; font-size: 26px; }
+    .case-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 20px; }
+    .case-card { padding: 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); }
+    .case-card.fish { border-top: 4px solid var(--blue); }
+    .case-card.crayfish { border-top: 4px solid var(--purple); }
+    .case-card.boundary { border-top: 4px solid var(--gray); }
+    .case-label { color: var(--muted); }
+    .case-result { margin-top: 18px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--ink); font-weight: 700; }
+    .status-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 20px; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--line); }
+    .status-strip div { min-height: 96px; padding: 15px 16px; background: var(--panel); }
+    .status-strip b, .status-strip span { display: block; }
+    .status-strip b { font-size: 14px; }
+    .status-strip span { margin-top: 5px; color: var(--muted); font-size: 13px; line-height: 1.35; }
+    pre { max-width: 760px; overflow-x: auto; padding: 18px 20px; border: 1px solid #d7dee4; border-radius: 12px; background: #202b35; color: #ecf3f6; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    @media (max-width: 760px) {
+      main { padding: 34px 17px 52px; }
+      .hero-flow { margin-right: -17px; }
+      .case-grid, .status-strip { grid-template-columns: 1fr; }
+      .flow-arrow { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="node-kicker">Proposal C / design map</p>
+      <h1>从实际呈现到候选留存</h1>
+      <p class="lede">这张图解释 Proposal C 如何把一段实际呈现拆成猎物解释、呈现状态、鱼侧评价和时间机会。参数仍是 Working seed，未冻结为生产规则。</p>
+    </header>
+
+    <section aria-labelledby="flow-title">
+      <h2 id="flow-title">主链</h2>
+      <ol class="hero-flow" aria-label="Proposal C 主链">
+        <li class="flow-node source"><span class="node-kicker">01</span><strong>实际呈现</strong><small>位置、轨迹、速度、停顿、环境关系</small></li>
+        <li class="flow-arrow" aria-hidden="true">→</li>
+        <li class="flow-node interpretation"><span class="node-kicker">02</span><strong>猎物解释</strong><small>同一呈现可以保留多个解释</small></li>
+        <li class="flow-arrow" aria-hidden="true">→</li>
+        <li class="flow-node state"><span class="node-kicker">03</span><strong>呈现状态</strong><small>移动、近底、下落、移动后停留</small></li>
+        <li class="flow-arrow" aria-hidden="true">→</li>
+        <li class="flow-node evaluation"><span class="node-kicker">04</span><strong>鱼侧评价</strong><small>价值、意愿、追击与风险负担</small></li>
+        <li class="flow-arrow" aria-hidden="true">→</li>
+        <li class="flow-node response"><span class="node-kicker">05</span><strong>条件响应</strong><small>局部方位下的响应强度</small></li>
+        <li class="flow-arrow" aria-hidden="true">→</li>
+        <li class="flow-node opportunity"><span class="node-kicker">06</span><strong>时间机会</strong><small>机会归约后进入候选留存</small></li>
+      </ol>
+    </section>
+
+    <section aria-labelledby="legend-title">
+      <h2 id="legend-title">颜色说明</h2>
+      <ul class="status-strip" aria-label="颜色图例">
+        <li><b style="color:var(--blue)">蓝色 / 事实</b><span>带来源、单位、参考系和有效时段。</span></li>
+        <li><b style="color:var(--purple)">紫色 / 解释</b><span>多个猎物解释可以并存。</span></li>
+        <li><b style="color:var(--amber)">琥珀色 / 状态</b><span>描述发生了什么，不自动等于奖励。</span></li>
+        <li><b style="color:var(--red)">红色 / 评价与响应</b><span>计算价值、成本和响应强度。</span></li>
+        <li><b style="color:var(--gray)">灰色 / 机会与候选</b><span>处理时间机会，不反写上游事实。</span></li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="case-title">
+      <h2 id="case-title">同一呈现可以保留两种解释</h2>
+      <p>这件裙丝 Jig 加鱼形 T 尾，鱼形轮廓可见，实际运动接近底部，并记录到裙丝展开变化。</p>
+      <div class="case-grid">
+        <article class="case-card fish">
+          <span class="case-label">猎物解释 A</span>
+          <h3>小鱼</h3>
+          <p>鱼形 T 尾提供较强的轮廓证据。裙丝的动态证据仍可保留，但不能借用 T 尾的分数。</p>
+          <div class="case-result">保留小鱼解释</div>
+        </article>
+        <article class="case-card crayfish">
+          <span class="case-label">猎物解释 B</span>
+          <h3>小龙虾</h3>
+          <p>近底移动和裙丝展开变化支持小龙虾解释。它读取同一段实际记录。</p>
+          <div class="case-result">保留小龙虾解释</div>
+        </article>
+        <article class="case-card boundary">
+          <span class="case-label">去重边界</span>
+          <h3>一次机会，多个解释</h3>
+          <p>两个解释可以同时存在，但同一个呈现段、局部机会窗口和摄食路径只生成一条机会记录。</p>
+          <div class="case-result">不生成两次机会</div>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="state-title">
+      <h2 id="state-title">状态不是零</h2>
+      <ul class="status-strip" aria-label="状态说明">
+        <li><b>Unknown</b><span>事实缺失，结果可能改变。</span></li>
+        <li><b>NotConfigured</b><span>规则或归属方不存在。</span></li>
+        <li><b>NoMatch</b><span>规则检查完成，没有命中。</span></li>
+        <li><b>ResolutionIncomplete</b><span>归约仍不能形成最终标量。</span></li>
+        <li><b>ResolvedNonResponsive</b><span>输入完整，结果是零。</span></li>
+        <li><b>Reject</b><span>类型硬边界，不进入连续计算。</span></li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="margin-title">
+      <h2 id="margin-title">决策裕量</h2>
+      <pre><code>DecisionMargin(theta)
+= CurrentFoodValue
++ StateTriggerValue
+- ClosingCost(theta)
+- PredictionCost
+- RiskCost
+- WillingnessThreshold(FeedingMotivation)</code></pre>
+      <p>只有所有必需输入已解析，<code>DecisionMargin</code> 才能进入响应投影。<code>Unknown</code> 不能偷偷变成 0。</p>
+    </section>
+
+    <section aria-labelledby="boundary-title">
+      <h2 id="boundary-title">当前边界</h2>
+      <ul>
+        <li>时间长度进入 Temporal Opportunity，不直接成为 <code>DecisionMargin</code> bonus。</li>
+        <li>Closing 只表达径向远离造成的负担，不是完整拦截模拟。</li>
+        <li>sudden turn 可以同时影响状态触发和预测负担，但不能产生第三个匿名加成。</li>
+        <li><code>Reject</code> 不能被高 Motivation 复活。</li>
+        <li>Candidate 后段不能再次乘同一份 Response。</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="open-title">
+      <h2 id="open-title">还没有冻结的部分</h2>
+      <ul>
+        <li><code>M0 / M1</code> 的生产标定；</li>
+        <li>sibling Unknown 的正式归约 owner；</li>
+        <li>Temporal Opportunity 到 Candidate 的正式 owner；</li>
+        <li>vertical-dominant presentation 的适用范围；</li>
+        <li>真实鱼种能力、曝光数据和 encounter geometry 来源。</li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

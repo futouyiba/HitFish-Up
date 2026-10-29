@@ -2,6 +2,13 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "proposal-c-design-preview",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8798", "--directory", "docs/mockups"],
+      "port": 8798,
+      "url": "http://localhost:8798"
+    },
+    {
       "name": "fcf-system-map-preview",
       "runtimeExecutable": "python3",
       "runtimeArgs": ["fcf-system-map/tools/preview.py"],
