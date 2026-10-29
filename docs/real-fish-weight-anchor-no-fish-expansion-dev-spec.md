@@ -73,16 +73,16 @@
 
 | 中文概念 | 英文名词 | 含义 | 数学表示 | KaTeX |
 |---|---|---|---|---|
-| **权重池** | FishStock | 本任务的配置和计算单位。 | $k$ | `k` |
+| **权重池** | FishStock | 本任务的配置和计算单位。 | \(k\) | `k` |
 | **局部权重池** | Local FishStock | 由区域命中后附加生效的 FishStock。 | — | — |
-| **实鱼权重** | Real Fish Weight | 单条鱼在本任务计算时使用的实鱼权重。 | $W_{i,k}$ | `W_{i,k}` |
-| **实鱼总权重** | Total Real Fish Weight | 某个 FishStock 内所有实鱼权重之和。 | $W_{\Sigma,k}$ | `W_{\Sigma,k}=\sum_i W_{i,k}` |
-| **基础空鱼权重** | Base None-Fish Weight | FishStock 原有的 `none_fish_weight`。 | $E_{0,k}$ | `E_{0,k}` |
-| **实鱼总权重锚点** | Real Fish Weight Anchor | 实鱼总权重超过该值后，开始增加额外空鱼权重。 | $A_k$ | `A_k` |
-| **超额实鱼权重** | Excess Real Fish Weight | 实鱼总权重超过锚点的部分。 | $X_k$ | `X_k=\max(0,W_{\Sigma,k}-A_k)` |
-| **空鱼权重扩张率** | None-Fish Weight Expansion Rate | 每增加 1 单位超额实鱼权重，需要增加多少单位空鱼权重。 | $S_k$ | `S_k` |
-| **扩张后空鱼权重** | Expanded None-Fish Weight | 单个 FishStock 完成本任务计算后的空鱼权重。 | $E_{e,k}$ | `E_{e,k}=E_{0,k}+S_kX_k` |
-| **叠加空鱼权重** | Stacked None-Fish Weight | 本次所有有效 FishStock 的扩张后空鱼权重之和。 | $E_{\text{stack}}$ | `E_{\text{stack}}=\sum_kE_{e,k}` |
+| **实鱼权重** | Real Fish Weight | 单条鱼在本任务计算时使用的实鱼权重。 | \(W_{i,k}\) | `W_{i,k}` |
+| **实鱼总权重** | Total Real Fish Weight | 某个 FishStock 内所有实鱼权重之和。 | \(W_{\Sigma,k}\) | `W_{\Sigma,k}=\sum_i W_{i,k}` |
+| **基础空鱼权重** | Base None-Fish Weight | FishStock 原有的 `none_fish_weight`。 | \(E_{0,k}\) | `E_{0,k}` |
+| **实鱼总权重锚点** | Real Fish Weight Anchor | 实鱼总权重超过该值后，开始增加额外空鱼权重。 | \(A_k\) | `A_k` |
+| **超额实鱼权重** | Excess Real Fish Weight | 实鱼总权重超过锚点的部分。 | \(X_k\) | `X_k=\max(0,W_{\Sigma,k}-A_k)` |
+| **空鱼权重扩张率** | None-Fish Weight Expansion Rate | 每增加 1 单位超额实鱼权重，需要增加多少单位空鱼权重。 | \(S_k\) | `S_k` |
+| **扩张后空鱼权重** | Expanded None-Fish Weight | 单个 FishStock 完成本任务计算后的空鱼权重。 | \(E_{e,k}\) | `E_{e,k}=E_{0,k}+S_kX_k` |
+| **叠加空鱼权重** | Stacked None-Fish Weight | 本次所有有效 FishStock 的扩张后空鱼权重之和。 | \(E_{\text{stack}}\) | `E_{\text{stack}}=\sum_kE_{e,k}` |
 
 本文后续统一使用“**空鱼权重扩张**”描述新增逻辑。
 
@@ -195,9 +195,9 @@ FishStock.id
 
 如果前置计算未完成，或本次按现有规则不可进入抽取流程，则沿用现有退出 / 失败处理：
 
-> **不能因为“没有得到实鱼权重”，就把它当成 $W_\Sigma=0$，进一步变成一次空鱼结果。**
+> **不能因为“没有得到实鱼权重”，就把它当成 \(W_\Sigma=0\)，进一步变成一次空鱼结果。**
 
-这里的 $W_\Sigma=0$ 只表示：前置计算已经正常完成，而该 FishStock 当前确实没有实鱼权重贡献。
+这里的 \(W_\Sigma=0\) 只表示：前置计算已经正常完成，而该 FishStock 当前确实没有实鱼权重贡献。
 
 ---
 
@@ -253,9 +253,9 @@ FishStock
 
 | 字段 | 中文名 | 类型 | 默认值 | 用途 |
 |---|---|---|---|---|
-| `none_fish_weight` | 基础空鱼权重 | 沿用现有类型 | 沿用现有值 | $E_0$ |
-| `real_fish_weight_anchor` | 实鱼总权重锚点 | `INT32` | `0` | $A$ |
-| `none_fish_weight_expansion_rate` | 空鱼权重扩张率 | `FLOAT` | `0.0` | $S$ |
+| `none_fish_weight` | 基础空鱼权重 | 沿用现有类型 | 沿用现有值 | \(E_0\) |
+| `real_fish_weight_anchor` | 实鱼总权重锚点 | `INT32` | `0` | \(A\) |
+| `none_fish_weight_expansion_rate` | 空鱼权重扩张率 | `FLOAT` | `0.0` | \(S\) |
 
 ### 默认值
 
@@ -323,11 +323,11 @@ $$E_{e,k}=E_{0,k}+S_kX_k$$
 
 | 情况 | 处理 |
 |---|---|
-| $W_{\Sigma,k}<A_k$ | 不扩张，$E_{e,k}=E_{0,k}$ |
-| $W_{\Sigma,k}=A_k$ | 不扩张，$E_{e,k}=E_{0,k}$ |
-| $W_{\Sigma,k}>A_k$ | 按超额部分扩张 |
-| $S_k=0$ | 不扩张，$E_{e,k}=E_{0,k}$ |
-| $W_{\Sigma,k}=0$，但本次计算正常完成且 FishStock 有效 | 仍贡献基础空鱼权重 $E_{0,k}$ |
+| \(W_{\Sigma,k}<A_k\) | 不扩张，\(E_{e,k}=E_{0,k}\) |
+| \(W_{\Sigma,k}=A_k\) | 不扩张，\(E_{e,k}=E_{0,k}\) |
+| \(W_{\Sigma,k}>A_k\) | 按超额部分扩张 |
+| \(S_k=0\) | 不扩张，\(E_{e,k}=E_{0,k}\) |
+| \(W_{\Sigma,k}=0\)，但本次计算正常完成且 FishStock 有效 | 仍贡献基础空鱼权重 \(E_{0,k}\) |
 | 多个 Collider 指向同一 `FishStock.id` | 只计算一次 |
 | 同时命中多个不同 `FishStock.id` | 各自计算并叠加 |
 | 前置计算未完成 / 本次不可进入抽取流程 | 沿用现有退出 / 失败处理，不执行本任务计算 |
@@ -340,7 +340,7 @@ $$E_{e,k}=E_{0,k}+S_kX_k$$
 
 假设本次有效 FishStock 为：
 
-| FishStock | 实鱼总权重 $W_\Sigma$ | 基础空鱼 $E_0$ | 锚点 $A$ | 扩张率 $S$ |
+| FishStock | 实鱼总权重 \(W_\Sigma\) | 基础空鱼 \(E_0\) | 锚点 \(A\) | 扩张率 \(S\) |
 |---|---:|---:|---:|---:|
 | 基础 FishStock | 120 | 100 | 100 | 0.5 |
 | Local FishStock A | 70 | 60 | 50 | 0.5 |
@@ -374,7 +374,7 @@ $$E_{\text{stack}}=110+70+20=200$$
 
 汇总：
 
-| FishStock | $W_\Sigma$ | $X$ | $E_0$ | $S$ | $E_e$ |
+| FishStock | \(W_\Sigma\) | \(X\) | \(E_0\) | \(S\) | \(E_e\) |
 |---|---:|---:|---:|---:|---:|
 | 基础 FishStock | 120 | 20 | 100 | 0.5 | 110 |
 | Local FishStock A | 70 | 20 | 60 | 0.5 | 70 |
@@ -401,12 +401,12 @@ $$E_{\text{stack}}=110+70+20=200$$
 | 字段 | 含义 |
 |---|---|
 | `fish_stock_id` | 当前 FishStock |
-| `real_fish_weight_total` | 实鱼总权重 $W_{\Sigma,k}$ |
-| `base_none_fish_weight` | 基础空鱼权重 $E_{0,k}$ |
-| `real_fish_weight_anchor` | 锚点 $A_k$ |
-| `none_fish_weight_expansion_rate` | 扩张率 $S_k$ |
-| `excess_real_fish_weight` | 超额实鱼权重 $X_k$ |
-| `expanded_none_fish_weight` | 扩张后空鱼权重 $E_{e,k}$ |
+| `real_fish_weight_total` | 实鱼总权重 \(W_{\Sigma,k}\) |
+| `base_none_fish_weight` | 基础空鱼权重 \(E_{0,k}\) |
+| `real_fish_weight_anchor` | 锚点 \(A_k\) |
+| `none_fish_weight_expansion_rate` | 扩张率 \(S_k\) |
+| `excess_real_fish_weight` | 超额实鱼权重 \(X_k\) |
+| `expanded_none_fish_weight` | 扩张后空鱼权重 \(E_{e,k}\) |
 
 叠加后建议至少能看到：
 
@@ -429,14 +429,14 @@ stacked_none_fish_weight
 
 | Case | 输入 / 场景 | 关键期望 |
 |---|---|---|
-| 单池：低于锚点 | $W_\Sigma<A$ | $E_e=E_0$ |
-| 单池：等于锚点 | $W_\Sigma=A$ | $E_e=E_0$ |
-| 单池：高于锚点 | $W_\Sigma>A$ | $E_e=E_0+S(W_\Sigma-A)$ |
-| 扩张关闭 | $S=0$ | $E_e=E_0$ |
-| 合法零实鱼 | $W_\Sigma=0$，FishStock 有效且前置计算正常完成 | 仍贡献 $E_0$ |
+| 单池：低于锚点 | \(W_\Sigma<A\) | \(E_e=E_0\) |
+| 单池：等于锚点 | \(W_\Sigma=A\) | \(E_e=E_0\) |
+| 单池：高于锚点 | \(W_\Sigma>A\) | \(E_e=E_0+S(W_\Sigma-A)\) |
+| 扩张关闭 | \(S=0\) | \(E_e=E_0\) |
+| 合法零实鱼 | \(W_\Sigma=0\)，FishStock 有效且前置计算正常完成 | 仍贡献 \(E_0\) |
 | 前置计算失败 / 不可抽取 | 无合法实鱼权重结果 | 不执行空鱼扩张，不转成空鱼 |
 | 基础池 + 1 Local FishStock | 两个不同 `FishStock.id` | 两个空鱼贡献都叠加 |
-| 基础池 + 多个 Local FishStock | 多个不同 `FishStock.id` | $E_{\text{stack}}=\sum E_e$ |
+| 基础池 + 多个 Local FishStock | 多个不同 `FishStock.id` | \(E_{\text{stack}}=\sum E_e\) |
 | Collider 重复命中 | 多个 Collider 指向同一 `FishStock.id` | 只计算一次 |
 | 空间重叠 | 命中多个不同 `FishStock.id` | 各自计算并叠加 |
 | 顺序检查 | 固定输入 | 扩张 → 叠加 → 挤占 → 裁剪 → 圆桌 |
