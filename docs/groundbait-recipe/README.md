@@ -15,6 +15,9 @@ docs/groundbait-recipe/
 ├─ candidate/                        # 当前最新工作提案
 │  ├─ proposal.md
 │  ├─ system-object-model.md
+│  ├─ environment-bake-integration.md
+│  ├─ fish-condition-integration.md
+│  ├─ response-algorithm.md
 │  ├─ object-model.md
 │  ├─ edible-size-response.md
 │  ├─ feeding-event.md
@@ -38,15 +41,18 @@ docs/groundbait-recipe/
 2. [`decisions/conflict-register.md`](decisions/conflict-register.md)：跨文档、跨候选栈的冲突与未决项。
 3. [`candidate/proposal.md`](candidate/proposal.md)：整体提案。
 4. [`candidate/system-object-model.md`](candidate/system-object-model.md)：端到端对象、权重与阶段隔离。
-5. [`candidate/object-model.md`](candidate/object-model.md)：Groundbait 对象、状态与因果所有权。
-6. [`candidate/edible-size-response.md`](candidate/edible-size-response.md)：可摄食尺寸如何进入动作约束。
-7. [`candidate/feeding-event.md`](candidate/feeding-event.md)：一次摄食事件的可行性、选择与成功。
-8. [`candidate/particle-distribution.md`](candidate/particle-distribution.md)：Groundbait 粒径分布及对象状态候选。
-9. [`candidate/physical-release.md`](candidate/physical-release.md)：雾化、黏度、解体和沉降的释放候选。
-10. [`candidate/response-stage-mapping.md`](candidate/response-stage-mapping.md)：与现有 Response Stage 的候选接口映射。
-11. [`candidate/plain-language-explainer.md`](candidate/plain-language-explainer.md)：面向人类快速理解当前设计。
-12. [`rejected/anti-designs.md`](rejected/anti-designs.md)：只在评审、反例检查或需要理解边界时读取。
-13. [`handoff/continuation-prompt.md`](handoff/continuation-prompt.md)：跨会话继续工作用的临时上下文与任务提示。
+5. [`candidate/environment-bake-integration.md`](candidate/environment-bake-integration.md)：环境烘焙与空间分布权重的消费边界。
+6. [`candidate/fish-condition-integration.md`](candidate/fish-condition-integration.md)：鱼况在完整链中的位置与消费者。
+7. [`candidate/response-algorithm.md`](candidate/response-algorithm.md)：Response Stage 的输入输出与聚合顺序。
+8. [`candidate/object-model.md`](candidate/object-model.md)：Groundbait 对象、状态与因果所有权。
+9. [`candidate/edible-size-response.md`](candidate/edible-size-response.md)：可摄食尺寸如何进入动作约束。
+10. [`candidate/feeding-event.md`](candidate/feeding-event.md)：一次摄食事件的可行性、选择与成功。
+11. [`candidate/particle-distribution.md`](candidate/particle-distribution.md)：Groundbait 粒径分布及对象状态候选。
+12. [`candidate/physical-release.md`](candidate/physical-release.md)：雾化、黏度、解体和沉降的释放候选。
+13. [`candidate/response-stage-mapping.md`](candidate/response-stage-mapping.md)：与现有 Response Stage 的候选接口映射。
+14. [`candidate/plain-language-explainer.md`](candidate/plain-language-explainer.md)：面向人类快速理解当前设计。
+15. [`rejected/anti-designs.md`](rejected/anti-designs.md)：只在评审、反例检查或需要理解边界时读取。
+16. [`handoff/continuation-prompt.md`](handoff/continuation-prompt.md)：跨会话继续工作用的临时上下文与任务提示。
 
 当前设计主旨不是四个并列 Bonus，而是一条从数据到抽鱼的完整主脊：
 
