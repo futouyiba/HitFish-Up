@@ -79,7 +79,7 @@ Fish Condition 是状态，不是分数。它描述鱼现在处于什么状态�
 - Fish Condition 的更新公式、时间粒度、记忆和衰减没有落仓。
 - Fish Condition 是否随地点、条件组或鱼个体变化，没有落仓。
 
-以上登记在 `decisions/conflict-register.md` 的 C-12、C-13、C-14。
+以上登记在 `decisions/conflict-register.md` 的 C-12a1、C-12a2、C-12b、C-13a、C-13b、C-14。
 
 ## 7. 最小结构反例
 
