@@ -58,9 +58,12 @@ Response Stage 的候选输入
 | Food Identity | 实体对象的 Food 属性 | Food 目标选择、对象价值 | 尺寸成功、释放速度 |
 | Chemical Cue Potential | Chemical Cue Field | 发现、趋近、回避、选择 | 实体质量、尺寸成功 |
 | Particle / Object Properties | Particle Object / Object State | 动作可行性、动作成功 | 鱼种偏好、最终中鱼 |
+| 可食 / 载体区分 | Edible Particle Distribution / Carrier | Size Response / Physical Release | 不把载体算成可食 |
 | Physical Release Properties | Feeding Place State | 接触机会、位置、水层、持续时间 | 固定中鱼 Bonus |
 
-同一个 Ingredient 可以同时提供多类事实，但相同来源不意味着可以把不同路径相加。完整对象和所有权见 `object-model.md`。
+同一个 Ingredient 可以同时提供多类事实，但相同来源不意味着可以把不同路径相加。Ingredient Facts 是原料的固有事实；`Base / Target / State / Attractant` 是配方级角色和配比约束，不是 Ingredient 的固有分类。完整对象和所有权见 `object-model.md`。
+
+固体还要区分可食颗粒和载体 / 不可食颗粒。两者都可以有粒径，也都可以参与释放，但只有可食颗粒进入尺寸响应。完整分层见 `particle-distribution.md`。
 
 ## 4. Food：同 Target 合并后边际递减
 
@@ -162,7 +165,7 @@ RF4 公开资料可以支持 attractant 很强，但“强且一定短效”目�
 
 > 当实体对象已经出现在鱼可接触的地点和状态中，这条鱼能否通过某种摄食动作有效利用它？
 
-完整 Candidate 见 `object-model.md`、`edible-size-response.md` 和 `feeding-event.md`。Groundbait 粒径分布与物理释放分别见 `particle-distribution.md` 和 `physical-release.md`；这些页面描述对象、状态和因果接口，不把归一化 Fixture 冒充生产参数。
+完整 Candidate 见 `object-model.md`、`edible-size-response.md` 和 `feeding-event.md`。Groundbait 粒径分布与物理释放分别见 `particle-distribution.md` 和 `physical-release.md`；这些页面描述对象、状态和因果接口，不把归一化 Fixture 冒充生产参数。尺寸的结构验证见 `edible-size-gold-fixture.md`。
 
 当前核心结构：
 
@@ -182,7 +185,7 @@ size-conditioned usability
 
 `Body Linear Size` 必须是体长等线性尺度。重量不能直接与无量纲 Ratio 相乘生成长度。
 
-Groundbait 用粒径分布求可利用份额；Hookbait 后续可用单颗饵球尺寸复用“Size Fit”语言，但 Hookbait 还会有入口性、硬度、持钩、姿态等其它因素，不等于整套 Groundbait Response 直接复用。
+Groundbait 用当前地点可接触的可食颗粒分布求 `EdibleUtilization`；载体和不可食颗粒只进入物理释放。Hookbait 后续可用单颗饵球尺寸复用“尺寸约束”语言，但 Hookbait 还会有入口性、硬度、持钩、姿态等其它因素，不等于整套 Groundbait Response 直接复用。
 
 ## 7. Physical Release：雾化、黏度不是直接中鱼系数
 

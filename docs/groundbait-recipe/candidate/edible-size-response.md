@@ -20,6 +20,13 @@ ParticleObject effective_size / shape / state
 feasibility_m / success_m 的尺寸相关部分
 ```
 
+输入和输出的边界：
+
+- 输入只包含 `Edible Particle Distribution`，即当前地点可接触的可食颗粒。载体、黏结料、泥和不提供营养的颗粒不进入本页。
+- 输出是 `EdibleUtilization`，表示可食颗粒中被有效利用的份额。
+- 输出不是 Attraction、Retention、Bite Bonus、饱腹或最终 Response。
+- Groundbait 与 Hookbait 共享的只是这个鱼侧尺寸约束接口，不共享完整的 Feeding Place、释放或响应机制。
+
 ## 2. Fish body 与 action capacity
 
 - `Body Linear Size` 描述个体成长带来的尺度变化。

@@ -18,7 +18,10 @@
 | 圆桌权重表 | Roundtable Weight List | 抽鱼前的候选权重列表 |
 | 挤占 | Crowding-out | 圆桌抽鱼中的候选竞争 |
 | 配方事实 | Recipe / Ingredient Facts | 原料和配比提供的事实 |
+| 配方角色 | Recipe Role | 玩家在配方里赋予 Ingredient 的功能角色，不是原料分类 |
 | 物理释放 | Physical Release | 配方状态到摄食地点状态的转换 |
+| 可食颗粒 | Edible Particle | 进入尺寸响应的实体可食部分 |
+| 载体颗粒 | Carrier / Non-edible Particle | 有粒径、参与释放，但不进入可食利用 |
 | 摄食地点状态 | Feeding Place State | 本目录工作词，当前可接触对象与线索 |
 | 摄食事件 | Feeding Event | 本目录工作词，一次摄食机会 |
 | 有效摄食机会 | Effective Ingestion Opportunity | 本目录工作词，候选输出接口 |
@@ -47,6 +50,7 @@ docs/groundbait-recipe/
 │  ├─ groundbait-integration.md
 │  ├─ food-flavor.md
 │  ├─ edible-size-response.md
+│  ├─ edible-size-gold-fixture.md
 │  ├─ feeding-event.md
 │  ├─ particle-distribution.md
 │  ├─ physical-release.md
@@ -73,17 +77,18 @@ docs/groundbait-recipe/
 7. [`candidate/response-algorithm.md`](candidate/response-algorithm.md)：Response Stage 的输入输出与聚合顺序。
 8. [`candidate/roundtable-and-draw.md`](candidate/roundtable-and-draw.md)：圆桌、抽鱼、生成与 Fish AI 边界。
 9. [`candidate/cross-stage-invariants.md`](candidate/cross-stage-invariants.md)：跨阶段不变量与最小反例。
-8. [`candidate/object-model.md`](candidate/object-model.md)：Groundbait 对象、状态与因果所有权。
-9. [`candidate/groundbait-integration.md`](candidate/groundbait-integration.md)：四条事实路径的整合与重复计权检查。
-10. [`candidate/food-flavor.md`](candidate/food-flavor.md)：Food 与 Flavor 的候选位置和准入问题。
-11. [`candidate/edible-size-response.md`](candidate/edible-size-response.md)：可摄食尺寸如何进入动作约束。
-12. [`candidate/feeding-event.md`](candidate/feeding-event.md)：一次摄食事件的可行性、选择与成功。
-13. [`candidate/particle-distribution.md`](candidate/particle-distribution.md)：Groundbait 粒径分布及对象状态候选。
-14. [`candidate/physical-release.md`](candidate/physical-release.md)：雾化、黏度、解体和沉降的释放候选。
-15. [`candidate/response-stage-mapping.md`](candidate/response-stage-mapping.md)：与现有 Response Stage 的候选接口映射。
-16. [`candidate/plain-language-explainer.md`](candidate/plain-language-explainer.md)：面向人类快速理解当前设计。
-17. [`rejected/anti-designs.md`](rejected/anti-designs.md)：只在评审、反例检查或需要理解边界时读取。
-18. [`handoff/continuation-prompt.md`](handoff/continuation-prompt.md)：跨会话继续工作用的临时上下文与任务提示。
+10. [`candidate/object-model.md`](candidate/object-model.md)：Groundbait 对象、状态与因果所有权。
+11. [`candidate/groundbait-integration.md`](candidate/groundbait-integration.md)：四条事实路径的整合与重复计权检查。
+12. [`candidate/food-flavor.md`](candidate/food-flavor.md)：Food 与 Flavor 的候选位置和准入问题。
+13. [`candidate/edible-size-response.md`](candidate/edible-size-response.md)：可摄食尺寸如何进入动作约束。
+14. [`candidate/edible-size-gold-fixture.md`](candidate/edible-size-gold-fixture.md)：窄版结构验证，不进入生产参数。
+15. [`candidate/feeding-event.md`](candidate/feeding-event.md)：一次摄食事件的可行性、选择与成功。
+16. [`candidate/particle-distribution.md`](candidate/particle-distribution.md)：Groundbait 粒径分布及对象状态候选。
+17. [`candidate/physical-release.md`](candidate/physical-release.md)：雾化、黏度、解体和沉降的释放候选。
+18. [`candidate/response-stage-mapping.md`](candidate/response-stage-mapping.md)：与现有 Response Stage 的候选接口映射。
+19. [`candidate/plain-language-explainer.md`](candidate/plain-language-explainer.md)：面向人类快速理解当前设计。
+20. [`rejected/anti-designs.md`](rejected/anti-designs.md)：只在评审、反例检查或需要理解边界时读取。
+21. [`handoff/continuation-prompt.md`](handoff/continuation-prompt.md)：跨会话继续工作用的临时上下文与任务提示。
 
 当前设计主旨不是四个并列 Bonus，而是一条从数据到抽鱼的完整主脊：
 
@@ -116,11 +121,13 @@ Food、Flavor、Particle、Physical Release 各自进入主脊的不同位置，
 - “天气直接切换味型偏好”目前证据不足，不作为候选规则；天气等环境输入优先进入现有 Fish Condition 语义。
 - 最终是否存在单一 `RecipeFit` 尚未决定。Attraction、Retention、Ingestion、Selection 可能需要保留为不同语义，不能因为公式整齐而提前相加。
 
-当前主要算法候选仍需验证：
+当前工作重点是 Size，不是把外围框架继续铺满：
 
-- Food：同 Target 合并后边际递减。
-- Flavor：先按 Chemical Cue Exposure / Potency 混成整体 Flavor Profile，并保留总 Intensity；不是按 Ingredient 质量份额直接当味型百分比。
-- Edible Size：用鱼的线性体尺、形态和 Feeding Mechanism 解释实体对象如何进入有效摄食；多 Feeding Mechanism 是受限的替代路径，不是默认求和。
+- 先按 WD-23 完成三个前置语义闭合：Ingredient 与 Recipe Role、物理颗粒与可食颗粒、Edible Size 输出语义。
+- 然后用 `candidate/edible-size-gold-fixture.md` 检查结构，不做生产参数。
+- Fixture 失败就修 Size Candidate；通过就停在这里，不进入 Food、Flavor 或完整 Recipe Grammar。
+
+Food、Flavor、Attraction、Retention 和完整配方语法仍停在候选层，不作为这一轮的下一步。
 
 ## 研究输入
 
@@ -134,23 +141,23 @@ Food、Flavor、Particle、Physical Release 各自进入主脊的不同位置，
 ## 当前推进顺序
 
 ```text
-阶段 0：权威冻结与冲突清单
+Step 0：Size 前置语义闭合
 ↓
-阶段 1：端到端对象与权重所有权
+Step 1：Edible Size Gold Fixture
 ↓
-阶段 2：环境烘焙 / DEF / 空间分布权重
+Step 2：Groundbait Particle Distribution
 ↓
-阶段 3：Fish Condition
+Step 3：Food Aggregation
 ↓
-阶段 4：Response Stage 与 Adaptation Coefficient
+Step 4：Flavor + 小药 + Avoidance
 ↓
-阶段 5：Groundbait 全栈（对象 / 释放 / 分布 / 摄食 / Food / Flavor）
+Step 5：Physical Release
 ↓
-阶段 6：圆桌与抽鱼
+Step 6：判断 Attraction / Retention 是否需要独立模块
 ↓
-阶段 7：抽鱼/生成与 Fish AI 边界
-↓
-阶段 8：跨阶段不变量与最小验证
+Step 7：最终 Response Aggregation
 ```
+
+这份顺序是当前工作项，不是对整个端到端计划的否定。端到端对象、烘焙、鱼况、响应和圆桌文档仍作为背景和边界；它们不要求在 Size 之前全部完成。
 
 不要从最终总公式开始倒推各模块，也不要在语义未定时先写 Fixture。
