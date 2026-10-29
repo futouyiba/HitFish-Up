@@ -121,13 +121,14 @@ Food、Flavor、Particle、Physical Release 各自进入主脊的不同位置，
 - “天气直接切换味型偏好”目前证据不足，不作为候选规则；天气等环境输入优先进入现有 Fish Condition 语义。
 - 最终是否存在单一 `RecipeFit` 尚未决定。Attraction、Retention、Ingestion、Selection 可能需要保留为不同语义，不能因为公式整齐而提前相加。
 
-当前工作重点是 Size，不是把外围框架继续铺满：
+当前进度停在 Step 2：
 
-- 先按 WD-23 完成三个前置语义闭合：Ingredient 与 Recipe Role、物理颗粒与可食颗粒、Edible Size 输出语义。
-- 然后用 `candidate/edible-size-gold-fixture.md` 检查结构，不做生产参数。
-- Fixture 失败就修 Size Candidate；通过就停在这里，不进入 Food、Flavor 或完整 Recipe Grammar。
+- Step 0 已完成：Ingredient 与 Recipe Role、物理颗粒与可食颗粒、Edible Size 输出语义。
+- Step 1 已完成：`candidate/edible-size-gold-fixture.md`。
+- Step 2 已完成：`candidate/particle-distribution.md` 的 Ingredient → 配方分布、配方分布 → Feeding Place、守恒账本和载体隔离。
+- 下一步是 Step 3 Food Aggregation；进入前先确认是否继续。
 
-Food、Flavor、Attraction、Retention 和完整配方语法仍停在候选层，不作为这一轮的下一步。
+Food、Flavor、Attraction、Retention 和完整配方语法仍停在候选层。
 
 ## 研究输入
 
