@@ -41,8 +41,10 @@ prey support 始终为 0.90；feeding motivation 不随 target speed 被重写�
 
 ```text
 ActualPresentation motion
-→ ResolvedTaskDemand
-× ResolvedFunctionalCapacity comparison
+→ ResolvedTaskDemand / Closing demand
+× species × size cohort → InterceptSpeedLimit
+→ Closing feasibility
+→ Activity-aware soft cost only if feasible
 → TaskAffordance
 ```
 
@@ -175,9 +177,11 @@ response = preySupport × stateBonus × motivation
 Target / prey interpretation
 + ActualPresentation current motion / geometry
 + fish-relative geometry
-+ ResolvedFunctionalCapacity
++ species × size cohort → InterceptSpeedLimit
         ↓
-ResolvedTaskDemand
+ResolvedTaskDemand / Closing feasibility
+        ↓
+Activity-aware soft Closing cost when physically feasible
         ↓
 TaskAffordance
 = Feasible | Constrained | Infeasible | Unknown
@@ -219,7 +223,7 @@ C_mode
 
 ## 8. 外部证据边界
 
-大口黑鲈与其他 centrarchid 的研究显示，捕获成功依赖 locomotor positioning / strike timing，且大口黑鲈可随感知与环境条件调整 ram、suction、接近速度和捕获运动。这支持 TaskDemand / FunctionalCapacity 的因果位置。
+大口黑鲈与其他 centrarchid 的研究显示，捕获成功依赖 locomotor positioning / strike timing，且大口黑鲈可随感知与环境条件调整 ram、suction、接近速度和捕获运动。这支持把 Closing 物理 hard feasibility 放在 `species × size cohort → InterceptSpeedLimit`，并把 Activity 作为 physically-feasible Closing 的 soft cost；它不证明本页任何人工阈值或生产校准。
 
 这些研究不直接证明：
 

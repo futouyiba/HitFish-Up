@@ -174,7 +174,7 @@ vulnerable-like
 
 - prey-side semantics；
 - fish-relative geometry；
-- FunctionalCapacity；
+- species × size cohort → InterceptSpeedLimit；
 - TaskDemand / TaskAffordance；
 - Perception / temporal support；
 - Feeding Motivation；
@@ -258,7 +258,7 @@ VulnerabilityBonus / VulnerabilityCoeff
 下一步不再扩词表，而应该验证这个 packet 是否真的改善最终 Complete Feeding Response Mode 的表达：
 
 - 对同一个 `vulnerable-like` presentation，让不同 fish / fish state 得到不同 response；
-- 对同一个 `escaping-like` presentation，让高 FunctionalCapacity 与低 FunctionalCapacity 产生策略 reversal；
+- 对同一个 `escaping-like` presentation，让不同 `species × size cohort → InterceptSpeedLimit` 产生策略 reversal；Activity 只在 physically-feasible Closing 上改变 soft cost；
 - 检查 `prey_semantics` 是否只需要参与 Explain / mode selection，还是至少有一个 semantic 真正需要进入 Valuation。
 
 如果 Opportunity packet 最终只是把已有字段重新包装而没有消费方，就不把它做成独立生产对象，只保留为解释视图。

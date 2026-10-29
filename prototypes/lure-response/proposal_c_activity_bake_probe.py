@@ -68,8 +68,9 @@ def main() -> None:
     assert low_pause.cost == 0.0
 
     # Transverse presentation likewise has zero radial Closing demand in this reduced model.
+    # Keep the closed form's tiny floating-point residual out of the assertion.
     transverse = closing_cost(0.9, 1.0, 90, 0.0)
-    assert transverse.cost == 0.0
+    assert transverse.cost is not None and abs(transverse.cost) < 1e-12
 
     print("Activity bake / Closing ownership probe passed")
 

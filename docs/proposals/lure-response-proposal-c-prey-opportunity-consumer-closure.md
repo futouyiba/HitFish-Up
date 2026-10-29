@@ -125,8 +125,10 @@ ActualPresentation
 → prey-type / prey-state interpretation
 → prey-side semantic facets
 
-fish-relative geometry + FunctionalCapacity
-→ ResolvedTaskDemand
+species × size cohort → InterceptSpeedLimit
++ fish-relative geometry / presentation facts
+→ ResolvedTaskDemand / Closing feasibility
+→ Activity-aware soft Closing cost when feasible
 → TaskAffordance
 
 Perception / temporal context

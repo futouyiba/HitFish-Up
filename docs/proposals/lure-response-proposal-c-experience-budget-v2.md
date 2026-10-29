@@ -55,8 +55,8 @@ T_target ≈ 30 / C
 | 正常鱼口 + fast | 0.75–0.85 | 35–40s | 有竞争力，只比 reference-good 略差 |
 | 正常鱼口 + reference-good | 0.95–1.00 | 30–32s | 基准强响应 |
 | 好鱼口 + fast | 0.90–1.00 | 30–33s | 基本恢复到 reference-good |
-| 弱 Functional Capacity + fast | 0.25–0.35 | 86–120s | demanding presentation 明显受损 |
-| 弱 Functional Capacity + slow | 0.85–0.95 | 32–35s | 降低 TaskStrain 后大幅恢复 |
+| species × size cohort / InterceptSpeedLimit 过高的 fast case | 0.25–0.35 | 86–120s | Closing 超过 hard limit 时不可行；Activity 不改变该边界 |
+| 低 Activity + physically-feasible slow | 0.85–0.95 | 32–35s | Activity 只增加可行 Closing 的 soft cost，不改变 `InterceptSpeedLimit` |
 
 这些值是 Working Experience Budget，不是 Production calibration。
 
@@ -65,19 +65,19 @@ T_target ≈ 30 / C
 如果两者 Food Value 与 Motivation 相同，而且：
 
 ```text
-弱鱼 + slow     → derived TaskStrain = 0.50
-正常鱼 + fast   → derived TaskStrain = 0.65
+low Activity + slow     → physically-feasible Closing，soft cost higher
+species × size cohort   → InterceptSpeedLimit
 ```
 
 那么前者必须具有不低于后者的 C_mode。
 
-否则等于 Functional Capacity 已经通过 TaskStrain 结算一次，下游又因为“这是弱鱼”额外再罚一次。
+否则等于物理 hard feasibility 与 Activity soft cost 被重复或错误合并；`InterceptSpeedLimit` 只负责 Closing 是否可行，Activity 只影响可行 Closing 的 soft cost。
 
 因此体验预算本身也必须服从：
 
 ```text
 same Value + same Motivation
-lower TaskStrain
+lower Closing demand / Activity soft cost
 → C_mode 不得更低
 ```
 
@@ -88,7 +88,7 @@ lower TaskStrain
 继续测试：
 
 ```text
-TaskCost = k × TaskStrain^p
+TaskCost = k × physically-feasible task consequence^p
 Threshold = b - c × Motivation
 Margin = FoodValue - TaskCost - Threshold
 C_mode = clamp(Margin / r, 0, 1)^gamma
@@ -112,10 +112,10 @@ gamma ≈ 0.89
 也就是：
 
 ```text
-低 / 中 TaskStrain
+低 / 中 physically-feasible task consequence
 → 成本上升较慢
 
-接近能力边界
+接近 `InterceptSpeedLimit` 的可行边界
 → 成本快速上升
 ```
 
@@ -123,7 +123,7 @@ gamma ≈ 0.89
 
 - 正常鱼口下 fast retrieve 仍有竞争力；
 - 差鱼口或弱能力时 demanding presentation 明显掉下去；
-- slowdown / pause 只要实质降低 TaskStrain，就能产生明显 rescue；
+- slowdown / pause 只要实质降低 Closing demand 或可行 Closing 的 Activity soft cost，就能产生明显 rescue；
 - 真正 Infeasible 仍由 hard gate 归零。
 
 ## 6. 本轮修正了上一轮的一个判断
@@ -136,7 +136,7 @@ Motivation → Threshold
 
 的线性关系可能过于简单。
 
-本轮发现，之前的部分困难来自体验目标自身不一致，例如同 Value / Motivation 下反而要求较低 TaskStrain 得到更低 C。
+本轮发现，之前的部分困难来自体验目标自身不一致，例如同 Value / Motivation 下反而要求较低 physically-feasible task consequence 得到更低 C。
 
 修正预算后，简单线性 Threshold 已能与目标相当接近。
 

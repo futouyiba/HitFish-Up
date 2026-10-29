@@ -9,7 +9,7 @@ Complete Feeding Response Mode 已收敛到最小输入：
 
 - Target / Food Value；
 - Feeding Motivation；
-- TaskAffordance / TaskStrain；
+- TaskAffordance / derived soft TaskCost for physically-feasible Closing；
 - Resolution / Mode Validity。
 
 本轮不再扩语义层，只攻击：`C_mode` 到底应如何从这些输入计算。
@@ -72,26 +72,20 @@ TaskAffordance 的 categorical label 继续保留：
 Feasible | Constrained | Infeasible | Unknown
 ```
 
-但连续计算建议消费一个 derived `TaskStrain`：
+其中 Closing 的 hard feasibility 由：
 
 ```text
-0   = 很轻松
-1   = 接近当前能力边界
->1  = Infeasible
+species × size cohort → InterceptSpeedLimit
 ```
 
-`TaskStrain > 1` 是 hard gate，不允许再被高 Food Value 或高 Motivation 补回来。
+决定。`Activity` 来自 Fish Condition Bake，只在 Closing 已 physically feasible 时进入 soft cost；不允许 `InterceptSpeedLimit × Activity`，也不允许 Activity 另设 hard gate。
 
-第一版 TaskCost 只需要满足：
-
-- 随 TaskStrain 单调上升；
-- 低 strain 成本较小；
-- 接近能力边界时成本明显增加。
+`TaskCost` 只消费已闭合的 physically-feasible task consequence。物理不可行不以极大 `TaskCost` 表示，而是先成为 `Infeasible`。
 
 probe 暂用：
 
 ```text
-TaskCost = 0.45 × TaskStrain^1.6
+TaskCost = 0.45 × physically_feasible_task_consequence^1.6
 ```
 
 这里只验证拓扑，不是生产标定。
@@ -111,7 +105,7 @@ C_mode = clamp(Margin / 0.45, 0, 1)
 ```text
 ResolutionIncomplete → no scalar
 ModeInvalid          → 0
-TaskStrain > 1       → 0
+physically infeasible Closing → 0
 FoodValue <= 0       → 0
 Motivation <= 0      → 0
 ```
@@ -120,11 +114,11 @@ Motivation <= 0      → 0
 
 ## 6. 数值表：Motivation 改变可接受机会区域
 
-列是 `FoodValue`，行是 `TaskStrain`。
+列是 `FoodValue`，行是 physically-feasible task consequence。
 
 ### Motivation = 0.3｜鱼口差
 
-| TaskStrain \\ FoodValue | 0.2 | 0.4 | 0.6 | 0.8 | 1.0 |
+| Physically-feasible task consequence \ FoodValue | 0.2 | 0.4 | 0.6 | 0.8 | 1.0 |
 |---:|---:|---:|---:|---:|---:|
 | 0.2 | 0.00 | 0.00 | 0.00 | 0.23 | 0.68 |
 | 0.4 | 0.00 | 0.00 | 0.00 | 0.08 | 0.52 |
@@ -136,7 +130,7 @@ Motivation <= 0      → 0
 
 ### Motivation = 0.6｜正常鱼口
 
-| TaskStrain \\ FoodValue | 0.2 | 0.4 | 0.6 | 0.8 | 1.0 |
+| Physically-feasible task consequence \ FoodValue | 0.2 | 0.4 | 0.6 | 0.8 | 1.0 |
 |---:|---:|---:|---:|---:|---:|
 | 0.2 | 0.00 | 0.00 | 0.32 | 0.77 | 1.00 |
 | 0.4 | 0.00 | 0.00 | 0.17 | 0.61 | 1.00 |
@@ -146,7 +140,7 @@ Motivation <= 0      → 0
 
 ### Motivation = 0.9｜鱼口好
 
-| TaskStrain \\ FoodValue | 0.2 | 0.4 | 0.6 | 0.8 | 1.0 |
+| Physically-feasible task consequence \ FoodValue | 0.2 | 0.4 | 0.6 | 0.8 | 1.0 |
 |---:|---:|---:|---:|---:|---:|
 | 0.2 | 0.00 | 0.41 | 0.86 | 1.00 | 1.00 |
 | 0.4 | 0.00 | 0.26 | 0.70 | 1.00 | 1.00 |
@@ -213,7 +207,7 @@ Interaction / Capture Current v15 也只要求 Complete Mode 独立闭合 `Perce
 
 ```text
 FoodValue
-- TaskCost(TaskStrain)
+- Activity-aware soft Closing cost / other admitted task consequence
 - WillingnessThreshold(Motivation)
 → DecisionMargin
 → ResponseCurve
@@ -229,7 +223,7 @@ FoodValue × Motivation × AffordanceCoeff
 当前需要标定/验证的核心自由度因此缩小为：
 
 1. `FoodValue` 的实际尺度与 reference anchors；
-2. `TaskStrain → TaskCost` 的曲线形状；
+2. 当前 physically-feasible task 的 Activity-aware soft cost 结构与参数；
 3. `Motivation → WillingnessThreshold` 的曲线形状；
 4. `DecisionMargin → C_mode` 的 response curve。
 
@@ -242,6 +236,6 @@ FoodValue × Motivation × AffordanceCoeff
 - 高价值 baitfish vs 低匹配 prey；
 - 鱼口差时 pause / slower retrieve 是否能通过降低 TaskCost 把 response 拉回；
 - 鱼口好时 aggressive retrieve 是否应该从不可接受变成可接受；
-- 同一 presentation 对不同 FunctionalCapacity 的鱼是否产生预期翻转。
+- 同一 presentation 对不同 `species × size cohort → InterceptSpeedLimit` 的鱼是否产生预期翻转；Activity 只应在 Closing physically feasible 时改变 soft cost。
 
 先把这些 qualitative ordering / reversal 写成验收矩阵，再反推四条曲线，而不是先凭手感定生产参数。

@@ -9,7 +9,7 @@
 
 ```text
 FoodValue
-- TaskCost(TaskStrain)
+- Activity-aware soft Closing cost and other admitted task consequences
 - WillingnessThreshold(Motivation)
 → DecisionMargin
 → ResponseCurve
@@ -34,7 +34,7 @@ FoodValue
 |---|---|---|
 | H1 | Food Value 单调 | 其它相同，更值得吃的目标不能反而更低响应 |
 | H2 | Motivation 单调 | 其它相同，更强 feeding motivation 不能反而更低响应 |
-| H3 | Task Strain 单调 | 其它相同，更难完成的捕获任务不能反而更高响应 |
+| H3 | Task consequence 单调 | 其它相同，更难完成的 physically-feasible task 不能反而有更高响应；Closing 超过 `InterceptSpeedLimit` 直接是 Infeasible |
 | H4 | Infeasible = hard zero | 真正做不到不能被 Food Value / Motivation 补偿 |
 | H5 | Food Value = 0 → zero feeding response | 已解析为无食物价值时，不应靠其它因子复活 Feeding mode |
 | H6 | Motivation = 0 → zero feeding response | 已解析为零 feeding drive 时，不应靠 target value 复活 Feeding mode |
@@ -49,12 +49,12 @@ Unknown / ResolutionIncomplete 仍沿 final-output contract：不产出 scalar�
 
 | ID | 策略约束 | 玩法含义 |
 |---|---|---|
-| S1 | 鱼口差时，低 Task Strain > 高 Task Strain | 慢一点、送近一点、降低追逐要求应有价值 |
+| S1 | 鱼口差时，较低 physically-feasible task consequence > 较高 consequence | 慢一点、送近一点、降低追逐要求应有价值 |
 | S2 | 鱼口好时，高 Task Strain presentation 仍可有响应 | aggressive retrieve 不应永远被判死 |
 | S3 | 提高 Motivation 会扩大可接受机会区域 | 鱼口好不是统一倍率，而是更多机会值得出手 |
 | S4 | 高 Food Value 可补偿部分 Constrained task | 特别合口的猎物值得多费一点劲 |
 | S5 | 高 Value / Motivation 不能突破 Infeasible | “太香了所以突然追得上”禁止 |
-| S6 | 同 presentation 下，更高 Functional Capacity 应通过更低 derived TaskStrain 获得优势 | 能力差异必须有真实 task consequence |
+| S6 | 同 presentation 下，不同 `species × size cohort → InterceptSpeedLimit` 应通过真实 Closing consequence 产生优势；Activity 只能在 Closing physically feasible 后改变 soft cost | 能力差异必须有真实 task consequence |
 | S7 | Pause 没有隐藏 bonus | pause 只有通过降低 TaskDemand、增加 exposure 或其它具名机制才有效 |
 
 ## 4. Calibration / Effect-Size Fixtures
@@ -64,7 +64,7 @@ Unknown / ResolutionIncomplete 仍沿 final-output contract：不产出 scalar�
 当前 probe 先放五个工作 fixture：
 
 - F1：鱼口差，同一较高价值 prey，快速 presentation → 慢速 presentation 应产生可观察 rescue；
-- F2：正常鱼口，中等偏上 target value，在较难与较易 task 之间应存在 threshold crossing；
+- F2：正常鱼口，中等偏上 target value，在 physically-feasible task consequence 较高与较低的对照之间应存在 threshold crossing；
 - F3：鱼口好，中等 target value + demanding task 仍应保留正响应；
 - F4：鱼口差，即使 prey 较好，demanding task 也应受到明显压制；
 - F5：鱼口好 + 高 value + easy task 应接近强响应区。
@@ -76,7 +76,7 @@ Unknown / ResolutionIncomplete 仍沿 final-output contract：不产出 scalar�
 使用 `lure-response-proposal-c-feeding-response-threshold.md` 中当前临时公式：
 
 ```text
-TaskCost(S) = 0.45 × S^1.6
+TaskCost(S) = 0.45 × physically_feasible_task_consequence^1.6
 Threshold(M) = 0.90 - 0.80 × M
 Margin = FoodValue - TaskCost - Threshold
 C_mode = clamp(Margin / 0.45, 0, 1)
@@ -132,7 +132,7 @@ slow > fast
 
 ```text
 FoodValue scale
-TaskStrain → TaskCost
+Task consequence / Activity soft Closing cost
 Motivation → Threshold
 DecisionMargin → C_mode
 ```
@@ -168,7 +168,7 @@ DecisionMargin → C_mode
 
 - Food Value；
 - Motivation；
-- TaskStrain。
+- Task consequence。
 
 然后观察：
 

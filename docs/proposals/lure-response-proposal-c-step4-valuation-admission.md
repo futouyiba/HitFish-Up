@@ -151,7 +151,7 @@ Feeding-mode Valuation
 - 捕获依赖 locomotor positioning；
 - sensory pre-strike information 会改变 ram / suction 与 approach kinematics；
 - 环境流速变化时，大口黑鲈会调整 prey-capture kinematics；
-- 因而 Perception、TaskDemand 与 FunctionalCapacity 分层是合理的。
+- 因而 Perception、TaskDemand、`InterceptSpeedLimit` 与 Activity soft cost 分层是合理的。
 
 这些研究不直接证明 cadence 或 vulnerability 应得到独立 valuation coefficient。
 

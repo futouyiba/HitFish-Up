@@ -140,11 +140,12 @@ p_target 0.16 → 0.286
 
 ### 5.2 Response curve 不应独立标定
 
-Response 的四条曲线：
+Response 的四条工作链：
 
 ```text
 FoodValue scale
-TaskStrain → TaskCost
+Task consequence + Activity-aware soft Closing cost
+→ TaskCost
 Motivation → Threshold
 DecisionMargin → C_mode
 ```
@@ -218,7 +219,7 @@ Response effect-size simulator
 1. 鱼口差：fast retrieve 几乎失效，pause / slower retrieve 应产生明显恢复；
 2. 鱼口正常：标准 retrieve 是基准，高 value prey 与适度降速各有可见收益；
 3. 鱼口好：aggressive retrieve 仍具竞争力，不要求玩家一直慢钓；
-4. 弱 Functional Capacity：高 demanding presentation 明显劣于强鱼；
+4. 较低 `InterceptSpeedLimit` 或更高 Closing demand：高 demanding presentation 明显劣于 physically-feasible、较低 Closing demand 的对照；Activity 只在可行区内改变 soft cost；
 5. Infeasible：任何 Value / Motivation 都不能复活。
 
 然后给每个故事指定 target purity / target-time / relative-efficiency 区间，再反推 Response 曲线参数。

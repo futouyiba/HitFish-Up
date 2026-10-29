@@ -2,9 +2,24 @@
 
 > 状态：Working Hypothesis / probe-backed，不是生产冻结公式。
 
+## Closing hard feasibility 与 soft cost 的分工
+
+当前 baseline 不建立旧的 `FunctionalCapacity` 总对象，也不把 `InterceptSpeedLimit × Activity` 做成复合 hard gate。
+
+```text
+species × size cohort → InterceptSpeedLimit
++ Closing demand
+→ Closing physically feasible / infeasible
+
+Activity
+→ soft Closing cost only when Closing is physically feasible
+```
+
+`InterceptSpeedLimit` 负责物理 hard feasibility；`Activity` 只负责可行 Closing 的软成本。其它 task axis 只有在有独立物理语义和反事实证据时才可单独 admission。`Unknown` 不等于 zero、`Disabled` 或 `NotApplicable`。
+
 ## 结论
 
-当前不建议直接把 `TaskStrain` 压成一个总标量后写死 `TaskCost = k × S^p`。
+当前不建议直接把 physically-feasible task consequence 压成一个总标量后写死 `TaskCost = k × S^p`。
 
 更稳的第一版结构是：
 
@@ -31,8 +46,8 @@ TaskCost = k × [max(axisCost_i) + rho × min(axisCost_i)]
 如果只用：
 
 ```text
-TaskStrain = max(u_intercept, u_maneuver)
-TaskCost = k × TaskStrain^p
+physically-feasible task consequence = max(u_intercept, u_maneuver)
+TaskCost = k × physically-feasible task consequence^p
 ```
 
 那么下面两种任务会被判成完全一样：
@@ -102,7 +117,7 @@ TaskCost = k × [max(ci, cm) + rho × min(ci, cm)]
 4. 接近能力边界时成本应快速上升；
 5. 同 peak utilization 下，额外显著 maneuver 可以增加成本；
 6. 第二轴附加成本不能等价于再完整乘一遍 response penalty；
-7. Functional Capacity 只通过 utilization 进入，不能在下游再因“弱鱼”重复惩罚。
+7. Activity 的 soft Closing cost 只能在 Closing 已 physically feasible 后计算；不得把 Activity 乘入 `InterceptSpeedLimit`，也不得用它制造第二个 hard gate。
 
 ## 仍未冻结
 

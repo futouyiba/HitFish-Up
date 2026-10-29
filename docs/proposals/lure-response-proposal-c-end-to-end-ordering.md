@@ -108,7 +108,7 @@ average task cost then project = 0.15
 
 差异达到 3 倍。后者虚构了一条不存在的“平均鱼”。
 
-因此 angle 是 mode 内部的 latent microstate distribution，不是一个应先压成平均 TaskStrain 的输入。
+因此 angle 是 mode 内部的 latent microstate distribution，不是一个应先压成平均 physically-feasible task consequence 的输入。
 
 ## 3. Closing hard gate 的正确粒度
 
@@ -226,7 +226,7 @@ C(theta)
 C_mode = E_theta[C(theta)]
 ```
 
-这比先构造一个综合平均 `TaskStrain` 更符合当前 retention 语义。
+这比先构造一个综合平均 physically-feasible task consequence 更符合当前 retention 语义。
 
 ## 7. 不应重复计权的 Cause
 
@@ -266,12 +266,11 @@ Mode admission / resolution
 Target Relation ─────────────→ FoodValue
 Current prey state ──────────→ StateTriggerValue
 Fish condition ──────────────→ WillingnessThreshold
-Functional Capacity + motion → task parameters
-        ↓
-latent theta loop
-├─ ClosingUtilization(theta)
-├─ local Closing hard gate
-├─ TaskCost(theta)
+species × size cohort → InterceptSpeedLimit
++ current motion / relative geometry
+→ ClosingUtilization(theta) / local Closing hard gate
+→ Activity-aware soft Closing cost
+→ TaskCost(theta)
 ├─ DecisionMargin(theta)
 └─ C(theta)
         ↓ expectation

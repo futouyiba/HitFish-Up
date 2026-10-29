@@ -11,7 +11,7 @@
 ```text
 Target Relation / Food Value
 + Feeding Motivation
-+ TaskStrain
++ Activity-aware soft Closing cost and other admitted task consequence
 → Decision Margin
 ```
 
@@ -71,7 +71,7 @@ Reject / Weak / Marginal / Positive / Strong
 → 0 / .2 / .5 / .8 / 1
 ```
 
-这与中层样板的 Working `Decision Strength` 语言兼容，但如果把它作为 Production numeric core，会把连续的 Motivation / TaskStrain 差异重新量化成台阶，并制造阈值跳变。
+这与中层样板的 Working `Decision Strength` 语言兼容，但如果把它作为 Production numeric core，会把连续的 Motivation / Activity-soft-cost 差异重新量化成台阶，并制造阈值跳变。
 
 因此更适合作为 Explain / Debug projection，而不是当前默认 numeric owner。
 
@@ -167,9 +167,11 @@ Unknown 仍不得进入 projection。
 Target Relation
 → FoodValue
 
-FunctionalCapacity + presentation task facts
-→ TaskStrain
-→ candidate TaskCost
+species × size cohort → InterceptSpeedLimit
++ presentation task facts
+→ Closing feasibility
+→ Activity-aware soft Closing cost
+→ TaskAffordance
 
 Feeding Motivation
 → candidate Willingness Threshold
@@ -187,7 +189,7 @@ DecisionMargin
 ## 9. 仍未冻结
 
 - Target Relation 各档的 production numeric anchors；
-- `TaskStrain → TaskCost` 的最终函数与参数；
+- `TaskCost` 的 Working 结构与参数；它必须把 physically-feasible Closing 的 Activity soft cost 与其它已 admission 的 task consequence 分开表示；
 - `Motivation → Threshold` 的最终函数与参数；
 - `M0 / M1` 的 reference calibration；
 - Feeding 之外的 Defense / Investigation 是否共享同一 projection family；

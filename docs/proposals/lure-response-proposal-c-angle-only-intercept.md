@@ -92,7 +92,7 @@ u_close(theta) = max(0, q * cos(theta))
 p(theta) = Uniform(-pi, pi)
 ```
 
-最终不是先求“平均 TaskStrain”，而是：
+最终不是先求“平均 physically-feasible task consequence”，而是：
 
 ```text
 C_mode = E_theta[C(theta)]
@@ -119,7 +119,7 @@ C_mode = E_theta[C(theta)]
 C_mode = 0.5
 ```
 
-而不是先构造一个不存在的“平均鱼位置 / 平均 TaskStrain”再算 response。
+而不是先构造一个不存在的“平均鱼位置 / 平均 physically-feasible task consequence”再算 response。
 
 ## Working probe
 

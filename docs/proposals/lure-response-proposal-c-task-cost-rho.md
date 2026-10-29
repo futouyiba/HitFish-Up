@@ -8,7 +8,7 @@
 
 当前**不应把 `rho` 作为已准入的生产参数**。
 
-现有体验故事主要只约束一个综合 TaskStrain，没有形成“同样瓶颈轴、第二轴不同”的控制对照，因此无法从现有校准数据识别 `rho`。
+现有体验故事主要只约束一个综合 physically-feasible task consequence，没有形成“同样瓶颈轴、第二轴不同”的控制对照，因此无法从现有校准数据识别 `rho`。
 
 第一版更干净的假设是：
 
@@ -96,7 +96,7 @@ TaskCost = k * max(u_intercept^p, u_maneuver^p)
 
 1. 相同 Intercept 难度下，大转向需要稳定且可感知地低于直线追击；
 2. 相同 Intercept 难度下，明显垂直重定位需要独立降低 response；
-3. 该差异不能由现有 Intercept / Maneuver capacity 定义、Infeasible gate 或 TaskStrain 主轴解释；
+3. 该差异不能由现有 Intercept / Maneuver task consequence 定义、Infeasible gate 或 Closing hard limit 主轴解释；
 4. 差异幅度足以映射为玩家可感知的 target efficiency / purity / wait-time 变化。
 
 在这之前，`rho` 保持 Deferred，而不是默认存在。

@@ -71,7 +71,7 @@ TaskDemand = higher than otherwise-same paused case
 feeding motivation = unchanged
 ```
 
-是否最终 response 更低，不能仅凭“运动更快”断言；如果鱼的 FunctionalCapacity 足够，可能仍是 Feasible，只是 demand / cost 不同。
+是否最终 response 更低，不能仅凭“运动更快”断言；如果 Closing 仍低于适用的 `species × size cohort → InterceptSpeedLimit`，它可能仍是 Feasible，只是 Activity-aware soft cost / 其它 task consequence 不同。
 
 ### B. 移动后停留
 
@@ -90,7 +90,8 @@ recent_move_then_pause => +30% response
 ```text
 lower current motion
 → lower TaskDemand
-→ compare with same ResolvedFunctionalCapacity
+→ compare Closing demand with species × size cohort → InterceptSpeedLimit
+→ apply Activity only as soft cost when Closing is physically feasible
 → TaskAffordance may improve
 ```
 
@@ -142,7 +143,8 @@ imbalance-like cue
 Step 2 Target / Prey interpretation
 + Step 3 current presentation facts
 + fish-relative geometry
-+ ResolvedFunctionalCapacity
++ species × size cohort → InterceptSpeedLimit
++ Activity-aware soft Closing cost
         ↓
 ResolvedTaskDemand
         ↓ compare
@@ -175,7 +177,7 @@ C_mode
 2. **relative motion demand**：当前需要鱼进行多少 closing / interception；
 3. **必要的 maneuver / vertical reposition**：只有案例证明单靠前两项无法解释差异时再 admission。
 
-Fish 侧同样不直接配置一堆“最大速度”。先由现有 ResolvedFunctionalCapacity 与具体 TaskDemand 比较；只有某个能力维度能独立决定 Feasible / Constrained / Infeasible，才增加 DOF。
+Fish 侧不直接配置一堆“最大速度”。Closing 的 hard feasibility 先由 `species × size cohort → InterceptSpeedLimit` 与具体 Closing demand 比较；只有在 Closing physically feasible 后，Activity 才能改变 soft cost。其它能力维度若未来能独立决定 Feasible / Constrained / Infeasible，需另给出物理语义与反事实，不得恢复旧的 `FunctionalCapacity` 总对象。
 
 ## 7. 外部证据怎样支持、又不支持本设计
 
@@ -210,7 +212,7 @@ Step 4 下一轮不要扩大鱼种，先攻击以下反事实：
 
 - Q1a target 速度低；
 - Q1b target 速度高到刚好让捕获任务进入 constrained；
-- Q1c 再高到超过当前 FunctionalCapacity。
+- Q1c Closing demand exceeds the applicable `InterceptSpeedLimit`.
 
 目标：验证 TaskAffordance 是否能自然形成 Feasible → Constrained → Infeasible，而不需要“快饵惩罚系数”。
 

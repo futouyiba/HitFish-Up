@@ -53,16 +53,24 @@ Unknown 不能被转成 0 或 neutral coefficient。
 
 ### 3.3 TaskAffordance
 
-来自 ResolvedTaskDemand 与 ResolvedFunctionalCapacity 的比较。
+当前 Working baseline 不再建立或消费旧的 `FunctionalCapacity` 总对象。物理 hard feasibility 由：
 
-至少区分：
+```text
+species × size cohort → InterceptSpeedLimit
+```
+
+提供 Closing 的硬上限。`InterceptSpeedLimit` 只回答该鱼种与体型 cohort 在当前口径下能否完成 Closing，不是通用的 fish-side readiness 分数。
+
+`Activity` 来自 Fish Condition Bake，只在 Closing 已经 physically feasible 后进入 soft cost。它不能改变 `InterceptSpeedLimit`，不能制造新的 hard gate，也不能写成 `InterceptSpeedLimit × Activity`。
+
+因此至少区分：
 
 - Feasible；
 - Constrained；
 - Infeasible；
 - Unknown。
 
-Infeasible 表示当前任务做不到，不等于鱼不想吃，也不应该通过降低 Motivation 来表示。
+其中 `Infeasible` 只表示 Closing 或其它已明确物理任务做不到；`Activity` 不得把 Feasible 变成 Infeasible，也不等于 Feeding Motivation。`Unknown` 不得被补成 zero、Disabled 或 NotApplicable。
 
 ### 3.4 Feeding Motivation
 
@@ -118,8 +126,9 @@ ActualPresentation
 → prey type / prey state interpretation
 → sparse prey semantics
 
-fish-relative geometry + FunctionalCapacity
-→ ResolvedTaskDemand
+fish-relative geometry + species × size cohort → InterceptSpeedLimit
+→ ResolvedTaskDemand / Closing feasibility
+→ Activity-aware soft Closing cost
 → TaskAffordance
 
 fish-side behavioral context
@@ -202,7 +211,7 @@ Mode Validity / Resolution
 
 因此 Step 4 不需要为了框架对称性强行创建一个独立 State Valuation 层。
 
-## 10. 下一步
+旧 `FunctionalCapacity` 文档只作为 Superseded 历史保留，不作为当前 Working baseline 的输入或语义 owner。
 
 下一步不再扩语义层，而应直接攻击最终输出 contract：
 

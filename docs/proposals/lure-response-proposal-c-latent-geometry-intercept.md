@@ -27,12 +27,12 @@ latent relative geometry g
 
 这和 Interaction 输出 `captureRetention` 的语义是相容的。
 
-## 为什么不是先平均 TaskStrain
+## 为什么不能先平均 physically-feasible task consequence
 
 不要这样：
 
 ```text
-E_g[TaskStrain]
+E_g[physically_feasible_task_consequence(g)]
 → TaskCost
 → C_mode
 ```
@@ -40,7 +40,7 @@ E_g[TaskStrain]
 原因是 Infeasible gate、凸 TaskCost 和截断 Response Projection 都是非线性的，一般有：
 
 ```text
-E_g[f(TaskStrain(g))] != f(E_g[TaskStrain(g)])
+E_g[f(physically_feasible_task_consequence(g))] != f(E_g[physically_feasible_task_consequence(g)])
 ```
 
 如果先平均，可能把“部分方向完全追不上、部分方向很好追”的真实混合状态，伪造成一条中等难度的平均鱼。

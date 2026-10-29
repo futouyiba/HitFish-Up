@@ -90,8 +90,9 @@ strength = 0
 
 - Resolution incomplete → block；
 - mode validity / required target semantics invalid → resolved nonresponsive；
-- TaskAffordance = Infeasible → resolved nonresponsive；
-- TaskAffordance = Unknown → resolution incomplete。
+- TaskAffordance = Infeasible → resolved nonresponsive only when the required physical task is known to exceed its hard feasibility boundary, such as Closing beyond the applicable `InterceptSpeedLimit`；
+- TaskAffordance = Unknown → resolution incomplete；
+- Activity may change soft cost only after physically feasible Closing is established；it must not be folded into `InterceptSpeedLimit` or create a second hard gate。
 
 ### continuous ranking
 
@@ -239,8 +240,11 @@ ActualPresentation
 → prey-type / prey-state interpretation
 → sparse prey semantics
 
-fish-relative geometry + FunctionalCapacity
+species × size cohort → InterceptSpeedLimit
++ fish-relative geometry / presentation facts
+→ Closing feasibility
 → ResolvedTaskDemand
+→ Activity-aware soft Closing cost
 → TaskAffordance
 
 Mode Validity / Resolution

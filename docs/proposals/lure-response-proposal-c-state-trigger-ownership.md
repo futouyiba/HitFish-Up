@@ -160,7 +160,10 @@ Prey-conditioned current state
 FoodValue + StateTriggerValue
 → target-side Attack Value（conceptual seam）
 
-FunctionalCapacity + task consequence
+species × size cohort → InterceptSpeedLimit
++ task consequence
+→ Closing feasibility
+→ Activity-aware soft Closing cost
 → TaskCost
 
 Fish Condition / Feeding Motivation

@@ -69,7 +69,7 @@ Feeding Enabled
 - 鱼口差时，降低 Task Strain 应当有价值；
 - 鱼口好时，aggressive retrieve 可以重新变得可用；
 - 高 Food Value 可以补偿部分 Constrained task，但不能突破 Infeasible；
-- 同 presentation 下，更高 Functional Capacity 应通过更低的 derived Task Strain 获得优势；
+- 同 presentation 下，较高 `InterceptSpeedLimit` 应通过真实 Closing consequence 获得优势；Activity 只在 Closing physically feasible 后改变 soft cost；
 - pause 本身没有匿名 bonus，只能通过降低 TaskDemand、增加 exposure 等具名机制起效。
 
 这些内容已经由 `lure-response-proposal-c-feeding-response-acceptance-matrix.md` 承接。具体 effect size 不属于这两层，而属于 Calibration。
@@ -111,7 +111,7 @@ C = 30 / target_active_roll_time
 
 下面数字全部是 **Working Experience Budget**，不是自然事实，也不是 Production 定值。目的只是让故事先有可攻击的体验差异。
 
-固定：同一较高价值 baitfish-like feeding target；只改变 Motivation、Task Strain / Functional Capacity consequence。
+固定：同一较高价值 baitfish-like feeding target；只改变 Motivation、Closing demand、`InterceptSpeedLimit` 与 Activity soft cost。
 
 | Story | 玩家体验目标：Target Active-Roll Time | 反推 C | 约束意图 |
 |---|---:|---:|---|
@@ -120,8 +120,8 @@ C = 30 / target_active_roll_time
 | 正常鱼口 + fast retrieve | 45s | 0.67 | 有损失，但仍是可用打法 |
 | 正常鱼口 + reference-good | 30s | 1.00 | 当前 Reference Anchor |
 | 好鱼口 + fast retrieve | 35s | 0.86 | aggressive retrieve 基本恢复竞争力 |
-| 较弱 Functional Capacity + fast | 120s | 0.25 | 同 presentation 下明显受限 |
-| 较弱 Functional Capacity + 降速 | 40s | 0.75 | 降低 TaskDemand 后大幅恢复 |
+| 较低 `InterceptSpeedLimit` + fast | 120s | 0.25 | Closing 物理边界或 soft cost 造成明显受限 |
+| 较低 `InterceptSpeedLimit` + 降速 | 40s | 0.75 | 降低 Closing demand 后大幅恢复 |
 
 这些预算对应的 Reference purity 约为：
 
@@ -143,16 +143,16 @@ C = 30 / target_active_roll_time
 
 这是一个很重要的新护栏。
 
-如果两条 Story 的：
+如果两条 Story 的
 
 ```text
 Food Value 相同
 Motivation 相同
 ```
 
-而 Story A 的 Task Strain 更低，那么体验预算反推得到的 `C_A` 不能反而低于 `C_B`。
+而 Story A 的 physically-feasible task consequence 更低，那么体验预算反推得到的 `C_A` 不能反而低于 `C_B`。
 
-否则还没开始拟合公式，体验目标自己就已经违反 `TaskStrain` 单调不变量。
+否则还没开始拟合公式，体验目标自己就已经违反 physically-feasible task consequence 的单调不变量。
 
 本轮原始草案曾出现：
 
@@ -161,7 +161,7 @@ normal fast: strain≈0.65, C≈0.67
 weak fish slow: strain≈0.50, C≈0.60
 ```
 
-这组预算不合法：既然 TaskStrain 已经是 Capacity × Demand 比较后的充分结果，就不能再因为“它叫弱鱼”额外压一次 Response。
+这组预算不合法：如果 physically-feasible task consequence 已经足以表达 Closing / task 差异，就不能再因为“它叫弱鱼”额外压一次 Response。
 
 因此 Working budget 修正为：
 
@@ -169,14 +169,14 @@ weak fish slow: strain≈0.50, C≈0.60
 weak fish slow: C≈0.75（40s）
 ```
 
-这里保留的是 TaskStrain consequence，而不是 fish label bonus / penalty。
+这里保留的是 Closing / task consequence，而不是 fish label bonus / penalty。
 
 ### 6.2 体验预算开始真正约束公式
 
 把上面的 `C` 目标交给当前简单 threshold family：
 
 ```text
-TaskCost = k × S^p
+TaskCost = k × physically-feasible task consequence^p
 Threshold = b - c × M
 Margin = V - TaskCost - Threshold
 C = clamp(Margin / r, 0, 1)^gamma

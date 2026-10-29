@@ -1,4 +1,4 @@
-# 方案 C｜Food Value × Motivation × TaskStrain 响应面
+# 方案 C｜Food Value × Motivation × Physically-feasible Task Cost 响应面
 
 日期：2026-10-26  
 状态：Working Probe，非 Current，非生产参数。
@@ -10,7 +10,7 @@
 需要同时满足两件事：
 
 - 鱼口好应降低挑食程度，让较弱 Target Relation 更容易进入响应区；
-- 但 `Reject` 代表明确语义拒绝，不能被高 Motivation 或低 TaskStrain 复活。
+- 但 `Reject` 代表明确语义拒绝，不能被高 Motivation 或较低 physically-feasible task consequence 复活。
 
 可执行 probe：`../../prototypes/lure-response/proposal_c_food_value_surface_probe.py`。
 
@@ -33,17 +33,17 @@
 沿用体验预算 v2 后的最小 family，只作 probe：
 
 ```text
-TaskCost = 0.33 × TaskStrain^4
+TaskCost = 0.33 × physically_feasible_task_consequence^4
 Threshold = 0.72 - 0.45 × Motivation
 Margin = FoodValue - TaskCost - Threshold
 C_mode = clamp(Margin / 0.38, 0, 1)
 ```
 
-其中 `TaskStrain > 1`、`Motivation = 0`、`Reject` 继续走 typed hard gate。
+其中 physically infeasible Closing、`Motivation = 0`、`Reject` 继续走 typed hard gate。
 
 ## 4. 响应面
 
-下表分别给出 easy / medium / demanding task：`TaskStrain = 0.25 / 0.55 / 0.80`。
+下表分别给出 easy / medium / demanding physically-feasible task consequence：`0.25 / 0.55 / 0.80`。
 
 ### 鱼口差｜Motivation = 0.25
 
@@ -85,7 +85,7 @@ C_mode = clamp(Margin / 0.38, 0, 1)
 
 ### FVAL-1 Target Relation 单调
 
-固定 Motivation / TaskStrain：
+固定 Motivation / physically-feasible task consequence：
 
 ```text
 Preferred >= Good >= Marginal >= Poor >= Reject
@@ -98,7 +98,7 @@ Preferred >= Good >= Marginal >= Poor >= Reject
 ```text
 Reject
 + Motivation=1
-+ TaskStrain≈0
++ physically-feasible task consequence≈0
 → C_mode = 0
 ```
 
@@ -106,7 +106,7 @@ Reject
 
 ### FVAL-3 Poor 不是默认 hard zero
 
-Poor 允许在极高 Motivation + 极低 TaskStrain 下产生少量 response，但不能因此接近 Good / Preferred。
+Poor 允许在极高 Motivation + 极低 physically-feasible task consequence 下产生少量 response，但不能因此接近 Good / Preferred。
 
 这防止把连续价值判断偷换成额外 categorical gate。
 
@@ -120,9 +120,9 @@ Marginal 是观察“鱼口好会不会降低挑食”的主要测试层：
 高 Motivation + easy task → 明显进入响应区
 ```
 
-### FVAL-5 TaskStrain 仍然有因果权力
+### FVAL-5 Task consequence 仍然有因果权力
 
-即使 Target Relation 相同，TaskStrain 上升仍应压低 response；Food Value 不能让 TaskAffordance 失去作用。
+即使 Target Relation 相同，physically-feasible task consequence 上升仍应压低 response；Food Value 不能让 TaskAffordance 失去作用。
 
 ## 6. 当前判断
 
@@ -145,7 +145,7 @@ Marginal 是观察“鱼口好会不会降低挑食”的主要测试层：
 ```text
 Target Relation / Food Value
 + Motivation-adjusted threshold
-+ TaskCost(TaskStrain)
++ TaskCost(physically-feasible task consequence)
 → Decision Margin
 ```
 

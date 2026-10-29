@@ -281,25 +281,31 @@ continuous Margin / C_mode
 
 只有产品明确需要离散状态本身拥有 lifecycle、行为切换或独立 authoring 语义时才重开；不能只为了 UI 好讲就让它取得数值 authority。
 
-## 12. 不对 Functional Capacity 重复惩罚
+## 12. 不把 Activity 与 InterceptSpeedLimit 重复或错误合并
 
 ### 反设计
 
 ```text
-Functional Capacity
-→ 已经影响 TaskStrain
-→ 后面再因为“弱鱼”额外乘一个 WeakFishPenalty
+InterceptSpeedLimit × Activity
+→ second hard gate / composite capacity
 ```
 
 ### 为什么拒绝
 
-如果 TaskStrain 已经由 Demand / Capacity 解析，Functional Capacity 的 consequence 已经结算。再按“鱼弱”额外罚一次属于同一原因重复结算。
+`species × size cohort → InterceptSpeedLimit` 负责 Closing 的物理 hard feasibility。Fish Condition Bake 输出的 `Activity` 只在 Closing 已 physically feasible 后影响 soft cost。Activity 不能改变 `InterceptSpeedLimit`，也不等于 `FeedingMotivation`。
 
-可执行验收：在 Food Value、Motivation 相同的前提下，TaskStrain 更低的 case 不得得到更低的 `C_mode`。
+因此必须区分：
+
+```text
+Closing > InterceptSpeedLimit → Infeasible
+Closing ≤ InterceptSpeedLimit → Activity may affect soft cost
+```
+
+`Unknown`、zero、`Disabled` 和 `NotApplicable` 仍是不同状态，不能互相补值。
 
 ### 重开条件
 
-如果发现 Functional Capacity 还有一个与当前 TaskDemand 正交、不能由 TaskStrain 表达的独立 consequence，应先给它独立语义和 counterfactual，再决定是否进入 Feeding Decision；不能沿用匿名 penalty。
+只有 Owner 明确改变 Fish Condition Bake 输出或 hard-feasibility owner，并给出新的承接 Contract，才允许改变这条路由；不能用新的系数或 probe 结果静默恢复 `FunctionalCapacity`。
 
 ## 13. 不把 pause 标签本身当 Cause
 

@@ -126,8 +126,11 @@ ActualPresentation / Step-3 facts
         └─ imbalance-like visible cue
                → Target / Valuation Candidate
 
-ResolvedTaskDemand
-+ ResolvedFunctionalCapacity
+species × size cohort → InterceptSpeedLimit
++ fish-relative geometry / presentation facts
+→ Closing feasibility
+→ ResolvedTaskDemand
+→ Activity-aware soft Closing cost
 → TaskAffordance
 
 Target / Feeding-mode valuation candidates

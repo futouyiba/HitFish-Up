@@ -19,16 +19,18 @@
 ### 2.1 最小语义暂收敛为两类任务
 
 ```text
-Intercept / Closing Demand
-← fish-target relative geometry + relative motion
-回答：鱼需要完成多大的接近 / 截获任务？
+species × size cohort → InterceptSpeedLimit
++ fish-relative geometry / relative motion
+→ Closing feasibility
+
+Activity
+→ soft Closing cost only when Closing is physically feasible
 
 Maneuver / Capture-Geometry Demand
-← orientation / lateral or vertical reposition / actual strike geometry consequence
-回答：即使能接近目标，鱼还需要完成多大的姿态、方向与攻击几何调整？
+→ its separately defined physical consequence
 ```
 
-这里不把 distance、speed、turn、vertical、roll 分别永久保留成五个独立 penalty。原始事实先进入具体 task semantics，再与鱼的 FunctionalCapacity 比较。
+这里不把 distance、speed、turn、vertical、roll 分别永久保留成五个独立 penalty。原始事实先进入具体 task semantics；Closing 的物理 hard feasibility 由 `species × size cohort → InterceptSpeedLimit` 判断。只有在 Closing 已 physically feasible 后，`Activity` 才能影响 soft cost。不得写成 `InterceptSpeedLimit × Activity`，也不得把 Activity 用作第二个 hard gate。
 
 ### 2.2 反事实 M1
 
@@ -185,6 +187,13 @@ pause 已通过速度下降影响 TaskDemand
 ResolvedTaskDemand
 ├─ Intercept / Closing Demand
 └─ Maneuver / Capture-Geometry Demand
+
+species × size cohort
+→ InterceptSpeedLimit
+→ Closing hard feasibility
+
+Activity
+→ soft cost on physically-feasible Closing only
 ```
 
 原始 speed / distance / orientation / vertical / roll 等不是天然独立 DOF；只有当它们对具体 task semantic 有独立作用时才进入。
