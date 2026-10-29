@@ -10,6 +10,8 @@
 
 每项记录五件事：冲突是什么、双方出处、影响哪些阶段、当前暂定处理、需要谁裁决。
 
+本页是冲突登记，不是 Owner ballot。可选方案、推荐和问题以 `owner-decision-brief.md` 为准；本页的“主张”只摘要冲突双方，不逐项复制 ballot 选项。两份文档需要保持一致的是条目编号、依赖关系、暂定状态和裁决方。
+
 暂定处理只有三类：
 
 - `KEEP_OPEN`：没有足够依据，保持开放，不选边。
@@ -40,6 +42,7 @@
 
 - **主张 A**：Groundbait Candidate 使用事件分解：`encounter → feasible action set → selection → success → ingestion`。出处：`candidate/feeding-event.md`。
 - **主张 B**：不采用统一 Feeding Event 外层结构，继续沿用既有 Response / Proposal C 各自的求值结构。
+- **主张 C**：其它结构，需要说明。
 - **冲突点**：事件分解是过程结构，Decision Margin 是某一步的比较函数，两者不在同一层。C-03a 只问是否采用事件分解作为外层结构。
 - **影响**：Feeding Event、Response 输入、Groundbait 与拟饵机制的共用语义。
 - **暂定处理**：`CANDIDATE_BRANCH`。本目录以事件分解为外层结构；Decision Margin 的位置由 C-03b 单独决定。
@@ -71,6 +74,7 @@
 - **主张 A**：Response Component。
 - **主张 B**：某个既有 Factor。
 - **主张 C**：Response Aggregation 内部。
+- **主张 D**：其它，需要说明。
 - **冲突点**：消费位置决定它进入哪条响应路径，以及如何与 AdaptationCoeff 组合。
 - **影响**：Response 接入、组件聚合、圆桌权重。
 - **暂定处理**：`KEEP_OPEN`。当前倾向 Response Component。
@@ -99,9 +103,10 @@
 
 - **主张 A**：术语把“食物浓度”列为环境因子示例。出处：`docs/terminology.md` §3.1。
 - **主张 B**：Groundbait 产生独立的 `Feeding Place State` 与对象集合。出处：`candidate/object-model.md` §2.4。
+- **主张 C**：暂不决定。
 - **冲突点**：环境侧是否在窝料之外表达背景食物浓度。
 - **影响**：环境烘焙、Response、Groundbait 全栈。
-- **暂定处理**：`KEEP_OPEN`。可能解释：有背景事实；或没有，只由窝料表达。
+- **暂定处理**：`KEEP_OPEN`。A 有背景事实；B 没有，只由窝料表达；C 暂不决定。
 - **裁决方**：Owner / 环境与响应 Current。
 
 ### C-06b｜背景与玩家增量是否保留独立 provenance
@@ -109,6 +114,7 @@
 - **前提**：仅当 C-06a 选“有背景事实”时成立。
 - **主张 A**：保留独立 provenance，消费前合并。
 - **主张 B**：直接物化成一个统一状态，不再区分来源。
+- **主张 C**：其它，需要说明。
 - **冲突点**：保留 provenance 才能查重和调试；统一状态更简单，但难以追溯。
 - **影响**：环境烘焙、Response、Groundbait 状态。
 - **暂定处理**：`KEEP_OPEN`。当前倾向保留 provenance。
@@ -119,6 +125,7 @@
 - **前提**：仅当 C-06a 选“有背景事实”，且 C-06b 选“保留独立 provenance”时成立。
 - **主张 A**：在 Response 之前合并，Response 只读合并后的状态。
 - **主张 B**：在 Response 内部合并，Response 同时读取两个来源。
+- **主张 C**：暂不决定。
 - **冲突点**：合并位置决定谁持有去重责任，以及 trace 放在哪里。
 - **影响**：Response 输入、持久字段、Groundbait 状态。
 - **暂定处理**：`KEEP_OPEN`。当前倾向 Response 前合并。
@@ -193,6 +200,7 @@
 - **主张 C**：取最大。
 - **主张 D**：Noisy-OR。
 - **主张 E**：求和后全局饱和。
+- **主张 F**：其它，需要说明。
 - **冲突点**：基线 R0 禁止自行引入 B–E；多 Target 聚合仍未获准。
 - **影响**：Food、Response、圆桌。
 - **暂定处理**：`KEEP_OPEN`。多 Target 算子为 OPEN（WD-26）。
