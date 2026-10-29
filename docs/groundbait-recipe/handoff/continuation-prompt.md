@@ -44,7 +44,7 @@ Recipe Facts
 
 当前状态：
 
-候选链已在接口层闭合。Size、Food、Flavor、Physical Release、Attraction / Retention 判断和 Response Aggregation 映射都已落文档。
+候选链已在接口层闭合。Size、Food、Flavor、Physical Release、Attraction / Retention 的 Candidate 判断和 Response Aggregation 映射都已落文档。
 
 剩余工作是 Owner 决策和数值公式：`AdaptationCoeff`、组件聚合、模式聚合、多 Target 算子、化学强度准入、Local Population / Residence、Overfeeding，以及冲突登记里的 OPEN 项。
 
