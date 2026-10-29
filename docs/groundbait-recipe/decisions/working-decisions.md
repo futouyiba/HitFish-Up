@@ -41,7 +41,7 @@
 
 同作用 Food Target 的 Exposure 先合并，再进入饱和 / 边际递减。目标是避免逐 Ingredient 拆分套利，并允许鱼同时喜欢两个 Food Target 时出现有限混配价值。
 
-这仍需证据或反例攻击，不等于最终数值公式已定，也不保证混配一定优于单一 Target 专精。
+这仍需证据或反例攻击，不等于最终数值公式已定，也不保证混配一定优于单一 Target 专精。具体合并与饱和公式见 WD-25 和 `candidate/food-aggregation.md`。
 
 ## WD-05｜Flavor 使用 Cue Exposure 形成整体画像
 
@@ -256,3 +256,26 @@ Particle Distribution 分两步：
 2. 配方分布 → Feeding Place：用状态转换 `T` 把每个桶分成 available / left / consumed / unprocessable，物理账本和可食账本分别守恒。
 
 载体不进入可食分布，也不进入 Size Response。具体公式和结构 Fixture 见 `candidate/particle-distribution.md`。
+
+## WD-25｜Food 同 Target 先合并再饱和
+
+**状态：ACTIVE CANDIDATE**
+
+对每个 Food Target，先把同一目标下的 Ingredient 贡献合并成 `E_t`，再做 Target 级饱和：
+
+```text
+E_t = Σ_i recipe_share_i × food_identity_i(t) × potency_i
+R_t = P_t × S_t(E_t)
+```
+
+`S_t` 只要求 `S_t(0)=0`、单调、有界、连续、凹。函数族和参数仍是 OPEN。
+
+先合并再饱和是为了避免同一作用的 Ingredient 拆成多个 ID 后各自饱和，产生拆分套利。
+
+## WD-26｜多 Target 聚合保持 OPEN
+
+**状态：OPEN**
+
+多个 Food Target 如何聚合成 `FoodResponse` 尚未决定。基线 R0 明确禁止 Coding Agent 自行引入 `sum`、`weighted average`、`max` 或 `Noisy-OR`，并把 multi-target hypothesis aggregation 列为不冻结项。
+
+本目录只固定候选算子必须满足的性质：非负、单调、有界、可交换、连续、跨 Target 递减、无全家桶、零处理、无隐式互补。具体算子由 Owner 裁决。详见 `candidate/food-aggregation.md`。

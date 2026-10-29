@@ -91,10 +91,12 @@ Target Response with diminishing returns
 
 ### 4.2 仍未闭合
 
-- Target 字典如何定义。
-- `k` 等饱和参数如何标定。
-- Food Target 是否完全来自可摄食目标，还是还需拆更多语义。
-- 最终 Food Response 如何进入更高层响应。
+完整聚合见 `food-aggregation.md`。
+
+- Food Target 字典的正式成员和版本化 admission 流程。
+- 饱和函数族和参数如何标定。
+- 多 Target 聚合算子按基线 R0 保持 OPEN，不在本页选择 `sum`、`weighted average`、`max` 或 `Noisy-OR`。
+- Food 响应如何分配到动作选择与对象价值。
 
 ## 5. Flavor：由 Cue Exposure 形成整体味型画像
 

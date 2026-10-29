@@ -110,11 +110,11 @@
 
 ### C-11｜Food Target 与多 Target 聚合
 
-- **主张 A**：Groundbait Candidate 使用“同 Target 合并后边际递减”。出处：`candidate/proposal.md` §4、WD-04。
+- **主张 A**：Groundbait Candidate 使用“同 Target 合并后边际递减”。出处：`candidate/proposal.md` §4、`candidate/food-aggregation.md`、WD-25。
 - **主张 B**：PC 基线明确 multi-target hypothesis aggregation 为本轮不冻结项，并禁止 Coding Agent 自行引入 `sum / weighted average / max / Noisy-OR`。出处：`docs/baselines/FCF-PC-BASELINE-R0-20260915.md` §4、§13。
-- **冲突点**：候选算法尚未获准成为正式聚合。
+- **冲突点**：同 Target 合并和 Target 级饱和已可定义，但多个 Target 如何合成总 Food 响应尚未获准。
 - **影响**：Food、Response、圆桌。
-- **暂定处理**：`ACTIVE CANDIDATE`。只在本目录作为工作候选，不写成 Current。
+- **暂定处理**：同 Target 合并与饱和为 `ACTIVE CANDIDATE`（WD-25）；多 Target 算子为 `OPEN`（WD-26）。
 - **裁决方**：Owner。
 
 ### C-12｜Diet Shift 的所有权

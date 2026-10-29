@@ -47,8 +47,9 @@ Recipe Facts
 Step 0 完成：Size 前置语义闭合。
 Step 1 完成：`candidate/edible-size-gold-fixture.md`。
 Step 2 完成：`candidate/particle-distribution.md` 的 Ingredient → 配方分布、配方分布 → Feeding Place、守恒账本和载体隔离。
+Step 3 完成：`candidate/food-aggregation.md` 的同 Target 合并、Target 级饱和和多 Target 聚合边界；多 Target 算子仍为 OPEN。
 
-下一步是 Step 3 Food Aggregation。进入前先确认是否继续；不自动进入 Flavor、Attraction、Retention 或完整 Recipe Grammar。
+下一步是 Step 4 Flavor + 小药 + Avoidance。进入前先确认是否继续；不自动进入 Attraction、Retention 或完整 Recipe Grammar。
 
 如果讨论开始扩张到 Attraction、Retention、Recipe Grammar、Food Taxonomy 或 Flavor Taxonomy，就停下来，说明已经偏离当前工作项。
 

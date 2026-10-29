@@ -32,7 +32,7 @@ Ingredient 质量 / 份额
 - 允许鱼同时喜欢两个 Target 时出现有限混配价值。
 - 不保证混配一定优于单一 Target 专精。
 
-出处：`candidate/proposal.md` §4、`decisions/working-decisions.md` 的 WD-04。
+出处：`candidate/proposal.md` §4、`decisions/working-decisions.md` 的 WD-04。完整合并、饱和和多 Target 聚合见 `food-aggregation.md`。
 
 ### 2.2 在 Feeding Event 中的位置
 
@@ -49,12 +49,7 @@ Food 不直接影响：
 
 ### 2.3 未决项
 
-- Food Target 字典如何定义。
-- 边际递减参数如何标定。
-- 多 Target 聚合是否允许 `sum`、`weighted average`、`max` 或 `Noisy-OR`。PC 基线明确把 multi-target aggregation 列为不冻结项，并禁止 Coding Agent 自行引入。
-- Food Response 如何进入更高层响应。
-
-对应冲突登记 C-11。
+完整聚合见 `food-aggregation.md`。其中同 Target 合并和 Target 级饱和是当前候选；多 Target 聚合按基线 R0 保持 OPEN，不在本页选择 `sum`、`weighted average`、`max` 或 `Noisy-OR`。
 
 ## 3. Flavor
 
