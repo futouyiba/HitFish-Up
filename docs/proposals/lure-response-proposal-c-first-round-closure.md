@@ -10,7 +10,7 @@
 
 - 玩家能否用可理解的操作制造该状态；
 - 系统当前是否有实际事实识别它；
-- 它是否被 FoodValue / Closing / Risk / FoodValue 已有的路径解释；
+- 它是否被 FoodValue / Closing / Risk / Prediction（若启用）已有的路径解释；
 - 它是否带来自然代价、是否重复计权；
 - 当前数据与配置是否足够生产。
 
@@ -19,14 +19,19 @@
 | 候选 | 玩家操作 | 当前可识别事实 | 独立性 | 自然代价 | 重复计权风险 | 数据充分性 | 建议 |
 |---|---|---|---|---|---|---|---|
 | Escape-like / 逃逸样 | 抽停、急抽、darting / slashing | 轨迹转向强度、burst 强度；经 prey-conditioned interpreter 判断 | 是：FoodValue 回答值不值得吃，Closing 回答难不难追，都不回答“现在是否触发攻击” | 速度上升 → 追赶负担；强动作 → 风险顾虑（若 cue 存在）；局部窗口可能缩短 | 中：burst 速度同时进入 Closing 是不同问题，允许；但不能再加 erratic bonus | 轨迹事实在设计层可用；无生产采集 | **准入（唯一）** |
-| Injured / Struggling / 受伤挣扎样 | 慢速翻滚、失稳下沉、濒死抖动 | 需要侧翻角、持续失衡、局部动作；当前无姿态字段 | 概念上是独立语义，但识别依赖姿态 | 慢速通常降低追赶负担；长时间停留抬高机会量 | 若同时用航迹不规则替代姿态，会与 prey support / prediction 重复 | 姿态输入缺失 | **暂缓**，等姿态输入 |
-| Vulnerable Pause / 虚弱停顿样 | burst 后停顿 | 位移分段可识别停顿 | 否：停顿已由 attention / temporal / prediction 承接；joint cadence closure 明确不准入 pause 作为 Trigger | 没有独立代价；收益已在机会量中 | 高：`burst → pause` 再算 Trigger 会与 temporal support 重复 | 分段可用，但语义重复 | **删除（作为 Trigger）**，保留为时间机会现象 |
+| Injured / Struggling / 受伤挣扎样 | 慢速翻滚、失稳下沉、濒死抖动 | 需要侧翻角、持续失衡、局部动作；也可来自 prey-conditioned 的 struggle 序列（如蛙类踢水） | 概念上独立，但缺生产闭合的识别映射 | 慢速通常降低追赶负担；长时间停留抬高机会量 | 若用航迹不规则替代姿态，会与 prey support / prediction 重复 | 无生产闭合的 struggle / vulnerability 输入映射 | **CandidateUnresolved**，等 cue-only holdout；不是仅因缺姿态字段否决 |
+| Vulnerable Pause / 虚弱停顿样 | burst 后停顿 | 位移分段可识别停顿 | pause 本身不成立：已由 attention / temporal / prediction 承接 | 没有独立代价；收益已在机会量中 | 高：把 `burst → pause` 再算 Trigger 会与 temporal support 重复 | 分段可用，但 pause 语义重复；imbalance-like vulnerability 另属未决候选 | **pause 本身不得作为 Trigger**；imbalance-like vulnerability 保持 **CandidateUnresolved** |
 
 ### 为什么只留 Escape-like
 
 - 它有独立策略价值：低摄食意愿时，普通呈现过不了线，合法逃逸样呈现可能跨线；
 - 它可低成本识别：转向与 burst 来自轨迹，不需要新硬件输入；
 - 它不能被已有项替代：Closing 只说“难追”，Risk 只说“可疑”，FoodValue 只说“值不值得吃”。
+
+其余两项不是被否决，而是仍未闭合：
+
+- Injured / Struggling 与 imbalance-like vulnerability 在 joint 来源中都是 `CandidateUnresolved`，需要 cue-only holdout（控制物理轨迹、capture geometry、prey support、Perception、TaskDemand、dwell、Motivation，只改可感知的 vulnerability cue）；本仓目前没有生产闭合的输入映射。
+- pause 本身不单独进入 Trigger；这不等于否定 vulnerability 候选。
 
 ### 第一版边界
 
@@ -47,7 +52,7 @@ StateTriggerValue_p = 0.10 × TriggerIntensity_p
 | 风险语义 | 当前配置 / 字段 | 数据来源 | 分类 | 第一版建议 |
 |---|---|---|---|---|
 | TackleConspicuousness | `TackleConspicuousness` 只存在于 Proposal C 文档；术语表把「线透明度、线颜色」列为派生条件，没有字段或 schema | 语义 | 缺失（语义已有，产物缺） | 不启用；等 owner 与字段 |
-| EntryDisturbance | 冻结验证基线有 `cue.contact_disturbance`（OrderedBand）与 `sound_amplitude` 瞬态；holdout 把入水 splash 映射为 sound spike + apparent_size 瞬态 | baseline 语义 | 可派生，但非生产 | 不启用；不拿「刚抛投」冒充风险 |
+| EntryDisturbance | 冻结验证基线有 `cue.contact_disturbance`（限定为 moving contact with world geometry，按 cause / motion / duration 分轴）与 `sound_amplitude` 瞬态；holdout 把入水 splash 映射为 sound spike + apparent_size 瞬态 | baseline 线索 | 存在可复用底层 cue 线索，尚不能推出 EntryDisturbance 生产量 | 不启用；不拿「刚抛投」冒充风险 |
 | Wariness | 术语表与鱼况定义存在；无 runtime 产出字段 | 语义 | 缺失 | 不生产 |
 | Activity / FeedingMotivation / DietShift | 同上，有语义，无运行时 schema | 语义 | 缺失 | 不生产 |
 | 装配 / 呈现 | 只有 Proposal C 文档与 5 个 probe；probe 输入为手填特征 | prototype | 仅设计层 | 不当作生产输入 |
@@ -125,7 +130,7 @@ Risk MVP 当前只能实现退化路径：
 | 参数 | 观察 |
 |---|---|
 | `M1` 0.30 / 0.40 / 0.50 | 同一 Margin 下响应从 1.00 / 0.75 / 0.60，变化最大；选项间排序不变 |
-| `K_close` 0.50 / 0.76 / 1.00 | 快/慢比值稳定 0.75–0.77，只改水平，不改排序 |
+| `K_close` 0.50 / 0.76 / 1.00 | 在本 probe fixture（`food=0.70`、`activity=1.0`、`M=0.5`）下，快/慢比值 0.77 / 0.75 / 0.76；只改水平，不改该 fixture 的排序，不能外推为普遍性质 |
 | Trigger budget 0.05 / 0.10 / 0.15 | 低 Motivation 反应口从 0.449 / 0.574 / 0.699，直接决定反应口能否跨线 |
 
 ### Probe 限制
@@ -151,8 +156,8 @@ Risk MVP 当前只能实现退化路径：
 
 1. **Closing 的角度平均削弱高速惩罚**：一半方位成本为零、有利方位响应饱和。这不是调 `K_close` 能解决的。
 2. **Risk 没有输入**：TackleConspicuousness 与 EntryDisturbance 在仓内都没有字段，MVP 只能输出零。
-3. **Injured / Struggling 无法识别**：缺姿态输入，不能用航迹不规则冒充。
-4. **Vulnerable Pause 与时间机会重复**：不能作为 Trigger 准入。
+3. **Injured / Struggling 没有生产闭合的输入映射**：不是单一姿态字段缺失，也没有可用的 cue-only 识别证据；不能用航迹不规则冒充。
+4. **Vulnerable Pause 与时间机会重复**：pause 本身不能作为 Trigger；imbalance-like vulnerability 仍是 `CandidateUnresolved`，需要 cue-only holdout。
 
 ### 5.3 只是标定问题
 

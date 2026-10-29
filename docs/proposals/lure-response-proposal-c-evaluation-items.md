@@ -74,8 +74,8 @@ StateTriggerValue_p
 | 状态 | 结果 |
 |---|---|
 | Escape-like / 逃逸样 | 准入；用转向强度与 burst 强度，经 prey-conditioned 判定 |
-| Injured / Struggling / 受伤挣扎样 | 暂缓；缺姿态输入，不用航迹不规则冒充 |
-| Vulnerable Pause / 虚弱停顿样 | 删除作为 Trigger；停顿已由时间机会与 attention 承接 |
+| Injured / Struggling / 受伤挣扎样 | `CandidateUnresolved`；缺生产闭合的识别映射，等 cue-only holdout，不用航迹不规则冒充 |
+| Vulnerable Pause / 虚弱停顿样 | pause 本身不得作为 Trigger；imbalance-like vulnerability 保持 `CandidateUnresolved` |
 
 不承载领地、防御、烦躁、护巢、调查。
 

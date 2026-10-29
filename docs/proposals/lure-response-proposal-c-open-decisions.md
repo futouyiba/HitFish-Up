@@ -24,7 +24,7 @@
 ## 3. 语义缺口
 
 - Prediction：第一版主体不含；只有控制 Trigger / Closing / Risk 后仍出现稳定、独立、玩家可学习的排序差异时，才重开；
-- AttackTrigger：Escape-like 已准入；Injured / Struggling 暂缓（缺姿态输入）；Vulnerable Pause 删除作为 Trigger（与时间机会重复）；
+- AttackTrigger：Escape-like 已准入；Injured / Struggling 与 imbalance-like vulnerability 为 `CandidateUnresolved`，等 cue-only holdout；pause 本身不得作为 Trigger（与时间机会重复）；
 - 风险顾虑：当前没有任何生产输入，`RiskCost` 退化为 0；等 cue owner 与字段，不补造代理；
 - 完整自然度模型；
 - 非摄食咬击（护巢、领地、防御、烦躁）如何作为独立 family 组合；
