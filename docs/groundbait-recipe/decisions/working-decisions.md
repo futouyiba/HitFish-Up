@@ -175,3 +175,11 @@ RecipeFit = Food + Flavor + Particle + Physical
 先闭合每条因果链，再检查是否需要 Attraction、Retention、Ingestion、Selection 等多个中间语义，最后接现有 Response / Adaptation Coefficient。
 
 这些中间名称本身仍是 Candidate，不应提前固化成新的正式术语。
+
+## WD-18｜端到端冲突显式登记
+
+**状态：BOUNDARY**
+
+完整中鱼链跨越环境烘焙、鱼况、响应、圆桌、抽鱼和 Fish AI，跨文档、跨候选栈的冲突不能靠某一份 Candidate 自行裁决。冲突与未决项统一登记在 `conflict-register.md`，每项标明出处、影响、暂定处理和裁决方。
+
+本目录任何文档不得把 `KEEP_OPEN` 项写成已确认规则，也不得把 `CANDIDATE_BRANCH` 当成 Owner 裁定。

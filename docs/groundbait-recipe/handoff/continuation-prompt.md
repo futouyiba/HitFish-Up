@@ -7,6 +7,18 @@
 当前主脊：
 
 ```text
+数据
+  → 烘焙 / DEF / 空间分布权重 + 鱼侧动态参数
+  → 玩家策略与操作 / 呈现刺激
+  → 响应 / 鱼适配系数集
+  → 圆桌权重表 / 挤占
+  → 抽鱼和生成
+  → Fish AI（范围外）
+```
+
+Groundbait 是主脊上的第一个候选消费者：
+
+```text
 Recipe Facts
   → Physical Release
   → Feeding Place State
@@ -19,7 +31,7 @@ Recipe Facts
   → Response Stage 的候选输入
 ```
 
-新增对象模型见 `candidate/object-model.md`；一次摄食事件见 `candidate/feeding-event.md`。
+端到端对象与所有权见 `candidate/system-object-model.md`；冲突与未决项见 `decisions/conflict-register.md`；Groundbait 对象模型见 `candidate/object-model.md`；一次摄食事件见 `candidate/feeding-event.md`。
 
 当前最重要的概念修正：
 
@@ -32,10 +44,11 @@ Recipe Facts
 
 下一步按以下顺序推进，不能跳过前置语义：
 
-1. 核对 `object-model.md` 的对象、状态和因果所有权。
-2. 核对 `feeding-event.md` 的 encounter、可行性、选择、成功和对象状态更新。
-3. 收窄 `edible-size-response.md`，只让尺寸、形态和状态进入动作约束。
-4. 把 `particle-distribution.md` 接到当前 Feeding Place 对象集合，而不是静态投放比例。
-5. 把 `physical-release.md` 接到 Feeding Place 状态转换。
-6. 用 `response-stage-mapping.md` 对照现有 Response Stage、Response Condition、Persistent Response Field 和 Fish Condition。
-7. 最后才保留少量反例，检查因果所有权、守恒和重复计权。
+1. 核对 `decisions/conflict-register.md` 的未决项和裁决方。
+2. 核对 `candidate/system-object-model.md` 的对象、权重和阶段隔离。
+3. 环境烘焙：只消费 `SpatialDistributionWeight`，不重新计算环境系数。
+4. Fish Condition：只作为条件输入，不由窝料或味型直接写入。
+5. Response Stage：先定输入输出和持久字段语义，再定聚合公式。
+6. Groundbait 全栈：对象守恒 → 释放状态 → 分布 → 摄食事件 → Food / Flavor。
+7. 圆桌与抽鱼：先定顺序和所有权，再谈具体权重规则。
+8. 最后才保留少量反例，检查因果所有权、守恒和重复计权。
