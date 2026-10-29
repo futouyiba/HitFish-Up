@@ -14,7 +14,9 @@ Recipe / Ingredient Facts
   └─ Physical Properties ───────→ Physical Release → Feeding Place State
 ```
 
-同一 Ingredient 可以同时提供多类事实，但四条路径分别进入，不在末端合并成一个总分。整合的关键不是“四个都算”，而是每个事实只进入它该进的阶段。
+同一 Ingredient 可以同时提供多类事实，但四条路径分别进入，不在末端合并成一个总分。整合的重点是每个事实只进入它该进的阶段，不是让四个都算。
+
+文中的 `Feeding Place State`（摄食地点状态）、`Feeding Event`（摄食事件）、`Effective Ingestion Opportunity`（有效摄食机会）都是本目录的 Candidate-local 工作词。
 
 ## 2. 完整候选链
 
@@ -48,7 +50,8 @@ Response Stage 的候选接口
 |---|---|---|---|
 | Food Identity | 动作选择、对象价值 | 鱼愿意尝试哪个对象、一次摄食值多少 | 动作可行性、释放速度 |
 | Chemical Cue | 发现、趋近、选择、回避 | 鱼是否感知、是否接近 | 尺寸成功、物理释放 |
-| Particle / Object | 动作可行性、动作成功 | 能否捕获、吸入、处理 | 发现、Food Preference |
+| Edible Particle | 动作可行性、动作成功 | 能否捕获、吸入、处理可食对象 | 发现、Food Preference |
+| Carrier / Non-edible Particle | Physical Release | 雾化、扩散、沉降、留存 | Edible Utilization |
 | Physical Properties | 状态转换 | 对象何时、在哪、以什么状态出现 | 直接中鱼率、鱼偏好 |
 | 状态粉 | 物料与物理性质 | 释放、黏度、持续时间 | 免费 Buff |
 | 小药 | 线索场 | Cue Exposure / Composition | 免费固体质量、固定 Bonus |
@@ -65,9 +68,12 @@ Response Stage 的候选接口
   → 被摄食 / 离开地点 / 不可接触 / 不可处理 / 转态
 ```
 
+可食颗粒和载体颗粒分别记账。载体可以有粒径，也参与释放，但不进入可食利用。
+
 规则：
 
 - 投放份额不等于当前可接触份额。
+- 可食份额在可食部分内部归一化，不混入载体。
 - 摄食成功后对象价值必须减少或移除。
 - 释放可以补充对象，但不能凭空增加总物料。
 - 质量、数量、能量只能声明一种工作计量，转换必须显式。

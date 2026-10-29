@@ -42,23 +42,22 @@ Recipe Facts
 - Physical Release 的产物是 Feeding Place 状态，不是 `release_score`；
 - 粒径既可作为鱼侧对象属性，也可作为物理对象属性，两个影响必须经不同中间状态进入，不能跨链总加权。
 
-当前阶段文档：
+当前工作项（WD-23）：
 
-- 端到端对象与所有权：`candidate/system-object-model.md`
-- 环境烘焙接入：`candidate/environment-bake-integration.md`
-- Fish Condition：`candidate/fish-condition-integration.md`
-- Response 算法接口：`candidate/response-algorithm.md`
-- Groundbait 全栈：`candidate/groundbait-integration.md`、`candidate/food-flavor.md`
-- 圆桌与抽鱼：`candidate/roundtable-and-draw.md`
-- 跨阶段不变量：`candidate/cross-stage-invariants.md`
-- 冲突与未决项：`decisions/conflict-register.md`
+Part A：Size 前置语义闭合，只改三篇现有 Markdown 和少量工作决定。
 
-下一步不是继续扩写机制，而是处理 Owner 决策和证据缺口：
+1. Ingredient 固有事实与 Recipe Role 分开。
+2. 物理颗粒与可食颗粒分开。
+3. Edible Size 只回答有效利用，不回答吸引、留存或中鱼。
 
-1. 按 `conflict-register.md` 的裁决顺序，先处理 C-01、C-02、C-03。
-2. 处理 C-04、C-05，决定 Response 接入和持久字段语义。
-3. 处理 C-06、C-07、C-08、C-12、C-13、C-14，决定空间、时间与鱼况边界。
-4. 处理 C-09、C-10、C-11，决定抽鱼、刺鱼和多目标聚合。
-5. 只有在语义闭合后，才考虑最小 Fixture 和实现验证。
+Part B：立即做 `candidate/edible-size-gold-fixture.md`。
+
+Part C：如果 Fixture 失败，修 Size Candidate。
+
+Part D：停止。不进入 Food、Flavor、Attraction、Retention 或完整 Recipe Grammar。
+
+如果 Part A 开始扩张到 Attraction、Retention、Recipe Grammar、Food Taxonomy 或 Flavor Taxonomy，就停下来，说明已经偏离 Size blocker。
+
+端到端对象、烘焙、鱼况、响应和圆桌文档仍作为背景和边界，不是本轮任务。冲突与未决项见 `decisions/conflict-register.md`。
 
 不把 `KEEP_OPEN` 项写成已确认规则，也不把 `CANDIDATE_BRANCH` 当成 Owner 裁定。

@@ -133,7 +133,7 @@ EdibleSizeUsability = aggregate over feasible action paths
 
 **状态：BOUNDARY**
 
-“下雨就喜欢腥、晴天就喜欢果香”目前证据不足，不作为候选机制。天气、时段等环境输入优先进入现有 Fish Condition / Feeding Readiness / Activity 语义。
+“下雨就喜欢腥、晴天就喜欢果香”目前证据不足，不作为候选机制。天气、时段等环境输入优先进入现有 Fish Condition 语义。
 
 Diet Shift 的驱动方式仍是 **OPEN**。若以后保留，可测试 Contextual Shift 和慢、有界、有记忆的随机漂移，但随机漂移本身尚未确认。
 
@@ -183,3 +183,65 @@ RecipeFit = Food + Flavor + Particle + Physical
 完整中鱼链跨越环境烘焙、鱼况、响应、圆桌、抽鱼和 Fish AI，跨文档、跨候选栈的冲突不能靠某一份 Candidate 自行裁决。冲突与未决项统一登记在 `conflict-register.md`，每项标明出处、影响、暂定处理和裁决方。
 
 本目录任何文档不得把 `KEEP_OPEN` 项写成已确认规则，也不得把 `CANDIDATE_BRANCH` 当成 Owner 裁定。
+
+## WD-19｜Ingredient 固有事实与配方角色分开
+
+**状态：BOUNDARY**
+
+`Ingredient` 提供的是固有事实：可食物质、化学线索潜力、颗粒属性、物理属性。`Base / Target / State / Attractant` 是玩家在这次配方里赋予它的功能角色和配比约束，不是 Ingredient 的固有分类。
+
+同一个虾粉可以在不同配方里被当主攻饵、状态饵或填充料，但它的固有事实不变。不得写成 `Ingredient.Type = TARGET_BAIT`。
+
+## WD-20｜物理颗粒与可食颗粒分开
+
+**状态：BOUNDARY**
+
+窝料固体可以同时包含可食颗粒和不可食 / 载体颗粒。两者都可以有粒径，也都可以参与雾化、扩散和沉降，但只有可食颗粒进入 Size Response。
+
+```text
+Recipe solids
+├─ Edible particulate matter
+│    → Size Response → Edible Utilization
+└─ Non-edible / carrier particulate matter
+     → Physical Release
+     → 不进入 Edible Utilization
+```
+
+同一个 Ingredient 也可以同时贡献可食部分和载体部分。第一版不必把数据拆得很细，但语义必须先分开。
+
+## WD-21｜Edible Size 只回答有效利用
+
+**状态：BOUNDARY**
+
+Edible Size 只回答：这份实体可食物，目标鱼以当前体型和摄食方式有多容易有效利用。
+
+它不回答：
+
+- 鱼会不会被吸引过来；
+- 鱼愿不愿意留窝；
+- 香味强不强；
+- 吃了以后饱不饱；
+- 中鱼概率是多少。
+
+输出是摄食 / 利用约束，不是 Bite Bonus，也不是最终 Response。
+
+## WD-22｜Groundbait 与 Hookbait 只共享尺寸约束接口
+
+**状态：BOUNDARY**
+
+Groundbait 与 Hookbait 只共享鱼侧尺寸约束接口：体尺、形态、摄食动作能力、对象尺寸 / 状态对动作的影响。
+
+它们不共享完整的 Feeding Place、释放、分布或响应机制。Hookbait 还有入口性、硬度、钩体阻碍、持钩和姿态等额外因素。
+
+## WD-23｜先闭合 Size 前置语义，再做 Gold Fixture
+
+**状态：BOUNDARY**
+
+当前工作项按以下顺序：
+
+1. 修正 Size 所需的三个前置语义：Ingredient 与 Recipe Role、物理颗粒与可食颗粒、Edible Size 输出语义。
+2. 立即做窄版 Edible Size Gold Fixture。
+3. 如果 Fixture 失败，修 Size Candidate。
+4. 到此停止，不进入 Food、Flavor、Attraction、Retention 或完整 Recipe Grammar。
+
+Part A 必须保持很短。如果讨论开始扩张到 Attraction、Retention、Recipe Grammar、Food Taxonomy 或 Flavor Taxonomy，就说明已经偏离 Size blocker。

@@ -35,9 +35,11 @@ Ingredient Facts
 
 同一个来源进入多条路径，不表示这些路径可以在末端合成一个总分。每条路径都必须有自己的中间状态和消费者。
 
+Ingredient Facts 是原料的固有事实，不包含玩家在这次配方里把它当什么角色。`Base / Target / State / Attractant` 是配方级角色和配比约束，不是 Ingredient 的固有分类。同一个虾粉可以在不同配方里被当主攻饵、状态饵或填充料，但它的固有事实不变。
+
 ### 2.2 Particle Object
 
-`Particle Object` 表示实体食物对象，至少保留：
+`Particle Object`（颗粒对象）表示实体食物对象，至少保留：
 
 ```text
 Particle Object
@@ -51,9 +53,22 @@ Particle Object
 
 `effective_size` 不必等于筛网粒径。对团块、纤维或不规则对象，如何从形态和状态生成有效尺寸仍是 OPEN。形状、硬度、团聚不能静默编码进尺寸值。
 
+实体对象还要区分可食部分和不可食 / 载体部分：
+
+```text
+Particle Object
+├─ Edible particulate matter
+│    → Size Response → Edible Utilization
+└─ Non-edible / carrier particulate matter
+     → Physical Release
+     → 不进入 Edible Utilization
+```
+
+两者都可以有粒径，也都可以参与雾化、扩散和沉降，但只有可食部分进入鱼侧尺寸响应。同一个 Ingredient 可以同时贡献可食部分和载体部分。
+
 ### 2.3 Chemical Cue Field
 
-`Chemical Cue Field` 表示地点和时间中的可感知化学线索：
+`Chemical Cue Field`（化学线索场）表示地点和时间中的可感知化学线索：
 
 ```text
 Chemical Cue Field
@@ -67,7 +82,7 @@ Chemical Cue Field
 
 ### 2.4 Feeding Place State
 
-`Feeding Place State(place, t)` 是某地点、某时点对鱼可见的状态集合：
+`Feeding Place State`（摄食地点状态，`place, t` 表示地点与时点）是某地点、某时点对鱼可见的状态集合：
 
 ```text
 Feeding Place State
@@ -91,13 +106,15 @@ Fish State
 └─ Fish Condition（引用现有 Current 语义）
 ```
 
-`Feeding Event` 是一次具体摄食机会的过程，不是鱼种静态属性。它依次处理：对象是否遇到、哪些动作可行、选择哪条动作路径、动作是否成功、对象是否被有效处理。
+`Feeding Event`（摄食事件）是一次具体摄食机会的过程，不是鱼种静态属性。它依次处理：对象是否遇到、哪些动作可行、选择哪条动作路径、动作是否成功、对象是否被有效处理。
 
 ## 3. 因果所有权矩阵
 
 | 量 / 状态 | 生产者 | 主要消费者 | 所属阶段 | 当前状态 |
 |---|---|---|---|---|
 | Food Identity | Recipe / Ingredient Facts | 鱼侧目标选择与对象价值 | 配方事实 → Feeding Event | Candidate |
+| edible particle fraction | Ingredient Facts + Particle Object | Size Response / Edible Utilization | Groundbait → Size | Candidate |
+| carrier particle fraction | Ingredient Facts + Particle Object | Physical Release | Groundbait → Release | Candidate |
 | Cue Exposure / Field | Ingredient + Physical Release | 发现、趋近、回避与选择 | Feeding Place | Candidate |
 | effective_size | Particle Object / Object State | 动作可行性与动作成功 | Feeding Event | Candidate |
 | shape / hardness / cohesion | Particle Object / Object State | 捕获、保留、处理 | Feeding Event | OPEN / Candidate |

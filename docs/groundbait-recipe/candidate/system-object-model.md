@@ -44,6 +44,8 @@
 
 ## 3. 对象表
 
+表中的 Candidate-local 工作词：`Feeding Place State`（摄食地点状态）、`Feeding Event`（摄食事件）、`Effective Ingestion Opportunity`（有效摄食机会）。
+
 | 对象 | 所属阶段 | 生产者 | 主要消费者 | 生命周期 | 持久化 | 成熟度 |
 |---|---|---|---|---|---|---|
 | 环境上下文 | 数据 | 世界 / 课程表 / 钓场三维数据 | 烘焙 | 场景级 | 是 | Current 术语 |
@@ -65,6 +67,8 @@
 | 抽鱼结果 | 抽鱼 | 抽鱼 | 生成 | 每次抽鱼 | 否 | Current 术语 |
 | 生成鱼对象 | 生成 | 生成模块 | Fish AI | 单条鱼 | 是 | Current 术语 |
 | 配方 / Ingredient Facts | 玩家输入 | 配方配置 | Groundbait 候选 | 配方级 | 是 | Candidate |
+| 可食颗粒分布 Edible Particle Distribution | Groundbait Candidate | Recipe Facts + Physical Release | Size Response | 地点时间级 | 视实现 | Candidate-local |
+| 载体颗粒分布 Carrier Particle Distribution | Groundbait Candidate | Recipe Facts + Physical Release | Physical Release | 地点时间级 | 视实现 | Candidate-local |
 | Feeding Place State | Groundbait Candidate | Physical Release | Feeding Event | 地点时间级 | 视实现 | Candidate-local |
 | Feeding Event | Groundbait Candidate | 鱼侧事件 | Groundbait 响应输入 | 单次事件 | 否 | Candidate-local |
 | Effective Ingestion Opportunity | Groundbait Candidate | Feeding Event | Response 候选输入 | 单次事件或时段 | 否 | Candidate-local / OPEN |
@@ -140,7 +144,7 @@ Recipe / Ingredient Facts
   → Response Stage 的候选输入
 ```
 
-它不定义 `Adaptation Coefficient` 公式，不写回 `SpatialDistributionWeight`，不直接设置 `Fish Condition`，也不进入 Fish AI。具体映射见 `candidate/response-stage-mapping.md`。
+它不定义 `Adaptation Coefficient` 公式，不写回 `SpatialDistributionWeight`，不直接设置 `Fish Condition`，也不进入 Fish AI。可食颗粒分布只进入 Size Response；载体颗粒分布只进入 Physical Release，两者不共享一个可食利用结果。具体映射见 `candidate/response-stage-mapping.md`。
 
 ## 9. 未决项
 
