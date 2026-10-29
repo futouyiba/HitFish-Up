@@ -86,7 +86,7 @@ Ingredient amount / dose
 - **分支 A（强度未准入）**：只使用化学类型和稀疏关系，不宣称连续强度。
 - **分支 B（Owner 准入强度后）**：使用 Cue Exposure、Composition 和 Intensity。
 
-当前采用分支 A 作为工作候选，分支 B 标为 OPEN。对应冲突登记 C-02。
+当前采用分支 A 作为工作候选，分支 B 标为 OPEN。对应冲突登记 C-02。分支 A 的集合解析、Avoidance 和小药结构见 `flavor-and-avoidance.md`。
 
 ### 3.3 在 Feeding Event 中的位置
 

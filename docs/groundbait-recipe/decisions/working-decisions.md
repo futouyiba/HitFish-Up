@@ -279,3 +279,27 @@ R_t = P_t × S_t(E_t)
 多个 Food Target 如何聚合成 `FoodResponse` 尚未决定。基线 R0 明确禁止 Coding Agent 自行引入 `sum`、`weighted average`、`max` 或 `Noisy-OR`，并把 multi-target hypothesis aggregation 列为不冻结项。
 
 本目录只固定候选算子必须满足的性质：非负、单调、有界、可交换、连续、跨 Target 递减、无全家桶、零处理、无隐式互补。具体算子由 Owner 裁决。详见 `candidate/food-aggregation.md`。
+
+## WD-27｜Flavor 当前只用签名集合
+
+**状态：ACTIVE CANDIDATE**
+
+在化学强度准入前，Flavor 只使用 `presentation.chemical_signature` 的类型集合。Recipe 的签名集合是 Ingredient 签名的并集；同一签名由多个 Ingredient 提供时仍只算一个。
+
+分支 A 不表达浓度、比例或强度。需要这些量时，必须先把 `cue.chemical_intensity` / `cue.odor_concentration` 作为产品决策准入。
+
+候选聚合是优先级解析：显式 `AVOID` 优先，其次 `POSITIVE`，否则 `NEUTRAL`。该解析不是 Current 规则。
+
+## WD-28｜Avoidance 稀疏且显式
+
+**状态：BOUNDARY**
+
+Avoidance 只为有明显解释价值的 Fish × Signature 对配置，是显式 `AVOID` 关系，不是低偏好，也不是缺少配置。
+
+它与 Wariness 分开：Wariness 是动态状态，Avoidance 是静态稀疏关系。两者都压低响应时，来源和 trace 必须分别保留。
+
+## WD-29｜小药必须占成本
+
+**状态：BOUNDARY**
+
+小药可以增加化学签名或改变 Cue 画像，但必须占剂量或成本，且不增加实体食物质量。它不能提供固定 Bonus，也不能绕过签名集合直接改最终响应。

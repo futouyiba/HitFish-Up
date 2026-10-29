@@ -33,7 +33,7 @@
 - **主张 B**：PC 基线把化学强度判为未准入。R2 写明 `cue.chemical_intensity` / `cue.odor_concentration` 保持候选，不进入 core；R3 把 chemical magnitude / odor concentration 标为 `DEFERRED / NOT_ADMITTED`；H17 把它标为 `NEW_PRIMITIVE_REQUIRED`，并说明是否准入是产品决策。出处：`docs/baselines/FCF-PC-BASELINE-R2-20260916.md` 第 60 行、`docs/baselines/FCF-PC-BASELINE-R3-20260916.md` 第 64 行、`docs/holdout/FCF-PC-R2_BLIND_HOLDOUT_R1_20260916.md` 第 240–248 行。
 - **冲突点**：Flavor 候选的核心量没有已准入的 Current 载体。
 - **影响**：Flavor、Chemical Cue Field、小药、发现与选择。
-- **暂定处理**：`KEEP_OPEN`。在 Owner 准入前，Flavor 只保留“化学类型 + 稀疏关系”的降级候选，连续强度标为未准入。
+- **暂定处理**：`KEEP_OPEN`。分支 A（只使用化学类型和稀疏关系）作为工作候选；分支 B（连续强度）阻塞，见 `candidate/flavor-and-avoidance.md`。
 - **裁决方**：Owner。
 
 ### C-03｜Feeding Event 与 Feeding Decision
