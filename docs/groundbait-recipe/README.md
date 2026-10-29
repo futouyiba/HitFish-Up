@@ -88,7 +88,7 @@ docs/groundbait-recipe/
 16. [`candidate/edible-size-gold-fixture.md`](candidate/edible-size-gold-fixture.md)：窄版结构验证，不进入生产参数。
 17. [`candidate/feeding-event.md`](candidate/feeding-event.md)：一次摄食事件的可行性、选择与成功。
 18. [`candidate/particle-distribution.md`](candidate/particle-distribution.md)：Groundbait 粒径分布及对象状态候选。
-19. [`candidate/physical-release.md`](candidate/physical-release.md)：雾化、黏度、解体和沉降的释放候选。
+19. [`candidate/physical-release.md`](candidate/physical-release.md)：离散时间状态转移、守恒账本和线索分离。
 20. [`candidate/response-stage-mapping.md`](candidate/response-stage-mapping.md)：与现有 Response Stage 的候选接口映射。
 21. [`candidate/plain-language-explainer.md`](candidate/plain-language-explainer.md)：面向人类快速理解当前设计。
 22. [`rejected/anti-designs.md`](rejected/anti-designs.md)：只在评审、反例检查或需要理解边界时读取。
@@ -125,16 +125,17 @@ Food、Flavor、Particle、Physical Release 各自进入主脊的不同位置，
 - “天气直接切换味型偏好”目前证据不足，不作为候选规则；天气等环境输入优先进入现有 Fish Condition 语义。
 - 最终是否存在单一 `RecipeFit` 尚未决定。Attraction、Retention、Ingestion、Selection 可能需要保留为不同语义，不能因为公式整齐而提前相加。
 
-当前进度停在 Step 4：
+当前进度停在 Step 5：
 
 - Step 0 已完成：Ingredient 与 Recipe Role、物理颗粒与可食颗粒、Edible Size 输出语义。
 - Step 1 已完成：`candidate/edible-size-gold-fixture.md`。
 - Step 2 已完成：`candidate/particle-distribution.md` 的 Ingredient → 配方分布、配方分布 → Feeding Place、守恒账本和载体隔离。
 - Step 3 已完成：`candidate/food-aggregation.md` 的同 Target 合并、Target 级饱和和多 Target 聚合边界。多 Target 算子仍为 OPEN。
 - Step 4 已完成：`candidate/flavor-and-avoidance.md` 的类型集合分支、小药成本和稀疏 Avoidance。连续强度分支仍阻塞。
-- 下一步是 Step 5 Physical Release；进入前先确认是否继续。
+- Step 5 已完成：`candidate/physical-release.md` 的离散时间状态转移、四份守恒账本和线索分离。
+- 下一步是 Step 6，判断 Attraction / Retention 是否需要独立模块；进入前先确认是否继续。
 
-Attraction、Retention 和完整配方语法仍停在候选层。
+完整配方语法仍停在候选层。
 
 ## 研究输入
 
