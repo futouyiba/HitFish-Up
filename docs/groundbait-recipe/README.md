@@ -49,6 +49,7 @@ docs/groundbait-recipe/
 │  ├─ object-model.md
 │  ├─ groundbait-integration.md
 │  ├─ food-flavor.md
+│  ├─ food-aggregation.md
 │  ├─ edible-size-response.md
 │  ├─ edible-size-gold-fixture.md
 │  ├─ feeding-event.md
@@ -80,15 +81,16 @@ docs/groundbait-recipe/
 10. [`candidate/object-model.md`](candidate/object-model.md)：Groundbait 对象、状态与因果所有权。
 11. [`candidate/groundbait-integration.md`](candidate/groundbait-integration.md)：四条事实路径的整合与重复计权检查。
 12. [`candidate/food-flavor.md`](candidate/food-flavor.md)：Food 与 Flavor 的候选位置和准入问题。
-13. [`candidate/edible-size-response.md`](candidate/edible-size-response.md)：可摄食尺寸如何进入动作约束。
-14. [`candidate/edible-size-gold-fixture.md`](candidate/edible-size-gold-fixture.md)：窄版结构验证，不进入生产参数。
-15. [`candidate/feeding-event.md`](candidate/feeding-event.md)：一次摄食事件的可行性、选择与成功。
-16. [`candidate/particle-distribution.md`](candidate/particle-distribution.md)：Groundbait 粒径分布及对象状态候选。
-17. [`candidate/physical-release.md`](candidate/physical-release.md)：雾化、黏度、解体和沉降的释放候选。
-18. [`candidate/response-stage-mapping.md`](candidate/response-stage-mapping.md)：与现有 Response Stage 的候选接口映射。
-19. [`candidate/plain-language-explainer.md`](candidate/plain-language-explainer.md)：面向人类快速理解当前设计。
-20. [`rejected/anti-designs.md`](rejected/anti-designs.md)：只在评审、反例检查或需要理解边界时读取。
-21. [`handoff/continuation-prompt.md`](handoff/continuation-prompt.md)：跨会话继续工作用的临时上下文与任务提示。
+13. [`candidate/food-aggregation.md`](candidate/food-aggregation.md)：Food Target 合并、饱和和多 Target 聚合边界。
+14. [`candidate/edible-size-response.md`](candidate/edible-size-response.md)：可摄食尺寸如何进入动作约束。
+15. [`candidate/edible-size-gold-fixture.md`](candidate/edible-size-gold-fixture.md)：窄版结构验证，不进入生产参数。
+16. [`candidate/feeding-event.md`](candidate/feeding-event.md)：一次摄食事件的可行性、选择与成功。
+17. [`candidate/particle-distribution.md`](candidate/particle-distribution.md)：Groundbait 粒径分布及对象状态候选。
+18. [`candidate/physical-release.md`](candidate/physical-release.md)：雾化、黏度、解体和沉降的释放候选。
+19. [`candidate/response-stage-mapping.md`](candidate/response-stage-mapping.md)：与现有 Response Stage 的候选接口映射。
+20. [`candidate/plain-language-explainer.md`](candidate/plain-language-explainer.md)：面向人类快速理解当前设计。
+21. [`rejected/anti-designs.md`](rejected/anti-designs.md)：只在评审、反例检查或需要理解边界时读取。
+22. [`handoff/continuation-prompt.md`](handoff/continuation-prompt.md)：跨会话继续工作用的临时上下文与任务提示。
 
 当前设计主旨不是四个并列 Bonus，而是一条从数据到抽鱼的完整主脊：
 
@@ -121,14 +123,15 @@ Food、Flavor、Particle、Physical Release 各自进入主脊的不同位置，
 - “天气直接切换味型偏好”目前证据不足，不作为候选规则；天气等环境输入优先进入现有 Fish Condition 语义。
 - 最终是否存在单一 `RecipeFit` 尚未决定。Attraction、Retention、Ingestion、Selection 可能需要保留为不同语义，不能因为公式整齐而提前相加。
 
-当前进度停在 Step 2：
+当前进度停在 Step 3：
 
 - Step 0 已完成：Ingredient 与 Recipe Role、物理颗粒与可食颗粒、Edible Size 输出语义。
 - Step 1 已完成：`candidate/edible-size-gold-fixture.md`。
 - Step 2 已完成：`candidate/particle-distribution.md` 的 Ingredient → 配方分布、配方分布 → Feeding Place、守恒账本和载体隔离。
-- 下一步是 Step 3 Food Aggregation；进入前先确认是否继续。
+- Step 3 已完成：`candidate/food-aggregation.md` 的同 Target 合并、Target 级饱和和多 Target 聚合边界。多 Target 算子仍为 OPEN。
+- 下一步是 Step 4 Flavor + 小药 + Avoidance；进入前先确认是否继续。
 
-Food、Flavor、Attraction、Retention 和完整配方语法仍停在候选层。
+Flavor、Attraction、Retention 和完整配方语法仍停在候选层。
 
 ## 研究输入
 
