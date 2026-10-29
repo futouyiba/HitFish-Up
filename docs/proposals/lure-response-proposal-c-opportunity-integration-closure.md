@@ -15,7 +15,7 @@
 → Response：计算该颗粒当前的 conditional captureRetention C
 
 姿态颗粒进入 Opportunity
-→ Opportunity / Spatial：计算该颗粒对应的 native opportunity support L
+→ Opportunity：消费 Spatial facts，计算该颗粒对应的 native opportunity support L
 
 Candidate join
 → q = L × C
@@ -27,6 +27,7 @@ Candidate join
 
 - `C` 回答：这一次局部呈现机会中，鱼有多大程度会响应；
 - `L` 回答：这一颗粒在当前空间、时间和局部可达条件下提供了多少 native opportunity support；
+- `L` 的正式 owner 是 Opportunity；Spatial 只提供事实；
 - 时间、停留、穿越有效区域、覆盖范围都不进入 `DecisionMargin`；
 - Response 不再自行对 `C` 按持续时间积分；
 - Candidate 只执行一次 `L × C`，不重复乘 Response。
@@ -114,7 +115,6 @@ new semantic grain / stable semantic trigger
 FoodValue
 StateTriggerValue
 ClosingCost
-PredictionCost
 RiskCost
 WillingnessThreshold
 ```
@@ -204,14 +204,18 @@ ExposureBonus
 
 ```text
 单位时间覆盖更多空间
-→ 遇到更多新的 Spatial / Opportunity support
+→ 遇到更多新的 Spatial facts
+→ Opportunity 建立更多新的 opportunity identity / support
 ```
+
+这是实际空间遍历产生的 Opportunity 结果，不是 FastSearchInformationBonus。
 
 因此最终单位时间效率应由：
 
 ```text
-Spatial / Opportunity support L
+Opportunity support L
 × Response retention C
+→ Candidate q
 ```
 
 共同决定，Response 单独不能宣称 Fast 一定更差。
@@ -222,7 +226,7 @@ Spatial / Opportunity support L
 
 ```text
 vertical position / rise / fall
-→ Spatial / Opportunity eligibility
+→ Opportunity eligibility
 → 是否进入、离开有效垂直机会区域
 → L 的大小 / 有效时间窗口
 ```
@@ -240,11 +244,9 @@ horizontal water-relative motion
 Candidate Bridge 已冻结 Working topology：
 
 ```text
-Spatial Native Supply Measure dM_i(s,t)
-× Interaction CaptureRetention C_i(s,p,t)
-→ retained Native Candidate measure dQ_i
-→ Opportunity Reduce
-→ W_i^opp
+Spatial facts
+→ Opportunity eligibility / identity / duration / dedupe / reevaluation / reducer
+→ native opportunity support L
 ```
 
 scalar specialization：
@@ -289,7 +291,7 @@ entry_probability
 
 它支持的设计判断是：
 
-1. Opportunity 已经是独立 owner；
+1. Opportunity 是 `L` 的正式 owner。Spatial 提供位置、区域、几何、垂直层和有效空间窗口等事实；
 2. 时间 / accessibility 已经有明确承接位置；
 3. 机会 identity 应是语义稳定的，而不是 evaluator 调用次数；
 4. Proposal C 不应再创建一套平行的 Response-owned ExposureRate。
@@ -356,7 +358,7 @@ L × C
 本页没有冻结：
 
 - `L_i,j` 的生产字段名；
-- 姿态颗粒到 semantic opportunity identity 的正式映射；
+- Spatial facts 到 Opportunity identity 的正式映射；
 - `temporal_factor` 与 `L_i,j` 是否是一一对应、子项还是旧实现概念；
 - pause / slow / fast 下 `L` 的生产曲线；
 - spatial coverage 与 local dwell 如何共同形成 native support；
@@ -371,12 +373,8 @@ L × C
 第一版冻结：
 
 ```text
-姿态颗粒 = Response 与 Opportunity 的共同离散求值载体
-
-Response
-→ 每颗粒输出 captureRetention C
-
-Opportunity / Spatial
+Spatial facts
+→ Opportunity
 → 每颗粒输出 native opportunity support L
 
 Candidate

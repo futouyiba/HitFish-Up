@@ -58,7 +58,7 @@ Preferred > Good > Marginal > Poor > Reject
 
 ### StateTriggerValue
 
-`StateTriggerValue` 表示当前 prey state 是否额外容易触发攻击。首版只准入 prey-conditioned 的 escape、erratic 或 distress 类价值，不使用通用 `ErraticBonus`。
+`StateTriggerValue` 表示当前 prey state 是否额外容易触发攻击。第一版只准入 `Escape-like`；`Injured / Struggling` 与 imbalance-like vulnerability 保持 `CandidateUnresolved`。Pause 本身不进入 Trigger。
 
 首版通用正向证据只保留：
 
@@ -140,46 +140,15 @@ Closing 的含义：
 - 朝鱼运动时 Closing Demand 可为 0；
 - `u_close` 越高时 soft burden 越高，但不绕过完整 DecisionMargin 直接判死；
 - `Activity` 只影响 Closing 的 soft cost，不改变 `InterceptSpeedLimit`；
+- Prediction 第一版不进入 active numeric core；
+- Risk cue 未启用时 `RiskCost = 0`；
 - 真正的 hard interception gate 需要 encounter geometry / reaction-window contract。
 
 `q >= 1` 不会让整个 mode hard-zero，因为其它角度仍可能可行。首版优先 `u_close²`，这是 Working shape，不是长期物理定律。没有 reaction distance 与 pursuit horizon 时，首版不显式拆 acceleration；其影响暂由短时 `InterceptSpeedLimit` 的口径吸收。
 
-### 4.2 Prediction Challenge
+### Prediction
 
-通用 `ManeuverCost(ω_traj / fish_turn_capacity)` 不进入首版 numeric core。没有鱼点、鱼朝向和截获路径时，不能从拟饵转向角速度推出鱼必须以同样速度转弯。
-
-首版只保留 sudden direction-change 后的暂态预测困难：
-
-```text
-sudden direction-change event
-→ PredictionChallenge
-→ soft PredictionCost
-```
-
-Working probe：
-
-```text
-TurnStrength(Δψ) = (1 - cosΔψ) / 2
-P(t) = max_recent[TurnStrength × exp(-age / τ_recover)]
-PredictionCost = K_pred × PredictionChallenge
-```
-
-连续 zig-zag 只通过刷新近期 challenge 生效，不另叠 `CadencePenalty`。PredictionChallenge 不产生 hard infeasible。`K_pred ≈ 0.08～0.12` 只是 Working budget，不是 production parameter；中等 prey-appropriate dart 不应仅因 Prediction 反转成负收益。
-
-### 4.3 同一事件的两条路径
-
-同一次 sudden redirection 或 darting 可以同时产生两条有不同职责的路径：
-
-```text
-trajectory event
-├→ prey-conditioned escape/distress interpretation
-│  → StateTriggerValue (+)
-└→ prediction disruption
-   → PredictionChallenge
-   → PredictionCost (-)
-```
-
-这两条路径分别表达 prey-state value 与 prediction difficulty，不重复计权。首版不手工加入“中等 erratic 最好”的钟形 bonus。
+Prediction 第一版 Deferred，不进入 active numeric core。旧的 turn-event / `max_recent` 方案只保留为研究证据，不进入当前 DecisionMargin。
 
 ## 5. Decision Margin 与 projection
 
@@ -188,7 +157,7 @@ DecisionMargin(θ)
 = FoodValue
 + StateTriggerValue
 - ClosingCost(θ)
-- PredictionCost
+- RiskCost
 - WillingnessThreshold(FeedingMotivation)
 ```
 
@@ -278,22 +247,22 @@ Trigger 和高 Motivation 不能救活 Reject。
 Pause 不获得匿名 `PauseBonus`。它只通过已有路径产生后果：
 
 - lure speed 下降，Closing Demand 降低；
-- 没有新的 abrupt redirection，PredictionChallenge 衰减；
+- 没有新的 abrupt redirection，Prediction 不产生 active cost；
 - prey-conditioned process interpretation 改变，只有在有独立证据时才改变 StateTriggerValue。
 
 不增加 `PredictionResetBonus`。`burst → pause` 也不整体增加一次 Trigger。
 
-`favorable dwell` 不进入 Feeding `DecisionMargin`，也不新增 `DwellBonus` 或 `PauseDurationCoeff`。如果两个状态的 FoodValue、Trigger、Closing、Prediction、Motivation 都相同，只是有利状态持续时间不同，那么瞬时 Feeding response `C` 相同。
+`favorable dwell` 不进入 Feeding `DecisionMargin`，也不新增 `DwellBonus` 或 `PauseDurationCoeff`。如果两个状态的 FoodValue、Trigger、Closing、Risk、Motivation 都相同，只是有利状态持续时间不同，那么瞬时 Feeding response `C` 相同。
 
 更长 dwell 的优势属于：
 
 ```text
 resolved response state
-× temporal exposure / opportunity support
+× Opportunity support L
 → cumulative opportunity
 ```
 
-当前 `main` 没有承接 temporal exposure integration 的 Current Markdown Contract。Feeding 不接管这部分，后续由 Opportunity / temporal exposure 的合法 Owner 承接。
+当前 `L` 由 Opportunity owner 承接。Feeding 不接管 temporal exposure、空间覆盖或 duration integration。
 
 首版不准入独立 `CadenceValue`、`CadenceBonus` 或 `CadencePenalty`。只有在其它量完全相同、唯一稳定变化是 temporal motif，且仍产生可复现、可解释、玩家可学习的 ranking difference 时，才重新打开 cadence scalar。当前 cadence 只保留为事件历史 / Explain feature。
 
@@ -325,8 +294,8 @@ Interaction response 只结算一次。禁止 `L × C → W → W × C`，也不
 当前证据只支持方向与体验预算，不支持 production anchors。
 
 - State Trigger 的 Working budget 约为 `0.10～0.15` 的 Decision-Margin 尺度。它可以帮助 Marginal、增强 Good，但不能普遍把 Poor 抬成主力，也不能救活 Reject。
-- Prediction Cost 的 Working budget 约为 `0.08～0.12`。它默认不强于 State Trigger；中等 dart 不应仅因 Prediction 反转成负收益。
-- Closing 使用 `K_close × u_close² × ActivityCostMultiplier(Activity)`。`K_close`、`K_activity`、`InterceptSpeedLimit` 生产数据、代表长度规则和 cohort 拆分阈值都未闭合。
+- Prediction 第一版不进入 active numeric core；
+- `RiskCost` 在 Risk cue Disabled / NotConfigured 时为 0；
 
 需要保持的体验排序：
 
@@ -335,7 +304,7 @@ Interaction response 只结算一次。禁止 `L × C → W → W × C`，也不
 - normal bite 下 normal-fast 仍有竞争力；
 - good bite 下 faster retrieve 可以接近 reference-good；
 - moderate prey-appropriate darting 优于机械直线；
-- 极端高速乱窜可以因 Closing、Prediction 或 temporal consequences 变差，不靠匿名 erratic penalty 强制实现；
+- 极端高速乱窜可以因 Closing 或 Opportunity consequences 变差，不靠匿名 erratic penalty 或 Prediction 强制实现；
 - 同一 presentation 下，不同 `InterceptSpeedLimit` 的鱼只通过物理可行性和 Closing cost 产生响应差异。
 
 ## 11. 不得恢复的路线
@@ -376,13 +345,12 @@ Interaction response 只结算一次。禁止 `L × C → W → W × C`，也不
 - 是否需要 fish-quality / individual variation；
 - latent-angle prior 的生产定义；
 - 若未来获得 reaction distance / pursuit horizon authority，是否拆出 acceleration；
-- PredictionChallenge 的 production event extraction；
-- `τ_recover` / `K_pred` production calibration；
+- `PredictionChallenge`、`τ_recover`、`K_pred` 和旧 prediction probe 不进入当前 OPEN；
 - `M0 / M1`；
 - State Trigger production budget；
 - support × conditional response 的 production calibration；
 - prey-family-specific escape / distress state rules；
-- Opportunity / temporal exposure 的 Current Owner 与 cumulative operator；
+- Opportunity `L` production contract；
 - Feeding / Defense / Investigation 的最终 route graph 与 operators；
 - runtime hot-path struct / representation；
 - production calibration 与自动回归阈值。

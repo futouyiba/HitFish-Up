@@ -78,9 +78,9 @@ u_close(theta) = max(0, q * cos(theta))
 ClosingCost(theta)
 = K_close * u_close(theta)^2
   * ActivityCostMultiplier(Activity)
+```
 
 `u_close >= 1` 表示高 Closing burden；没有独立 encounter-geometry / reaction-window contract 时，不直接输出 `C_conditional(theta)=0`。
-```
 
 Activity 只影响已经物理可行的追赶任务有多吃力。
 
@@ -182,7 +182,7 @@ SpeciesCohortMotionProfile {
 
 runtime Response 直接查 `intercept_speed_limit`，不必重复运行 size scaling。
 
-如果同一 cohort 的尺寸跨度已经足以让常见拟饵速度跨过 hard-feasibility 边界，则一个代表长度不再合格。优先拆 cohort；必要时才考虑尺寸分布积分。
+如果同一 cohort 的尺寸跨度已经足以让常见拟饵速度显著改变 Closing burden 或 response ranking，则一个代表长度不再合格。优先拆 cohort；必要时才考虑尺寸分布积分。
 
 ## 9. 与策略体验的关系
 
@@ -226,7 +226,7 @@ Activity 应购买的主要策略故事：
 ```text
 species × size cohort config
 → InterceptSpeedLimit
-→ hard feasibility
+→ Closing burden / capability scale
 
 Fish Condition Bake
 → Activity

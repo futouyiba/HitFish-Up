@@ -17,15 +17,15 @@
 | Raw feature / event | 允许的首版 owner | 首版禁止的额外解释 | 说明 |
 |---|---|---|---|
 | lure speed relative to water | Closing | Suspicion、generic naturalness penalty | speed 回答追赶负担；除非未来有独立风险证据，不因“太快不自然”重复扣分 |
-| radial-away component under latent bearing | Closing | Trigger、Suspicion | 只负责 closing demand / hard feasibility |
-| sudden direction change | Prediction；prey-state interpretation → StateTrigger | generic ErraticBonus / ErraticPenalty；Suspicion by default | 可有双路径，因为一条回答攻击预测受损，另一条回答猎物状态触发；禁止第三次匿名结算 |
+| radial-away component under latent bearing | Closing | Trigger、Suspicion | 只负责 Closing demand；当前不授予单变量 hard-feasibility authority |
+| sudden direction change | prey-state interpretation → StateTrigger（仅 Escape-like v1） | PredictionCost；generic ErraticBonus / ErraticPenalty；Suspicion by default | 第一版只在形成 Escape-like 时进入 Trigger；Prediction Deferred，不能再从同一事件生成 active cost |
 | burst / sudden acceleration | prey-state interpretation → StateTrigger；若改变 closing demand，则通过 speed 进入 Closing | generic ExcitementBonus；Suspicion by default | raw event 可改变多个不同中间量，但不能直接贴额外 multiplier |
-| pause / low displacement | 通过低 speed 降低 Closing；通过时间推进使 PredictionChallenge 衰减；可改变 prey-state interpretation | PauseBonus、DwellBonus | pause 本身不是数值 owner |
-| favorable dwell duration | temporal exposure / opportunity（待合法 Owner） | Feeding DecisionMargin | 同一瞬时状态下，持续更久不提高瞬时 C |
+| pause / low displacement | 通过低 speed 降低 Closing；通过 Opportunity 处理停留与时间支持；可改变 prey-state interpretation | PauseBonus、DwellBonus、PredictionCost | pause 本身不是 Trigger owner |
+| favorable dwell duration | Opportunity | Feeding DecisionMargin；Response-owned exposure | 同一瞬时状态下，持续更久不提高瞬时 C；`L` 由 Opportunity 负责 |
 | prey support | prey interpretation support；最终 `support × response` | SuspicionLoad=`1-support`；FoodValue | “不像某 prey”不等于“危险”或“这类 prey 不值钱” |
 | low prey support | 同上 | automatic risk / unnaturalness penalty | 防止一次匹配不足被 support 与 risk 双扣 |
-| tackle / line / hook conspicuousness | SuspicionLoad（若有权威输入） | prey support by default；Closing / Prediction | 表达目标旁的非猎物风险线索 |
-| entry splash / impact / noise | SuspicionLoad（若有权威输入）；若同时形成 prey-state event，必须独立取证 | generic disturbance coefficient | 需要明确时间窗和量纲；不能因为“刚抛入”自动处罚 |
+| tackle / line / hook conspicuousness | TackleConspicuousness → SuspicionLoad（有合法输入后） | prey support by default；Closing / Prediction；SKU 直接映射 | 当前无生产输入；未启用时 `RiskCost=0` |
+| entry splash / impact / noise | CandidateUnresolved；未来可单独评估 | 当前 Risk MVP；generic disturbance coefficient | 本轮不进入第一版正式输入方向 |
 | repeated exposure / conditioning | 当前未分配；待 Wariness Bake / memory owner 裁定 | 同时进入 Wariness 和 SuspicionLoad | 同一 fishing-pressure/history cause 不能在乘法两边重复放大 |
 | fishing pressure | 优先作为 Wariness 上游 cause | SuspicionLoad by default | 防止 `Wariness × SuspicionLoad` 对同一 pressure 近似平方放大 |
 | prey family identity | BaseDietAffinity / DietaryShift | support strength | 身份与“像不像”分开 |
@@ -40,21 +40,7 @@
 
 ### 3.1 sudden turn
 
-允许：
-
-```text
-sudden turn
-├→ prey-state escape / distress evidence
-│  → StateTriggerValue (+)
-└→ attack prediction disruption
-   → PredictionChallenge
-   → PredictionCost (-)
-```
-
-这不是重复计权，因为：
-
-- Trigger 回答“这个猎物当前状态是否更容易触发攻击”；
-- Prediction 回答“已有攻击预测是否更难维持”。
+第一版只在 prey-state interpretation 形成 `Escape-like` 时进入 `StateTrigger`。Prediction Deferred，不从 sudden turn 生成 active `PredictionCost`。
 
 禁止：
 
@@ -159,21 +145,19 @@ F. same prey-state, different speed
 还应测试：
 
 ```text
-sudden turn with Trigger disabled
-→ only Prediction changes
+Escape-like Trigger enabled
+→ StateTrigger changes
 
-sudden turn with Prediction disabled
-→ only Trigger path changes
+Escape-like Trigger disabled
+→ only baseline response paths remain
 ```
-
-用于证明两条路径可分别关闭，不是同一个隐藏 scalar 的两个名字。
 
 ## 7. 当前缺口
 
 - SuspicionLoad 的生产 cue 数据仍未闭合；
-- temporal exposure / opportunity 的 Current Owner 仍缺失；
+- Opportunity `L` 的 production contract 仍需实现；
 - repeated exposure / conditioning 尚未决定属于 Wariness Bake、memory 还是其它 owner；
-- 完整链路还需要测试 Closing + Prediction + Risk 多 soft-cost 同时叠加时是否过强；
+- Risk cue 未启用时 `RiskCost=0`；
 - 本矩阵尚未写回总 Working Closure。
 
 本页冻结首版 feature ownership 与防重复计权边界，不冻结各路径最终 effect size。
