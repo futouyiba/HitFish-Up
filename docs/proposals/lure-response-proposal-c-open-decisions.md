@@ -60,7 +60,7 @@
 
 ## 7. 下一轮收口顺序
 
-1. Escape-like 的 v1 判定已写入 [Escape-like Trigger v1](lure-response-proposal-c-escape-trigger-v1.md)；下一步是轨迹采集与 family 适用表，不是再改语义；
+1. Escape-like 的 v1 判定已写入 [Escape-like Trigger v1](lure-response-proposal-c-escape-trigger-v1.md)；本轮不再扩展语义，但事件提取（滤波、采样、最短间隔）、family 适用表、强度缩放、窗口与刷新语义仍 OPEN，下一步是轨迹采集与这些参数的落定；
 2. 决定 Risk cue 是否立项（TackleConspicuousness / EntryDisturbance 需要字段与 owner）；在此之前 `RiskCost` 保持 0；
 3. 补机会量 `L` 的覆盖与有效窗口模型，验证快搜与隐蔽方案的外部代价；
 4. 用 `proposal_c_strategy_probe.py` 的排序结果检查参数敏感度，再进入生产标定；
