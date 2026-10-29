@@ -2,7 +2,7 @@
 
 状态：Working Design / Candidate。本文把出手余量的五项拆开写，定义每项的输入、合成方式与边界。不是 Current Contract，也不是生产参数。
 
-来源：`docs/lure-response-joint-evaluation` 的 `food-value-production-topology`、`support-scale-contract`、`state-trigger-intensity-contract`、`attack-trigger-strategy-contract`、`activity-closing-cost-contract`、`activity-motivation-separation`、`wariness-response-path`、`suspicion-load-contract`、`poor-reject-separation`，按 `311ae70d` 快照核对；对齐稿部分以 `0d3a7de2` 当前内容核对。
+来源：`docs/lure-response-joint-evaluation` 的 `food-value-production-topology`、`support-scale-contract`、`state-trigger-intensity-contract`、`attack-trigger-strategy-contract`、`activity-closing-cost-contract`、`activity-motivation-separation`、`wariness-response-path`、`suspicion-load-contract`、`poor-reject-separation`，按 `311ae70d` 快照核对；对齐稿部分按其当前内容核对。
 
 ## 1. 总式
 

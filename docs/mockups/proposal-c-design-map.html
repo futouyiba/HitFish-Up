@@ -217,6 +217,20 @@
       </ol>
     </section>
 
+    <section aria-labelledby="support-title">
+      <h2 id="support-title">支持度怎么合成</h2>
+      <p>每份证据有自己的形态基值，动态路径只在基值与上限之间插值；同一猎物的多份证据取最强，不逐个相加。</p>
+      <pre><code>sat(x)   = min(1, max(0, x))
+路径分数 = 基值 + (上限 − 基值) × sat(动态匹配)
+一份证据 = max(基值, 各路径分数)
+某类猎物 = max(各适用证据)
+
+例：裙丝 Jig + 鱼形 T 尾，近底移动
+小鱼   = max(裙丝 0.40, 鱼形 0.90) = 0.90
+小龙虾 = 裙丝 0.40 + (0.75 − 0.40) × 1.0 = 0.75</code></pre>
+      <p>缺记录不是零：若裙丝展开变化未取得，小龙虾支持变成区间 <code>[0.40, 0.75]</code>；小鱼的 0.90 已闭合，不受影响。未评价的猎物类型保持未覆盖，也不自动填零。</p>
+    </section>
+
     <section aria-labelledby="items-title">
       <h2 id="items-title">每一项购买什么策略</h2>
       <table>
@@ -303,7 +317,7 @@
       </ul>
     </section>
 
-    <p class="footnote">口径来源：<code>docs/lure-response-joint-evaluation</code> 的 Working Closure，按 <code>311ae70d</code> 快照核对；该分支此后仍有提交（当前 head <code>0d3a7de2</code>）。本文与设计骨架、语义契约、五评价项契约、工作案例、开放决策同属 Proposal C 设计包，不替代已审核的 Current Contract。</p>
+    <p class="footnote">口径来源：<code>docs/lure-response-joint-evaluation</code> 的 Working Closure，按 <code>311ae70d</code> 快照核对；该分支在此之后持续更新。本文与设计骨架、语义契约、呈现解释与状态契约、五评价项契约、工作案例、开放决策同属 Proposal C 设计包，不替代已审核的 Current Contract。</p>
   </main>
 </body>
 </html>

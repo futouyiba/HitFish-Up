@@ -2,7 +2,7 @@
 
 状态：Working Design / Candidate。本文用于收敛设计，不是 Current Contract，也不是生产参数批准。
 
-口径来源：本包按 `docs/lure-response-joint-evaluation` 的 `311ae70d` Working Closure 快照核对，整理成一份可审阅的设计包；该分支此后仍有提交（当前 head `0d3a7de2`），本轮未逐条重新纳入。引用前先核对该分支当前 head。
+口径来源：本包按 `docs/lure-response-joint-evaluation` 的 `311ae70d` Working Closure 快照核对，整理成一份可审阅的设计包；该分支在此之后持续更新，本轮未逐条重新纳入。引用前先核对该分支当前 head。
 
 ## 1. 设计问题
 
@@ -82,6 +82,7 @@ ActualPresentation
 ## 6. 设计交付
 
 - [语义契约](lure-response-proposal-c-semantic-contract.md)：逐层写输入、输出、状态、owner 和禁止事项；
+- [呈现解释与状态契约](lure-response-proposal-c-presentation-interpretation.md)：证据、支持度插值、区间与状态提取规则；
 - [五评价项契约](lure-response-proposal-c-evaluation-items.md)：食物价值、攻击诱因、追赶负担、风险顾虑与门槛的合成方式和边界；
 - [工作案例](lure-response-proposal-c-worked-cases.md)：用反例检查每层是否真的区分了不同情况；
 - [开放决策](lure-response-proposal-c-open-decisions.md)：只保留尚未有 owner、尚未闭合或存在冲突的问题；
