@@ -343,3 +343,11 @@ C(t+1) = C(t) + E(t)
 黏结、比重、水作用和粒径先改变解体、沉降、漂移、暴露和线索释放，再形成 Feeding Place 状态。它们不能直接写成 `+Retention`、`+Attraction` 或 `+Bite`。
 
 同一物理变化可能同时扩大暴露、缩短留存、改变水层或降低可处理性，最终方向取决于地点、时间和鱼。
+
+## WD-33｜Attraction / Retention 暂不独立成模块
+
+**状态：BOUNDARY**
+
+Attraction 是 encounter / selection 的上位解释词，可由事件派生摘要；Retention 是重复 Feeding Event、Feeding Place 持久性和 Fish Condition 的组合结果。二者当前都不新增独立系数，避免与现有阶段重复计权。
+
+缺口是 Local Population / Residence 和 Overfeeding，应作为独立候选问题处理，而不是塞进 `AttractionCoeff` 或 `RetentionCoeff`。详见 `decisions/attraction-retention-verdict.md`。
