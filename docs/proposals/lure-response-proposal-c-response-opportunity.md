@@ -73,12 +73,13 @@ Reject                         → typed zero，不进入连续计算
 | `ResolvedResponsive`，`C=c` | `[c, c]` |
 | `ResolvedNonResponsive` | `[0, 0]` |
 | `Reject` | `[0, 0]`，它是硬零，不是 Unknown |
-| `NoMatch`（已完整评价、明确无支持） | `[0, 0]` |
+| `NoMatch`，规则明确给出数值零 | `[0, 0]` |
+| `NoMatch`，规则只给“条件不成立”等非数值结论 | 保持 `ResolutionIncomplete`，携带当前可证明边界（默认 `[0, 1]`） |
 | `Unknown`，无更窄信息 | `[0, 1]` |
 | `Unknown`，已有部分信息 | 更窄的 `[L_i, U_i]` |
-| `NotConfigured` | 不产生区间，直接 `ResolutionIncomplete` |
+| `NotConfigured`（已进入 sibling set） | `ResolutionIncomplete`，携带当前可证明边界（默认 `[0, 1]`），不丢上界 |
 
-已有部分信息时必须用更窄区间，不退回 `[0, 1]`。
+已有部分信息时必须用更窄区间，不退回 `[0, 1]`。进入集合后缺配置，状态保持 `ResolutionIncomplete`，但仍保留上界，用来判断已知 sibling 是否已经赢。
 
 ### 聚合
 
@@ -86,7 +87,7 @@ Reject                         → typed zero，不进入连续计算
 L_feed = max_i(L_i)
 U_feed = max_i(U_i)
 
-L_feed == U_feed → C_feed = L_feed，可进入 roll
+L_feed == U_feed → C_feed = L_feed，可进入机会接入；仍需已解析的 L 才能形成 q
 否则 → ResolutionIncomplete，携带 response_bounds，不可进入 roll
 ```
 
@@ -100,6 +101,10 @@ L_feed = 0.80, U_feed = 0.80 → C_feed = 0.80
 baitfish = [0.45, 0.45]
 crayfish = [0.10, 0.90]
 L_feed = 0.45, U_feed = 0.90 → ResolutionIncomplete
+
+baitfish = [0.40, 0.40]
+crayfish = NotConfigured → [0, 1]
+L_feed = 0.40, U_feed = 1.00 → ResolutionIncomplete
 ```
 
 ### 边界
