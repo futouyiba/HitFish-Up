@@ -31,18 +31,29 @@
 
 - **主张 A**：Groundbait Candidate 的 Flavor 主量依赖 `Flavor Intensity` 与 `Cue Exposure`。出处：`candidate/proposal.md` §5、`candidate/object-model.md` §2.3。
 - **主张 B**：PC 基线把化学强度判为未准入。R2 写明 `cue.chemical_intensity` / `cue.odor_concentration` 保持候选，不进入 core；R3 把 chemical magnitude / odor concentration 标为 `DEFERRED / NOT_ADMITTED`；H17 把它标为 `NEW_PRIMITIVE_REQUIRED`，并说明是否准入是产品决策。出处：`docs/baselines/FCF-PC-BASELINE-R2-20260916.md` 第 60 行、`docs/baselines/FCF-PC-BASELINE-R3-20260916.md` 第 64 行、`docs/holdout/FCF-PC-R2_BLIND_HOLDOUT_R1_20260916.md` 第 240–248 行。
-- **冲突点**：Flavor 候选的核心量没有已准入的 Current 载体。
+- **冲突点**：Flavor 候选的核心量没有已准入的 Current 载体；是否准入是产品决策。
 - **影响**：Flavor、Chemical Cue Field、小药、发现与选择。
-- **暂定处理**：`KEEP_OPEN`。分支 A（只使用化学类型和稀疏关系）作为工作候选；分支 B（连续强度）阻塞，见 `candidate/flavor-and-avoidance.md`。
+- **暂定处理**：`KEEP_OPEN`。当前工作分支是 A（只使用化学类型和稀疏关系）；B/C 需要 Owner 准入，不在裁决前预先排除。若选 B/C，必须说明新增 primitive、口径、标定成本和失败边界。
 - **裁决方**：Owner。
 
-### C-03｜Feeding Event 与 Feeding Decision
+### C-03a｜Feeding Event 是否作为外层结构
 
-- **主张 A**：Groundbait Candidate 使用事件概率分解：`encounter → feasible action set → selection → success → ingestion`。出处：`candidate/feeding-event.md`。
-- **主张 B**：Proposal C 使用决策裕量：`DecisionMargin = CurrentFoodValue + StateTriggerValue - ClosingCost - PredictionCost - RiskCost - WillingnessThreshold`，再投影为 `C(Margin)`。出处：`docs/proposals/lure-response-proposal-c-current-review-entry-2026-10-27.md` 第 30–36 行、第 272 行。
-- **冲突点**：两套都在解释“鱼吃不吃”，但一个是事件概率，一个是决策裕量；没有映射，也没有声明谁覆盖谁。
+- **主张 A**：Groundbait Candidate 使用事件分解：`encounter → feasible action set → selection → success → ingestion`。出处：`candidate/feeding-event.md`。
+- **主张 B**：Proposal C 使用决策裕量作为鱼侧判断：`DecisionMargin = CurrentFoodValue + StateTriggerValue - ClosingCost - PredictionCost - RiskCost - WillingnessThreshold`，再投影为 `C(Margin)`。出处：`docs/proposals/lure-response-proposal-c-current-review-entry-2026-10-27.md` 第 30–36 行、第 272 行。
+- **冲突点**：两者不在同一层。事件分解是过程结构，决策裕量是某一步的比较函数。不能直接写成“二选一”。
 - **影响**：Feeding Event、Response 输入、Groundbait 与拟饵机制的共用语义。
-- **暂定处理**：`KEEP_OPEN`。本目录以事件分解为主候选；Proposal C 的决策裕量保留为并行候选，不混用变量名。
+- **暂定处理**：`CANDIDATE_BRANCH`。本目录以事件分解为外层结构；Decision Margin 的位置由 C-03b 单独决定。
+- **裁决方**：Owner / Response Current。
+
+### C-03b｜Decision Margin 进入哪一步
+
+- **前提**：仅当 C-03a 选“事件分解为外层结构”时成立。
+- **主张 A**：Decision Margin 进入 `selection`，作为鱼比较可行动作的决策函数。
+- **主张 B**：Decision Margin 进入单独的 approach / risk 步骤。
+- **主张 C**：不进入；Feeding Event 使用其它选择规则。
+- **冲突点**：现有 Groundbait 候选没有显式 Decision Margin；Proposal C 有，但没有声明它替代哪一步。
+- **影响**：Feeding Event 的 selection、Response 输入、拟饵机制复用。
+- **暂定处理**：`KEEP_OPEN`。本目录暂不引入 Decision Margin；若需要，优先放在 selection。
 - **裁决方**：Owner / Response Current。
 
 ### C-04｜有效摄食机会的落点
@@ -51,16 +62,26 @@
 - **主张 B**：现有术语只定义 `SpatialDistributionWeight × AdaptationCoeff → 下游候选权重`，没有“有效摄食机会”槽位。出处：`docs/terminology.md` §5.2。
 - **冲突点**：`Effective Ingestion Opportunity` 是 Response Condition、Response Component、独立因子，还是只供某个既有计算消费，尚未确定；它如何与 AdaptationCoeff 组合也未定。
 - **影响**：Response 接入、圆桌权重构建、Groundbait 候选闭环。
-- **暂定处理**：`KEEP_OPEN`。候选文档保留接口和单位说明；映射与顺序见 `candidate/response-aggregation-map.md`，组合公式仍不定义。
+- **暂定处理**：`KEEP_OPEN`。候选文档保留接口和单位说明；映射与顺序见 `candidate/response-aggregation-map.md`，组合公式仍不定义。依赖 C-03a 和 C-03b。
 - **裁决方**：Owner / Response Current。
 
-### C-05｜Persistent Response Field 是增量还是覆盖层
+### C-05a｜Persistent Field 数据所有权
 
 - **主张 A**：术语把 `Persistent Response Field` 定义为“运行时对 DEF 的持续性增量影响层，不复制一份 DEF”。出处：`docs/terminology.md` §4。
 - **主张 B**：Groundbait Candidate 明确不把窝料写回 DEF 或 `SpatialDistributionWeight`。出处：`candidate/response-stage-mapping.md` §6。
 - **冲突点**：“增量”可能被实现成直接修改 DEF，导致持续效果和即时效果重复消费。
 - **影响**：持久响应、姿态响应、窝料、响动。
-- **暂定处理**：`CANDIDATE_BRANCH`。本目录把持久字段理解为 DEF 之外的运行时叠加层：DEF 只读，持久字段记录来源、范围、强度、持续时间和衰减，Response 只读一次。
+- **暂定处理**：`CANDIDATE_BRANCH`。本目录把持久字段理解为 DEF 之外的运行时叠加层：DEF 只读，响应层持有增量。
+- **裁决方**：Owner / Response Current。
+
+### C-05b｜Persistent Field 表示与消费
+
+- **前提**：与 C-05a 正交。即使数据所有权选“DEF 只读”，仍需决定表示方式。
+- **主张 A**：独立的 `Persistent Response Field` 对象，Response 读取时合并。
+- **主张 B**：在 Response 求值时即时投影，不持久化独立对象。
+- **冲突点**：术语已经把它命名为一个 Field，但没有规定是持久对象还是求值投影。
+- **影响**：Schema、缓存、时间与衰减、Response 读取。
+- **暂定处理**：`KEEP_OPEN`。当前倾向 A，但 B 可以作为实现优化，不改变语义。
 - **裁决方**：Owner / Response Current。
 
 ### C-06｜环境食物浓度与窝料对象状态
@@ -72,13 +93,22 @@
 - **暂定处理**：`KEEP_OPEN`。只保留两种解释：环境侧是背景事实、窝料是玩家增量；或二者是同一事实，需要在消费端合并。
 - **裁决方**：Owner / 环境与响应 Current。
 
-### C-07｜Overfeeding 与补窝历史
+### C-07a｜Overfeeding
 
-- **主张 A**：外部研究记录 RF4 存在 overfeeding：population 下降、咬口频率降低、需要休息和补窝。出处：`programaticHitFish/docs/research/2026-10-21-rf4-bait-groundbait-mechanism-deep-research.md` 第 22–23、186–189、243–249、636、641 行。这只是外部研究，不是本仓 Current。
-- **主张 B**：Groundbait Candidate 只有 `persistence / turnover`，没有 overfeed、历史累积、补窝频率和跨 session 语义。出处：`candidate/physical-release.md` §2、§6。
+- **主张 A**：外部研究记录 RF4 存在 overfeeding：population 下降、咬口频率降低、需要休息和补窝。出处：`programaticHitFish/docs/research/2026-10-21-rf4-bait-groundbait-mechanism-deep-research.md` 第 22–23、243–249、636、641 行。这只是外部研究，不是本仓 Current。
+- **主张 B**：Groundbait Candidate 只有 `persistence / turnover`，没有 overfeed、历史累积、补窝频率和跨 session 语义。出处：`candidate/physical-release.md` §2、§8。
 - **冲突点**：如果只做“越多越好”的释放，会丢失 overfeed 这个非单调策略轴；如果直接并入，又没有仓内证据和位置。
 - **影响**：Physical Release、Feeding Place State、Fish Condition、补窝玩法。
-- **暂定处理**：`KEEP_OPEN`。外部研究只作证据线索；是否首版纳入、放在 Feeding Place 还是 Fish Condition，待 Owner 决定。状态转移接口见 `candidate/physical-release.md` §8。
+- **暂定处理**：`KEEP_OPEN`。外部研究只作证据线索；是否首版纳入、放在 Feeding Place 还是 Fish Condition，待 Owner 决定。
+- **裁决方**：Owner。
+
+### C-07b｜Local Population / Residence
+
+- **主张 A**：外部研究记录 Feed 会提高局部 fish population，overfeeding 后 population 会下降。出处：`programaticHitFish/docs/research/2026-10-21-rf4-bait-groundbait-mechanism-deep-research.md` 第 186–189、247–249 行。这只是外部研究，不是本仓 Current。
+- **主张 B**：Groundbait Candidate 没有局地鱼群数量或驻留状态，只有 Feeding Place 的对象与线索。出处：`candidate/object-model.md` §2.4。
+- **冲突点**：如果“留鱼”需要显式的局地鱼群状态，现有链无法表达；如果只体现为机会权重变化，又需要明确它和 Response 的关系。
+- **影响**：Feeding Place、Response、抽鱼、留鱼玩法。
+- **暂定处理**：`KEEP_OPEN`。首版可只记录缺口，或只体现为机会权重变化；不建显式 population state。
 - **裁决方**：Owner。
 
 ### C-08｜发现与趋近的阶段划分
@@ -88,6 +118,7 @@
 - **冲突点**：`Encounter` 同时承担感知、接近和时间窗口，难以区分“没看见”“不想靠近”“没时间”。
 - **影响**：Feeding Event、Cue、Fish Condition、刺鱼接口。
 - **暂定处理**：`KEEP_OPEN`。本目录保留 `Encounter` 作为合并候选，但在对象模型里记录它可能拆成 Detection / Approach / Temporal Opportunity。
+- **依赖条件**：只有 C-02 准入 magnitude 后，才继续决定“谁拥有 cue 羽流几何和到达鱼端强度”。若 C-02 选 A，本题只决定是否拆分 Encounter，不涉及浓度所有权。
 - **裁决方**：Owner。
 
 ### C-09｜刺鱼与抽鱼接口
@@ -117,23 +148,44 @@
 - **暂定处理**：同 Target 合并与饱和为 `ACTIVE CANDIDATE`（WD-25）；多 Target 算子为 `OPEN`（WD-26）。
 - **裁决方**：Owner。
 
-### C-12｜Diet Shift 的所有权
+### C-12a｜Diet Shift 所有权
 
 - **主张 A**：术语把 `Diet Shift` 列为 `Fish Condition` 参数。出处：`docs/terminology.md` §5.2。
 - **主张 B**：Groundbait Candidate 把 Diet Shift 后置为慢变生态候选。出处：`candidate/proposal.md` §8.2、WD-14。
 - **主张 C**：Proposal C 把它作为 `CurrentFoodValue` 的加项。出处：`docs/proposals/lure-response-proposal-c-current-review-entry-2026-10-27.md` 第 45 行。
-- **冲突点**：三处都在改“鱼想吃什么”，更新时间尺度和消费者不同。
+- **冲突点**：Diet Shift 属于谁，和它影响 Food 还是 Flavor，是两个不同问题。当前容易混成一项。
 - **影响**：Fish Condition、Food Preference、Response。
-- **暂定处理**：`KEEP_OPEN`。本目录规定：Baseline Diet 是静态配置，Diet Shift 是 Fish Condition 的动态偏移，Food/Flavor Exposure 不直接写 Diet Shift。
+- **暂定处理**：`CANDIDATE_BRANCH`。本目录把所有权放在 Fish Condition：Baseline Diet 是静态配置，Diet Shift 是动态偏移。
 - **裁决方**：Owner。
 
-### C-13｜Wariness 与 Avoidance 的边界
+### C-12b｜Diet Shift 消费语义
+
+- **前提**：仅当 C-12a 选“所有权在 Fish Condition”时成立。
+- **主张 A**：Diet Shift 修改 Food Preference。
+- **主张 B**：Diet Shift 修改 Flavor Preference。
+- **主张 C**：两者都改，但必须分别有因果依据。
+- **冲突点**：当前没有证据说明 Diet Shift 应该只改 Food、只改 Flavor，还是两者都改。
+- **影响**：Food、Flavor、Response。
+- **暂定处理**：`KEEP_OPEN`。暂不决定；若选 C，两条路径必须分别保留 provenance。
+- **裁决方**：Owner。
+
+### C-13a｜Wariness 与 Avoidance 是否不同语义
 
 - **主张 A**：`Wariness` 是随过程累积的 Fish Condition 状态。出处：`docs/terminology.md` §5.2。
 - **主张 B**：`Avoidance` 是稀疏配置的 Cue 排斥。出处：`candidate/proposal.md` §5.4、WD-07。
-- **冲突点**：两者都可能压低响应，容易重复扣分。
+- **冲突点**：两者都可能压低响应，容易重复扣分；但“是否不同语义”和“Avoidance 用什么表示”是两个问题。
 - **影响**：Response、Flavor、Feeding Event。
 - **暂定处理**：`CANDIDATE_BRANCH`。本目录要求两者各自保留来源和 trace，不合并成一个“负分”。
+- **裁决方**：Owner / Response Current。
+
+### C-13b｜Avoidance 的表示形式
+
+- **前提**：仅当 C-13a 选“不同语义”时成立。
+- **主张 A**：静态稀疏 Profile。
+- **主张 B**：Context-sensitive relation。
+- **冲突点**：当前 Working Decision 只收敛了“排斥 ≠ 不喜欢”和“稀疏配置”，没有收敛它必须是静态关系。
+- **影响**：Flavor、Response、Authoring。
+- **暂定处理**：`KEEP_OPEN`。不把“静态”当成已确认前提。
 - **裁决方**：Owner / Response Current。
 
 ### C-14｜Feeding Readiness 是否为正式状态
@@ -147,9 +199,9 @@
 
 ## 3. 裁决顺序建议
 
-1. C-01、C-02、C-03 先决，它们决定 Groundbait 候选能否继续使用现有量。
-2. C-04、C-05 决定 Response 接入和持久字段语义。
-3. C-06、C-07、C-08、C-12、C-13、C-14 决定空间、时间与鱼况边界。
+1. C-01、C-02、C-03a、C-03b 先决，它们决定 Groundbait 候选能否继续使用现有量。
+2. C-04、C-05a、C-05b 决定 Response 接入和持久字段语义。
+3. C-06、C-07a、C-07b、C-08、C-12a、C-12b、C-13a、C-13b、C-14 决定空间、时间与鱼况边界。
 4. C-09、C-10、C-11 决定抽鱼、刺鱼和多目标聚合。
 
 ## 4. 不冒充裁决
