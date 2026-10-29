@@ -60,7 +60,7 @@ Current 只定义到 `SpatialDistributionWeight × AdaptationCoeff → 下游候
 | C-05a | Persistent Field 数据所有权 | 接口 | DEF 只读，响应层持有增量 | 低 |
 | C-05b | Persistent Field 是否存在独立语义 | 接口 | 存在独立持续语义 | 低中 |
 | C-06a | 是否存在环境背景食物浓度 | 接口 | 有 | 中 |
-| C-06b | 背景与增量是否保留独立 provenance | 接口 | 保留，消费前合并 | 中 |
+| C-06b | 背景与增量是否保留独立 provenance | 接口 | 保留 provenance；合并位置见 C-06c | 中 |
 | C-06c | 合并在哪里发生 | 接口 | Response 前；待 C-06a/b | 中 |
 | C-07a1 | Overfeeding 是否首版纳入 | 边界 | 后置 | 低 |
 | C-07a2 | Overfeeding 承载层 | 边界 | 若纳入再定 | 中 |
@@ -218,11 +218,11 @@ C. 暂不决定。
 
 选项：
 
-A. 保留独立 provenance，消费前合并。
+A. 保留独立 provenance，不预设合并位置。
 B. 直接物化成一个统一状态，不再区分来源。
 C. 其它，需要说明。
 
-**推荐**：A。保留 provenance 才能查重和调试；合并可以发生在消费前。
+**推荐**：A。保留 provenance 才能查重和调试；合并位置由 C-06c 单独决定。
 
 **请回答**：选哪个？如果选 A，合并后的状态是否仍保留来源引用？
 
@@ -232,11 +232,11 @@ C. 其它，需要说明。
 
 选项：
 
-A. 在 Response 之前合并，Response 只读合并后的状态。
+A. 在 Response 之前合并，也就是消费前合并，Response 只读合并后的状态。
 B. 在 Response 内部合并，Response 同时读取两个来源。
 C. 暂不决定。
 
-**推荐**：A。先合并再进入响应，避免同一事实在响应里被两条路径各读一次。
+**推荐**：A。消费前合并，避免同一事实在响应里被两条路径各读一次。
 
 **请回答**：选哪个？如果选 B，去重规则和 trace 放在哪里？
 
