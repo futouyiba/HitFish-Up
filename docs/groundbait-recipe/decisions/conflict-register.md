@@ -157,7 +157,7 @@
 - **主张 B**：Proposal C 对 sibling prey 使用 `max(C_baitfish, C_crayfish, ...)`。出处：`docs/proposals/lure-response-proposal-c-current-review-entry-2026-10-27.md`。
 - **冲突点**：两处都在用 `max` 做替代聚合，但对象不同：一个是动作路径，一个是猎物解释。是否允许同一算子出现在两层，没有统一说明。
 - **影响**：Feeding Event、Food 选择、Response。
-- **暂定处理**：`KEEP_OPEN`。本目录只在动作路径层使用受限聚合，不把 `max` 推广到其它层。
+- **暂定处理**：`KEEP_OPEN`。生产聚合保持 OPEN；`max` 仅作为“可自由选择最佳路径”的 Fixture 上界，不作为生产聚合候选，也不推广到其它层。
 - **裁决方**：Owner。
 
 ### C-11｜Food Target 与多 Target 聚合
@@ -241,10 +241,19 @@
 
 ## 3. 裁决顺序建议
 
-1. C-01、C-02、C-03a、C-03b 先决，它们决定 Groundbait 候选能否继续使用现有量。
-2. C-04、C-05a、C-05b 决定 Response 接入和持久字段语义。
-3. C-06a、C-06b、C-07a1、C-07a2、C-07b、C-08、C-12a1、C-12a2、C-12a3、C-12b、C-13a、C-13b、C-14 决定空间、时间与鱼况边界。
-4. C-09、C-10、C-11 决定抽鱼、刺鱼和多目标聚合。
+分三轮，与 `owner-decision-brief.md` §7 保持一致。
+
+**第一轮：模型形状**
+
+C-01、C-02、C-03a、C-03b。
+
+**第二轮：接入现有 FCF**
+
+C-04、C-05a、C-05b、C-06a、C-06b、C-08、C-09。
+
+**第三轮：首版边界与暂缓项**
+
+C-07a1、C-07a2、C-07b、C-10、C-11、C-12a1、C-12a2、C-12a3、C-12b、C-13a、C-13b、C-14。
 
 ## 4. 不冒充裁决
 
