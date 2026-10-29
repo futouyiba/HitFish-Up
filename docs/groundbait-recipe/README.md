@@ -18,6 +18,8 @@ docs/groundbait-recipe/
 │  ├─ environment-bake-integration.md
 │  ├─ fish-condition-integration.md
 │  ├─ response-algorithm.md
+│  ├─ roundtable-and-draw.md
+│  ├─ cross-stage-invariants.md
 │  ├─ object-model.md
 │  ├─ groundbait-integration.md
 │  ├─ food-flavor.md
@@ -46,6 +48,8 @@ docs/groundbait-recipe/
 5. [`candidate/environment-bake-integration.md`](candidate/environment-bake-integration.md)：环境烘焙与空间分布权重的消费边界。
 6. [`candidate/fish-condition-integration.md`](candidate/fish-condition-integration.md)：鱼况在完整链中的位置与消费者。
 7. [`candidate/response-algorithm.md`](candidate/response-algorithm.md)：Response Stage 的输入输出与聚合顺序。
+8. [`candidate/roundtable-and-draw.md`](candidate/roundtable-and-draw.md)：圆桌、抽鱼、生成与 Fish AI 边界。
+9. [`candidate/cross-stage-invariants.md`](candidate/cross-stage-invariants.md)：跨阶段不变量与最小反例。
 8. [`candidate/object-model.md`](candidate/object-model.md)：Groundbait 对象、状态与因果所有权。
 9. [`candidate/groundbait-integration.md`](candidate/groundbait-integration.md)：四条事实路径的整合与重复计权检查。
 10. [`candidate/food-flavor.md`](candidate/food-flavor.md)：Food 与 Flavor 的候选位置和准入问题。

@@ -42,13 +42,23 @@ Recipe Facts
 - Physical Release 的产物是 Feeding Place 状态，不是 `release_score`；
 - 粒径既可作为鱼侧对象属性，也可作为物理对象属性，两个影响必须经不同中间状态进入，不能跨链总加权。
 
-下一步按以下顺序推进，不能跳过前置语义：
+当前阶段文档：
 
-1. 核对 `decisions/conflict-register.md` 的未决项和裁决方。
-2. 核对 `candidate/system-object-model.md` 的对象、权重和阶段隔离。
-3. 环境烘焙：只消费 `SpatialDistributionWeight`，不重新计算环境系数。
-4. Fish Condition：只作为条件输入，不由窝料或味型直接写入。
-5. Response Stage：先定输入输出和持久字段语义，再定聚合公式。
-6. Groundbait 全栈：对象守恒 → 释放状态 → 分布 → 摄食事件 → Food / Flavor。
-7. 圆桌与抽鱼：先定顺序和所有权，再谈具体权重规则。
-8. 最后才保留少量反例，检查因果所有权、守恒和重复计权。
+- 端到端对象与所有权：`candidate/system-object-model.md`
+- 环境烘焙接入：`candidate/environment-bake-integration.md`
+- Fish Condition：`candidate/fish-condition-integration.md`
+- Response 算法接口：`candidate/response-algorithm.md`
+- Groundbait 全栈：`candidate/groundbait-integration.md`、`candidate/food-flavor.md`
+- 圆桌与抽鱼：`candidate/roundtable-and-draw.md`
+- 跨阶段不变量：`candidate/cross-stage-invariants.md`
+- 冲突与未决项：`decisions/conflict-register.md`
+
+下一步不是继续扩写机制，而是处理 Owner 决策和证据缺口：
+
+1. 按 `conflict-register.md` 的裁决顺序，先处理 C-01、C-02、C-03。
+2. 处理 C-04、C-05，决定 Response 接入和持久字段语义。
+3. 处理 C-06、C-07、C-08、C-12、C-13、C-14，决定空间、时间与鱼况边界。
+4. 处理 C-09、C-10、C-11，决定抽鱼、刺鱼和多目标聚合。
+5. 只有在语义闭合后，才考虑最小 Fixture 和实现验证。
+
+不把 `KEEP_OPEN` 项写成已确认规则，也不把 `CANDIDATE_BRANCH` 当成 Owner 裁定。
