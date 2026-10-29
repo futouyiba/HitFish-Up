@@ -1,344 +1,137 @@
 # Edible Size Response｜可摄食尺寸响应 Candidate
 
-> 状态：Candidate / Working Design  
-> 日期：2026-10-28  
-> 目标：建立一套可同时服务 Groundbait 粒径筛选与后续 Hookbait / 饵球尺寸筛选的鱼侧响应模型。
+> 状态：Candidate / Working Design
+> 日期：2026-10-29
+> 权威边界：本页只定义 Feeding Event 中“对象约束如何影响动作路径”的候选接口，不定义独立的最终尺寸分、Response 或生产参数。
 
-## 1. 问题定义
+## 1. 作用范围
 
-不要直接给每条鱼配置“最佳颗粒大小 = X mm”。当前提案把尺寸响应拆成：
+粒径不是鱼的偏好，也不是一个独立 Bonus。它只回答：
+
+> 给定对象已经进入接触机会后，某条摄食动作能否捕获、保留、处理这个对象？
+
+对象是否出现、是否被发现、是否位于该动作可用的水层，由 `Feeding Place State` 和 `Physical Release` 负责。一次事件如何选择动作、如何更新对象状态，由 `feeding-event.md` 负责。
 
 ```text
-Fish Body Linear Size
+Fish body / morphology + action capacity
         +
-Morphology Profile
+ParticleObject effective_size / shape / state
         ↓
-Intake Reference Size
-        +
-Feeding Mechanism Curve(s)
+feasibility_m / success_m 的尺寸相关部分
+```
+
+## 2. Fish body 与 action capacity
+
+- `Body Linear Size` 描述个体成长带来的尺度变化。
+- `Morphology Profile` 描述同一体尺下口部、过滤结构或身体形态差异。
+- 两者共同约束 Feeding Action 的能力范围，但不直接给出“最佳颗粒”。
+
+普通口部路径可以使用线性参考尺度：
+
+```text
+reference_size = body_linear_size × morphology_scale
+```
+
+这只是生成动作能力坐标的一种候选映射，不是 Runtime 真理，也不是“颗粒小于嘴宽乘常数”的万能公式。重量可以帮助推断体尺或成长阶段，但不能直接与无量纲 Ratio 相乘生成长度。
+
+`FILTER` 可能没有同样的口部参考。它可以由过滤结构、悬浮状态和流量直接提供自己的截留 / 保留约束；不能强行套普通 Mouth Reference。
+
+## 3. Feeding Mechanism 是动作路径
+
+PICK、SUCTION、BENTHIC_SUCTION、GULP、FILTER 不是同一条曲线的倍率，而是不同的动作路径。每条路径要分别说明：
+
+- 动作前提；
+- 对象如何被捕获；
+- 对细小对象如何保留和处理；
+- 对过大对象的入口、吸入或吞咽限制；
+- 对水层、底质、流态的依赖。
+
+例如 `BENTHIC_SUCTION` 的“底层”属于动作可行性的地点前提，不属于尺寸本身；否则会把地点约束重复计入尺寸约束。
+
+### 3.1 尺寸约束接口
+
+每条动作路径可以提供尺寸相关的条件项：
+
+```text
+size_condition_m(
+  effective_size,
+  fish_morphology,
+  object_state
+)
+```
+
+它表示对象尺寸、形态与状态如何影响动作 `m` 的捕获、保留和处理。它不是一条必须具有“上升—平台—下降”形状的最终曲线。若实现采用相对尺寸曲线，也必须说明：
+
+- 它只服务哪条动作路径；
+- 哪些地点前提已在外部处理；
+- 哪些对象状态会改变结果；
+- 它不能解释 encounter、Food Preference 或最终 Response。
+
+## 4. 多动作由 Feeding Event 处理
+
+一条鱼可能有多个动作路径。它们是处理同一对象的备选路径，不是多个独立奖励：
+
+```text
+Feasible Action Set
         ↓
-Edible Size Fit
-```
-
-其中：
-
-- `Body Linear Size`：当前个体 / 成长阶段的体长或其它明确线性体尺。
-- `Morphology Profile`：同样线性体尺下，这个物种的口部或过滤结构相对尺度。
-- `Feeding Mechanism`：鱼如何摄食，决定尺寸响应曲线的形状。
-- `Edible Size Fit`：当前尺寸的实体食物对这条鱼是否容易被有效利用。
-
-`Intake Reference Size` 只是尺寸基准，不等于最佳颗粒尺寸。
-
-### 1.1 为什么不用重量直接乘 Ratio
-
-只有线性尺度乘无量纲比例，结果才仍然是长度。例如：
-
-```text
-BodyLength × OralScaleRatio → Oral Reference Length
-```
-
-鱼重可以参与推导体长或成长阶段，但不能直接写成：
-
-```text
-Weight × MouthRatio → particle size
-```
-
-否则量纲不成立。
-
-## 2. 为什么 Body Linear Size 与 Morphology 分开
-
-这两个量承担不同职责：
-
-```text
-Body Linear Size
-→ 个体成长变化
-
-Morphology Profile
-→ 同体尺下的物种形态差异
-```
-
-例如两条同为 30 cm 的鱼，可以因为口部相对尺寸不同而拥有不同 Intake Reference。反过来，同一物种从幼鱼长到成年时，线性体尺改变即可让 Size Response 随成长移动。
-
-### 2.1 Candidate 字段
-
-```text
-Species Morphology Profile
-├─ OralScaleRatio / OralScaleClass
-├─ FilterMorphology optional
-└─ GrowthStageOverride optional
-```
-
-`OralScaleRatio` 可以是最终 Runtime / Bake 参数，也可以由更粗的 `OralScaleClass` 在 Authoring 阶段生成；当前未锁死 Authoring 形式。
-
-默认不引入复杂异速生长公式。只有存在明确证据或 Fixture 需要时，才为特定成长阶段 Override。
-
-## 3. Feeding Mechanism Catalog
-
-第一版候选类型：
-
-```text
-PICK              啄食
-SUCTION           吸食
-BENTHIC_SUCTION   底层吸食
-GULP              吞食
-FILTER            滤食
-GRAZE             刮食（是否首版需要待核）
-```
-
-Feeding Mechanism 不只是一个倍率。不同机制拥有不同的标准 Size Response Curve。
-
-### 3.1 统一曲线接口
-
-曲线输入优先使用无量纲的相对尺寸：
-
-```text
-relative_size = edible_object_size / reference_size
-```
-
-普通摄食机制的标准曲线至少需要表达：
-
-| 参数 / 语义 | 含义 |
-|---|---|
-| `fine_utilization` | 对远小于高效区间的细小食物仍能利用到什么程度 |
-| `preferred_min` | 高效区间下界 |
-| `preferred_max` | 高效区间上界 |
-| `oversize_falloff` / `max_ingestible` | 过大以后下降多快，以及何时接近不可摄食 |
-
-第一版优先用简单分段线性曲线，避免过早购买复杂函数。
-
-示意：
-
-```text
-Fit
-1.0             ┌──────────┐
-               /            \
- fine floor ───              \
-0 ────────────────────────────┴──
-          小    高效区间       过大
-```
-
-左侧不要求统一降到 0。不同 Feeding Mechanism 可以有不同 `fine_utilization`。这与“细颗粒不应仅因鱼大就被强烈排斥”的边界一致。
-
-## 4. 各摄食方式的结构差异
-
-### 4.1 PICK
-
-候选特征：
-
-- 高效区间偏小到中等。
-- 过小颗粒可能降低单颗利用价值，但不预设完全不可利用。
-- 对超大颗粒下降较快。
-- 曲线相对窄。
-
-### 4.2 SUCTION
-
-候选特征：
-
-- 对较细颗粒的利用范围更宽。
-- 小到中颗粒都可高效利用。
-- 右侧仍受入口尺度和处理能力约束。
-
-### 4.3 BENTHIC_SUCTION
-
-Size Curve 可与 SUCTION 接近，但“底层”不要写进尺寸曲线本身。
-
-底层可用性应由 Feeding Place 中颗粒所在位置 / 水层决定，避免同一语义重复计权。
-
-### 4.4 GULP
-
-候选特征：
-
-- 高效区间相对右移。
-- 对较大对象容忍更高。
-- 很细颗粒不一定不能吃，但可能不是该机制最有效的利用方式。
-
-### 4.5 FILTER
-
-FILTER 不强制使用：
-
-```text
-BodyLength × FilterRatio
-```
-
-过滤效率可能更直接受鳃耙间距、过滤结构和悬浮颗粒特征约束。第一版应允许 `FilterMorphology` 直接提供或生成自己的 Reference / Efficiency Window：
-
-```text
-FilterMorphology Evidence
-→ Filter Reference / Retention Window
-→ Filter Size Fit
-```
-
-若后续证据表明过滤结构可稳定随体尺缩放，再把 Body Linear Size 作为 Generator 输入，而不是先把线性比例写成 Runtime 真理。
-
-## 5. 多 Feeding Mechanism 如何聚合
-
-一条鱼可以拥有多个摄食机制，例如：
-
-```text
-BENTHIC_SUCTION proficiency = 1.0
-PICK            proficiency = 0.5
-```
-
-每个机制独立求值：
-
-```text
-ModeFit_m = proficiency_m × curve_m(relative_size_m)
-```
-
-当前第一版候选：
-
-```text
-EdibleSizeFit = max(ModeFit_m)
-```
-
-理由：多个摄食方式是完成“处理同一个食物对象”的替代路径。若直接求和，会出现“会的机制越多越强”的机制数量套利。
-
-但 `max` 仍不是已确认公式。Gold Fixture 需要检查它是否过于尖锐、是否导致模式切换不连续；必要时再测试平滑 best-path，而不是直接退回求和。
-
-## 6. Groundbait 如何消费 Size Response
-
-Groundbait 输入不是单个尺寸，而是 Particle Distribution：
-
-```text
-Fine      20%
-Small     40%
-Medium    30%
-Coarse    10%
-```
-
-当前最小候选可以先做质量加权：
-
-```text
-EdibleFraction_f = Σ_b MassShare_b × SizeFit_f(b)
-```
-
-语义：
-
-> 这团窝料的实体食物质量中，有多少比例对当前鱼而言可被有效利用。
-
-这可以自然形成体型筛选：粗颗粒窝不需要写“大鱼概率 +30%”，而是因为小鱼的 Size Fit 在大颗粒区间下降，导致其可利用份额更低。
-
-注意：`MassShare` 只是第一轮 Fixture 的统一计量候选。若后续发现颗粒数量、表面积或能量价值更适合某条响应链，应单独处理，不在这里静默替换语义。
-
-## 7. Hookbait / 饵球如何复用
-
-Hookbait 输入可以有单个 `BaitBallSize`：
-
-```text
-BaitBallSize
-    ↓
-Edible Size Response
-    ↓
-SizeFit
-```
-
-Groundbait 与 Hookbait 可以共享鱼侧的尺寸响应语言：
-
-```text
-Body Linear Size
-Morphology Profile
-Feeding Mechanism Profile
-```
-
-区别在输入：
-
-```text
-Groundbait → Particle Distribution
-Hookbait   → Single Bait Size / Size Distribution
-```
-
-共享的只是“尺寸是否适合摄食”这一层。Hookbait 还可能受到形状、硬度、钩体阻碍、持钩、姿态等因素影响，不能把 Groundbait 的完整摄食结果直接移植过去。
-
-## 8. 不把“小颗粒”默认做成大鱼强负分
-
-当前 Candidate 认为：
-
-- 太大颗粒对小鱼可以形成明显的右侧生理 / 行为约束。
-- 小颗粒对大鱼通常不应仅因“大鱼嘴大”就产生强烈负分。
-
-“大颗粒筛大鱼”的首要机制可以来自：
-
-```text
-小鱼无法高效利用大颗粒
-vs
-大鱼可以同时利用小颗粒和大颗粒
-```
-
-如果玩法验证发现这不足以产生目标体型差异，再研究“大鱼对细碎食物的单位留存价值 / 摄食收益”是否应由 Retention、Food Value 或其它机制承担，而不是先硬写进 Size Fit。
-
-## 9. 参数生成，而不是全量手填
-
-数据生产链候选：
-
-```text
-Evidence
-├─ Fish body-length / linear-size range
-├─ Mouth / gape information
-├─ Feeding mechanism
-├─ Filter morphology when needed
-└─ Typical natural food / prey size
+Action Selection
         ↓
-Parameter Generator
+One Attempt
         ↓
-Morphology Profile
-+ Feeding Mechanism Set
-        ↓
-Generated Size Response
-        ↓
-Sparse Exact Override
+Action Success
 ```
 
-建议记录 Evidence Level：
+因此本页不再定义 `EdibleSizeFit = max(...)`。`max` 只能在“动作总能自由切换、没有选择成本和竞争”的强假设下作为上界。实际路径选择、可行性、动作成功和失败状态见 `feeding-event.md`。
+
+## 5. 对象状态不是尺寸值
+
+同一有效尺寸的对象，仍可能因状态不同而产生不同动作结果：
+
+- `shape`：影响捕获、入口和保留；
+- `hardness`：影响处理和吞咽；
+- `cohesion`：影响团聚、解体和一次事件可处理的对象边界；
+- `release_state`：影响当前是否仍是可处理实体。
+
+这些属性不能静默编码进 `effective_size`。如果它们影响物理释放，也必须通过 `Feeding Place State` 进入；如果影响动作成功，则通过 `success_m` 的对象约束进入。
+
+## 6. Groundbait 与 Hookbait 的复用边界
+
+Groundbait 输入是随地点和时间变化的对象分布；Hookbait 通常是单对象或小分布。两者可以共用：
 
 ```text
-DIRECT
-INFERRED
-ARCHETYPE_DEFAULT
-OVERRIDE
+fish morphology + action capacity + object constraints
 ```
 
-嘴部 / gape 信息可以作为重要上游证据，但不把 Runtime 简化成一条固定 `particle < mouth × constant` 的万能公式。
+但 Hookbait 还要经过入口性、钩体阻碍、持钩、姿态和被识别等约束。复用的是对象约束接口，不是 Groundbait 的完整响应。
 
-## 10. 第一轮 Gold Fixture
+## 7. 当前状态
 
-先不追求完整真实鱼库。用六类角色攻击结构：
+### 事实 / 结构性边界
 
-| Fixture | 目的 |
-|---|---|
-| 小型啄食鱼 | 验证 Fine / Small |
-| 大型底吸鱼 | 验证线性体尺右移 |
-| 小型底吸鱼 | 与大型同机制对照 |
-| 大口吞食鱼 | 验证 GULP 曲线 |
-| 滤食鱼 | 验证独立 Filter Morphology / Reference |
-| 双模式鱼 | 验证 best-path 不产生机制数量套利 |
+- 线性体尺与无量纲比例相乘才得到线性尺寸；
+- 不同摄食动作不能默认视为同一动作的倍率；
+- 一个对象的一次摄食机会不能通过动作数量重复计奖；
+- FILTER 的约束可能来自过滤结构，而不是普通口部尺度；
+- 粒径对摄食的作用与释放、扩散、沉降是不同环节。
 
-测试尺寸可先用一组 Working Fixture，例如：
+### Working Hypothesis
 
-```text
-0.2 / 0.5 / 1 / 2 / 5 / 10 / 20 mm
-```
+- 大对象对小鱼的限制通常首先出现在捕获、吸入或处理环节；
+- 小对象对大鱼不应仅因体型更大就自动变成强负分；
+- Feeding Place 会改变动作路径是否可行，因此尺寸约束不能脱离地点状态单独解释。
 
-这些数值只用于看结构行为，不是生产定值。
+### OPEN
 
-### 10.1 必须出现的结构行为
+- `size_condition_m` 是否需要拆成捕获、保留、处理三个显式因子；
+- `capacity_m` 由哪些可取证的形态和行为事实生成；
+- 过滤结构的窗口如何与悬浮状态联合；
+- 同一尺寸下的形状、硬度和团聚如何进入动作成功；
+- 是否需要保留相对尺寸曲线，还是改用动作能力窗口与对象约束的组合。
 
-1. 同物种线性体尺增大后，普通摄食模式的 Size Response 按其 Morphology 关系合理移动。
-2. 同体长鱼可因 Morphology 不同而产生差异。
-3. PICK / SUCTION / GULP 不是简单倍率缩放，而是曲线形状不同。
-4. FILTER 不依赖 Mouth Reference 也能工作。
-5. 多 Feeding Mechanism 不因数量多而叠加获利。
-6. 粗颗粒能明显降低小鱼的可利用份额。
-7. 细颗粒不会无依据地强烈排斥大鱼。
-8. `max` 若造成明显不连续或不合理模式切换，应被 Fixture 暴露，而不是默认接受。
+## 8. 最小验证要求
 
-## 11. Open Questions
-
-- 第一版实际需要哪些 Feeding Mechanism，`GRAZE` 是否可以后置。
-- Body Linear Size 生产上采用哪一种稳定体尺，以及如何从现有 Fish Quality / 成长数据取得。
-- Oral Morphology 用连续 Ratio 还是离散 Class Authoring 更可维护。
-- Size Curve 的标准参数如何由真实作钓 / 生物证据标定。
-- `max` 是否过于尖锐，是否需要平滑 best-path。
-- Particle Size 是否还应独立影响 Attraction / Release，而不仅是 Ingestion。
-- 大颗粒带来的“大鱼留存 / 价值”是否需要由 Food Amount / Retention 而不是 Size Fit 表达。
-- Groundbait 聚合长期应按质量、数量、表面积还是能量价值计量；首轮 Fixture 暂用 Mass Share。
-- 实际生产使用毫米连续值还是离散 Size Class。当前偏向 Authoring 先使用 Size Class，Runtime 后续再决定是否映射到连续物理尺度。
+1. 改变体尺或形态时，改变的是动作能力，不是鱼的偏好标签。
+2. 改变 Feeding Place 的水层或底质时，只影响相关动作可行性，不重复修改尺寸约束。
+3. 增加重复动作路径不增加同一对象的一次有效收益。
+4. 改变释放时间或空间分布时，改变的是鱼遇到对象的分布，不直接改写对象固有尺寸约束。
+5. 同一尺寸的不同对象状态可以改变动作成功，但不能伪装成不同粒径。

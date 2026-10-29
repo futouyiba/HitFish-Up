@@ -1,8 +1,8 @@
 # 台钓窝料 / 饵料混合机制 Candidate Proposal
 
-> 状态：Candidate / Working Design  
-> 日期：2026-10-28  
-> 说明：本文记录当前最新整体提案。`decisions/working-decisions.md` 区分已收敛边界与仍待验证的算法候选；本文不把 Candidate 冒充正式 Contract。
+> 状态：Candidate / Working Design
+> 日期：2026-10-29
+> 说明：本文记录当前整体提案。`decisions/working-decisions.md` 区分已收敛边界与仍待验证的算法候选；本文不把 Candidate 写成正式 Contract。
 
 ## 1. 设计目标
 
@@ -18,54 +18,49 @@
 
 ## 2. 总体因果结构
 
+当前主脊不是四个加分层，而是一次状态转换和一次摄食事件：
+
 ```text
-Ingredient / Recipe
-        ↓
-Source Facts
-├─ Food Identity
-├─ Flavor / Chemical Cue Potential
-├─ Particle Distribution
-└─ Physical Properties
+Recipe / Ingredient Facts
+  ├─ Food Identity
+  ├─ Chemical Cue Potential
+  ├─ Particle / Object Properties
+  └─ Physical Release Properties
         ↓
 Physical Release
-├─ Breakdown Rate
-├─ Cue Release Rate
-├─ Spatial Spread
-├─ Sinking / Layer Behavior
-└─ Persistence
         ↓
-Feeding Place
-├─ Available Food
-├─ Chemical Cue Field
-└─ Particle State
+Feeding Place State(place, t)
+  ├─ contactable objects
+  ├─ Chemical Cue Field
+  ├─ location / layer
+  └─ object processing state
         ↓
-Fish Interpretation
-├─ Food Preference
-├─ Flavor Preference
-├─ Sparse Avoidance
-├─ Edible Size Response
-└─ Fish Condition
+Feeding Event
+  ├─ encounter
+  ├─ feasible action set
+  ├─ action selection
+  ├─ action success
+  └─ effective ingestion opportunity
         ↓
-Response
+Response Stage 的候选输入
         ↓
-现有下游 Adaptation Coefficient / 权重链
+现有 Adaptation Coefficient / 下游权重链
 ```
 
-关键边界：Food、Flavor、Particle、Physical Release 不是四个并列 Bonus。Physical Release 先决定信号何时、在哪里、以什么强度出现；Fish Response 再解释这些状态。
+`Feeding Place State`、`Feeding Event` 和 `Effective Ingestion Opportunity` 仅是本目录的 Candidate-local 工作词，不是 FCF Current Contract。
 
 ## 3. Common Ingredient / Recipe Facts
 
-第一版 Ingredient 建议至少提供以下事实，不直接提供“鲤鱼 +0.8”一类鱼种总分：
+配方事实只描述来源和资源，不直接提供鱼种总分。每条事实进入自己的因果路径：
 
-| 类别 | 示例 | 主要用途 |
-|---|---|---|
-| Food Identity | 谷物、虫、甲壳、植物、藻类等 | 鱼对可摄食目标的偏好 |
-| Flavor / Chemical Cue Potential | 腥、谷香、奶、果、蒜等及其强度 | 生成 Chemical Cue Exposure |
-| Particle Properties | 粒径分布、颗粒形态 | 尺寸筛选和释放 |
-| Physical Properties | 黏性、溶散倾向、比重等 | 生成释放过程 |
-| Potency / Quality | Ingredient 自身强度 | 区分同类 Ingredient，不直接等于鱼种响应 |
+| 事实 | 进入的中间状态 | 主要被谁消费 | 不直接负责 |
+|---|---|---|---|
+| Food Identity | 实体对象的 Food 属性 | Food 目标选择、对象价值 | 尺寸成功、释放速度 |
+| Chemical Cue Potential | Chemical Cue Field | 发现、趋近、回避、选择 | 实体质量、尺寸成功 |
+| Particle / Object Properties | Particle Object / Object State | 动作可行性、动作成功 | 鱼种偏好、最终中鱼 |
+| Physical Release Properties | Feeding Place State | 接触机会、位置、水层、持续时间 | 固定中鱼 Bonus |
 
-同一个 Ingredient 可以同时贡献多类事实。例如虾粉既可能贡献甲壳类 Food Identity，也贡献腥味 Chemical Cue Potential，还具有自己的粒径和物理性质。
+同一个 Ingredient 可以同时提供多类事实，但相同来源不意味着可以把不同路径相加。完整对象和所有权见 `object-model.md`。
 
 ## 4. Food：同 Target 合并后边际递减
 
@@ -161,28 +156,28 @@ RF4 公开资料可以支持 attractant 很强，但“强且一定短效”目�
 
 浓度过高导致普遍 Overdose 与“天生排斥某味型”是不同机制。首版不必同时购买两套复杂度。
 
-## 6. Particle Size：单独建立 Edible Size Response
+## 6. Particle Size：解释对象如何进入有效摄食
 
 颗粒大小不是 Food 或 Flavor Bonus。它主要解决：
 
-> 这条鱼以当前线性体尺、摄食形态和摄食方式，能否有效利用这个尺寸的实体食物。
+> 当实体对象已经出现在鱼可接触的地点和状态中，这条鱼能否通过某种摄食动作有效利用它？
 
-完整 Candidate 见 `edible-size-response.md`。
+完整 Candidate 见 `object-model.md`、`edible-size-response.md` 和 `feeding-event.md`。Groundbait 粒径分布与物理释放分别见 `particle-distribution.md` 和 `physical-release.md`；这些页面描述对象、状态和因果接口，不把归一化 Fixture 冒充生产参数。
 
 当前核心结构：
 
 ```text
-Body Linear Size
-+ Morphology Profile
-→ Intake Reference
+Body / Morphology
+→ action capacity
 
-Intake Reference
-+ Feeding Mechanism Curve
-→ Mode Size Fit
+Feeding Place + object state
+→ feasible action paths
 
-多个可替代 Feeding Mechanism
-→ Best-path Candidate
-→ Edible Size Fit
+feasible paths + object size
+→ size-conditioned usability
+
+size-conditioned usability
+→ effective ingestion opportunity
 ```
 
 `Body Linear Size` 必须是体长等线性尺度。重量不能直接与无量纲 Ratio 相乘生成长度。
@@ -235,7 +230,22 @@ Contextual Shift
 
 较慢的生态 Context，例如季节、水温阶段、水域食物结构、生物事件等，只有在有证据或明确玩法价值时才进入 Preference Shift。随机漂移是否需要、如何产生仍是 Open，不应提前当作既定机制。
 
-## 9. 不急于定义单一 RecipeFit
+## 9. Candidate 与现有 Response Stage 的边界
+
+现有仓内术语把窝料列为 `Response Condition` 的玩家侧输入，并为持续生效的玩家行为保留 `Persistent Response Field` 入口。本 Candidate 只提供可被这些入口消费的候选状态：
+
+```text
+Feeding Place State
++ Fish Condition
++ Response Components
++ Presentation Signal（若适用）
+→ 现有 Response Stage
+→ Adaptation Coefficient / 下游候选权重
+```
+
+候选模块不定义 `Adaptation Coefficient` 公式，不写回 `SpatialDistributionWeight`，不直接设置 `Fish Condition`，也不把同一份窝料效果同时作为持久和即时增量重复消费。具体映射与 OPEN 项见 `response-stage-mapping.md`。
+
+## 10. 不急于定义单一 RecipeFit
 
 当前不为了公式整齐而直接写：
 
@@ -243,20 +253,11 @@ Contextual Shift
 RecipeFit = FoodFit + FlavorFit + ParticleFit + PhysicalFit
 ```
 
-原因：这些量不一定处于同一阶段，简单相加可能重复计权。
+原因：这些量处于不同阶段。Food Identity、Chemical Cue、对象约束和物理释放必须先沿各自路径形成 Feeding Place 与 Feeding Event 状态，再由现有 Response Stage 消费。简单相加会重复计算。
 
-后续需要检验是否应保留不同语义，例如：
+`Attraction`、`Retention`、`Ingestion`、`Selection` 仍只是解释候选，不是本目录已经确认的正式中间层；如需使用，必须明确它属于哪个阶段、由谁生产、由谁消费。
 
-- Attraction：鱼是否被信号吸引 / 发现。
-- Retention：鱼是否愿意持续留在 Feeding Place。
-- Ingestion：实体食物是否容易被有效摄食。
-- Selection：鱼种和体型如何被筛选。
-
-这些名称本身也仍是 Candidate；最后再决定如何映射到现有 Response / Adaptation Coefficient。
-
-## 10. 首轮 Recipe Grammar 候选
-
-以下只作为 Fixture 范围，不是平衡定值：
+以下只描述配方输入的资源与职责边界，不是平衡定值：
 
 | 角色 | 候选限制 |
 |---|---|
@@ -269,16 +270,16 @@ RecipeFit = FoodFit + FlavorFit + ParticleFit + PhysicalFit
 
 ## 11. 推荐推进顺序
 
-1. 凿实 `Edible Size Response`。
-2. 建立小型 Gold Fixture，攻击尺寸模块。
-3. 用真实代表鱼生成 Morphology / Feeding Mechanism 参数，验证 authoring 路径。
-4. 接 Groundbait Particle Distribution。
-5. 设计 Physical Release，把雾化、黏度等变成时空释放。
-6. 回到 Food Target，验证单品统治、多 Target 拼盘、拆分套利。
-7. 完成 Flavor / 小药 / Sparse Avoidance。
-8. 形成 Groundbait 完整玩法闭环。
-9. Hookbait / 饵球复用 Edible Size Response 中的尺寸响应语言。
-10. 最后再收 Diet Shift 与 Response Aggregation。
+1. 先收清实体对象从配方到 Feeding Place 的状态转换。
+2. 定义一次摄食事件中的动作可行、动作选择和动作成功边界。
+3. 用体尺、形态和摄食动作生成可解释的尺寸约束；不先手填最佳毫米数。
+4. 把粒径分布接入当前地点的可接触对象，而不是直接接最终 Response。
+5. 把雾化、黏度、沉降和解体写成 Feeding Place 状态转换。
+6. 再处理 Food Target、Flavor Exposure、小药和 Sparse Avoidance 如何进入发现、趋近、留存和摄食。
+7. Groundbait 机制闭合后，再让 Hookbait 复用鱼侧尺寸约束；不复用完整响应。
+8. 最后再收 Diet Shift 与下游 Response Aggregation。
+
+Fixture 只承担反例和边界检查，不承担机制设计本身。
 
 ## 12. Regression Guardrails
 

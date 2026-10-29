@@ -1,7 +1,7 @@
 # 台钓配方机制 Anti-designs / 当前排除方向
 
-> 状态：Rejected / Deferred Design Boundaries  
-> 日期：2026-10-28  
+> 状态：Rejected / Deferred Design Boundaries
+> 日期：2026-10-29
 > 用途：记录已经讨论过、当前不应被后续 Agent 直接重新采用的退化方案。这里只保留“为什么不能这么做”的承重结论，不保存聊天流水账。`Deferred` 表示首版不采用，不代表永久禁止。
 
 ## 1. 全 Ingredient 线性加权作为完整方案
