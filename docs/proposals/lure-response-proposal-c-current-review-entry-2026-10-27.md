@@ -14,6 +14,7 @@
 | 每层的输入、输出、状态与 owner | [语义契约](lure-response-proposal-c-semantic-contract.md) |
 | 证据、支持度插值、区间与状态提取 | [呈现解释与状态契约](lure-response-proposal-c-presentation-interpretation.md) |
 | 五评价项的合成方式与边界 | [五评价项契约](lure-response-proposal-c-evaluation-items.md) |
+| 投影、sibling 区间与候选接入 | [响应与机会契约](lure-response-proposal-c-response-opportunity.md) |
 | 用反例检查设计 | [工作案例](lure-response-proposal-c-worked-cases.md) |
 | 未收口、无 owner 或冲突的问题 | [开放决策](lure-response-proposal-c-open-decisions.md) |
 | 图形化说明 | [设计图](../mockups/proposal-c-design-map.html) |

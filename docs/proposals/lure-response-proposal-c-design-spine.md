@@ -84,6 +84,7 @@ ActualPresentation
 - [语义契约](lure-response-proposal-c-semantic-contract.md)：逐层写输入、输出、状态、owner 和禁止事项；
 - [呈现解释与状态契约](lure-response-proposal-c-presentation-interpretation.md)：证据、支持度插值、区间与状态提取规则；
 - [五评价项契约](lure-response-proposal-c-evaluation-items.md)：食物价值、攻击诱因、追赶负担、风险顾虑与门槛的合成方式和边界；
+- [响应与机会契约](lure-response-proposal-c-response-opportunity.md)：投影、sibling 区间、`L × C` 与候选接入；
 - [工作案例](lure-response-proposal-c-worked-cases.md)：用反例检查每层是否真的区分了不同情况；
 - [开放决策](lure-response-proposal-c-open-decisions.md)：只保留尚未有 owner、尚未闭合或存在冲突的问题；
 - [设计图](../mockups/proposal-c-design-map.html)：面向阅读的图形版本。

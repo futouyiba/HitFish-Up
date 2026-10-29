@@ -266,6 +266,16 @@
       <p>食物价值不用多个匿名乘数连乘；活动度只改追赶倍率，不改速度上限；风险顾虑只放大已解析的可疑线索，没有线索就不凭空处罚。</p>
     </section>
 
+    <section aria-labelledby="chain-title">
+      <h2 id="chain-title">从余量到候选</h2>
+      <pre><code>C(θ)      = clamp(余量 / 0.40, 0, 1)      # 每个方位先算，再聚合
+C_prey    = support × E_θ[C]
+L_feed    = max(L_i)   U_feed = max(U_i)   # sibling 区间
+C_feed    = 标量，仅当 L_feed == U_feed
+q         = L × C                          # 只乘一次，进入候选</code></pre>
+      <p>区间没有收敛时保持 ResolutionIncomplete，携带上下界，不进入 roll；不能拿已知下界冒充最终值。机会量 <code>L</code> 由机会侧给出，时间与停留只影响 <code>L</code>，不回写余量。</p>
+    </section>
+
     <section aria-labelledby="status-title">
       <h2 id="status-title">状态不是零</h2>
       <ul class="chips">
@@ -317,7 +327,7 @@
       </ul>
     </section>
 
-    <p class="footnote">口径来源：<code>docs/lure-response-joint-evaluation</code> 的 Working Closure，按 <code>311ae70d</code> 快照核对；该分支在此之后持续更新。本文与设计骨架、语义契约、呈现解释与状态契约、五评价项契约、工作案例、开放决策同属 Proposal C 设计包，不替代已审核的 Current Contract。</p>
+    <p class="footnote">口径来源：<code>docs/lure-response-joint-evaluation</code> 的 Working Closure，按 <code>311ae70d</code> 快照核对；该分支在此之后持续更新。本文与设计骨架、语义契约、呈现解释与状态契约、五评价项契约、响应与机会契约、工作案例、开放决策同属 Proposal C 设计包，不替代已审核的 Current Contract。</p>
   </main>
 </body>
 </html>
