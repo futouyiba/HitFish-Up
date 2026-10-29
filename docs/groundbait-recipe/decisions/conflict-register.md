@@ -39,8 +39,8 @@
 ### C-03a｜Feeding Event 是否作为外层结构
 
 - **主张 A**：Groundbait Candidate 使用事件分解：`encounter → feasible action set → selection → success → ingestion`。出处：`candidate/feeding-event.md`。
-- **主张 B**：Proposal C 使用决策裕量作为鱼侧判断：`DecisionMargin = CurrentFoodValue + StateTriggerValue - ClosingCost - PredictionCost - RiskCost - WillingnessThreshold`，再投影为 `C(Margin)`。出处：`docs/proposals/lure-response-proposal-c-current-review-entry-2026-10-27.md` 第 30–36 行、第 272 行。
-- **冲突点**：两者不在同一层。事件分解是过程结构，决策裕量是某一步的比较函数。不能直接写成“二选一”。
+- **主张 B**：不采用统一 Feeding Event 外层结构，继续沿用既有 Response / Proposal C 各自的求值结构。
+- **冲突点**：事件分解是过程结构，Decision Margin 是某一步的比较函数，两者不在同一层。C-03a 只问是否采用事件分解作为外层结构。
 - **影响**：Feeding Event、Response 输入、Groundbait 与拟饵机制的共用语义。
 - **暂定处理**：`CANDIDATE_BRANCH`。本目录以事件分解为外层结构；Decision Margin 的位置由 C-03b 单独决定。
 - **裁决方**：Owner / Response Current。
@@ -56,13 +56,24 @@
 - **暂定处理**：`KEEP_OPEN`。本目录暂不引入 Decision Margin；若需要，优先放在 selection。
 - **裁决方**：Owner / Response Current。
 
-### C-04｜有效摄食机会的落点
+### C-04a｜EIO 是否为一等中间语义
 
 - **主张 A**：Groundbait Candidate 输出 `Effective Ingestion Opportunity`，但明确它不等于 `Adaptation Coefficient`。出处：`candidate/object-model.md` §3、`candidate/response-stage-mapping.md` §2。
 - **主张 B**：现有术语只定义 `SpatialDistributionWeight × AdaptationCoeff → 下游候选权重`，没有“有效摄食机会”槽位。出处：`docs/terminology.md` §5.2。
-- **冲突点**：`Effective Ingestion Opportunity` 是 Response Condition、Response Component、独立因子，还是只供某个既有计算消费，尚未确定；它如何与 AdaptationCoeff 组合也未定。
+- **冲突点**：它是否作为显式派生状态存在，还是只作为某个现有计算的内部量。
 - **影响**：Response 接入、圆桌权重构建、Groundbait 候选闭环。
-- **暂定处理**：`KEEP_OPEN`。候选文档保留接口和单位说明；映射与顺序见 `candidate/response-aggregation-map.md`，组合公式仍不定义。依赖 C-03a 和 C-03b。
+- **暂定处理**：`KEEP_OPEN`。候选文档保留接口和单位说明。
+- **裁决方**：Owner / Response Current。
+
+### C-04b｜若显式存在，谁消费
+
+- **前提**：仅当 C-04a 选“是，作为显式派生状态”时成立。
+- **主张 A**：Response Component。
+- **主张 B**：某个既有 Factor。
+- **主张 C**：Response Aggregation 内部。
+- **冲突点**：消费位置决定它进入哪条响应路径，以及如何与 AdaptationCoeff 组合。
+- **影响**：Response 接入、组件聚合、圆桌权重。
+- **暂定处理**：`KEEP_OPEN`。当前倾向 Response Component。
 - **裁决方**：Owner / Response Current。
 
 ### C-05a｜Persistent Field 数据所有权
@@ -84,18 +95,28 @@
 - **暂定处理**：`KEEP_OPEN`。当前倾向 A；物理 materialization、按需计算和缓存属于 Implementation Brief，不由 Owner 裁。
 - **裁决方**：Owner / Response Current。
 
-### C-06a｜环境食物浓度的事实所有权
+### C-06a｜环境是否存在背景食物浓度
 
 - **主张 A**：术语把“食物浓度”列为环境因子示例。出处：`docs/terminology.md` §3.1。
 - **主张 B**：Groundbait 产生独立的 `Feeding Place State` 与对象集合。出处：`candidate/object-model.md` §2.4。
-- **冲突点**：环境侧和窝料侧是否在描述同一事实。
+- **冲突点**：环境侧是否在窝料之外表达背景食物浓度。
 - **影响**：环境烘焙、Response、Groundbait 全栈。
-- **暂定处理**：`KEEP_OPEN`。可能解释：环境侧是背景事实、窝料是玩家增量；或二者是同一事实，不能分成两份；或环境侧不表达食物浓度。
+- **暂定处理**：`KEEP_OPEN`。可能解释：有背景事实；或没有，只由窝料表达。
 - **裁决方**：Owner / 环境与响应 Current。
 
-### C-06b｜合并在哪里发生
+### C-06b｜背景与玩家增量是否保留独立 provenance
 
-- **前提**：仅当 C-06a 选“背景 + 增量”或“同一事实”时成立。
+- **前提**：仅当 C-06a 选“有背景事实”时成立。
+- **主张 A**：保留独立 provenance，消费前合并。
+- **主张 B**：直接物化成一个统一状态，不再区分来源。
+- **冲突点**：保留 provenance 才能查重和调试；统一状态更简单，但难以追溯。
+- **影响**：环境烘焙、Response、Groundbait 状态。
+- **暂定处理**：`KEEP_OPEN`。当前倾向保留 provenance。
+- **裁决方**：Owner / 环境与响应 Current。
+
+### C-06c｜合并在哪里发生
+
+- **前提**：仅当 C-06a 选“有背景事实”，且 C-06b 选“保留独立 provenance”时成立。
 - **主张 A**：在 Response 之前合并，Response 只读合并后的状态。
 - **主张 B**：在 Response 内部合并，Response 同时读取两个来源。
 - **冲突点**：合并位置决定谁持有去重责任，以及 trace 放在哪里。
@@ -160,13 +181,21 @@
 - **暂定处理**：`KEEP_OPEN`。生产聚合保持 OPEN；`max` 仅作为“可自由选择最佳路径”的 Fixture 上界，不作为生产聚合候选，也不推广到其它层。
 - **裁决方**：Owner。
 
-### C-11｜Food Target 与多 Target 聚合
+### C-11a｜同 Target 先合并再饱和（WD-25 前提）
 
-- **主张 A**：Groundbait Candidate 使用“同 Target 合并后边际递减”。出处：`candidate/proposal.md` §4、`candidate/food-aggregation.md`、WD-25。
-- **主张 B**：PC 基线明确 multi-target hypothesis aggregation 为本轮不冻结项，并禁止 Coding Agent 自行引入 `sum / weighted average / max / Noisy-OR`。出处：`docs/baselines/FCF-PC-BASELINE-R0-20260915.md` §4、§13。
-- **冲突点**：同 Target 合并和 Target 级饱和已可定义，但多个 Target 如何合成总 Food 响应尚未获准。
+- **状态**：`ACTIVE CANDIDATE`（WD-25）。同 Target 的 Ingredient 先合并 Exposure，再做 Target 级饱和。
+- **说明**：这是当前工作候选，不在本轮 Owner ballot 中单独裁决。若 Owner 要改，另行提出。
+
+### C-11b｜多个 Food Target 如何聚合
+
+- **主张 A**：保持 OPEN，暂不选择生产算子。
+- **主张 B**：直接求和。
+- **主张 C**：取最大。
+- **主张 D**：Noisy-OR。
+- **主张 E**：求和后全局饱和。
+- **冲突点**：基线 R0 禁止自行引入 B–E；多 Target 聚合仍未获准。
 - **影响**：Food、Response、圆桌。
-- **暂定处理**：同 Target 合并与饱和为 `ACTIVE CANDIDATE`（WD-25）；多 Target 算子为 `OPEN`（WD-26）。
+- **暂定处理**：`KEEP_OPEN`。多 Target 算子为 OPEN（WD-26）。
 - **裁决方**：Owner。
 
 ### C-12a1｜Diet Shift 的所有权
@@ -249,11 +278,11 @@ C-01、C-02、C-03a、C-03b。
 
 **第二轮：接入现有 FCF**
 
-C-04、C-05a、C-05b、C-06a、C-06b、C-08、C-09。
+C-04a、C-04b、C-05a、C-05b、C-06a、C-06b、C-06c、C-08、C-09。
 
 **第三轮：首版边界与暂缓项**
 
-C-07a1、C-07a2、C-07b、C-10、C-11、C-12a1、C-12a2、C-12a3、C-12b、C-13a、C-13b、C-14。
+C-07a1、C-07a2、C-07b、C-10、C-11b、C-12a1、C-12a2、C-12a3、C-12b、C-13a、C-13b、C-14。
 
 ## 4. 不冒充裁决
 

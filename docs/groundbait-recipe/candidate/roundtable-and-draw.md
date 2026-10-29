@@ -78,7 +78,7 @@ SpatialDistributionWeight × AdaptationCoeff
 - 权重组装时是否还有其他修正。
 - 响应是否读取空间权重作为上下文，以及是否会在圆桌处再次相乘。
 
-对应冲突登记 C-04。
+对应冲突登记 C-04a、C-04b。
 
 ## 6. 圆桌四件
 

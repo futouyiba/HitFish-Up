@@ -187,4 +187,4 @@ RecipeFit = FoodFit + FlavorFit + ParticleFit + PhysicalFit
 - `Persistent Response Field` 的 Schema、时间、范围、衰减。
 - 候选输出是否需要进入刺鱼或搏鱼。
 
-对应冲突登记 C-04、C-05a、C-05b、C-09。
+对应冲突登记 C-04a、C-04b、C-05a、C-05b、C-09。
