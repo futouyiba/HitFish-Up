@@ -2,7 +2,7 @@
 
 状态：Working Candidate。本文是提交给独立裁定人的问题单，不是 Contract，也不预设结论。
 
-基线：`futou-/exciting-payne-95a562`，提交 `3b7b2332`。
+基线：`futou-/exciting-payne-95a562`，提交 `3b7b2332`。追踪 Issue：[#152](https://github.com/futouyiba/HitFish-Up/issues/152)。
 
 ## 1. 请求
 
