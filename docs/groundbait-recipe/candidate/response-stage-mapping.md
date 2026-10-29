@@ -4,6 +4,8 @@
 > 日期：2026-10-29
 > 权威边界：本页只做候选接口映射，不修改 `docs/terminology.md`，不定义 `Adaptation Coefficient` 或 `Persistent Response Field` 的新 Schema。
 
+最终聚合映射和求值顺序见 `response-aggregation-map.md`。
+
 ## 1. 现有 Current 语义
 
 仓内术语将响应阶段描述为：

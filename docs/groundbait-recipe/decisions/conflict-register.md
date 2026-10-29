@@ -51,7 +51,7 @@
 - **主张 B**：现有术语只定义 `SpatialDistributionWeight × AdaptationCoeff → 下游候选权重`，没有“有效摄食机会”槽位。出处：`docs/terminology.md` §5.2。
 - **冲突点**：`Effective Ingestion Opportunity` 是 Response Condition、Response Component、独立因子，还是只供某个既有计算消费，尚未确定；它如何与 AdaptationCoeff 组合也未定。
 - **影响**：Response 接入、圆桌权重构建、Groundbait 候选闭环。
-- **暂定处理**：`KEEP_OPEN`。候选文档只保留接口和单位说明，不定义组合公式。
+- **暂定处理**：`KEEP_OPEN`。候选文档保留接口和单位说明；映射与顺序见 `candidate/response-aggregation-map.md`，组合公式仍不定义。
 - **裁决方**：Owner / Response Current。
 
 ### C-05｜Persistent Response Field 是增量还是覆盖层

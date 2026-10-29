@@ -235,4 +235,4 @@ Response = ... × AttractionCoeff × RetentionCoeff
 
 ### 当前边界
 
-不新增 `AttractionCoeff` 或 `RetentionCoeff`。需要表达“吸引”或“留存”时，先说明它对应哪个现有阶段。真正的缺口是 Local Population / Residence 和 Overfeeding，应作为独立问题处理。详见 `../decisions/attraction-retention-verdict.md`。
+不新增 `AttractionCoeff` 或 `RetentionCoeff`。需要表达“吸引”或“留存”时，先说明它对应哪个现有阶段。需要单独处理的是 Local Population / Residence 和 Overfeeding，应作为独立问题，而不是塞进系数。详见 `../decisions/attraction-retention-verdict.md`。
