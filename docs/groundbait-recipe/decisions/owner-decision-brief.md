@@ -26,7 +26,7 @@
 - Food：同 Target 先合并再饱和；多 Target 算子 OPEN。
 - Flavor：签名集合分支是当前工作分支；连续强度待 C-02 裁决。
 - Physical Release：离散时间状态转移、四份守恒账本、线索分离。
-- Attraction / Retention：判断为不独立成模块。
+- Attraction / Retention：Candidate 判断已完成，当前不独立成模块。
 - Response Aggregation：四条候选输出映射到现有 Response Stage。
 
 Current 只定义到 `SpatialDistributionWeight × AdaptationCoeff → 下游候选权重`，没有给 `AdaptationCoeff` 公式。
@@ -57,7 +57,7 @@ Current 只定义到 `SpatialDistributionWeight × AdaptationCoeff → 下游候
 | C-03b | Decision Margin 进入哪一步 | 形状 | D（首版可暂缓），否则 A | 中高 |
 | C-04 | Effective Ingestion Opportunity 落点 | 接口 | 暂缓，等 C-03a/b | 中 |
 | C-05a | Persistent Field 数据所有权 | 接口 | DEF 只读，响应层持有增量 | 低 |
-| C-05b | Persistent Field 语义承载形态 | 接口 | 独立对象；即时投影是备选 | 低中 |
+| C-05b | Persistent Field 是否存在独立语义 | 接口 | 存在独立持续语义 | 低中 |
 | C-06a | 环境食物浓度事实所有权 | 接口 | 背景 + 增量 | 中 |
 | C-06b | 合并在哪里发生 | 接口 | Response 前；待 C-06a | 中 |
 | C-07a1 | Overfeeding 是否首版纳入 | 边界 | 后置 | 低 |
@@ -65,10 +65,11 @@ Current 只定义到 `SpatialDistributionWeight × AdaptationCoeff → 下游候
 | C-07b | Local Population / Residence | 边界 | 首版后置 | 低 |
 | C-08 | Encounter 是否拆分 | 接口 | v1 合并；magnitude 准入后再决定 | 中 |
 | C-09 | 刺鱼 / 抽鱼接口 | 边界 | 本候选不进入刺鱼 | 低 |
-| C-10 | 多 Feeding Mechanism 聚合 | 边界 | max 只作上界 | 低 |
+| C-10 | 多 Feeding Mechanism 聚合 | 边界 | 生产聚合 OPEN；max 仅 Fixture 上界 | 低 |
 | C-11 | 多 Food Target 聚合 | 边界 | 同 Target 合并 + 饱和，算子 OPEN | 中 |
 | C-12a1 | Diet Shift 所有权 | 边界 | Fish Condition | 低 |
 | C-12a2 | 保留或覆盖现有语义 | 边界 | 保留 | 中 |
+| C-12a3 | 不设所有权时旧语义如何处置 | 边界 | 保留为描述性候选 | 中 |
 | C-12b | Diet Shift 消费语义 | 边界 | 暂不决定；Food/Flavor 分别取证 | 中 |
 | C-13a | Wariness 与 Avoidance 是否不同语义 | 边界 | 不同 | 低 |
 | C-13b | Avoidance 表示形式 | 边界 | 暂不决定 | 中 |
@@ -169,21 +170,21 @@ C. 其它，需要说明。
 
 **请回答**：选哪个？如果选 A，增量的时间、范围、衰减和重叠由谁定义？
 
-### C-05b Persistent Field 的语义承载形态
+### C-05b Persistent Field 是否存在独立语义
 
-**前提**：与 C-05a 正交。即使选 A，仍需决定语义承载形态。
+**前提**：与 C-05a 正交。即使选“DEF 只读”，仍需决定是否存在独立的持续语义。
 
-本题只决定语义承载形态；持久化、缓存和求值时机是实现细节，可以随实现调整，不改变语义。
+本题只裁语义：是否存在一个具有持续生命周期、来源、范围、衰减语义的 Persistent Field。物理上是否 materialize 为独立对象、是否按需计算、如何缓存，交给 Implementation Brief，不由 Owner 裁。
 
 选项：
 
-A. 独立的 Persistent Field 对象，Response 读取时合并。
-B. 在 Response 求值时即时投影，不持久化独立对象。
-C. 其它，需要说明。
+A. 存在独立的 Persistent Field 语义。
+B. 不存在独立语义；持续效果只是 DEF 或其它状态的投影。
+C. 暂不决定。
 
-**推荐**：A。术语已经把它命名为一个 Field；B 可以作为实现优化，但不改变语义。
+**推荐**：A。术语已经把它命名为一个 Field，并给出持续增量语义。
 
-**请回答**：选哪个？如果选 A，Schema 由谁维护？如果选 B，投影的输入和缓存策略是什么？
+**请回答**：选哪个？如果选 A，来源、范围、衰减的语义边界由谁定义？
 
 ### C-06a 环境食物浓度的事实所有权
 
@@ -283,11 +284,11 @@ D. 其它，需要说明。
 
 选项：
 
-A. `max` 只作“总能选最优路径”的上界，不作默认公式。
+A. 多 Feeding Mechanism 的生产聚合保持 OPEN；`max` 仅作为“可自由选择最佳路径”的 Fixture 上界。
 B. 用选择概率加权。
 C. 直接求和（已排除）。
 
-**推荐**：A。C 已经排除；B 需要选择模型和证据。
+**推荐**：A。生产聚合保持 OPEN；B 需要选择模型和证据。
 
 **请回答**：选哪个？
 
@@ -315,7 +316,7 @@ C. 明确不设所有权，不建模。
 
 **推荐**：A。术语已把 Diet Shift 列为 Fish Condition 参数。
 
-**请回答**：选哪个？如果选 B，承载对象是什么？如果选 C，是否删除 Diet Shift 引用？
+**请回答**：选哪个？如果选 B，承载对象是什么？如果选 C，继续回答 C-12a3。
 
 ### C-12a2 保留或覆盖现有 Fish Condition 语义
 
@@ -330,6 +331,21 @@ C. 暂不决定。
 **推荐**：A。术语已经给出该语义，覆盖需要新的裁定。
 
 **请回答**：选哪个？如果选 B，覆盖范围、迁移和旧语义处置是什么？
+
+### C-12a3 若不设所有权，现有 Diet Shift 语义如何处置
+
+**前提**：仅当 C-12a1 选 C 时回答。
+
+选项：
+
+A. 保留为描述性候选，不落 Schema。
+B. 废弃并迁移，需要迁移方案。
+C. 其它，需要说明。
+D. 暂不决定。
+
+**推荐**：A。先保留为描述性候选，避免在未迁移前直接删除。
+
+**请回答**：选哪个？如果选 B，迁移范围和旧引用清单是什么？
 
 ### C-12b Diet Shift 消费语义
 
@@ -354,7 +370,7 @@ A. 不同：Wariness 是状态，Avoidance 是 Cue 反应。
 B. 相同：合并成一个负分。
 C. 只保留 Avoidance；删除或废弃 Wariness，需要迁移方案。
 
-C 是删除或废弃决定，不是纯粹的语义区分选项。
+B 和 C 会覆盖现有 Fish Condition 中 Wariness 的语义，需要 Owner 明确 override 和迁移范围。C 还是删除或废弃决定，不是纯粹的语义区分选项。
 
 **推荐**：A。两者来源和 trace 不同，合并容易重复扣分。
 
@@ -387,18 +403,38 @@ C. 作为派生复合量，不落 Schema。
 
 **请回答**：选哪个？
 
-## 7. 请外部评审回答的最小问题集
+## 7. 建议裁决顺序
+
+不要一次回答全部。建议分三轮：
+
+**第一轮：模型形状**
+
+C-01、C-02、C-03a、C-03b。
+
+这四项决定整个模型的形状。裁完后，后面不少接口项会自动收窄。
+
+**第二轮：接入现有 FCF**
+
+C-04、C-05a、C-05b、C-06a、C-06b、C-08、C-09。
+
+**第三轮：首版边界与暂缓项**
+
+C-07a1、C-07a2、C-07b、C-10、C-11、C-12a1、C-12a2、C-12a3、C-12b、C-13a、C-13b、C-14。
+
+每轮结束后再进入下一轮，避免把形状项和接口项混在一次回答里。
+
+## 8. 请外部评审回答的最小问题集
 
 1. C-01 选 A / B / C？为什么？
 2. C-02 选 A / B / C？如果选 B/C，新增 primitive、口径、标定成本和失败边界是什么？
 3. C-03a 选 A / B / C？C-03b 选 A / B / C / D？
 4. C-04、C-05a、C-05b、C-06a、C-06b、C-08、C-09 各选哪个？若 C-06a 选 C，C-06b 是否不适用？
 5. C-07a1、C-07a2、C-07b、C-10、C-11、C-12a1、C-12a2、C-12b、C-13a、C-13b、C-14 各选哪个？若 C-07a1 选 A，C-07a2 是否不适用？
-6. 若 C-12a1 选 A，C-12a2 选什么？若 C-12a2 选 B，覆盖和迁移方案是什么？
+6. 若 C-12a1 选 A，C-12a2 选什么？若 C-12a2 选 B，覆盖和迁移方案是什么？若 C-12a1 选 C，C-12a3 选什么？
 7. 哪些项可以现在定，哪些必须等证据？
 8. 有没有我们没列出的冲突？
 
-## 8. 不要做什么
+## 9. 不要做什么
 
 - 不要建议单一 `RecipeFit`。
 - 不要给生产数值。

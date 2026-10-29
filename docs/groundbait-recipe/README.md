@@ -145,7 +145,7 @@ Food、Flavor、Particle、Physical Release 各自进入主脊的不同位置，
 - Food：同 Target 先合并再饱和；多 Target 算子 OPEN。
 - Flavor：签名集合分支可用；连续强度分支阻塞。
 - Physical Release：离散时间状态转移和守恒账本已定义。
-- Attraction / Retention：判断为不独立成模块。
+- Attraction / Retention：Candidate 判断已完成，当前不独立成模块。
 - Response Aggregation：四条候选输出映射到现有 Response Stage，不建立单一 `RecipeFit`。
 
 `AdaptationCoeff` 公式、组件聚合、模式聚合和冲突登记里的 OPEN 项仍未收口。
