@@ -245,3 +245,14 @@ Groundbait 与 Hookbait 只共享鱼侧尺寸约束接口：体尺、形态、�
 4. 到此停止，不进入 Food、Flavor、Attraction、Retention 或完整 Recipe Grammar。
 
 Part A 必须保持很短。如果讨论开始扩张到 Attraction、Retention、Recipe Grammar、Food Taxonomy 或 Flavor Taxonomy，就说明已经偏离 Size blocker。
+
+## WD-24｜Particle Distribution 从 Ingredient 生成并守恒
+
+**状态：ACTIVE CANDIDATE**
+
+Particle Distribution 分两步：
+
+1. Ingredient → 配方分布：按 `recipe_share` 混合物理分布；用 `edible_fraction` 生成可食质量，再在可食部分内部归一化。
+2. 配方分布 → Feeding Place：用状态转换 `T` 把每个桶分成 available / left / consumed / unprocessable，物理账本和可食账本分别守恒。
+
+载体不进入可食分布，也不进入 Size Response。具体公式和结构 Fixture 见 `candidate/particle-distribution.md`。

@@ -42,21 +42,15 @@ Recipe Facts
 - Physical Release 的产物是 Feeding Place 状态，不是 `release_score`；
 - 粒径既可作为鱼侧对象属性，也可作为物理对象属性，两个影响必须经不同中间状态进入，不能跨链总加权。
 
-当前工作项（WD-23）：
+当前工作项：
 
-Part A：Size 前置语义闭合，只改三篇现有 Markdown 和少量工作决定。
+Step 0 完成：Size 前置语义闭合。
+Step 1 完成：`candidate/edible-size-gold-fixture.md`。
+Step 2 完成：`candidate/particle-distribution.md` 的 Ingredient → 配方分布、配方分布 → Feeding Place、守恒账本和载体隔离。
 
-1. Ingredient 固有事实与 Recipe Role 分开。
-2. 物理颗粒与可食颗粒分开。
-3. Edible Size 只回答有效利用，不回答吸引、留存或中鱼。
+下一步是 Step 3 Food Aggregation。进入前先确认是否继续；不自动进入 Flavor、Attraction、Retention 或完整 Recipe Grammar。
 
-Part B：立即做 `candidate/edible-size-gold-fixture.md`。
-
-Part C：如果 Fixture 失败，修 Size Candidate。
-
-Part D：停止。不进入 Food、Flavor、Attraction、Retention 或完整 Recipe Grammar。
-
-如果 Part A 开始扩张到 Attraction、Retention、Recipe Grammar、Food Taxonomy 或 Flavor Taxonomy，就停下来，说明已经偏离 Size blocker。
+如果讨论开始扩张到 Attraction、Retention、Recipe Grammar、Food Taxonomy 或 Flavor Taxonomy，就停下来，说明已经偏离当前工作项。
 
 端到端对象、烘焙、鱼况、响应和圆桌文档仍作为背景和边界，不是本轮任务。冲突与未决项见 `decisions/conflict-register.md`。
 
