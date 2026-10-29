@@ -18,6 +18,7 @@
 | 用反例检查设计 | [工作案例](lure-response-proposal-c-worked-cases.md) |
 | 未收口、无 owner 或冲突的问题 | [开放决策](lure-response-proposal-c-open-decisions.md) |
 | 第一轮玩法闭合：AttackTrigger、Risk 输入、策略 probe | [第一轮闭合审查](lure-response-proposal-c-first-round-closure.md) |
+| Escape-like 第一版事实与判定 | [Escape-like Trigger v1](lure-response-proposal-c-escape-trigger-v1.md) |
 | 图形化说明 | [设计图](../mockups/proposal-c-design-map.html) |
 
 口径来源：本包按 `docs/lure-response-joint-evaluation` 的 `311ae70d` Working Closure 快照核对。该分支在此之后持续更新，本轮未逐条重新纳入；引用前先核对该分支当前 head。研究分支更新后，先回写设计包，再更新本入口。
@@ -64,7 +65,7 @@
 4. 风险顾虑的第一版实现层是否够用，是否会把自然呈现误判；
 5. 有界部分解析是否在真实 sibling 组合下频繁停在不完整状态；
 6. 机会量与响应的 `L × C` 是否存在系统性过度衰减；
-7. Prediction 是否值得重入主体，需要什么证据；
+7. Prediction 是否出现独立策略价值证据；没有证据时维持不进第一版主体；
 8. 哪些开放项真正阻塞生产，哪些只是标定。
 
 Reviewer 必须区分事实、Candidate、Working seed、建议；不能把缺少 owner 的内容补造成生产规则。替代方案必须指出它替换哪个归属方、消除了什么重复计权，以及对回归证据的影响。
@@ -75,6 +76,7 @@ Reviewer 必须区分事实、Candidate、Working seed、建议；不能把缺�
 - [`proposal_c_response_projection_probe.py`](../../prototypes/lure-response/proposal_c_response_projection_probe.py)：响应投影形状比较；
 - [`proposal_c_closing_cost_shape_probe.py`](../../prototypes/lure-response/proposal_c_closing_cost_shape_probe.py)：Closing 成本形状；
 - [`proposal_c_support_retention_projection_probe.py`](../../prototypes/lure-response/proposal_c_support_retention_projection_probe.py)：support × response retention；
-- [`proposal_c_strategy_probe.py`](../../prototypes/lure-response/proposal_c_strategy_probe.py)：追赶、摄食意愿、警戒度三组策略排序与敏感度。
+- [`proposal_c_strategy_probe.py`](../../prototypes/lure-response/proposal_c_strategy_probe.py)：追赶、摄食意愿、警戒度三组策略排序与敏感度；
+- [`proposal_c_escape_trigger_probe.py`](../../prototypes/lure-response/proposal_c_escape_trigger_probe.py)：逃逸样事件窗口、family 适用与取 max 判定。
 
 这些 probe 是形状检查，不是生产标定；其参数与设计包中的 Working 值分开记录。
