@@ -51,8 +51,9 @@ Step 3 完成：`candidate/food-aggregation.md` 的同 Target 合并、Target �
 Step 4 完成：`candidate/flavor-and-avoidance.md` 的类型集合分支、小药成本和稀疏 Avoidance；连续强度分支仍阻塞。
 Step 5 完成：`candidate/physical-release.md` 的离散时间状态转移、四份守恒账本和线索分离。
 Step 6 完成：`decisions/attraction-retention-verdict.md` 判断 Attraction / Retention 暂不独立成模块。
+Step 7 完成：`candidate/response-aggregation-map.md` 把四条候选输出映射到现有 Response Stage，不建立单一 `RecipeFit`。
 
-下一步是 Step 7，最终 Response Aggregation。进入前先确认是否继续；不自动进入完整 Recipe Grammar。
+候选链在接口层闭合。剩余工作是 Owner 决策和数值公式，不是继续扩写候选结构。`AdaptationCoeff` 公式、组件聚合、模式聚合和冲突登记里的 OPEN 项仍未收口。
 
 如果讨论开始扩张到 Attraction、Retention、Recipe Grammar、Food Taxonomy 或 Flavor Taxonomy，就停下来，说明已经偏离当前工作项。
 

@@ -6,6 +6,8 @@
 
 ## 1. 已验证的 Current 语义
 
+候选输出如何进入本 Stage 的完整映射和求值顺序见 `response-aggregation-map.md`。
+
 `docs/terminology.md` §5.2 把响应阶段描述为：
 
 ```text

@@ -351,3 +351,11 @@ C(t+1) = C(t) + E(t)
 Attraction 是 encounter / selection 的上位解释词，可由事件派生摘要；Retention 是重复 Feeding Event、Feeding Place 持久性和 Fish Condition 的组合结果。二者当前都不新增独立系数，避免与现有阶段重复计权。
 
 缺口是 Local Population / Residence 和 Overfeeding，应作为独立候选问题处理，而不是塞进 `AttractionCoeff` 或 `RetentionCoeff`。详见 `decisions/attraction-retention-verdict.md`。
+
+## WD-34｜不建立单一 RecipeFit
+
+**状态：BOUNDARY**
+
+四条候选输出分别进入 Response Condition、Response Component 或 Persistent Response Field。最终聚合仍由现有 Response Stage 的 `SpatialDistributionWeight × AdaptationCoeff` 完成。
+
+不建立 `RecipeFit = Food + Flavor + Particle + Physical`。`AdaptationCoeff` 公式、组件聚合算子和模式聚合算子仍是 OPEN。映射和顺序见 `candidate/response-aggregation-map.md`。
