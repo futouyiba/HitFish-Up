@@ -81,8 +81,10 @@ def main() -> None:
 
     # Lower multiplier = higher activity. High activity sustains a faster optimum.
     assert rows[0.8][0] > rows[1.6][0]
-    # At the low-activity end, slow beats fast; at the high-activity end, fast can catch up.
+    # In this toy model, fast (q=0.90) never beats moderate (q=0.45) at either
+    # activity level; that negative result is the finding, not a passing claim.
     assert rows[0.8][2] > rows[0.8][3]
+    assert rows[1.6][2] > rows[1.6][3]
 
     print("\nwariness\tstealth_cov\tY_direct(0.9)\tY_stealth(0.9)")
     for wariness in (0.1, 0.4, 0.8):
