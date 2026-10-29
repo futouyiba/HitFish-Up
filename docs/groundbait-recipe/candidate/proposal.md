@@ -262,7 +262,7 @@ RecipeFit = FoodFit + FlavorFit + ParticleFit + PhysicalFit
 
 原因：这些量处于不同阶段。Food Identity、Chemical Cue、对象约束和物理释放必须先沿各自路径形成 Feeding Place 与 Feeding Event 状态，再由现有 Response Stage 消费。简单相加会重复计算。
 
-`Attraction`、`Retention`、`Ingestion`、`Selection` 仍只是解释候选，不是本目录已经确认的正式中间层；如需使用，必须明确它属于哪个阶段、由谁生产、由谁消费。
+`Attraction`、`Retention`、`Ingestion`、`Selection` 仍只是解释候选，不是本目录已经确认的正式中间层；如需使用，必须明确它属于哪个阶段、由谁生产、由谁消费。当前判断是 Attraction 和 Retention 都不独立成模块，理由和翻转条件见 `../decisions/attraction-retention-verdict.md`。
 
 以下只描述配方输入的资源与职责边界，不是平衡定值：
 
