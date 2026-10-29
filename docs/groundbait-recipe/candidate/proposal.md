@@ -102,6 +102,8 @@ Target Response with diminishing returns
 
 ### 5.1 当前候选
 
+完整候选见 `flavor-and-avoidance.md`。在化学强度准入前，当前工作分支只使用化学签名集合；下面的 Cue Exposure 模型属于被阻塞的分支 B，不能当作当前可用公式。
+
 Flavor 不直接按 Ingredient 的质量百分比求“味型占比”。先由每个 Ingredient 的用量 / 剂量与 Chemical Cue Potency 生成各味型的 Exposure：
 
 ```text
