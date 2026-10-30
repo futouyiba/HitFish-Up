@@ -31,7 +31,7 @@ Feeding Place State(place, t)
 
 - Feeding Place 的空间位置、水层和对象可接触状态；
 - Chemical Cue Field 的暴露；
-- 当前 Fish Condition 的 Activity、Feeding Motivation、Wariness；
+- 当前 Fish Condition 的 Activity、Feeding Motivation、Wariness（Wariness 的数值消费属 Candidate，未获授权前不启用，见 `fish-condition-integration.md` §3）；
 - 当前 Response Condition / Presentation Signal 的相关输入。
 
 它不应读取对象尺寸来直接宣布对象“更吸引”，也不应把尺寸成功提前算进发现概率。
