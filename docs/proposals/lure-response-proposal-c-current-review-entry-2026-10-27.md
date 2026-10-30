@@ -6,7 +6,7 @@
 
 > 若本文与更高 Authority 冲突，以 `docs/authority-model.md` 与已合并 Current Owner 为准。本文是 `futou-/exciting-payne-95a562` 分支的审阅入口；Proposal C 的 Working 文档保留在 `docs/lure-response-joint-evaluation` 分支。
 >
-> 2026-10-30 同步：第一版 `DecisionMargin` 按 Proposal C 当前 Working Closure 使用五项式；Prediction 为 `Deferred Research`，不进入第一版裕量。本页此前含 `PredictionCost` 的六项式是未同步旧口径。依据：PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3` 的 `docs/proposals/lure-response-proposal-c-feeding-response-working-closure.md` §4–§5，以及 Proposal C open-decisions 的「已知未同步」条目。
+> 2026-10-30 同步：第一版 `DecisionMargin` 按 Proposal C 当前 Working Closure 使用五项式；Prediction 为 `Deferred Research`，不进入第一版裕量。本页此前含 `PredictionCost` 的六项式是未同步旧口径。依据：PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3` 的 [`lure-response-proposal-c-feeding-response-working-closure.md`](https://github.com/futouyiba/HitFish-Up/blob/5caf1f119ab6e5a5c595a4ba913e7962aa338ec3/docs/proposals/lure-response-proposal-c-feeding-response-working-closure.md) §4–§5，以及 Proposal C open-decisions 的「已知未同步」条目。
 
 ## 1. 当前主链
 
