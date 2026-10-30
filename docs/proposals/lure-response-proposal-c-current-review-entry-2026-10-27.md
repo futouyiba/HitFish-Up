@@ -1,8 +1,8 @@
-# Proposal C｜Current Review Entry（2026-10-27）
+# Proposal C｜Working Review Entry（2026-10-27）
 
 状态：Working Review Entry / Candidate。不是 Current，不是生产参数。
 
-用途：给其他 Agent / Reviewer 作为当前 Proposal C 的统一审阅入口。本文只保留当前仍成立的主链、最新 Working seed、已闭合边界和开放项。
+用途：给其他 Agent / Reviewer 作为 Proposal C clean-room landing 的统一 Working 审阅入口。本文只保留当前仍成立的主链、最新 Working seed、已闭合边界和开放项；它不替代 `docs/README.md` 或 `docs/authority-model.md` 的 Current 导航。
 
 > 若本文与更高 Authority 冲突，以 `docs/authority-model.md` 与已合并 Current Owner 为准。本文所在分支为 `docs/lure-response-joint-evaluation`。
 
@@ -29,9 +29,9 @@ ActualPresentation
 ```text
 DecisionMargin(theta)
 = CurrentFoodValue
-+ StateTriggerValue [Escape-like v1]
++ StateTriggerValue [Escape-like v1; 0 ≤ value ≤ TriggerBudget]
 - ClosingCost(theta)
-- RiskCost [0 when Risk cue is Disabled / NotConfigured]
+- RiskCost [Risk cue Disabled / NotConfigured → 0; Unknown is not 0]
 - WillingnessThreshold(FeedingMotivation)
 ```
 
@@ -374,6 +374,8 @@ Reviewer 必须区分事实、Candidate、Working seed、建议；不能把缺�
 
 ## 15. 深挖入口
 
+Landing PR 只保留以下可直接访问的深挖入口：
+
 - `lure-feeding-response-proposal-c.md`：实际呈现 → prey interpretation / state；
 - `lure-response-proposal-c-current-food-value-bounds.md`：FoodValue 域；
 - `lure-response-proposal-c-feeding-motivation-threshold.md`：Motivation topology；
@@ -383,6 +385,7 @@ Reviewer 必须区分事实、Candidate、Working seed、建议；不能把缺�
 - `lure-response-proposal-c-latent-bearing-dimensionality-decision.md`：Horizontal2D decision；
 - `lure-response-proposal-c-closing-geometry-interpretation.md`：最新 Closing 几何与 hard-zero 撤回；
 - `lure-response-proposal-c-intercept-speed-production-contract.md`：InterceptSpeed production topology；
-- `lure-response-proposal-c-reference-intercept-speed-working-anchors.md`：Working anchors，注意旧 hard-infeasible 解释已被最新 Closing decision supersede；
-- `lure-response-proposal-c-combined-burden-stress-test.md`：联合 burden；
-- `lure-response-proposal-c-temporal-exposure-opportunity.md`：Temporal Opportunity seam。
+- `lure-response-proposal-c-opportunity-integration-closure.md`：Opportunity `L` owner 与 `L × C` seam；
+- `lure-response-proposal-c-owner-adjudication-2026-10-29.md`：Issue #152 五项 Owner 裁定。
+
+被 clean-room landing 排除的研究证据不在本入口列出；需要考古时回到 joint research branch 或其历史提交。

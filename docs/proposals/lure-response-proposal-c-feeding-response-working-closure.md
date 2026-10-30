@@ -357,30 +357,15 @@ Interaction response 只结算一次。禁止 `L × C → W → W × C`，也不
 
 Cadence scalar 不在默认 OPEN 列表中。只有满足 residual admission gate 才重新打开。
 
-## 13. 证据文档
+## 13. 证据边界
 
-窄主题文档保留证据与回归说明，不自动覆盖本页：
+本页只列出 clean-room landing 中可直接访问的证据入口：
 
-- `lure-response-proposal-c-food-value-surface.md`
-- `lure-response-proposal-c-feeding-response-threshold.md`
 - `lure-response-proposal-c-response-projection.md`
-- `lure-response-proposal-c-task-cost-structure.md`
-- `lure-response-proposal-c-task-cost-rho.md`
-- `lure-response-proposal-c-angle-only-intercept.md`
-- `lure-response-proposal-c-closing-cost-shape.md`
-- `lure-response-proposal-c-intercept-capacity-semantics.md`（旧能力路线证据）
-- `lure-response-proposal-c-maneuver-input-routing.md`（历史 Working；通用 ManeuverCost 已替代）
-- `lure-response-proposal-c-prediction-challenge.md`
-- `lure-response-proposal-c-prediction-cost-budget.md`
-- `lure-response-proposal-c-favorable-dwell-ownership.md`
-- `lure-response-proposal-c-cadence-residual-admission.md`
-- `lure-response-proposal-c-erratic-state-trigger.md`
-- `lure-response-proposal-c-escape-feature-routing.md`
-- `lure-response-proposal-c-state-trigger-budget.md`
-- `lure-response-proposal-c-state-trigger-ownership.md`
-- `lure-response-proposal-c-end-to-end-ordering.md`
-- `lure-response-proposal-c-prey-support-bridge.md`
-- `lure-response-proposal-c-support-retention-projection.md`
 - `lure-response-proposal-c-candidate-bridge-closure.md`
+- `lure-response-proposal-c-opportunity-integration-closure.md`
+- `lure-response-proposal-c-feature-ownership-matrix.md`
+- `lure-response-proposal-c-final-output-contract.md`
+- `lure-response-proposal-c-owner-adjudication-2026-10-29.md`
 
-清理前 Proposal C 全文仍在 archive，用于历史查阅，不回流为当前规则。
+其余研究过程、旧路线和 superseded probe 保留在 joint research branch / 历史提交，不作为本页的 active 依赖。

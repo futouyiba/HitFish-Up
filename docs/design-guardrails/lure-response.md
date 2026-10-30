@@ -19,8 +19,10 @@ C_mode = FoodCoeff × MotivationCoeff × TaskCoeff × StateBonus × ...
 
 - Target / Food Value 回答“值不值得吃”；
 - Feeding Motivation 回答“现在有多愿意为了食物出手”；
-- TaskAffordance / TaskStrain 回答“当前能不能完成、要费多大劲”；
-- Infeasible 是硬门，不是一个可被其它高系数补偿的小数。
+- ClosingCost 回答当前径向追赶负担；
+- RiskCost 回答已解析风险 cue 在 Wariness 下的软抑制；
+- `u_close >= 1` 不是单独的完整 encounter hard gate；真正 hard infeasibility 需要独立 encounter geometry / reaction-window contract；
+- ResolvedNonResponsive 是已解析的终态，不是可被其它高系数补偿的小数。
 
 统一连乘会把这些语义压成同一种折扣，并且维度越多，整体数值越容易无意义地下沉。
 
@@ -130,27 +132,31 @@ ResolvedNonResponsive → C_mode = 0
 
 只有上游语义被明确重新定义成“Unknown 即某个具体默认值”时才能改变；不能静默降级成 0。
 
-## 6. 不把 Infeasible 写成“很大的 TaskCost”
+## 6. 不把高 Closing burden 自动写成 Infeasible
 
 ### 反设计
 
 ```text
-Infeasible → TaskCost = 999
+u_close >= 1 → TaskAffordance = Infeasible → C_mode = 0
 ```
-
-然后仍允许 Food Value / Motivation 参与统一算式。
 
 ### 为什么拒绝
 
-物理上做不到，不应被“特别饿 / 特别喜欢”补偿回来。Infeasible 是 TaskAffordance hard gate：
+`u_close` 只表示径向 Closing burden 高，不证明完整 encounter 已不可达。没有 current gap、strike reach、reaction latency 和 interaction-region exit window 时，不能把这个单一 proxy 当完整 hard gate。
 
 ```text
-Task Infeasible → ResolvedNonResponsive → C_mode = 0
+u_close >= 1 → soft Closing burden
+```
+
+真正 hard infeasibility 必须来自独立的 encounter geometry / reaction-window contract；已知 terminal non-response 才可输出：
+
+```text
+ResolvedNonResponsive → C_mode = 0
 ```
 
 ### 重开条件
 
-如果以后发现当前所谓 Infeasible 实际只是“极困难但仍可完成”，应修正 TaskAffordance 定义，而不是让其它价值项跨越真正的物理不可行边界。
+只有合法 encounter geometry / reaction-window owner 明确当前任务不可达，才允许建立 geometry-qualified hard gate。
 
 ## 7. 不让 Food Value 与 Motivation 被公式结构强制对称
 
@@ -287,18 +293,16 @@ continuous Margin / C_mode
 
 ```text
 InterceptSpeedLimit × Activity
-→ second hard gate / composite capacity
+→ composite capacity
 ```
 
 ### 为什么拒绝
 
-`species × size cohort → InterceptSpeedLimit` 负责 Closing 的物理 hard feasibility。Fish Condition Bake 输出的 `Activity` 只在 Closing 已 physically feasible 后影响 soft cost。Activity 不能改变 `InterceptSpeedLimit`，也不等于 `FeedingMotivation`。
-
-因此必须区分：
+`species × size cohort → InterceptSpeedLimit` 提供 Closing 的能力尺度。Fish Condition Bake 输出的 `Activity` 只影响 soft Closing cost，不改变 `InterceptSpeedLimit`，也不等于 `FeedingMotivation`。
 
 ```text
-Closing > InterceptSpeedLimit → Infeasible
-Closing ≤ InterceptSpeedLimit → Activity may affect soft cost
+Activity = soft Closing-cost multiplier
+InterceptSpeedLimit = Closing capability scale
 ```
 
 `Unknown`、zero、`Disabled` 和 `NotApplicable` 仍是不同状态，不能互相补值。

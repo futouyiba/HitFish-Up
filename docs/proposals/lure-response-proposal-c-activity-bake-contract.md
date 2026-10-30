@@ -219,7 +219,7 @@ Activity 应购买的主要策略故事：
 
 本页替代 Proposal C 中把 `FunctionalCapacity` 作为 Closing 动态能力输入的 Working 路线。
 
-历史文档 `lure-response-proposal-c-functional-capacity-to-intercept.md` 保留用于推导考古，但不再代表当前 Proposal C 推荐结构。
+历史路线仅以本页的 supersession 说明为准；具体旧文档保留在 joint research branch / 历史提交，不作为 clean-room landing 依赖。
 
 当前链条改为：
 
