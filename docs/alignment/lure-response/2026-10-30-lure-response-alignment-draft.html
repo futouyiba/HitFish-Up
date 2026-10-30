@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>路亚响应对齐稿｜会议图形版</title>
+<title>路亚响应对齐稿｜2026-10-30 会议版</title>
 <style>
 :root{--bg:#f4f6f9;--card:#fff;--ink:#172033;--muted:#667085;--line:#d9e0e8;--blue:#2f6fed;--bsoft:#eaf1ff;--green:#23875d;--gsoft:#eaf7f1;--purple:#7754b3;--psoft:#f2ecfb;--orange:#c96d19;--osoft:#fff2e5;--red:#b54747;--rsoft:#fdecec;--shadow:0 8px 26px rgba(20,34,55,.08)}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#f8fafc,#eef2f6);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.65}.page{max-width:1220px;margin:auto;padding:36px 22px 70px}.hero{background:linear-gradient(135deg,#101828,#203a59 62%,#265d87);color:#fff;border-radius:26px;padding:40px 44px;box-shadow:var(--shadow)}.hero h1{font-size:38px;line-height:1.18;margin:6px 0 12px}.hero p{margin:0;color:#dbe6f2;font-size:18px;max-width:930px}.eyebrow{font-size:13px;opacity:.75;letter-spacing:.08em}.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}.badge{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);font-size:13px}section{margin-top:32px}.title{font-size:27px;margin:0 0 8px}.lead{margin:0 0 17px;color:var(--muted)}.grid{display:grid;gap:15px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.card{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:19px;box-shadow:var(--shadow)}.card h3{margin:0 0 7px;font-size:18px}.card p{margin:0;color:var(--muted)}.tag{display:inline-block;font-size:12px;font-weight:800;padding:4px 8px;border-radius:999px;margin-bottom:8px}.blue{background:var(--bsoft);color:var(--blue)}.green{background:var(--gsoft);color:var(--green)}.purple{background:var(--psoft);color:var(--purple)}.orange{background:var(--osoft);color:var(--orange)}.red{background:var(--rsoft);color:var(--red)}.callout{background:var(--bsoft);border-left:5px solid var(--blue);border-radius:14px;padding:17px 19px}.formula{background:#111827;color:#e8eef7;border-radius:16px;padding:20px 22px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.table{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:1px solid var(--line);border-radius:15px;overflow:hidden}.table th,.table td{padding:12px 13px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);vertical-align:top;text-align:left}.table th{background:#f8fafc;color:#475467;font-size:13px}.table th:last-child,.table td:last-child{border-right:0}.table tr:last-child td{border-bottom:0}.arch{background:#f9fbfd;border:1px solid var(--line);border-radius:20px;padding:14px;overflow:auto}.arch svg{display:block;width:100%;min-width:1020px;height:auto}.arch text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.box{fill:#fff;stroke:#ccd6e3;stroke-width:1.5}.input{fill:#eaf1ff;stroke:#93b4fb}.interp{fill:#f2ecfb;stroke:#baa6de}.fish{fill:#eaf7f1;stroke:#98cdb5}.resp{fill:#fff2e5;stroke:#e1b37f}.out{fill:#fdecec;stroke:#d8a6a6}.group{fill:#f8fafc;stroke:#cfd7e3;stroke-width:1.4;stroke-dasharray:7 6}.label{font-size:17px;font-weight:800;fill:#172033}.small{font-size:13px;fill:#667085}.arrow{stroke:#7d8ca3;stroke-width:2;fill:none;marker-end:url(#arr)}.foot{margin-top:40px;color:var(--muted);font-size:13px;text-align:center}@media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}.hero{padding:31px 25px}.hero h1{font-size:31px}}
@@ -11,11 +11,13 @@
 </head>
 <body><div class="page">
 <header class="hero">
-<div class="eyebrow">会议对齐草案 · 2026-10-30</div>
+<div class="eyebrow">会议对齐草案 · 候选设计 · 2026-10-30</div>
 <h1>路亚响应：先讲玩家为什么换打法，再讲系统怎么判断</h1>
 <p>这次先把路亚的即时姿态响应讨论清楚。台钓、浮钓后续复用分层原则，但不直接照搬路亚公式。</p>
 <div class="badges"><span class="badge">先定讨论范围</span><span class="badge">再讲 4 个玩家选择</span><span class="badge">最后进入模块与算法</span></div>
 </header>
+
+<div class="callout" style="margin-top:18px"><strong>状态边界：</strong>会议对齐草案，不是现行契约，不是生产参数。本稿四项方向（去掉相对方位 θ、终端钓组显眼度聚合、同级猎物解释取最大、一竿一鱼况快照）尚未回写设计包；回写前，设计包算法与 probe 是实现基线，终端钓组字段落地前风险顾虑为 0。</div>
 
 <section>
 <h2 class="title">0. 响应分两部分，不同钓法重点不同</h2>
@@ -33,7 +35,7 @@
 </section>
 
 <section>
-<h2 class="title">1. 先看 4 个玩家真正会做的选择</h2>
+<h2 class="title">1. 先看 4 个玩家会做的选择</h2>
 <div class="grid g2">
 <div class="card"><span class="tag blue">选什么</span><h3>今天它到底想吃什么？</h3><p>食性没有明显偏向时，泛用饵仍有竞争力；偏向某类猎物时，高匹配方案值得换上去。</p></div>
 <div class="card"><span class="tag green">搜多快</span><h3>现在该快搜，还是慢下来精钓？</h3><p>适合追时，快速搜索的局部响应仍可接受；不适合追时，高速明显吃亏。</p></div>
