@@ -57,7 +57,7 @@ Attraction 目前不需要独立模块。它是 `encounter` 和 `selection` 的�
 - Feeding Place State 的 `persistence / turnover` 描述对象和线索随时间的变化。
 - Physical Release 的 `A(t)`、`L(t)`、`U(t)` 描述可用食物如何减少或离开。
 - Feeding Event 可以重复发生，形成持续摄食的时间序列。
-- Fish Condition 的 `Wariness` 和 `Feeding Motivation` 可以随时间变化。
+- Fish Condition 的 `Wariness` 有累积依据，可按获授权的 runtime overlay 变化；`Feeding Motivation` 等其它 Condition 不自动获得 runtime 更新（#161）。
 - Response Stage 可以按次调整候选权重。
 
 ### 4.2 判断
