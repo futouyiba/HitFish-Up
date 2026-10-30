@@ -373,7 +373,7 @@ Bake → Fish Condition → Opportunity(L) → Groundbait State
 
 算法层面的默认候选为：
 
-- 同 Target 先合并，再做 Target 级饱和；多 Target 在实现试验中采用全局有界饱和，但仍不冒称 Owner 已裁决。
+- 同 Target 先合并，再做 Target 级饱和；多 Target 只使用参数化 `AggFood` Candidate 接口，不进入默认 V1 生产接入，直到 WD-26 的 Owner 决定完成。
 - 物理释放采用竞争转移率，实体账本和化学线索账本分离。
 - Fish Condition 使用有界一阶记忆更新；具体 cause、时间尺度和生命周期由实现输入提供。
 - Response 先硬门、后软 Margin，再做有界投影；`Unknown`、`Invalid`、`Reject` 和合法零分开处理。

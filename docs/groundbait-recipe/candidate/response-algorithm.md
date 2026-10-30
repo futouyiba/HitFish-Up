@@ -19,15 +19,14 @@
 → 下游候选权重
 ```
 
-当前可表达为：
+当前存在两条互斥的圆桌接口：
 
 ```text
-SpatialDistributionWeight × AdaptationCoeff
-→ 下游候选权重
+GenericFCF → AdaptationCoeff → SpatialDistributionWeight × AdaptationCoeff
+ProposalCOpportunity → q = L × C → 不再乘 SpatialDistributionWeight
 ```
 
-术语只给出这一层关系，没有给出 `AdaptationCoeff` 的具体公式。
-
+候选必须带接口类型；未声明时阻断组装。本文不把 Proposal C 的 `q` 当作通用 `AdaptationCoeff`。
 ## 2. 两条通道
 
 ### 2.1 持久响应
@@ -145,6 +144,7 @@ Feeding Place State
 - `Persistent Response Field` 的正式 Schema、时间、范围、衰减。
 - `Effective Ingestion Opportunity` 的落点和量纲。
 - 同一来源在持久与即时两条通道的消费规则。
+- Proposal C 与 GenericFCF 的接口类型如何在实现载体中固化；接口类型缺失时必须阻断组装。
 
 以上登记在 `docs/terminology.md` §5.2 的缺口和 `decisions/conflict-register.md`。
 

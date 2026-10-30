@@ -30,8 +30,8 @@
 ### 3.1 现有覆盖
 
 - Feeding Event 的 `encounter` 处理“鱼是否可能发现或接近对象”。
-- Feeding Event 的 `selection` 处理“鱼更愿意尝试哪个对象”。
-- Chemical Cue Field 和 Food 响应分别进入 encounter 和 selection。
+- 当前 `selection_m` 只在可行动作中按动作代价、动作前提和 Fish Condition 选择动作；Food 与 Chemical Cue 不在此处重复消费。
+- Food 进入 Response 的唯一 Food 输入或对象价值；Chemical Cue 进入 Encounter / 趋近或 Response 的 Flavor 候选。
 - Response Stage 处理候选权重的整体调整。
 
 ### 3.2 判断

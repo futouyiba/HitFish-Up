@@ -47,7 +47,7 @@
 ### 3.2 Groundbait 与响应
 
 - Groundbait 释放改变 Feeding Place State，不直接改变 `AdaptationCoeff`。
-- Flavor 改变发现或选择，不改变尺寸成功。
+- Flavor 改变发现、趋近或 Response 的 Flavor 候选，不改变尺寸成功，也不进入 `selection_m` 动作选择。
 - Particle 状态改变动作可行性或成功，不改变 Cue Exposure。
 - 重复动作路径不增加一次事件收益。
 - 摄食成功后对象仍保留完整价值，视为守恒失败。

@@ -21,18 +21,38 @@
 
 - 不建立单一 `RecipeFit`。
 - 候选只提供输入。
-- 最终聚合仍由现有 Response Stage 完成：
+- 先按候选接口类型分流，再进入圆桌：
 
 ```text
-SpatialDistributionWeight × AdaptationCoeff
-→ 下游候选权重
+GenericFCF
+  AdaptationCoeff
+  → SpatialDistributionWeight × AdaptationCoeff
+
+ProposalCOpportunity
+  q = L × C
+  → 直接进入候选权重，不再乘 SpatialDistributionWeight
 ```
 
+- 未声明接口类型时阻断组装。
 - `AdaptationCoeff` 的具体公式仍是 OPEN，不由本页定义。
 
 ## 2. 现有 Current 边界
 
-`docs/terminology.md` §5.2 定义：
+本页存在两条互斥的候选接口，必须先由调用者声明接口类型：
+
+```text
+GenericFCF
+  output: AdaptationCoeff
+  assembly: SpatialDistributionWeight × AdaptationCoeff
+
+ProposalCOpportunity
+  output: final candidate weight q = L × C
+  assembly: 不再乘 SpatialDistributionWeight
+```
+
+Proposal C 的 `L` 由 Opportunity 负责，Groundbait 本页不重新生成；`q` 不得被当作 `AdaptationCoeff` 交给通用组装器。若候选接口类型未声明，阻断组装，不猜测。
+
+`docs/terminology.md` §5.2 定义通用 FCF 术语层关系：
 
 ```text
 SpatialDistributionWeight
@@ -41,11 +61,9 @@ SpatialDistributionWeight
 + Presentation Signal
 → 响应评价
 → 下游候选权重
-
-可表达为：
-SpatialDistributionWeight × AdaptationCoeff
-→ 下游候选权重
 ```
+
+该术语关系不覆盖 Proposal C 的 `ProposalCOpportunity` 分支；本页只在声明接口类型后选择对应的组装路径。
 
 因此本页只能做三件事：
 
@@ -65,8 +83,8 @@ SpatialDistributionWeight × AdaptationCoeff
 | 候选输出 | 进入的槽位 | 角色 | 不能做 |
 |---|---|---|---|
 | Feeding Place State（对象、线索、位置、状态） | Response Condition / 上下文 | 决定当前有什么可被评价 | 不直接变成系数 |
-| Food 响应 | Response Component | 选择或对象价值的修正 | 不改尺寸成功、不改释放 |
-| Flavor 结果 | Response Component | 发现、趋近、选择或回避的修正 | 不改尺寸成功、不改释放 |
+| Food 响应 | Response Component | Response 的唯一 Food 输入或对象价值来源 | 不进入 `selection_m`，不改尺寸成功、不改释放 |
+| Flavor 结果 | Response Component | Response 的 Flavor 候选：发现、趋近、回避或其它已声明消费 | 不改尺寸成功、不改释放 |
 | Edible Utilization | Response Component | 摄食 / 利用的修正 | 不改发现、不改偏好 |
 | Physical Release 状态（`A/L/U/Q`） | Response Condition / 上下文 | 可用性、位置、持久性 | 不直接乘进响应 |
 | 持久释放部分 | Persistent Response Field | 持续增量 | 不复制 DEF，不与即时重复 |
@@ -88,7 +106,7 @@ SpatialDistributionWeight × AdaptationCoeff
 7. 求修正：Food、Flavor、Edible、Release context。
 8. 按模式聚合组件；算子 OPEN。
 9. 按鱼种 / 模式聚合为 `Fish Adaptation Coefficient Set`；算子 OPEN。
-10. 交给圆桌，由圆桌执行 `SpatialDistributionWeight × AdaptationCoeff`。
+10. 交给圆桌：`GenericFCF` 候选执行 `SpatialDistributionWeight × AdaptationCoeff`；`ProposalCOpportunity` 候选直接交付 `q = L × C`，不得再次乘 `SpatialDistributionWeight`。接口类型缺失时阻断，不猜测。
 
 运行时顺序与设计顺序一致，但第 8、9 步的具体函数不在本页。
 
@@ -96,8 +114,8 @@ SpatialDistributionWeight × AdaptationCoeff
 
 候选输出分两类：
 
-- **门控**：当前有没有值得评价的对象或线索。例如没有遇见机会、没有可处理对象。
-- **修正**：在门控通过后，响应有多强。例如 Food 偏好、Flavor 正响应、Edible 利用。
+1. **门控**：当前有没有值得评价的对象或线索。例如没有遇见机会、没有可处理对象。显式 `AVOID` 在 C-13a / C-13b 收口前只能作为带 provenance 的 typed candidate，不能作为门控失败或 `Reject`。
+2. **修正**：在门控通过后，响应有多强。例如 Food 偏好、Flavor 正响应、Edible 利用。
 
 规则：
 
@@ -165,7 +183,7 @@ RecipeFit = FoodFit + FlavorFit + ParticleFit + PhysicalFit
 4. **释放不直乘**：改变 `A/L/U/Q` 不能直接改变 `AdaptationCoeff`。
 5. **Fish Condition 不被写**：窝料候选不能修改鱼况四参数。
 6. **适配系数不是概率**：`AdaptationCoeff` 在圆桌前不归一化。
-7. **圆桌只乘一次**：`SpatialDistributionWeight × AdaptationCoeff` 只在圆桌执行一次。
+7. **接口互斥**：GenericFCF 只组装 `SpatialDistributionWeight × AdaptationCoeff`；ProposalCOpportunity 只交付 `q = L × C`，不得再次乘空间权重。
 8. **输出是集合**：响应输出是鱼种 × 模式的系数集，不是单鱼总分。
 9. **移除候选**：移除窝料候选后，现有 Response Stage 不应被本目录改写。
 
@@ -173,7 +191,7 @@ RecipeFit = FoodFit + FlavorFit + ParticleFit + PhysicalFit
 
 - 不建立单一 `RecipeFit`。
 - 四条候选输出分别进入 Response Condition、Response Component 或 Persistent Response Field。
-- 最终聚合仍由现有 Response Stage 的 `SpatialDistributionWeight × AdaptationCoeff` 完成。
+- 圆桌组装必须先识别接口类型：GenericFCF 使用 `SpatialDistributionWeight × AdaptationCoeff`；ProposalCOpportunity 直接使用 `q = L × C`，不得再次乘空间权重。
 - `AdaptationCoeff` 的具体公式、组件聚合算子和模式聚合算子仍是 OPEN。
 - 本页闭合的是候选到现有接口的映射，不是数值公式。
 

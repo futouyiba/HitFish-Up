@@ -18,7 +18,7 @@ Food Aggregation 只回答：
 - 鱼是否愿意留下；
 - 最终中鱼概率。
 
-Food 响应可以进入 Feeding Event 的动作选择或对象价值，但不进入动作可行性、动作成功、环境权重或圆桌竞争。
+Food 响应当前只作为 Response 的唯一 Food 输入或对象价值来源；不在 Feeding Event 的 `selection_m` 动作选择中再次消费，也不进入动作可行性、动作成功、环境权重或圆桌竞争。
 
 ## 2. Food Target 字典
 
@@ -203,10 +203,7 @@ S(0.4)          = 0.29
 
 ## 8. 进入 Feeding Event 的位置
 
-Food 响应可以进入：
-
-- 动作选择：鱼更愿意尝试哪个对象；
-- 对象价值：一次有效摄食对鱼值多少。
+Food 响应在当前工作候选中只作为 Response 的唯一 Food 输入，或作为对象价值的来源；它不在 Feeding Event 的动作选择中再次消费。若未来 Owner 选择让 Food 直接影响动作选择，必须关闭对应的 Response 消费路径并补充 provenance / 去重规则。
 
 Food 响应不进入：
 
@@ -222,6 +219,6 @@ Food 响应不进入：
 - 饱和函数族和参数如何标定。
 - 多 Target 聚合算子由 Owner 裁决。
 - Food 响应按对象计算还是按 Feeding Place 计算。
-- Food 响应如何分配到动作选择与对象价值。
+- Food 只作为 Response 的唯一 Food 输入或对象价值来源；当前不在 Feeding Event 的 `selection_m` 动作选择中再次消费。
 - `Diet Shift` 如何改变 `P_t`，时间尺度多大。
 - `P_t` 是静态配置还是随 Engagement Mode 变化。R1 的 `StaticTargetAffinity = Species × FeedingTargetKey` 不含 Mode 轴，若未来需要 Mode 轴，应按新语义申请处理。

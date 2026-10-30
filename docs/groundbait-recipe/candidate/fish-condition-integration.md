@@ -46,7 +46,7 @@ Fish Condition 是状态，不是分数。它描述鱼现在处于什么状态�
 ## 4. 与窝料、Food、Flavor 的边界
 
 - 窝料产生 Feeding Place State，不直接写 `Activity`、`Feeding Motivation`、`Diet Shift`、`Wariness`。
-- Food 和 Flavor 的 Exposure 影响发现、趋近、选择，不直接写 Diet Shift。
+- Food 和 Flavor 的 Exposure 影响发现、趋近或 Response 候选，不直接写 Diet Shift。
 - 如果未来要表达持续摄食改变鱼况，必须单独定义时间、记忆和衰减，不在本页隐含发生。
 - 天气、时段等环境输入优先进入现有 Fish Condition 语义，不转换成简单的味型密码。
 
