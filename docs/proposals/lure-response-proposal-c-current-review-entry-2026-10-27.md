@@ -108,3 +108,14 @@ Reviewer 必须区分事实、Candidate、Working seed、建议；不能把缺�
 - [`proposal_c_opportunity_support_probe.py`](../../prototypes/lure-response/proposal_c_opportunity_support_probe.py)：机会量、遭遇饱和与单位时间收益。
 
 这些 probe 是形状检查，不是生产标定；其参数与设计包中的 Working 值分开记录。
+
+## 6. 完成度
+
+设计、逻辑、机制与算法已推到 Candidate 完成度：
+
+- 各层契约、端到端算法、状态代数与失败对照已写入文档；
+- 规则到 probe 的覆盖写在[回归矩阵](lure-response-proposal-c-regression-matrix.md)；
+- 当前 Working 参数与缺数据写在[标定台账](lure-response-proposal-c-calibration-register.md)；
+- 8 个 probe 全部可运行。
+
+不声称生产闭合。仍缺：Fish Condition 的生成曲线与数据、机会量 `L` 的生产函数、事件提取阈值、各参数标定，以及 `TackleConspicuousness` 的字段与 owner。
