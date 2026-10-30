@@ -106,15 +106,7 @@ u_close(theta) = max(0, q * cos(theta))
 
 Activity 不修改 `InterceptSpeedLimit`。低 Activity 不能表现为“鱼突然失去运动能力”。
 
-### 可选的能力修正
-
-若未来确认需要动态可用运动能力修正，可在消费端聚合成一个速度轴：
-
-```text
-追赶状态倍率 = ActivityCostMultiplier / CapacityModifier²
-```
-
-这只是一个可选的单轴聚合，不表示 `CapacityModifier` 已确认为 Fish Condition，也不表示 Activity 与能力来源在上游必须合并。
+`CapacityModifier` 已由 2026-10-30 Owner 裁定从 active design 删除，重开条件见[开放决策](lure-response-proposal-c-open-decisions.md)。
 
 ### 边界
 
@@ -134,20 +126,20 @@ RiskCost = K_wary × Wariness × SuspicionLoad
 - `Wariness`：当前这类鱼对风险线索有多敏感；
 - `SuspicionLoad`：本次呈现里有多少已解析的可疑证据。
 
-### 首版候选 cue
+### 首版 cue
 
-| cue | 表达 |
-|---|---|
-| TackleConspicuousness | 终端连接、线、钩等已声明事实对当前目标的可见或侵入程度 |
-| EntryDisturbance | 本次呈现进入局部区域时的已解析异常扰动 |
+| cue | 表达 | 状态 |
+|---|---|---|
+| TackleConspicuousness | 终端连接、线、钩等已声明事实对当前目标的可见或侵入程度 | 2026-10-30 裁定立项，可后置实现 |
+| EntryDisturbance | 本次呈现进入局部区域时的已解析异常扰动 | 暂不实现 |
 
-两类当前都缺生产输入，先冻结语义，不假装 runtime 已有数据。第一轮玩法闭合审查的结论是：
+`TackleConspicuousness` 当前仍缺生产字段；实现前：
 
 ```text
 无已解析 cue → SuspicionLoad = 0 → RiskCost = 0
 ```
 
-因此第一版不生产 RiskCost；保留接口，等 cue owner 与字段，不补造代理。冻结验证基线里的 `cue.contact_disturbance`、`sound_amplitude` 瞬态与「线透明度 / 线颜色」派生条件只能作为语义参考，不是生产输入。
+不补造代理；`SKU → conspicuousness` 不允许。冻结验证基线里的 `cue.contact_disturbance`、`sound_amplitude` 瞬态与「线透明度 / 线颜色」派生条件只能作为语义参考，不是生产输入。实现前必须明确：Wariness 暂时没有真实玩家策略消费方。
 
 ### 不准入
 
@@ -204,8 +196,8 @@ Fish Condition（鱼侧动态参数）
 
 ## 9. 未决项
 
-- Prediction：第一版主体不含；只有出现独立策略价值证据时才重开；
-- 风险顾虑的最低实现层与完整 Naturalness 边界；当前无生产输入；
-- `CapacityModifier` 是否需要，以及它是派生中间量还是持久 Fish Condition；
-- 垂直主导呈现的机会窗口形态与正式 owner；
+- Prediction：第一版不含，`Deferred Research`；重开条件见[开放决策](lure-response-proposal-c-open-decisions.md)；
+- 风险顾虑的最低实现层与完整 Naturalness 边界；`TackleConspicuousness` 尚无生产字段；
+- `CapacityModifier` 已从 active design 删除，重开条件见开放决策；
+- 垂直主导呈现的机会窗口形态（`L` 归 Opportunity）；
 - 各系数的生产标定。

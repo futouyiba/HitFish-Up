@@ -319,7 +319,7 @@ q         = L × C                          # 只乘一次，进入候选</code>
       <h2 id="closure-title">第一轮玩法闭合结果</h2>
       <ul>
         <li>攻击诱因只准入逃逸样；受伤挣扎与失衡样虚弱仍未闭合（CandidateUnresolved）；停顿本身不作为触发。</li>
-        <li>风险顾虑当前没有生产输入，<code>RiskCost</code> 退化为 0，不补造代理。</li>
+        <li>风险顾虑只立装备显眼度（TackleConspicuousness），可后置实现；实现前 <code>RiskCost</code> 为 0。</li>
         <li>反应口策略成立；快搜与隐蔽只完成一半，另一半代价需要机会量 <code>L</code> 或外部成本。</li>
       </ul>
     </section>
@@ -331,7 +331,7 @@ q         = L × C                          # 只乘一次，进入候选</code>
         <li>攻击诱因第一版准入哪些具名猎物状态；</li>
         <li>风险顾虑的最低实现层，以及完整 Naturalness 的边界；</li>
         <li>Fish Condition 的数量，应由 Response 与其它消费者反推；</li>
-        <li>Opportunity / Spatial 侧 <code>L</code> 的正式 owner 与 reducer；</li>
+        <li>Opportunity 侧 <code>L</code> 的 reducer 与生产实现；</li>
         <li>生产标定：tail 起点、触发器预算、追赶快慢的系数、机会分布护栏。</li>
       </ul>
     </section>

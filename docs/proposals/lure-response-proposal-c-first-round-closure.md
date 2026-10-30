@@ -154,8 +154,8 @@ Risk MVP 当前只能实现退化路径：
 
 ### 5.2 机制缺口
 
-1. **Closing 的角度平均削弱高速惩罚**：一半方位成本为零、有利方位响应饱和。这不是调 `K_close` 能解决的。机会量的玩具模型见[机会量支持](lure-response-proposal-c-opportunity-support.md)。
-2. **Risk 没有输入**：TackleConspicuousness 与 EntryDisturbance 在仓内都没有字段，MVP 只能输出零。
+1. **Closing 的角度平均削弱高速惩罚**：一半方位成本为零、有利方位响应饱和。这不是调 `K_close` 能解决的。2026-10-30 Owner 裁定：不新增独立的信息/探索数值机制，实际空间覆盖由 Opportunity 保留；机会量玩具模型见[机会量支持](lure-response-proposal-c-opportunity-support.md)。
+2. **Risk 没有输入**：`TackleConspicuousness` 与 `EntryDisturbance` 在仓内都没有字段。2026-10-30 裁定只立 `TackleConspicuousness`、可后置实现；`EntryDisturbance` 暂不实现；实现前 `RiskCost` 仍为 0。
 3. **Injured / Struggling 没有生产闭合的输入映射**：不是单一姿态字段缺失，也没有可用的 cue-only 识别证据；不能用航迹不规则冒充。
 4. **Vulnerable Pause 与时间机会重复**：pause 本身不能作为 Trigger；imbalance-like vulnerability 仍是 `CandidateUnresolved`，需要 cue-only holdout。
 
@@ -168,11 +168,11 @@ Risk MVP 当前只能实现退化路径：
 
 ### 5.4 CapacityModifier
 
-本轮没有找到独立消费需求或失败案例。维持 optional Candidate，不引入。
+本轮没有找到独立消费需求或失败案例。2026-10-30 Owner 裁定：从 active design 删除，重开条件见[开放决策](lure-response-proposal-c-open-decisions.md)。
 
 ### 5.5 Prediction
 
-维持“第一版主体不含”。重开条件：控制 Trigger / Closing / Risk 后，Prediction 仍产生稳定、独立、玩家可学习的排序差异。
+2026-10-30 Owner 裁定：第一版不含，状态为 `Deferred Research`。重开条件：控制 Trigger / Closing / Risk 后，Prediction 仍产生稳定、独立、玩家可学习且足以改变打法选择的排序差异；不能只靠统计拟合改善。
 
 ## 6. E. 文档联动
 

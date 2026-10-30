@@ -1,6 +1,6 @@
 # Proposal C｜第一轮闭合：顾问建议记录（待 Owner 确认）
 
-状态：Advisor Recommendation。本文记录 2026-10-30 由用户转述的 ChatGPT 评审建议，**不是 Owner 裁定，也不自动改变设计包状态**。Owner 确认前，现有 Candidate 状态保持不变。
+状态：Advisor Recommendation，Owner 已于 2026-10-30 确认全部五项，按 Owner 裁定执行。记录保留来源与当时的建议原文，便于追溯。
 
 基线：`futou-/exciting-payne-95a562`，提交 `c8437a91`；对应 Issue #152。
 
@@ -62,19 +62,22 @@ Opportunity → 消费事实，产生 L，管理 identity / duration / dedupe / 
 
 `q = L × C` 不变。
 
-## 3. 若 Owner 确认，需要翻的状态
+## 3. Owner 确认后的执行记录
+
+五项已全部执行：
 
 - `open-decisions`：五项从待裁改为已裁，保留重开条件；
-- `evaluation-items`：`CapacityModifier` 从 optional candidate 移出正文，标注删除与重开条件；
-- `response-opportunity`：`L` owner 从「Spatial / Opportunity」改为 Opportunity；
-- `first-round-closure`：Risk 与快搜的结论补上裁定状态；
-- 会议稿：只保留结论，不加新机制细节。
+- `evaluation-items`：`CapacityModifier` 移出可选聚合，标注删除与重开条件；Risk 只列 `TackleConspicuousness`；
+- `response-opportunity` 与 `semantic-contract`：`L` owner 改为 Opportunity，Spatial 只提供空间事实；
+- `first-round-closure`：Risk、快搜、CapacityModifier、Prediction 的结论补上裁定状态；
+- 图形版同步。
+
+会议稿不在本分支；如需同步，只加裁定结论，不加新机制细节。
 
 ## 4. 未决边界
 
-- 本记录不把顾问建议写成 Owner 批；
-- Owner 确认前，不把现有 Candidate 状态改成 Current；
-- 若 Owner 只确认部分项，其余项保持原状态，不整体翻转。
+- 本记录保留顾问建议原文与 Owner 确认来源；执行以 Owner 裁定为准；
+- 未确认范围以外的事项不随本建议一起翻转。
 
 ## 5. 来源
 

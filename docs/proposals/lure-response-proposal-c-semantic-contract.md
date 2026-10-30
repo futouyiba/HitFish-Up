@@ -276,7 +276,7 @@ U_feed = max_i(U_i)
 姿态颗粒 / semantic presentation grain
 → Response：计算该颗粒的 conditional response C
 
-姿态颗粒 → Opportunity / Spatial：计算该颗粒的 native opportunity support L
+姿态颗粒 → Opportunity：计算该颗粒的 native opportunity support L（Spatial 提供空间事实）
 
 Candidate join
 → q = L × C
@@ -286,7 +286,7 @@ Candidate join
 
 - `L × C` 只乘一次，Candidate 后段不重复乘 Response；
 - 时间、停留、穿越有效区域、覆盖范围不进入出手余量；
-- 垂直运动通过“多久处在可交互垂直区域”影响 `L`；该窗口的具体输出形态与正式 owner 由 Opportunity / Spatial 侧决定，当前尚未落仓，属候选边界；
+- 垂直运动通过“多久处在可交互垂直区域”影响 `L`；该窗口由 Opportunity 承接，具体实现形态尚未落仓；
 - 若既有 Candidate pipeline 已把 `L` 定义为 opportunity 侧的量，复用该量，不另造第二个 Exposure multiplier。
 
 ## 10. CandidateRetention

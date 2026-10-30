@@ -120,7 +120,7 @@ L_feed = 0.40, U_feed = 1.00 → ResolutionIncomplete
 ```text
 姿态颗粒 / semantic presentation grain j
 ├→ Response：C_i,j
-└→ Opportunity / Spatial：L_i,j
+└→ Opportunity：L_i,j（Spatial 提供空间事实）
 
 q_i,j = L_i,j × C_i,j
 ```
@@ -128,6 +128,7 @@ q_i,j = L_i,j × C_i,j
 - 姿态颗粒必须有稳定语义身份或稳定 semantic partition；
 - 一个 runtime tick 或一次重复调用不是新机会；
 - 同一语义颗粒、同一 opportunity identity 的重算属于 replay，不增加机会计数；
+- `L` 的正式 owner 是 Opportunity；Spatial 只提供位置、区域、几何与有效空间窗口等事实（2026-10-30 Owner 裁定）；
 - 具体 identity、dedupe 与 reevaluation 由 Opportunity owner 决定。
 
 ### 时间与停留
@@ -195,7 +196,7 @@ q_i,j = L_i,j × C_i,j
 
 ## 8. 未决
 
-- Prediction 是否作为独立局部代价重入主体；
+- Prediction：第一版不含，`Deferred Research`；
 - `L` 的生产函数、单位与窗口口径，以及 Opportunity reducer；
 - sibling set 的正式上游声明位置；
 - `M1=0.40` 与 tail 参数的 reference calibration；
