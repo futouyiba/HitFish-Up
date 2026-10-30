@@ -97,14 +97,14 @@
 </section>
 
 <section>
-<h2 class="title">5. 第一版猎物证据：四类</h2>
-<table class="table"><thead><tr><th>证据</th><th>回答什么</th><th>典型输入</th><th>边界</th></tr></thead><tbody>
-<tr><td><strong>外观证据（Appearance）</strong></td><td>看起来像什么</td><td>轮廓、比例、颜色 / 反光、部件布局</td><td>不读整体运动</td></tr>
-<tr><td><strong>整体运动证据（Whole-body Motion）</strong></td><td>整体怎么运动像什么</td><td>速度模式、方向变化、游 / 爬 / 跳 / 漂 / 下沉</td><td>不重复局部动作</td></tr>
-<tr><td><strong>局部动作证据（Articulation）</strong></td><td>局部怎么动像什么</td><td>尾摆、腿踢、裙丝动作</td><td>不重复整体轨迹</td></tr>
-<tr><td><strong>空间关系证据（Spatial Relation）</strong></td><td>出现在哪里更符合什么猎物</td><td>水面、近底、中层、触底、离底高度</td><td>默认只做弱证据</td></tr>
+<h2 class="title">5. 判断像不像：第一版先用四类线索</h2>
+<table class="table"><thead><tr><th>线索</th><th>回答什么</th><th>典型输入</th><th>边界</th></tr></thead><tbody>
+<tr><td><strong>外观线索（Appearance）</strong></td><td>看起来像什么</td><td>轮廓、比例、颜色 / 反光、部件布局</td><td>不读整体运动</td></tr>
+<tr><td><strong>整体运动线索（Whole-body Motion）</strong></td><td>整体怎么运动像什么</td><td>速度模式、方向变化、游 / 爬 / 跳 / 漂 / 下沉</td><td>不重复局部动作</td></tr>
+<tr><td><strong>局部动作线索（Articulation）</strong></td><td>局部怎么动像什么</td><td>尾摆、腿踢、裙丝动作</td><td>不重复整体轨迹</td></tr>
+<tr><td><strong>空间关系线索（Spatial Relation）</strong></td><td>出现在哪里更符合什么猎物</td><td>水面、近底、中层、触底、离底高度</td><td>默认只做弱线索</td></tr>
 </tbody></table>
-<p class="lead" style="margin-top:13px">同一猎物类型有多份替代证据时默认取最强，不把相近证据直接相加。只有 A+B 同时存在才形成新语义时，再显式配置联合证据。</p>
+<p class="lead" style="margin-top:13px">同一猎物类型有多份替代线索时默认取最强，不把相近线索直接相加。只有 A+B 同时存在才形成新语义时，再显式配置联合线索。</p>
 </section>
 
 <section>
@@ -178,7 +178,7 @@
 <tr><td>本轮范围</td><td>先闭合路亚姿态操作；饵料混合与打窝后续承接</td></tr>
 <tr><td>拟饵与猎物</td><td>一个拟饵可同时表达多种猎物，不先选唯一身份</td></tr>
 <tr><td>猎物解释</td><td>分别产出表达支持度和当前状态</td></tr>
-<tr><td>证据</td><td>外观、整体运动、局部动作、空间关系</td></tr>
+<tr><td>线索</td><td>外观、整体运动、局部动作、空间关系</td></tr>
 <tr><td>姿态</td><td>1 个原子姿态 + 0/1 个主导分子姿态</td></tr>
 <tr><td>攻击诱因</td><td>只表达额外捕食促发；第一版采用逃逸样</td></tr>
 <tr><td>鱼体型</td><td>先用体型档，不要求先生成具体鱼</td></tr>
