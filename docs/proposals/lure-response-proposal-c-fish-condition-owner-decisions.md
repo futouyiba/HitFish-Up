@@ -1,6 +1,6 @@
 # Proposal C｜Fish Condition 剩余七项：Owner 决定请求
 
-状态：Decision Request。2026-10-30 的 Fable 子代理裁决已把能定的部分定完；本文只列裁决明确留给 Owner 的七项。不是 Contract，不预设结论。
+状态：Owner Decided（2026-10-30）。Owner 已在 Issue #161 评论中裁定七项；本文保留问题与选项作为记录，执行结果写回鱼况契约与开放决策。
 
 基线：`futou-/exciting-payne-95a562`，提交 `9d4ed83e`。裁决原文见[裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md)。追踪 Issue：[#161](https://github.com/futouyiba/HitFish-Up/issues/161)。
 

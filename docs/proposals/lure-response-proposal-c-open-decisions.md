@@ -23,8 +23,8 @@
 ## 2. Owner 缺口
 
 - Feeding、Defense、Investigation 的 Interaction composition；
-- `TackleConspicuousness` 的字段与数据 owner（方向已定，owner 未指定）；
-- Wariness 累积更新的 owner、事件、粒度、有效期与衰减（2026-10-30 裁决只定“归 Fish Condition / 动态机制”，未指定 owner）；
+- `TackleConspicuousness` 的字段与数据 owner：2026-10-30 裁定暂不投入，`RiskCost=0`；需要交付真实警戒玩法时再立项；
+- Wariness runtime overlay 的事件来源、粒度、衰减、有效期与会话记忆边界：职责已归 Fish Condition 线，具体机制 Contract 未闭合；
 - 若未来启用 `ExplicitDirectional` bearing prior，production directional support 的 owner；
 - 垂直可交互窗口的正式实现 owner（`L` 归 Opportunity 后由该线承接）。
 
@@ -34,8 +34,8 @@
 - Risk：只立 `TackleConspicuousness`，`EntryDisturbance` 暂不实现；实现前 `RiskCost = 0`，Wariness 暂无真实玩家策略消费方；
 - 完整自然度模型；
 - 非摄食咬击（护巢、领地、防御、烦躁）如何作为独立 family 组合；
-- Fish Condition：2026-10-30 裁决采用「Bake 基线 + 受限运行时更新」，当前只有 Wariness 有累积依据；日期与来源见[裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md)；
-- Fish Condition 名单与生成方式留待专门 Bake / Owner 讨论；本轮沿用现行四个鱼况，不重定名单；
+- Fish Condition：Owner 2026-10-30 裁定「Bake baseline + 仅机制授权的 runtime overlay → resolved → Response 只读」；V1 可只实现 baseline；见 [Issue #161](https://github.com/futouyiba/HitFish-Up/issues/161)；
+- Fish Condition 名单与生成方式：名单沿用现行四个鱼况；各 Condition 的语义、曲线与标定归对应机制 Contract，Bake 只负责执行、物化与校验；
 - 装配版本变化时，共用轨迹记忆可以保留到什么边界。
 
 ## 4. 标定缺口
@@ -69,8 +69,8 @@
 ## 7. 下一轮收口顺序
 
 1. Escape-like 的事件提取（滤波、采样、最短间隔）、family 适用表、强度缩放、窗口与刷新语义仍 OPEN，下一步是轨迹采集与这些参数的落定；
-2. `TackleConspicuousness`：确定字段、事实来源与 owner，再做窄 MVP；在此之前 `RiskCost` 保持 0；
+2. `TackleConspicuousness`：按 2026-10-30 裁定暂不投入，`RiskCost` 保持 0；需要真实警戒玩法时再立项字段与 owner；
 3. 机会量 `L` 归 Opportunity 后，由该线补生产函数、单位与窗口口径；
 4. 用 `proposal_c_strategy_probe.py` 的排序结果检查参数敏感度，再进入生产标定；
-5. 按[鱼况/Bake 契约](lure-response-proposal-c-fish-condition-bake-contract.md)与[裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md)进入 Fish Condition / Bake：先落粒度、占位标注与 `Unknown` 边界；路径 B 的正式 Contract 化、Wariness owner 与过期协议仍需 Owner；
+5. Fish Condition / Bake：Owner 已裁定架构与七项；下一步是 DEF baseline block 的字段形态与校验、各 Condition 的机制 Contract，再谈上游输入与公式；
 6. Prediction 保持 `Deferred Research`，满足重开条件时再单独开题。

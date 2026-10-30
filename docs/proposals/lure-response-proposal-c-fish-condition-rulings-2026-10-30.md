@@ -62,17 +62,19 @@ SuspicionLoad = 0 → RiskCost = 0
 
 允许常量或分档值，但必须标注 `Candidate/Working placeholder`、适用范围（ConditionGroup × Mode，Diet Shift 另含 family）、版本、有效期、来源与未标定状态。placeholder 不得冒充生产参数；无来源、越界或过期仍输出 `Unknown`。
 
-## 3. 仍需 Owner 决定
+## 3. Owner 裁定（2026-10-30）
 
-已整理成[Owner 决定请求](lure-response-proposal-c-fish-condition-owner-decisions.md)，含选项与影响。摘要：
+七项已由 Owner 在 [Issue #161](https://github.com/futouyiba/HitFish-Up/issues/161) 裁定，摘要：
 
-1. 是否把路径 B 正式 Contract 化，以及除 Wariness 外是否允许任何 Condition 运行时更新；
-2. Wariness 累积的 owner、事件、粒度、有效期、衰减与会话记忆边界；
-3. 过期转 `Unknown` 是否作为正式状态协议；
-4. Activity 是否需要生产上界与标定来源；
-5. `TackleConspicuousness` 的字段、数据 owner 与 schema；
-6. DEF 中 Fish Condition 的版本与有效区间载体；
-7. 四个 Condition 的生成来源与审核职责。
+1. 路径 B Contract 化：Bake baseline + 仅机制授权的 runtime overlay → resolved Fish Condition → Response 只读；V1 可实现 baseline-only；
+2. Wariness 累积归 Fish Condition 线下的 `Wariness Runtime Update / Overlay`；V1 不要求实现；
+3. 过期、越界或缺来源 → `Unknown`，不引入 `stale-but-usable`；
+4. Activity 不设语义生产上界，只要求非负且有限；1.0 是 Working reference；
+5. `TackleConspicuousness` 暂不投入字段与 owner，继续 `RiskCost=0`；`EntryDisturbance` 不恢复；
+6. Fish Condition baseline 落在 DEF 条件组下，按 snapshot / block 保存，含 value / status / source / version / validity；
+7. Bake 负责执行、物化与校验；各 Condition 的语义、曲线、标定仍由对应机制 Contract 承接与审核。
+
+问题与选项的原文见[Owner 决定请求](lure-response-proposal-c-fish-condition-owner-decisions.md)。
 
 ## 4. 来源
 

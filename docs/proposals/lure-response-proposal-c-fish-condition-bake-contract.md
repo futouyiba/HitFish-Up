@@ -2,6 +2,8 @@
 
 状态：Working Design / Candidate。本文只写 Response 需要 Bake 产出什么，不定义 Bake 的生成公式，也不修改术语或 V1 语义。
 
+2026-10-30 Owner 已就架构与七项作出裁定（Issue #161 评论）；本文按其执行。文档仍需审核合并后才成为 Contract。
+
 ## 1. 目的与边界
 
 Response 已收口到五项评价。下一步是把上游需求反过来写成对 Fish Condition 的要求：
@@ -11,6 +13,22 @@ Response 消费什么
 → Fish Condition 必须产出什么
 → Bake 必须保证什么
 ```
+
+Owner 裁定的架构：
+
+```text
+Bake
+→ Fish Condition Baseline
+
+仅当某个 Condition 的机制 Contract 明确授权时
+→ Runtime Overlay / Update
+
+Baseline + authorized runtime state
+→ resolved Fish Condition
+→ Response 只读消费
+```
+
+V1 允许只实现 Bake baseline；runtime overlay 是受限扩展点，不是必做项。
 
 本文不回答“天气怎样算出 Activity”，也不新增 Fish Condition。
 
@@ -38,8 +56,8 @@ Response 消费什么
 ### 3.1 Activity
 
 - 只调制追赶负担，不进入 Closing 的结构速度上限；
-- `ActivityCostMultiplier` 非负；1.0 只是 Working reference，不是缺失默认值；
-- 当前无证据支持上界，不新增 runtime cap；
+- `ActivityCostMultiplier` 必须非负且有限；1.0 只是 Working reference，不是缺失默认值；
+- 当前不设语义上的生产上界，也不新增 runtime cap；
 - 不能与 Feeding Motivation 共用一个“积极程度”标量。
 
 ### 3.2 Feeding Motivation
@@ -59,29 +77,32 @@ Response 消费什么
 - `[0,1]` 仅为 Candidate 表示域；
 - 只放大已解析的 `SuspicionLoad`；Risk 只消费 Wariness，不生成它；
 - 没有可疑线索时，高 Wariness 不产生风险顾虑；
-- 累积更新归 Fish Condition / 动态机制，owner、事件、粒度与衰减待指定；
+- 累积更新归 Fish Condition 线下的 `Wariness Runtime Update / Overlay`；V1 可只消费 baseline；
+- 事件来源、粒度、衰减、有效期与会话记忆边界未闭合前，不实现 runtime overlay；
 - fishing pressure 若已作为 Wariness 的上游原因，不得再进入 SuspicionLoad。
 
 ## 4. 粒度与载体
 
-`DEF` 按条件组归并，并在中鱼习性模式下保存鱼况，这是术语表的 Working 语义。
-
-2026-10-30 裁决采用路径 B（见[裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md)）：
+`DEF` 按条件组归并，并在中鱼习性模式下保存鱼况，这是术语表的 Working 语义。Owner 2026-10-30 裁定：
 
 ```text
 Bake 产出 ConditionGroup × EngagementMode 基线
-+ 运行时仅更新已有机制 Contract 明确授权的维度
-当前仓内只有 Wariness 有“随过程累积变化”的语义依据
++ 仅机制 Contract 授权的 Runtime Overlay
+→ resolved Fish Condition
+→ Response 只读
 ```
+
+当前只有 Wariness 有“随过程累积”的语义依据；Activity、Feeding Motivation、Diet Shift 不因此获得 runtime state。
 
 边界：
 
 - Response 不写回 Fish Condition；
-- Activity、Feeding Motivation、Diet Shift 目前只随上游重新求值或 Bake 刷新变化，不获得运行时累积权限；
+- 运行时 overlay 不写回 DEF；由运行时状态层单独承接，消费前与 baseline 合成 resolved 值；
 - 窝料、Persistent Response Field、玩家即时操作只提供上游原因或独立输入，不直接改写 Fish Condition；
-- 值必须携带来源、适用区间与解析状态；过期、越界或缺少必要来源不得沿用最后值，转为 `Unknown`。具体有效期、刷新频率与运行时 Wariness 的事件窗口待 Owner 定。
+- 值必须携带来源、适用区间与解析状态；过期、越界或缺少必要来源转 `Unknown`，不得静默沿用最后值；
+- 不引入通用 `stale-but-usable` 状态；具体 TTL 与刷新频率由各 Condition 的生产 Contract 定义。
 
-路径 B 的正式 Contract 化、Wariness 累积 owner 与过期状态协议仍列在[裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md)第 3 节。
+Wariness runtime overlay 归 Fish Condition 线下的 `Wariness Runtime Update / Overlay` 职责；V1 可只消费 baseline。
 
 ## 5. 上游输入边界
 
@@ -102,14 +123,27 @@ Bake 产出 ConditionGroup × EngagementMode 基线
 
 ## 6. 第一版最小输出
 
-路径 B 的 Bake 基线最低可消费集合如下；范围与参考仍是 Candidate：
+Bake baseline 落在 DEF 条件组下，按 Owner 2026-10-30 裁定作为结构化 snapshot / block 保存，而不是散成裸字段：
+
+```text
+ConditionGroup × EngagementMode
+→ Activity
+→ FeedingMotivation
+→ Wariness
+→ DietShift[prey family]
+
+每项同时保留：
+value / resolution status / source / version / validity
+```
+
+最低可消费集合；范围与参考仍是 Candidate：
 
 | 输出 | 最小要求 |
 |---|---|
-| Activity | 每个条件组 × 模式一个倍率或 `Unknown` |
+| Activity | 每个条件组 × 模式一个有限非负倍率或 `Unknown` |
 | Feeding Motivation | 每个条件组 × 模式一个 `[0,1]` 值或 `Unknown` |
 | Diet Shift | 每个条件组 × 模式 × prey family 一个偏移或 `Unknown` |
-| Wariness | 每个条件组 × 模式一个 `[0,1]` 基线值或 `Unknown`；运行时累积另需授权 |
+| Wariness | 每个条件组 × 模式一个 `[0,1]` 基线值或 `Unknown`；runtime overlay 另需授权 |
 
 允许第一版只产出常量或按天气 / 时段分档的 placeholder；必须标注 `Candidate/Working`、适用范围、版本、有效期、来源与未标定状态，不能冒充生产参数。
 
@@ -124,19 +158,17 @@ Response 侧应能验证：
 5. 运行时玩家操作不会改写任何 Fish Condition；
 6. 过期、越界或缺来源的 Fish Condition 不会被沿用为最后值。
 
-第 6 项的裁决建议是转 `Unknown`；正式状态协议仍待 Owner 确认。
+第 6 项已由 Owner 2026-10-30 裁定：过期、越界或缺来源转 `Unknown`，不引入 `stale-but-usable`。
 
 ## 8. 未决
 
-裁决已定的部分见[裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md)。仍需 Owner 决定：
+Owner 2026-10-30 已裁定架构、加载路径、失效语义、Activity 上界与 DEF 载体。仍未闭合：
 
-- 路径 B 是否正式 Contract 化，以及 Wariness 之外是否有 Condition 获得运行时更新权限；
-- Wariness 累积的 owner、事件、粒度、有效期、衰减与会话记忆边界；
-- 过期转 `Unknown` 是否作为正式状态协议；
-- Activity 是否需要生产上界与标定来源；
-- `TackleConspicuousness` 的字段、数据 owner 与 schema；
-- DEF 中 Fish Condition 的版本与有效区间载体；
-- 四个 Condition 的生成公式、来源与审核职责。
+- 每个 Condition 的机制 Contract：上游原因、cause → Condition 映射、曲线 / reducer、标定证据；
+- Wariness runtime overlay 的事件来源、粒度、衰减、有效期与会话记忆边界（未闭合前只消费 baseline）；
+- 各 Condition 的 TTL / 刷新频率；
+- Fish Condition 公共契约的字段版本与校验实现；
+- `TackleConspicuousness` 的字段与 owner：当前按裁定暂不投入，`RiskCost=0`；需要交付真实警戒玩法时再立项。
 
 ## 9. 来源
 
@@ -144,6 +176,7 @@ Response 侧应能验证：
 
 - [`docs/terminology.md`](../terminology.md) §4、§5.2（Working Terminology Ledger）；
 - [裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md)（2026-10-30 Fable 子代理裁决）；
+- [Issue #161](https://github.com/futouyiba/HitFish-Up/issues/161)（2026-10-30 Owner 对七项的裁定）；
 - [`common-semantics.md`](../fish-habit-editor-v1/common-semantics.md) §13（V1 负向清单）；
 - [`reference/0340-fixed-bake/README.md`](../../reference/0340-fixed-bake/README.md)（参考实现范围）；
 - [`response-stage-mapping.md`](../groundbait-recipe/candidate/response-stage-mapping.md)（只读边界）。
