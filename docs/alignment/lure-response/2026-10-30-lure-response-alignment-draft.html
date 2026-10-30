@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>路亚 Response 对齐稿｜深入浅出图形版</title>
+<style>
+:root{
+  --bg:#f4f6f9;--panel:#ffffff;--ink:#172033;--muted:#667085;--line:#d9e0ea;
+  --blue:#2f6fed;--blue2:#eaf1ff;--green:#23875d;--green2:#eaf7f1;
+  --purple:#7955b7;--purple2:#f1ecfb;--orange:#c96d19;--orange2:#fff2e5;
+  --red:#b54747;--red2:#fdecec;--cyan:#187b91;--cyan2:#e8f7fb;
+  --shadow:0 10px 30px rgba(28,39,60,.08);--r:18px;
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:linear-gradient(180deg,#f7f9fc 0,#eef2f6 100%);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.65}
+.page{max-width:1240px;margin:0 auto;padding:36px 22px 80px}.hero{padding:42px 46px;border-radius:28px;background:linear-gradient(135deg,#111827,#203a59 55%,#265d87);color:#fff;box-shadow:var(--shadow)}
+.eyebrow{font-size:13px;opacity:.72;letter-spacing:.08em}.hero h1{font-size:40px;line-height:1.16;margin:9px 0 14px}.hero p{font-size:18px;color:#dce6f2;max-width:980px;margin:0}.badges{display:flex;gap:9px;flex-wrap:wrap;margin-top:22px}.badge{padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.18);font-size:13px}
+section{margin-top:34px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:24px}.section-title{font-size:27px;margin:0 0 8px}.lead{margin:0 0 18px;color:var(--muted);max-width:1040px}.grid{display:grid;gap:16px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:19px}.card h3{margin:0 0 7px;font-size:18px}.card p{margin:0;color:var(--muted)}
+.tag{display:inline-block;padding:4px 9px;border-radius:999px;font-weight:800;font-size:12px;margin-bottom:8px}.blue{background:var(--blue2);color:var(--blue)}.green{background:var(--green2);color:var(--green)}.purple{background:var(--purple2);color:var(--purple)}.orange{background:var(--orange2);color:var(--orange)}.red{background:var(--red2);color:var(--red)}.cyan{background:var(--cyan2);color:var(--cyan)}
+.callout{border-left:5px solid var(--blue);background:var(--blue2);border-radius:14px;padding:17px 19px}.callout.good{border-color:var(--green);background:var(--green2)}.callout.warn{border-color:var(--orange);background:var(--orange2)}
+.formula{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#111827;color:#e8eef7;border-radius:16px;padding:20px 22px;overflow:auto}.formula .plus{color:#8fe0af}.formula .minus{color:#ffb2a8}.formula .accent{color:#9fc2ff}.formula small{color:#aab7ca}
+.table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:15px;overflow:hidden;background:#fff}.table th,.table td{padding:12px 13px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);vertical-align:top;text-align:left}.table th{font-size:13px;color:#475467;background:#f8fafc}.table td:last-child,.table th:last-child{border-right:0}.table tr:last-child td{border-bottom:0}.strong{font-weight:800;color:#1d2939}
+.arch{background:#f9fbfd;border:1px solid var(--line);border-radius:22px;padding:12px;overflow:auto}.arch svg{display:block;width:100%;min-width:1050px;height:auto}.arch text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.arch .box{fill:#fff;stroke:#ccd6e3;stroke-width:1.5}.arch .group{fill:#f7f9fc;stroke:#cbd5e1;stroke-width:1.5;stroke-dasharray:7 6}.arch .input{fill:#eaf1ff;stroke:#94b5ff}.arch .interp{fill:#f1ecfb;stroke:#bca6df}.arch .fish{fill:#eaf7f1;stroke:#94ceb3}.arch .resp{fill:#fff2e5;stroke:#e3b37d}.arch .out{fill:#e8f7fb;stroke:#87c7d5}.arch .join{fill:#fdecec;stroke:#d9a2a2}.arch .label{font-size:17px;font-weight:800;fill:#172033}.arch .small{font-size:13px;fill:#667085}.arch .micro{font-size:12px;fill:#475467}.arch .arrow{stroke:#7d8ca3;stroke-width:2;fill:none;marker-end:url(#arrow)}
+.pose{display:grid;grid-template-columns:1fr 70px 1fr;gap:12px;align-items:center}.pose .arrowtxt{text-align:center;font-size:30px;color:#98a2b3}.pillrow{display:flex;gap:8px;flex-wrap:wrap}.pill{padding:7px 10px;border-radius:999px;background:#f2f4f7;border:1px solid #e1e6ed;font-size:13px;font-weight:700}.mini-flow{display:flex;align-items:stretch;gap:9px;flex-wrap:wrap}.mini-node{flex:1 1 160px;border:1px solid var(--line);background:#fff;border-radius:14px;padding:14px;text-align:center}.mini-arrow{display:flex;align-items:center;color:#98a2b3;font-size:25px}.em{font-weight:900;color:#101828}.note{font-size:13px;color:var(--muted)}.footer{margin-top:42px;text-align:center;color:var(--muted);font-size:13px}
+@media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}.pose{grid-template-columns:1fr}.pose .arrowtxt{transform:rotate(90deg)}.hero{padding:32px 26px}.hero h1{font-size:31px}.mini-arrow{transform:rotate(90deg);justify-content:center}}
+</style>
+</head>
+<body><div class="page">
+<header class="hero">
+  <div class="eyebrow">Meeting Alignment Draft · Candidate · 2026-10-30</div>
+  <h1>路亚 Response：先解释“像什么”，再评价“值不值得出手”</h1>
+  <p>这版把拟饵表达、猎物解释、鱼况、鱼体型、五项 Response 和 Opportunity 分成清楚的模块。重点不是堆公式，而是让每种效果只在一个地方结算。</p>
+  <div class="badges">
+    <span class="badge">Prey Interpreter 并行解释</span>
+    <span class="badge">C = 适配系数</span>
+    <span class="badge">去 Prediction</span>
+    <span class="badge">去 θ</span>
+    <span class="badge">一竿一 Fish Condition Snapshot</span>
+  </div>
+</header>
+
+<section>
+  <h2 class="section-title">1. 一张图看完整体结构</h2>
+  <p class="lead">一个拟饵可以同时表达小鱼、小龙虾、蛙等多个猎物类型。系统不先强行选唯一身份，而是让多个 Prey Interpreter 并行解释；鱼分别评价这些解释，最后同级解释取最大适配系数。</p>
+  <div class="arch">
+  <svg viewBox="0 0 1180 700" role="img" aria-label="路亚 Response 模块图">
+    <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#7d8ca3"/></marker></defs>
+
+    <rect x="25" y="45" width="210" height="90" rx="16" class="box input"/>
+    <text x="130" y="78" text-anchor="middle" class="label">拟饵 / 饵装配</text>
+    <text x="130" y="102" text-anchor="middle" class="small">Lure Assembly</text>
+    <text x="130" y="122" text-anchor="middle" class="micro">声明可表达多个 Prey Type</text>
+
+    <rect x="25" y="185" width="210" height="125" rx="16" class="box input"/>
+    <text x="130" y="216" text-anchor="middle" class="label">Shared Facts</text>
+    <text x="130" y="239" text-anchor="middle" class="small">共同事实提取</text>
+    <text x="130" y="263" text-anchor="middle" class="micro">速度 · 轨迹 · 姿态</text>
+    <text x="130" y="283" text-anchor="middle" class="micro">水层 · 部件动作 · 空间关系</text>
+
+    <path d="M130 135 L130 182" class="arrow"/>
+
+    <rect x="285" y="30" width="400" height="400" rx="22" class="group"/>
+    <text x="305" y="60" class="label">Prey Interpretation｜猎物解释层</text>
+    <text x="305" y="82" class="small">同一份事实，各种猎物各自解释</text>
+
+    <rect x="315" y="110" width="340" height="82" rx="15" class="box interp"/>
+    <text x="485" y="140" text-anchor="middle" class="label">Baitfish Interpreter</text>
+    <text x="485" y="164" text-anchor="middle" class="small">Support + Atomic / Composite State</text>
+
+    <rect x="315" y="218" width="340" height="82" rx="15" class="box interp"/>
+    <text x="485" y="248" text-anchor="middle" class="label">Crayfish Interpreter</text>
+    <text x="485" y="272" text-anchor="middle" class="small">Support + Atomic / Composite State</text>
+
+    <rect x="315" y="326" width="340" height="82" rx="15" class="box interp"/>
+    <text x="485" y="356" text-anchor="middle" class="label">Frog Interpreter</text>
+    <text x="485" y="380" text-anchor="middle" class="small">Support + Atomic / Composite State</text>
+
+    <path d="M235 245 C260 245 268 150 313 150" class="arrow"/>
+    <path d="M235 245 L313 258" class="arrow"/>
+    <path d="M235 245 C260 245 270 366 313 366" class="arrow"/>
+
+    <rect x="745" y="42" width="385" height="118" rx="17" class="box fish"/>
+    <text x="938" y="73" text-anchor="middle" class="label">Fish Side Context</text>
+    <text x="938" y="98" text-anchor="middle" class="small">Species × Engagement Mode × Size Cohort</text>
+    <text x="938" y="122" text-anchor="middle" class="small">+ Cast Fish Condition Snapshot</text>
+    <text x="938" y="144" text-anchor="middle" class="micro">不要求先生成具体鱼个体</text>
+
+    <rect x="745" y="205" width="385" height="230" rx="20" class="box resp"/>
+    <text x="938" y="238" text-anchor="middle" class="label">Response Evaluation｜五项评价</text>
+    <text x="785" y="278" class="small">+ FoodValue</text>
+    <text x="785" y="307" class="small">+ AttackTrigger</text>
+    <text x="785" y="336" class="small">− ClosingCost</text>
+    <text x="785" y="365" class="small">− RiskCost</text>
+    <text x="785" y="394" class="small">− WillingnessThreshold</text>
+    <text x="965" y="278" class="micro">食物值不值得吃</text>
+    <text x="965" y="307" class="micro">当前状态是否额外促发捕食</text>
+    <text x="965" y="336" class="micro">追起来有多费劲</text>
+    <text x="965" y="365" class="micro">终端钓组是否露馅</text>
+    <text x="965" y="394" class="micro">当前鱼情需要多强理由</text>
+
+    <path d="M655 150 C705 150 705 260 743 260" class="arrow"/>
+    <path d="M655 258 L743 315" class="arrow"/>
+    <path d="M655 366 C700 366 708 370 743 370" class="arrow"/>
+    <path d="M938 160 L938 202" class="arrow"/>
+
+    <rect x="390" y="480" width="285" height="84" rx="16" class="box out"/>
+    <text x="532" y="512" text-anchor="middle" class="label">各 Prey 的适配系数 Cᵢ</text>
+    <text x="532" y="538" text-anchor="middle" class="small">0 ≤ Cᵢ ≤ 1</text>
+    <path d="M820 435 C820 475 700 520 678 520" class="arrow"/>
+
+    <rect x="390" y="590" width="285" height="70" rx="16" class="box out"/>
+    <text x="532" y="620" text-anchor="middle" class="label">Sibling Max</text>
+    <text x="532" y="642" text-anchor="middle" class="small">得到最终适配系数 C</text>
+    <path d="M532 564 L532 588" class="arrow"/>
+
+    <rect x="760" y="500" width="195" height="82" rx="16" class="box fish"/>
+    <text x="858" y="532" text-anchor="middle" class="label">Opportunity</text>
+    <text x="858" y="557" text-anchor="middle" class="small">机会量 L</text>
+
+    <rect x="760" y="610" width="195" height="64" rx="16" class="box join"/>
+    <text x="858" y="648" text-anchor="middle" class="label">L × C</text>
+    <path d="M675 625 L758 642" class="arrow"/>
+    <path d="M858 582 L858 607" class="arrow"/>
+
+    <rect x="985" y="610" width="160" height="64" rx="16" class="box out"/>
+    <text x="1065" y="637" text-anchor="middle" class="label">候选贡献</text>
+    <text x="1065" y="658" text-anchor="middle" class="micro">进入后续抽取</text>
+    <path d="M955 642 L983 642" class="arrow"/>
+  </svg>
+  </div>
+  <div class="callout good" style="margin-top:14px"><strong>一句话：</strong>拟饵先被不同猎物解释器并行“理解”，鱼再按自己的模式、体型档和鱼况评价这些解释；同级解释取 max，最后再和机会量 L 合流。</div>
+</section>
+
+<section>
+  <h2 class="section-title">2. Interpreter 到底解释什么？</h2>
+  <div class="grid g2">
+    <div class="card">
+      <span class="tag purple">Support Interpretation</span>
+      <h3>“现在有多像这种猎物？”</h3>
+      <p>外观、整体运动、局部动作、空间关系共同提供证据。同一事实可以被多个 Prey Type 读，但每个类型自己解释。</p>
+    </div>
+    <div class="card">
+      <span class="tag blue">State Interpretation</span>
+      <h3>“如果按这种猎物理解，它现在是什么状态？”</h3>
+      <p>例如移动、停顿、下落、逃逸样、失衡样。状态不会自动变成 Bonus；只有具体 Response 子机制决定是否结算。</p>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:16px">
+    <table class="table">
+      <thead><tr><th>Evidence Family</th><th>中文</th><th>回答什么</th><th>典型输入</th><th>边界</th></tr></thead>
+      <tbody>
+        <tr><td class="strong">Appearance</td><td>外观证据</td><td>看起来像什么</td><td>轮廓、比例、颜色/反光、部件布局</td><td>不读整体运动</td></tr>
+        <tr><td class="strong">WholeBodyMotion</td><td>整体运动证据</td><td>整体怎么运动像什么</td><td>速度模式、方向变化、游/爬/跳/漂/下沉</td><td>不重复局部部件动作</td></tr>
+        <tr><td class="strong">Articulation</td><td>局部动作证据</td><td>局部部件怎么动像什么</td><td>尾摆、腿踢、裙丝、局部摆动</td><td>不重复整体轨迹</td></tr>
+        <tr><td class="strong">SpatialRelation</td><td>空间关系证据</td><td>出现在哪里更合理</td><td>水面、近底、中层、触底、离底高度</td><td>默认弱证据，不能单独制造强身份</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">3. Dynamic Route 不再是大模块，只是“动态表达规则”</h2>
+  <p class="lead">它最初解决的是：一个东西静止时已经有点像某猎物，动起来以后可以表达得更充分。现在把它收进 Prey Interpreter 内部即可。</p>
+  <div class="mini-flow">
+    <div class="mini-node"><div class="em">鱼形外观</div><div class="note">base support = 0.60</div></div>
+    <div class="mini-arrow">+</div>
+    <div class="mini-node"><div class="em">正常游动 + 尾摆</div><div class="note">动态表达匹配 f</div></div>
+    <div class="mini-arrow">→</div>
+    <div class="mini-node"><div class="em">更高 baitfish support</div><div class="note">回答“更像不像小鱼”</div></div>
+  </div>
+  <div class="callout" style="margin-top:14px"><strong>同一段 darting 可以被读两次，但不是重复计权：</strong>一次用于“运动以后更像小鱼”而改变 Support；另一次用于“如果已经是小鱼，这是不是逃逸状态”而产生 AttackTrigger。两个问题不同。</div>
+</section>
+
+<section>
+  <h2 class="section-title">4. 姿态只保留两层：原子 + 主导分子</h2>
+  <div class="pose">
+    <div class="card">
+      <span class="tag blue">Atomic Pose</span>
+      <h3>当前这一刻是什么</h3>
+      <div class="pillrow"><span class="pill">Move</span><span class="pill">Pause</span><span class="pill">Rise</span><span class="pill">Fall</span></div>
+    </div>
+    <div class="arrowtxt">＋</div>
+    <div class="card">
+      <span class="tag purple">Composite Pose</span>
+      <h3>当前姿态 + 必要前史</h3>
+      <div class="pillrow"><span class="pill">Move→Pause</span><span class="pill">Twitch→Pause</span><span class="pill">Burst→Pause</span><span class="pill">Burst→Turn→Pause</span></div>
+    </div>
+  </div>
+  <div class="callout warn" style="margin-top:14px"><strong>每个 Prey Interpretation 同时最多保留：</strong>1 个当前 Atomic Pose + 0/1 个主导 Composite Pose。水面、近底、侧翻角等仍是正交状态维度，不算更多“姿态”。</div>
+</section>
+
+<section>
+  <h2 class="section-title">5. “游得更像”不是 AttackTrigger</h2>
+  <div class="grid g2">
+    <div class="card">
+      <span class="tag green">Prey Support</span>
+      <h3>像不像</h3>
+      <p>自然匀速游、正常尾摆、合理水层，都可能让 baitfish interpretation 更可信。</p>
+    </div>
+    <div class="card">
+      <span class="tag orange">AttackTrigger</span>
+      <h3>为什么现在扑</h3>
+      <p>已经认可这是可吃猎物之后，逃逸、受伤、脆弱等状态才可能额外促发捕食动作。当前正式准入只有 Escape-like。</p>
+    </div>
+  </div>
+  <div class="formula" style="margin-top:16px">
+    <span class="accent">DecisionMargin</span><br>
+    = FoodValue<br>
+    <span class="plus">+ AttackTrigger</span><br>
+    <span class="minus">- ClosingCost</span><br>
+    <span class="minus">- RiskCost</span><br>
+    <span class="minus">- WillingnessThreshold</span><br><br>
+    C = clamp((Margin - M0) / (M1 - M0), 0, 1)
+  </div>
+  <div class="callout good" style="margin-top:14px"><strong>因此 Trigger 不会把基础强度放大失控：</strong>再强也只能把适配系数 C 推到 1，不能让 C 大于 1。</div>
+</section>
+
+<section>
+  <h2 class="section-title">6. 鱼体型：用 Size Cohort，不提前生成具体鱼</h2>
+  <div class="grid g3">
+    <div class="card"><span class="tag cyan">Species</span><h3>鱼种</h3><p>决定基础食性、能力等长期差异。</p></div>
+    <div class="card"><span class="tag cyan">Engagement Mode</span><h3>中鱼习性模式</h3><p>同一鱼种在不同模式下可以有不同 Response。</p></div>
+    <div class="card"><span class="tag cyan">Size Cohort</span><h3>体型档</h3><p>先用小 / 中 / 大等 cohort 参与计算，最终长度重量后抽。</p></div>
+  </div>
+  <div class="mini-flow" style="margin-top:14px">
+    <div class="mini-node"><div class="em">predator size cohort + prey size</div><div class="note">尺寸关系</div></div>
+    <div class="mini-arrow">→</div>
+    <div class="mini-node"><div class="em">SizePreferenceAdjustment</div><div class="note">喜欢多大的猎物</div></div>
+    <div class="mini-arrow">；</div>
+    <div class="mini-node"><div class="em">species × size cohort</div><div class="note">追赶能力</div></div>
+    <div class="mini-arrow">→</div>
+    <div class="mini-node"><div class="em">InterceptSpeedLimit</div></div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">7. Closing 第一版刻意去掉 θ</h2>
+  <p class="lead">没有真实鱼坐标，就不模拟“鱼到底在拟饵哪个方向”。第一版统一假定：形成摄食机会时，鱼正在追拟饵。</p>
+  <div class="formula">
+    q = 拟饵相对水体水平速度 / InterceptSpeedLimit<br><br>
+    ClosingCost = K_close × q² × ActivityCostMultiplier(Activity)
+  </div>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card"><span class="tag green">保留</span><h3>真正购买玩法的东西</h3><p>鱼种 / 体型能力差异、当前 Activity、高速追赶代价。</p></div>
+    <div class="card"><span class="tag red">刻意省略</span><h3>没有可靠事实的二阶几何</h3><p>“虽然饵很快，但刚好迎面游来，所以很好追”等相对方位特例。</p></div>
+  </div>
+</section>
+
+<section>
+  <h2 class="section-title">8. Risk：先把终端钓组做简单</h2>
+  <p class="lead">目标饵本身负责 prey expression；目标饵之外的前导线、钩、别针、转环等终端钓组，负责 TackleConspicuousness。</p>
+  <div class="formula">
+    TackleConspicuousness = 1 - Π(1 - cᵢ)<br><br>
+    <small>cᵢ = 每个终端钓组逻辑部件的显眼度 ∈ [0,1]</small>
+  </div>
+  <div class="callout" style="margin-top:14px"><strong>第一版可直接：</strong>SuspicionLoad ≈ TackleConspicuousness，再由 RiskCost = K_wary × Wariness × SuspicionLoad 结算。水体透明度、光照等可见性修正等真的需要时再加。</div>
+</section>
+
+<section>
+  <h2 class="section-title">9. Fish Condition：一竿一个 Snapshot</h2>
+  <div class="mini-flow">
+    <div class="mini-node"><div class="em">Cast Start</div><div class="note">抛竿开始</div></div>
+    <div class="mini-arrow">→</div>
+    <div class="mini-node"><div class="em">解析当前 DEF / ConditionGroup</div></div>
+    <div class="mini-arrow">→</div>
+    <div class="mini-node"><div class="em">CastFishConditionSnapshot</div><div class="note">Activity / Motivation / Diet Shift / Wariness</div></div>
+    <div class="mini-arrow">→</div>
+    <div class="mini-node"><div class="em">本竿固定只读</div><div class="note">下一竿重新解析</div></div>
+  </div>
+  <div class="callout warn" style="margin-top:14px"><strong>例子：</strong>05:59 抛竿，06:00 切时段，本竿继续用 05:59 的 Snapshot；下一竿才切新 DEF。Wariness 未来若需要 runtime accumulation，再单独加授权 overlay。</div>
+</section>
+
+<section>
+  <h2 class="section-title">10. C 和 L 各自回答什么？</h2>
+  <div class="grid g2">
+    <div class="card">
+      <span class="tag orange">C｜适配系数</span>
+      <h3>机会摆在面前时，有多适配？</h3>
+      <p>由食物价值、AttackTrigger、Closing、Risk、摄食意愿门槛共同决定。范围固定 0~1。</p>
+    </div>
+    <div class="card">
+      <span class="tag green">L｜机会量</span>
+      <h3>这个机会实际上形成了多少？</h3>
+      <p>时间、空间、垂直窗口、覆盖、有效交互等属于 Opportunity。停得更久不保证 L 必然更大。</p>
+    </div>
+  </div>
+  <div class="formula" style="margin-top:16px">候选贡献 q = L × C</div>
+</section>
+
+<section>
+  <h2 class="section-title">11. 第一版刻意不做什么</h2>
+  <table class="table">
+    <thead><tr><th>刻意不做</th><th>为什么</th></tr></thead>
+    <tbody>
+      <tr><td class="strong">Prediction / 运动可预测性</td><td>大部分效果已由 Support、Trigger、Closing、Opportunity、Risk 承接；残余独立策略价值尚未证明。</td></tr>
+      <tr><td class="strong">θ / 相对方位积分</td><td>没有真实鱼坐标，不伪造 encounter geometry；首版统一按“鱼在追拟饵”估算。</td></tr>
+      <tr><td class="strong">PauseBonus</td><td>Pause 已能进入 prey pattern、Closing 与 Opportunity，不再匿名加分。</td></tr>
+      <tr><td class="strong">停越久 L 越大</td><td>duration 只是 Opportunity 输入；错误水层、无效窗口、覆盖损失时，多停未必更好。</td></tr>
+      <tr><td class="strong">先生成具体鱼</td><td>先按 Size Cohort 评价，选中后再抽具体长度、重量、品质。</td></tr>
+      <tr><td class="strong">复杂视觉显眼度模拟</td><td>第一版先用终端钓组部件饱和聚合，等数据证明需要再加环境可见性修正。</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section>
+  <h2 class="section-title">12. 下一步不是重画框架，而是生产化</h2>
+  <div class="grid g3">
+    <div class="card"><span class="tag purple">Prey</span><h3>规则生产</h3><p>各 Prey Type 的具体 Evidence、Dynamic Expression、Atomic / Composite Pose。</p></div>
+    <div class="card"><span class="tag orange">Response</span><h3>参数与输入</h3><p>Escape-like 提取、SizePreference、InterceptSpeedLimit、TackleConspicuousness。</p></div>
+    <div class="card"><span class="tag green">Upstream</span><h3>Opportunity / Fish Condition</h3><p>L 的生产函数、窗口与 reducer；四个 Fish Condition 的 baseline 曲线与标定。</p></div>
+  </div>
+</section>
+
+<div class="footer">当前会议稿基于 Proposal C 工作分支继续收敛；用于方向对齐，不代表生产参数批准。</div>
+</div></body>
+</html>
