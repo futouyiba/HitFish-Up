@@ -5,6 +5,8 @@
 > 权威边界：本目录整理当前讨论形成的工作提案、工作决定、已排除方向和跨会话上下文。它不是 FCF Current Contract，不自动覆盖现有中鱼框架、Response Contract 或术语规范。正式术语与权威关系仍以 [`docs/README.md`](../README.md)、[`docs/authority-model.md`](../authority-model.md) 和对应 Current 文档为准。
 >
 > 上游裁定依赖：Proposal C 的 Issue #152 五项 Owner 裁定记录在 PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 的提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`，文件为 `docs/proposals/lure-response-proposal-c-owner-adjudication-2026-10-29.md`。截至本页日期，PR #130 仍为 draft，记录尚未合并到 `main`，因此这里只把它作为 Proposal C 的上游 Working 裁定依据，不称为已合并 Current Contract。Groundbait 与该裁定重叠的 Opportunity、Risk、Prediction、Capacity 和 `L` owner 边界不得重复投票；若后续 PR 合并或裁定变更，再按新版本复核承接范围。
+>
+> Fish Condition 的七项 Owner 裁定见 [Issue #161](https://github.com/futouyiba/HitFish-Up/issues/161) 的 Owner 评论（2026-10-30）：runtime overlay 必须逐 Condition 由机制 Contract 授权，当前只有 Wariness 有累积依据；Activity 不设语义生产上界。`candidate/end-to-end-algorithm.md` §4、§8.2、§9 按该裁定和 Proposal C closure 收窄为 Candidate。
 
 ## 术语对照
 
