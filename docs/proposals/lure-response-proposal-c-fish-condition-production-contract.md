@@ -89,13 +89,15 @@ FishConditionBlock {
 
 ```text
 resolved(condition) =
-  baseline.value       如果 status = Resolved 且无 overlay
-  baseline + overlay   如果该 Condition 被授权且有有效 overlay
-  Unknown              过期 / 越界 / 缺来源 / overlay 无效
+  baseline.value          status = Resolved，且无 overlay 或 overlay 已过期
+  baseline + delta        overlay 被授权、在有效期内、结果在范围内
+  Unknown                 baseline 过期 / 越界 / 缺来源
+  InvalidInput            overlay 指向未授权 Condition，或合并结果越界
 ```
 
 - overlay 必须声明来源、适用区间与规则版本；
-- overlay 只能修改被机制 Contract 明确授权的 Condition；
+- overlay 只能修改被机制 Contract 明确授权的 Condition；越权 overlay 是配置错误，标 `InvalidInput`，不能静默应用；
+- 过期 overlay 回落到 baseline，不沿用旧增量；
 - 当前只有 Wariness 具备 runtime 语义依据；V1 可只消费 baseline；
 - Response 不得写回任何 Fish Condition。
 
