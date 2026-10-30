@@ -115,6 +115,7 @@ Reject            → typed zero，不进入连续公式
 Unknown           → 需要的下游步骤转 ResolutionIncomplete
 NotConfigured     → 同上，且不当作 NoMatch
 NoMatch           → 只有规则明确给数值时才转 Resolved
+NotApplicable     → 该 family 不在本次评价范围，不制造 Unknown
 InvalidInput      → 配置或输入错误，不可 roll
 ResolvedNonResponsive → C=0
 ResolvedResponsive    → 0<C<=1
