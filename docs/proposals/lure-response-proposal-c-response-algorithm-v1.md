@@ -43,39 +43,78 @@ function response(segment, assembly, fc, opportunity, params):
 
   # 2. 每个 sibling family
   for family in declaredSiblingSet:
-      if supports[family] == Reject:
-          interval[family] = (Reject, 0.0)
+      support = supports[family]
+
+      if support == Reject:
+          interval[family] = (Reject, 0.0, 0.0)
           continue
-      if supports[family] in (Unknown, NotConfigured, InvalidInput):
-          interval[family] = (ResolutionIncomplete, None)
+      if support == NoMatch:
+          if ruleReturnsNumber(family):
+              v = ruleValue(family)
+              interval[family] = (Resolved, v, v)
+          else:
+              interval[family] = (ResolutionIncomplete, 0.0, 1.0)
+          continue
+      if support == Unknown:
+          lo, hi = knownSupportBounds(family)      # 默认 (0,1)，有部分信息就收窄
+          interval[family] = (ResolutionIncomplete, lo, hi)
+          continue
+      if support == InvalidInput:
+          interval[family] = (InvalidInput, 0.0, 1.0)
+          continue
+      if support == NotConfigured:
+          interval[family] = (ResolutionIncomplete, 0.0, 1.0)
           continue
 
-      state = extractState(segment, family)    # dims, events, TriggerIntensity
+      state = extractState(segment, family)        # dims, events, TriggerIntensity
+      if state.status == Reject:
+          interval[family] = (Reject, 0.0, 0.0)     # typed zero，短路
+          continue
+      if state.status == InvalidInput:
+          interval[family] = (InvalidInput, 0.0, 1.0)
+          continue
       if state.status in (Unknown, NotConfigured):
-          interval[family] = (ResolutionIncomplete, None)
+          interval[family] = (ResolutionIncomplete, 0.0, 1.0)
           continue
 
-      if supports[family] is an interval:
-          # 支持区间按同一规则传播，得到响应区间；不提前取中点
-          interval[family] = responseInterval(supports[family], state, fc, params)
+      if support is an interval:
+          interval[family] = responseInterval(support, state, fc, params)
           continue
 
-      C_cond = evaluate(state, fc, params)     # 已解析输入下的条件响应
-      if C_cond is Unknown / NotConfigured / InvalidInput:
-          interval[family] = (ResolutionIncomplete, None)
+      C_cond = evaluate(state, fc, params)         # 已解析输入下的条件响应
+      if C_cond == Reject:
+          interval[family] = (Reject, 0.0, 0.0)
+          continue
+      if C_cond == InvalidInput:
+          interval[family] = (InvalidInput, 0.0, 1.0)
+          continue
+      if C_cond is Unknown / NotConfigured:
+          interval[family] = (ResolutionIncomplete, 0.0, 1.0)
           continue
 
-      C_f = supports[family].value * C_cond
-      interval[family] = (Resolved, C_f)
+      C_f = support.value * C_cond
+      interval[family] = (Resolved, C_f, C_f)
 
   # 3. sibling 组成
-  (status, C_feed) = compose(interval)
-  if status != Resolved: return (ResolutionIncomplete, bounds)
+  (status, L_feed, U_feed) = compose(interval)
+  if status != Resolved:
+      return (status, (L_feed, U_feed))   # response_bounds；status 可为 RI 或 InvalidInput
 
   # 4. 机会接入
-  if opportunity.L is Unknown / NotConfigured: return ResolutionIncomplete
-  q = opportunity.L * C_feed
+  if opportunity.L == InvalidInput: return InvalidInput
+  if opportunity.L in (Unknown, NotConfigured): return ResolutionIncomplete
+  q = opportunity.L * L_feed
   return (Resolved, q)
+
+
+function compose(interval):
+  # Reject 分支按 (0,0) 参与 max；Unresolved 分支用已知边界参与
+  L_feed = max(branch.lower for branch in interval)
+  U_feed = max(branch.upper for branch in interval)
+  if any(branch.status == InvalidInput for branch in interval):
+      return (InvalidInput, L_feed, U_feed)
+  if L_feed == U_feed: return (Resolved, L_feed, U_feed)
+  return (ResolutionIncomplete, L_feed, U_feed)
 
 
 function evaluate(state, fc, params):
@@ -93,7 +132,10 @@ function evaluate(state, fc, params):
 
 function responseInterval([a, b], state, fc, params):
   C_cond = evaluate(state, fc, params)     # 以 support=1 计算条件响应
-  return (a * C_cond, b * C_cond)          # 不提前取中点
+  if C_cond == Reject: return (Reject, 0.0, 0.0)
+  if C_cond is Unknown / NotConfigured / InvalidInput:
+      return (C_cond, 0.0, 1.0)
+  return (ResolutionIncomplete, a * C_cond, b * C_cond)   # 不提前取中点；收敛由 compose 判定
 ```
 
 ### 2.1 各步状态
@@ -127,15 +169,16 @@ ResolvedResponsive    → 0<C<=1
 Reject > InvalidInput > NotConfigured > Unknown > Resolved
 ```
 
-- 同一分支出现 `Reject` 时按 typed zero 处理，不再检查其余输入；
+- 同一分支出现 `Reject`（target relation、support、state 或评价项）时按 typed zero 短路，不再检查该分支其余输入；
 - sibling 之间不做优先级合并：各自映射为区间后取 max；
-- `NotApplicable` 的 family 不进入 sibling set，也不制造 `Unknown`。
+- `NotApplicable` 的 family 不进入 sibling set，也不制造 `Unknown`；
+- 任何数值输入为 NaN / Infinity 时按 `InvalidInput` 处理，不进入 `clamp`。
 
 ### 失败对照
 
 | 情况 | 结果 |
 |---|---|
-| Activity 非有限或为负 | `InvalidInput` → `ResolutionIncomplete` |
+| Activity 非有限或为负 | 该分支 `InvalidInput`，不可 roll |
 | Motivation 缺失 | `ResolutionIncomplete`，不回填 0.5 |
 | Wariness 缺失且存在 cue | `ResolutionIncomplete` |
 | Wariness 缺失且无 cue | `RiskCost=0` |

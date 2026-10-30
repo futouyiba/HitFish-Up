@@ -8,7 +8,7 @@
 
 - 四个 Condition 都是鱼侧状态，不是四个奖励或惩罚；
 - 同一上游事实可以进入多个 Condition，但每个 Condition 必须有独立的 cause → Condition 语义；同一效果不得在两处重复结算；
-- 任何 Condition 的生成都不读取玩家当前操作或饵的呈现；
+- 任何 Condition 的生成都不读取玩家当前操作或饵的当前呈现；历史遭遇记录只能作为独立摘要输入，且必须声明来源与时间范围；
 - `Unknown` 不默认成 1.0、0.5 或 0；
 - Bake 负责执行、物化与校验，不因此拥有语义裁定权。
 
@@ -106,7 +106,7 @@
 |---|---|---|
 | 钓压 / fishing pressure | 长期警戒基线 | 术语与设计包提到“作为上游原因” |
 | 近期受惊事件 | 短期抬升 | 无仓内映射 |
-| 重复见到同类饵 / 线组 | conditioning | 无仓内映射 |
+| 重复见到同类饵 / 线组（历史遭遇记录，不读当前呈现） | conditioning | 无仓内映射 |
 | 环境突变（光、声、船影） | 瞬时抬升 | 无仓内映射 |
 
 若实现 runtime overlay，必须先闭合：
@@ -124,7 +124,7 @@
 1. 无 `SuspicionLoad` 时，高 Wariness 不产生 `RiskCost`；
 2. `SuspicionLoad` 只来自具名 cue；
 3. `Wariness` 不改变 FoodValue 或 Motivation；
-4. overlay 无效时回落到 baseline，不沿用旧 overlay。
+4. 过期 overlay 回落到 baseline；越权 overlay 标 `InvalidInput`；baseline 本身过期或越界转 `Unknown`。
 
 ## 6. Cause 准入表（全部未证实）
 
