@@ -64,6 +64,8 @@ SuspicionLoad = 0 → RiskCost = 0
 
 ## 3. 仍需 Owner 决定
 
+已整理成[Owner 决定请求](lure-response-proposal-c-fish-condition-owner-decisions.md)，含选项与影响。摘要：
+
 1. 是否把路径 B 正式 Contract 化，以及除 Wariness 外是否允许任何 Condition 运行时更新；
 2. Wariness 累积的 owner、事件、粒度、有效期、衰减与会话记忆边界；
 3. 过期转 `Unknown` 是否作为正式状态协议；
