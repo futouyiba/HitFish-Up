@@ -25,6 +25,7 @@
 | Fish Condition 与 Bake 的反推需求 | [鱼况/Bake 契约](lure-response-proposal-c-fish-condition-bake-contract.md) |
 | Fish Condition 裁决记录（2026-10-30） | [裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md) |
 | Fish Condition 剩余七项：Owner 决定请求 | [Owner 决定请求](lure-response-proposal-c-fish-condition-owner-decisions.md) |
+| Fish Condition 的载体、状态与校验 | [Fish Condition Production Contract](lure-response-proposal-c-fish-condition-production-contract.md) |
 | 图形化说明 | [设计图](../mockups/proposal-c-design-map.html) |
 
 口径来源：本包按 `docs/lure-response-joint-evaluation` 的 `311ae70d` Working Closure 快照核对。该分支在此之后持续更新，本轮未逐条重新纳入；引用前先核对该分支当前 head。研究分支更新后，先回写设计包，再更新本入口。

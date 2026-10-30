@@ -72,5 +72,5 @@
 2. `TackleConspicuousness`：按 2026-10-30 裁定暂不投入，`RiskCost` 保持 0；需要真实警戒玩法时再立项字段与 owner；
 3. 机会量 `L` 归 Opportunity 后，由该线补生产函数、单位与窗口口径；
 4. 用 `proposal_c_strategy_probe.py` 的排序结果检查参数敏感度，再进入生产标定；
-5. Fish Condition / Bake：Owner 已裁定架构与七项；下一步是 DEF baseline block 的字段形态与校验、各 Condition 的机制 Contract，再谈上游输入与公式；
+5. Fish Condition / Bake：Owner 已裁定架构与七项；[Production Contract](lure-response-proposal-c-fish-condition-production-contract.md) 已给出 DEF block、状态与校验，下一步是各 Condition 的机制 Contract 与 main 窝料文档的三处对齐；
 6. Prediction 保持 `Deferred Research`，满足重开条件时再单独开题。
