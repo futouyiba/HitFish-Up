@@ -169,7 +169,7 @@ Proposal C 的 Issue #152 五项 Owner 裁定记录在 PR [#130](https://github.
 ### C-08｜发现与趋近的阶段划分
 
 - **主张 A**：Groundbait Candidate 把发现和趋近合并在 `Encounter` 里。出处：`candidate/feeding-event.md` §2.1。
-- **主张 B**：Proposal C 区分 `ClosingCost` 和 `RiskCost`，把接近与风险分开；Prediction 第一版为 `Deferred Research`，不进入当前五项式 `DecisionMargin`。外部研究也建议把“进入范围、试探、攻击、吞饵”拆成多阶段。出处：`docs/proposals/lure-response-proposal-c-feeding-response-working-closure.md` §4–§5（PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`）；`main` 上的 `docs/proposals/lure-response-proposal-c-current-review-entry-2026-10-27.md` 仍是含 `PredictionCost` 的六项式，属未同步旧文档，本目录不据此重开；外部研究 `programaticHitFish/docs/rf4_fishing_planet_bite_mechanism_research_report.md`。
+- **主张 B**：Proposal C 区分 `ClosingCost` 和 `RiskCost`，把接近与风险分开；Prediction 第一版为 `Deferred Research`，不进入当前五项式 `DecisionMargin`。外部研究也建议把“进入范围、试探、攻击、吞饵”拆成多阶段。出处：`docs/proposals/lure-response-proposal-c-feeding-response-working-closure.md` §4–§5（PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`）；截至 2026-10-30，`main` 上的 `docs/proposals/lure-response-proposal-c-current-review-entry-2026-10-27.md` 仍是含 `PredictionCost` 的六项式，属未同步旧文档，本目录不据此重开；外部研究 `programaticHitFish/docs/rf4_fishing_planet_bite_mechanism_research_report.md`。
 - **冲突点**：`Encounter` 同时承担感知、接近和时间窗口，难以区分“没看见”“不想靠近”“没时间”。
 - **影响**：Feeding Event、Cue、Fish Condition、刺鱼接口。
 - **暂定处理**：`KEEP_OPEN`。本目录保留 `Encounter` 作为合并候选，但在对象模型里记录它可能拆成 Detection / Approach / Temporal Opportunity。
