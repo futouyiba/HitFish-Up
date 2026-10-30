@@ -8,7 +8,7 @@
 
 > **先讲 4 个玩家钓鱼策略故事，再解释为什么需要后面的猎物解释、五项评价、鱼况和机会量。**
 
-> 与设计包的同步状态（2026-10-30）：以上四项 Owner 方向（去掉 θ、`TackleConspicuousness` 聚合公式、sibling 取 max、一竿一 Snapshot）尚未回写设计包。回写并复审前：
+> 与设计包的同步状态（2026-10-30）：本稿中的四项 Owner 方向（去掉 θ、`TackleConspicuousness` 聚合公式、同级猎物解释取 max、一竿一 Snapshot；HTML 说明稿同此边界）尚未回写设计包。回写并复审前：
 >
 > - `docs/proposals/lure-response-proposal-c-response-algorithm-v1.md`、`response-opportunity.md`、`semantic-contract.md` 与 probe 仍描述回写前的 Working 状态（逐 latent bearing 投影、有界 sibling 部分解析、Fish Condition validity 覆盖每个 segment）；
 > - 本分支的实现基线暂以设计包的算法与 probe 为准；本文方向在回写后取代相应条目；
