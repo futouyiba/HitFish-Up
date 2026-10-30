@@ -33,7 +33,7 @@ Recipe Facts
   → Feeding Place State
   → Feeding Event
   → Food / Flavor / Edible Utilization
-  → Candidate EIO（Groundbait 中间量，是否进入 Response 评价项见 §9）
+  → Candidate EIO（Groundbait 中间量，不作为 Response 评价项，见 §9）
   → Response 输入
 ```
 
@@ -393,7 +393,7 @@ DecisionMargin(θ)
 - WillingnessThreshold(FeedingMotivation)
 ```
 
-该式没有 `EIO` 项，也没有 `w_*` 权重；响应投影是 `M0/M1` 线性 clamp。下文 §9.1 的 `w_*` 加权和、顶层 `EIO` 项和 §9.2 的 sigmoid 投影都是 Groundbait 自己的接入形式。`EIO` 要成为第六项，必须另行证明它不与上述五项重复计权、每个 `w_*` 有明确归属，并取得 Response 侧审核；在这些条件满足前，§9 只能按 Groundbait Candidate 使用，不能写成 Proposal C 的 Response 规则，也不能升格为 Fish Condition 契约。
+该式没有 `EIO` 项，也没有 `w_*` 权重；响应投影是 `M0/M1` 线性 clamp。下文 §9.1 的 `w_*` 加权和与 §9.2 的 sigmoid 投影是 Groundbait 自己的接入形式；`EIO` 作为第六评价项尚未准入，准入前不进入 `M`。`EIO` 要成为第六项，必须另行证明它不与上述五项重复计权、每个 `w_*` 有明确归属，并取得 Response 侧审核；在这些条件满足前，§9 只能按 Groundbait Candidate 使用，不能写成 Proposal C 的 Response 规则，也不能升格为 Fish Condition 契约。
 
 ### 9.1 硬门与软量
 
@@ -415,12 +415,13 @@ G = G_resolution × G_flavor × G_opportunity × G_prey
 ```text
 M = b
   + w_food × FoodValue
-  + w_eio × normalize(EIO)
   + w_trigger × AttackTrigger
   - w_close × ClosingCost
   - w_risk × RiskCost
   - w_threshold × WillingnessThreshold
 ```
+
+`EIO` 不进入上式。它是 Groundbait 中间量（§8.3）；作为第六评价项要先完成独立语义、不重复计权和玩家策略价值的证明，并取得 Response 侧审核，准入前不得在实现中加入 `w_eio` 项。
 
 Proposal C 的 active 边界要求：
 
@@ -452,7 +453,7 @@ C = G × E_θ[C_conditional(θ)]
 
 ### 9.3 Groundbait 的接入
 
-Groundbait 通过 `FoodValue`、`FlavorGate`、`EIO` 和 `FeedingPlaceState` 接入 Response。其中 `FoodValue`、`FlavorGate` 与 `FeedingPlaceState` 属于已声明的接入面；`EIO` 仍按 §9 开头列为 Candidate，在完成第六项证明前不进入 `M`。Groundbait 不直接写 Fish Condition，不直接改 `SpatialDistributionWeight`，不再乘一次 `L`。
+Groundbait 通过 `FoodValue`、`FlavorGate` 与 `FeedingPlaceState` 接入 Response。`EIO` 只作为 Groundbait 中间量，按 §9 开头在完成第六项证明前不进入 `M`。Groundbait 不直接写 Fish Condition，不直接改 `SpatialDistributionWeight`，不再乘一次 `L`。
 
 同一持续窝料效果只能进入持久响应场或即时响应条件中的一个有效增量；若同时保留来源状态和即时摘要，必须带 provenance 并明确只消费一次。
 
