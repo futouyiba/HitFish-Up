@@ -5,6 +5,8 @@
 > 边界：本文把当前目录与 Proposal C 的已知边界组织成一条可执行的工作算法。它不是 FCF Current Contract，不提供生产标定值，也不把 PR 分支上的 Owner 裁定升级为 `main` 上的 Current。
 >
 > 上游依赖：Proposal C 的 Issue #152 五项 Owner 裁定记录在 PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 的提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`。截至 2026-10-30，该 PR 仍为 draft。本文承接其工作边界，但每次实现前仍须以最新提交复核。
+>
+> 鱼况边界：Fish Condition 的七项 Owner 裁定见 [Issue #161](https://github.com/futouyiba/HitFish-Up/issues/161) 的 Owner 评论（2026-10-30）。runtime overlay 必须逐 Condition 由该 Condition 的机制 Contract 授权。当前只有 Wariness 具备 runtime overlay 的语义依据；具体运行时更新仍须由 Wariness 机制 Contract 授权，并闭合事件来源、粒度、衰减、有效期和会话记忆。Activity、Feeding Motivation、Diet Shift 不因此自动获得 runtime 更新；Activity 不设语义生产上界。本文 §4 与 §8.2 按此收窄为 Candidate，§9 的加权式另按 Proposal C closure 标为 Groundbait Candidate 接口。
 
 ## 1. 一句话版本
 
@@ -30,7 +32,8 @@ Recipe Facts
   → Physical Release
   → Feeding Place State
   → Feeding Event
-  → Food / Flavor / Edible Utilization / EIO
+  → Food / Flavor / Edible Utilization
+  → Candidate EIO（Groundbait 中间量，不作为 Response 评价项，见 §9）
   → Response 输入
 ```
 
@@ -120,7 +123,11 @@ SpatialDistributionWeight
 
 四个参数是鱼侧状态，不是四个独立 Bonus。实现可以把状态按 FishStock、ConditionGroup、时间片保存，但必须声明键和生命周期。
 
-对任一 `[0,1]` 状态 `x`，采用有界的一阶更新作为工作算法：
+运行时更新是受机制授权的扩展点，不是四个 Condition 的通用默认。[Issue #161](https://github.com/futouyiba/HitFish-Up/issues/161) 的 Owner 裁定把 runtime overlay 定为受限扩展点：当前只有 Wariness 具备 runtime overlay 的语义依据，具体运行时更新仍须由 Wariness 机制 Contract 授权，并闭合事件来源、粒度、衰减、有效期和会话记忆；V1 允许只实现 Bake baseline。Activity、FeedingMotivation 和 DietShift 不因此自动获得 runtime 更新。
+
+下面的有界一阶更新是 Groundbait Candidate 的更新式，只适用于已由对应机制 Contract 授权、并在该 Contract 里声明为 `[0,1]` 的状态。它本身不构成任何 Condition 的 runtime 授权，也不能用来给未授权的 Condition 补一个运行时状态。
+
+对这样的状态 `x`：
 
 ```text
 α = 1 - exp(-Δt / τ_x)
@@ -138,6 +145,9 @@ x_next = clamp((1 - α) × x_prev + α × x_target, 0, 1)
 
 规则：
 
+- 未获 runtime 授权的 Condition 只消费 Bake baseline，不得用本式自行累加。
+- `Activity` 不适用本式：#161 裁定 Activity 非负且有限、不设语义生产上界，`1.0` 只是 Working reference，不是默认值或上界。本式两端的 `[0,1]` clamp 会强加一个 #161 明确拒绝的上界；若将来 Activity 要参与运行时更新，须先由 Activity 机制 Contract 授权并给出不引入上界的形式。
+- `FeedingMotivation`、`DietShift` 同样只按各自机制 Contract 声明的形式更新；未声明时停在 Bake baseline。
 - 缺失的必需 cause 产生 `ResolutionIncomplete`，不当作 0。
 - 显式 `Disabled` / `NotApplicable` 不参加聚合。
 - 同一环境事实不能同时在 `EnvCoeff` 和状态更新中产生两份未经说明的效果。
@@ -336,6 +346,8 @@ z_m = β_m
 P(select m | F) = exp(z_m) / Σ_{j∈F} exp(z_j)
 ```
 
+`w_wary × Wariness` 是 Groundbait 自己的消费者候选，不能从 Risk 的 Wariness 权限顺带继承。Proposal C 的 Wariness 消费走 `RiskCost`，而 #161 裁定 `TackleConspicuousness` 暂不投入字段与生产 owner、继续 `RiskCost = 0`；Fish Condition 侧的约定是 Response 只读 Wariness。把 Wariness 直接放进 Feeding Event 的动作选择 softmax 会产生一个新的消费者语义，须单独证明并取得 Response / Fish Condition 侧授权后才能作为现行规则。在那之前，`w_wary` 只能作为 Candidate 参数保留，并且必须可显式关闭、标记为未启用，不得写成已批准的 Risk 等效消费。
+
 对所选动作：
 
 ```text
@@ -370,6 +382,19 @@ EIO = Σ_o E_event(o) × value(o)
 
 ## 9. Response Evaluation
 
+本节公式是 Groundbait 的 Candidate 接口，不是 Proposal C 的 Response 公式。按 Proposal C 的 Feeding Response Working Closure（PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`，[`lure-response-proposal-c-feeding-response-working-closure.md`](https://github.com/futouyiba/HitFish-Up/blob/5caf1f119ab6e5a5c595a4ba913e7962aa338ec3/docs/proposals/lure-response-proposal-c-feeding-response-working-closure.md) §5）给出的工作形态，`DecisionMargin` 是五项名目量的无权求和：
+
+```text
+DecisionMargin(θ)
+= FoodValue
++ StateTriggerValue
+- ClosingCost(θ)
+- RiskCost
+- WillingnessThreshold(FeedingMotivation)
+```
+
+该式没有 `EIO` 项，也没有 `w_*` 权重；响应投影是 `M0/M1` 线性 clamp。下文 §9.1 的 `w_*` 加权和与 §9.2 的 sigmoid 投影是 Groundbait 自己的接入形式；`EIO` 作为第六评价项尚未准入，准入前不进入 `M`。`EIO` 要成为第六项，必须另行证明它不与上述五项重复计权、每个 `w_*` 有明确归属，并取得 Response 侧审核；在这些条件满足前，§9 只能按 Groundbait Candidate 使用，不能写成 Proposal C 的 Response 规则，也不能升格为 Fish Condition 契约。
+
 ### 9.1 硬门与软量
 
 先求硬门：
@@ -385,17 +410,18 @@ G = G_resolution × G_flavor × G_opportunity × G_prey
 - `G_opportunity = 0` 表示没有有效 Opportunity / 可消费机会；
 - `G_prey = 0` 表示目标解释被明确 Reject。
 
-然后求软的 `DecisionMargin`：
+然后求软的 `DecisionMargin`（Groundbait Candidate 版本）：
 
 ```text
 M = b
   + w_food × FoodValue
-  + w_eio × normalize(EIO)
   + w_trigger × AttackTrigger
   - w_close × ClosingCost
   - w_risk × RiskCost
   - w_threshold × WillingnessThreshold
 ```
+
+`EIO` 不进入上式。它是 Groundbait 中间量（§8.3）；作为第六评价项要先完成独立语义、不重复计权和玩家策略价值的证明，并取得 Response 侧审核，准入前不得在实现中加入 `w_eio` 项。
 
 Proposal C 的 active 边界要求：
 
@@ -427,7 +453,7 @@ C = G × E_θ[C_conditional(θ)]
 
 ### 9.3 Groundbait 的接入
 
-Groundbait 通过 `FoodValue`、`FlavorGate`、`EIO` 和 `FeedingPlaceState` 接入 Response。它不直接写 Fish Condition，不直接改 `SpatialDistributionWeight`，不再乘一次 `L`。
+Groundbait 通过 `FoodValue`、`FlavorGate` 与 `FeedingPlaceState` 接入 Response。`EIO` 只作为 Groundbait 中间量，按 §9 开头在完成第六项证明前不进入 `M`。Groundbait 不直接写 Fish Condition，不直接改 `SpatialDistributionWeight`，不再乘一次 `L`。
 
 同一持续窝料效果只能进入持久响应场或即时响应条件中的一个有效增量；若同时保留来源状态和即时摘要，必须带 provenance 并明确只消费一次。
 
