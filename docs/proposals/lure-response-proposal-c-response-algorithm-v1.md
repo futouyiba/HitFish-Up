@@ -1,0 +1,176 @@
+# Proposal C｜Response 端到端算法 v1（Candidate）
+
+状态：Working Algorithm / Candidate。把已收口的各层写成一条可执行规格；不引入新机制，不冻结生产参数。
+
+来源：设计骨架、语义契约、呈现解释与状态契约、五评价项契约、响应与机会契约、第一轮闭合审查、Fish Condition Production Contract。
+
+## 1. 输入与不变量
+
+输入：
+
+```text
+PresentationSegment   轨迹、时间、环境关系、局部记录
+AssemblySnapshot      证据绑定与适用标记
+FishCondition         resolved baseline（可选授权 overlay）
+OpportunityFacts      L 及其状态
+WorkingParams         K_close、TriggerBudget、M0/M1、tail 参数
+```
+
+不变量：
+
+1. 先按 latent bearing 算成本与 Margin，再投影，最后聚合；不能先平均 Margin。
+2. 支持度只乘一次；机会量只乘一次，`q = L × C`。
+3. `Unknown`、`NotConfigured`、`InvalidInput` 不当作 0；`Reject` 是 typed zero。
+4. 过期、越界或缺来源的 Fish Condition 不沿用最后值。
+5. 时间、停留、覆盖不进入出手余量。
+6. Candidate 后段不再乘 Response。
+7. 同一事实可被多层读取，但同一作用只在一个 owner 结算。
+
+## 2. 算法
+
+```text
+function response(segment, assembly, fc, opportunity, params):
+
+  # 0. 帧校验
+  require segment.valid and assembly.version == segment.assemblyVersion
+  require fc.version matches segment, fc.validity covers segment.time
+  if not satisfied: return ResolutionIncomplete
+
+  # 1. 猎物解释
+  supports = interpret(segment, assembly)      # per family: value | [L,U] | status
+  if supports covers no family: return NotApplicable
+
+  # 2. 每个 sibling family
+  for family in declaredSiblingSet:
+      if supports[family] == Reject:
+          interval[family] = (Resolved, 0.0)
+          continue
+      if supports[family] in (Unknown, NotConfigured, InvalidInput):
+          interval[family] = (ResolutionIncomplete, None)
+          continue
+
+      state = extractState(segment, family)    # dims, events, TriggerIntensity
+      if state.status in (Unknown, NotConfigured):
+          interval[family] = (ResolutionIncomplete, None)
+          continue
+
+      items = evaluate(supports[family], state, fc, params)
+      if any item is Unknown / NotConfigured / InvalidInput:
+          interval[family] = (ResolutionIncomplete, None)
+          continue
+
+      C_f = supports[family].value
+            * meanOverTheta(project(margin(theta)))
+      interval[family] = (Resolved, C_f)
+
+  # 3. sibling 组成
+  (status, C_feed) = compose(interval)
+  if status != Resolved: return (ResolutionIncomplete, bounds)
+
+  # 4. 机会接入
+  if opportunity.L is Unknown / NotConfigured: return ResolutionIncomplete
+  q = opportunity.L * C_feed
+  return (Resolved, q)
+
+
+function evaluate(support, state, fc, params):
+
+  food      = reject? typed zero : clamp(base + size + dietShift, 0, 1)
+  trigger   = params.TriggerBudget * state.TriggerIntensity
+  closing   = K_close * u_close(theta)^2 * activityMultiplier(fc.activity)
+  risk      = K_wary * fc.wariness * suspicionLoad      # 无 cue 时为 0
+  threshold = f(fc.feedingMotivation)                    # 分段线性 + tail
+
+  margin(theta) =
+      food + trigger - closing(theta) - risk - threshold
+```
+
+### 2.1 各步状态
+
+| 步骤 | 可返回 |
+|---|---|
+| 帧校验 | `ResolutionIncomplete` |
+| 猎物解释 | 数值 / 区间 / `Unknown` / `NotConfigured` / `NoMatch` |
+| 状态提取 | 状态维度、事件、`TriggerIntensity`；非数值状态向上传播 |
+| 评价 | 五项各自状态；`Reject` 单独处理 |
+| 投影 | 数值 `C(theta)`；不输出非数值 |
+| sibling 组成 | 标量或 `ResolutionIncomplete` + bounds |
+| 机会接入 | 标量 `q` 或 `ResolutionIncomplete` |
+
+## 3. 状态代数
+
+```text
+Reject            → typed zero，不进入连续公式
+Unknown           → 需要的下游步骤转 ResolutionIncomplete
+NotConfigured     → 同上，且不当作 NoMatch
+NoMatch           → 只有规则明确给数值时才转 Resolved
+InvalidInput      → 配置或输入错误，不可 roll
+ResolvedNonResponsive → C=0
+ResolvedResponsive    → 0<C<=1
+```
+
+聚合优先级（同一分支内）：
+
+```text
+Reject > InvalidInput > NotConfigured > Unknown > Resolved
+```
+
+- 同一分支出现 `Reject` 时按 typed zero 处理，不再检查其余输入；
+- sibling 之间不做优先级合并：各自映射为区间后取 max；
+- `NotApplicable` 的 family 不进入 sibling set，也不制造 `Unknown`。
+
+### 失败对照
+
+| 情况 | 结果 |
+|---|---|
+| Activity 非有限或为负 | `InvalidInput` → `ResolutionIncomplete` |
+| Motivation 缺失 | `ResolutionIncomplete`，不回填 0.5 |
+| Wariness 缺失且存在 cue | `ResolutionIncomplete` |
+| Wariness 缺失且无 cue | `RiskCost=0` |
+| DietShift[family] 缺失 | 该 family 的 FoodValue 不可闭合 |
+| TriggerIntensity 缺失 | `ResolutionIncomplete` |
+| support 为区间 | 进入 sibling 区间，不提前取中点 |
+| `L` 缺失 | `ResolutionIncomplete`，不是零机会 |
+
+## 4. 计算追溯
+
+输入：
+
+```text
+support = 1.0
+FoodValue = 0.70
+TriggerIntensity = 0.80 → StateTriggerValue = 0.08
+Activity multiplier = 1.0
+q = 0.40
+RiskCost = 0
+Motivation = 0.50 → threshold = 0.40
+M0 = 0, M1 = 0.40
+```
+
+逐 bearing 算成本与 Margin，投影后取平均：
+
+```text
+C_conditional = 0.874
+C_prey        = 1.0 × 0.874 = 0.874
+```
+
+若 `L = 0.50`：
+
+```text
+q = 0.50 × 0.874 = 0.437
+```
+
+只乘一次；Candidate 后段不再乘 Response。
+
+## 5. 可执行入口
+
+- `prototypes/lure-response/proposal_c_end_to_end_probe.py`：跑通 happy path、Unknown Activity、Reject、Unknown support、sibling 收敛 / 未收敛、`L` 缺失与单次乘法。
+- 各形状 probe：投影、Closing、Trigger、support retention、机会量。
+
+## 6. 未闭口
+
+- 各 Condition 的生成语义与标定；
+- 事件提取的滤波、采样与阈值；
+- `L` 的生产函数与窗口口径；
+- 真实 encounter geometry 是否引入 hard gate；
+- 生产参数：`K_close`、Trigger budget、`K_wary`、`M0/M1`、tail 参数。
