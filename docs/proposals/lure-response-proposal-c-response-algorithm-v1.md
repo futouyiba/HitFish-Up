@@ -39,11 +39,12 @@ function response(segment, assembly, fc, opportunity, params):
   # 1. 猎物解释
   supports = interpret(segment, assembly)      # per family: value | [L,U] | status
   if supports covers no family: return NotApplicable
+  if targetRelation == Reject: return (Reject, 0)   # typed hard zero，不再计算
 
   # 2. 每个 sibling family
   for family in declaredSiblingSet:
       if supports[family] == Reject:
-          interval[family] = (Resolved, 0.0)
+          interval[family] = (Reject, 0.0)
           continue
       if supports[family] in (Unknown, NotConfigured, InvalidInput):
           interval[family] = (ResolutionIncomplete, None)
@@ -54,13 +55,17 @@ function response(segment, assembly, fc, opportunity, params):
           interval[family] = (ResolutionIncomplete, None)
           continue
 
-      items = evaluate(supports[family], state, fc, params)
-      if any item is Unknown / NotConfigured / InvalidInput:
+      if supports[family] is an interval:
+          # 支持区间按同一规则传播，得到响应区间；不提前取中点
+          interval[family] = responseInterval(supports[family], state, fc, params)
+          continue
+
+      C_cond = evaluate(state, fc, params)     # 已解析输入下的条件响应
+      if C_cond is Unknown / NotConfigured / InvalidInput:
           interval[family] = (ResolutionIncomplete, None)
           continue
 
-      C_f = supports[family].value
-            * meanOverTheta(project(margin(theta)))
+      C_f = supports[family].value * C_cond
       interval[family] = (Resolved, C_f)
 
   # 3. sibling 组成
@@ -73,9 +78,10 @@ function response(segment, assembly, fc, opportunity, params):
   return (Resolved, q)
 
 
-function evaluate(support, state, fc, params):
+function evaluate(state, fc, params):
 
-  food      = reject? typed zero : clamp(base + size + dietShift, 0, 1)
+  # Returns a resolved conditional response, or a non-numeric status.
+  food      = clamp(base + size + dietShift, 0, 1)
   trigger   = params.TriggerBudget * state.TriggerIntensity
   closing   = K_close * u_close(theta)^2 * activityMultiplier(fc.activity)
   risk      = K_wary * fc.wariness * suspicionLoad      # 无 cue 时为 0
@@ -83,6 +89,11 @@ function evaluate(support, state, fc, params):
 
   margin(theta) =
       food + trigger - closing(theta) - risk - threshold
+
+
+function responseInterval([a, b], state, fc, params):
+  C_cond = evaluate(state, fc, params)     # 以 support=1 计算条件响应
+  return (a * C_cond, b * C_cond)          # 不提前取中点
 ```
 
 ### 2.1 各步状态

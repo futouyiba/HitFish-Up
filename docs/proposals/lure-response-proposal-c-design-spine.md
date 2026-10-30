@@ -96,6 +96,7 @@ ActualPresentation
 - [Fish Condition Production Contract](lure-response-proposal-c-fish-condition-production-contract.md)：DEF block、状态与校验；
 - [Response Algorithm v1](lure-response-proposal-c-response-algorithm-v1.md)：端到端算法与状态代数；
 - [Fish Condition 机制契约](lure-response-proposal-c-fish-condition-mechanisms.md)：四个 Condition 的语义、cause 与验收；
+- [回归矩阵](lure-response-proposal-c-regression-matrix.md)：规则到 probe 的覆盖与缺口；
 - [设计图](../mockups/proposal-c-design-map.html)：面向阅读的图形版本。
 
 这些材料共同构成 Proposal C 的设计工作包，不替代已审核的 Current Contract。

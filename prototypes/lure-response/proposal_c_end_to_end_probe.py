@@ -55,13 +55,13 @@ def conditional_c(food, trigger, activity, q, risk, motivation, n=720) -> float:
 def prey_response(support, state, food, activity, q, risk, motivation):
     """Return (status, C_f or None)."""
     if support == REJECT:
-        return RESOLVED, 0.0
+        return REJECT, 0.0
     if support in (UNKNOWN, NOT_CONFIGURED):
         return RI, None
     if not isinstance(support, (int, float)) or not 0.0 <= support <= 1.0:
         return INVALID, None
     if state == REJECT:
-        return RESOLVED, 0.0
+        return REJECT, 0.0
     if state in (UNKNOWN, NOT_CONFIGURED):
         return RI, None
     mult = activity_multiplier(activity)
@@ -72,12 +72,22 @@ def prey_response(support, state, food, activity, q, risk, motivation):
     return RESOLVED, support * c
 
 
+def prey_interval(support_lo, support_hi, state, food, activity, q, risk, motivation):
+    """Interval support: compute C with support=1, then scale the bounds."""
+    status, c = prey_response(1.0, state, food, activity, q, risk, motivation)
+    if status != RESOLVED:
+        return RI, None
+    return RI, (support_lo * c, support_hi * c)
+
+
 def compose(siblings):
     """siblings: list of (status, interval). Return (status, C_feed or bounds)."""
     bounds = []
     for status, value in siblings:
         if status == RESOLVED:
             bounds.append((value, value))
+        elif status == REJECT:
+            bounds.append((0.0, 0.0))
         elif status == RI:
             lo, hi = value
             bounds.append((lo, hi))
@@ -117,6 +127,11 @@ def main() -> None:
     print("sibling converged:", comp1)
     print("sibling open:", comp2)
 
+    interval_support = prey_interval(0.40, 0.75, 0.80, **base)
+    print("interval support:", interval_support)
+    interval_comp = compose([interval_support])
+    print("interval compose:", interval_comp)
+
     print("join ok:", join(0.80, 0.50))
     print("join missing L:", join(0.80, None))
 
@@ -124,10 +139,14 @@ def main() -> None:
     status, c = s1
     assert status == RESOLVED and 0 < c <= 1
     assert s2 == (RI, None)
-    assert s3 == (RESOLVED, 0.0)
+    assert s3 == (REJECT, 0.0)
     assert s4 == (RI, None)
     assert comp1 == (RESOLVED, 0.80)
     assert comp2[0] == RI and comp2[1] == (0.45, 0.90)
+    assert interval_support[0] == RI
+    lo, hi = interval_support[1]
+    assert 0 < lo < hi <= 1
+    assert interval_comp[0] == RI and interval_comp[1] == interval_support[1]
     assert join(0.80, 0.50) == (RESOLVED, 0.40)
     assert join(0.80, None) == (RI, None)
 

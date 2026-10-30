@@ -276,6 +276,22 @@ q         = L × C                          # 只乘一次，进入候选</code>
       <p>区间没有收敛时保持 ResolutionIncomplete，携带上下界，不进入 roll；不能拿已知下界冒充最终值。机会量 <code>L</code> 由机会侧给出，时间与停留只影响 <code>L</code>，不回写余量。</p>
     </section>
 
+    <section aria-labelledby="algorithm-title">
+      <h2 id="algorithm-title">端到端算法</h2>
+      <pre><code>响应(presentation, assembly, fishCondition, opportunity):
+  校验帧、版本、有效期
+  supports = 猎物解释(presentation, assembly)
+  对每个 sibling family:
+      state    = 状态提取 + TriggerIntensity
+      margin   = 食物价值 + 攻击诱因 - 追赶负担 - 风险顾虑 - 门槛
+      C(theta) = clamp(余量 / 0.40)
+      C_prey   = support × E_theta[C]
+  L_feed = max(L_i), U_feed = max(U_i)
+  C_feed = 标量，仅当 L_feed == U_feed
+  q      = L × C_feed</code></pre>
+      <p>状态优先级：<code>Reject</code> 先于 <code>InvalidInput</code>，再于 <code>NotConfigured</code>、<code>Unknown</code>、<code>Resolved</code>。任一必需输入缺失或过期，输出 <code>ResolutionIncomplete</code>，不回填默认值。</p>
+    </section>
+
     <section aria-labelledby="status-title">
       <h2 id="status-title">状态不是零</h2>
       <ul class="chips">
@@ -321,18 +337,20 @@ q         = L × C                          # 只乘一次，进入候选</code>
         <li>攻击诱因只准入逃逸样；受伤挣扎与失衡样虚弱仍未闭合（CandidateUnresolved）；停顿本身不作为触发。</li>
         <li>风险顾虑只立装备显眼度（TackleConspicuousness），可后置实现；实现前 <code>RiskCost</code> 为 0。</li>
         <li>反应口策略成立；快搜与隐蔽只完成一半，另一半代价需要机会量 <code>L</code> 或外部成本。</li>
+        <li><code>CapacityModifier</code> 已从 active design 删除；Prediction 标为 Deferred；<code>L</code> 归 Opportunity。</li>
+        <li>Fish Condition 采用 Bake baseline + 仅授权的 runtime overlay；当前只有 Wariness 有累积依据。</li>
       </ul>
     </section>
 
     <section aria-labelledby="open-title">
       <h2 id="open-title">还没有收口的部分</h2>
       <ul>
-        <li>Prediction 是否值得作为独立局部代价重入主体；</li>
-        <li>攻击诱因第一版准入哪些具名猎物状态；</li>
-        <li>风险顾虑的最低实现层，以及完整 Naturalness 的边界；</li>
-        <li>Fish Condition 的数量，应由 Response 与其它消费者反推；</li>
+        <li>四个 Fish Condition 的正式机制 Contract：上游 cause、曲线与标定；</li>
+        <li>Wariness runtime overlay 的事件、粒度、衰减与会话边界；</li>
+        <li>DEF baseline block 的序列化、版本与校验实现；</li>
         <li>Opportunity 侧 <code>L</code> 的 reducer 与生产实现；</li>
-        <li>生产标定：tail 起点、触发器预算、追赶快慢的系数、机会分布护栏。</li>
+        <li>生产标定：tail 起点、触发器预算、追赶快慢的系数、机会分布护栏；</li>
+        <li>main 窝料文档按 #161 的三处对齐。</li>
       </ul>
     </section>
 
