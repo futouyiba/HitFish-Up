@@ -1,4 +1,4 @@
-# Proposal C｜第一轮闭合：顾问建议记录（待 Owner 确认）
+# Proposal C｜第一轮闭合：顾问建议记录（Owner 已确认）
 
 状态：Advisor Recommendation，Owner 已于 2026-10-30 确认全部五项，按 Owner 裁定执行。记录保留来源与当时的建议原文，便于追溯。
 
@@ -24,7 +24,7 @@
 
 重开条件：发现当前 Opportunity 架构无法表达“扫过更多空间意味着更多有效试探”时，按 Opportunity 实现缺口处理，不在 Response 加 bonus。
 
-### 2.2 Risk MVP：只立 TackleConspicuousness
+### 2.2 风险 MVP：只立 TackleConspicuousness
 
 理由：玩家能直接选择线径、前导、钩与连接件、终端装配的明显程度；`EntryDisturbance` 是短暂瞬态，且 sound / contact 线索离“鱼视为异常风险”还隔一层解释。
 

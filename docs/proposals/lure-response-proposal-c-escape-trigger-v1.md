@@ -1,4 +1,4 @@
-# Proposal C｜Escape-like Trigger 第一版
+# Proposal C｜逃逸样（Escape-like）触发第一版
 
 状态：Working Design / Candidate。本文把已准入的逃逸样攻击诱因落到可执行的事实与判定，不扩展其它状态，也不冻结生产参数。
 

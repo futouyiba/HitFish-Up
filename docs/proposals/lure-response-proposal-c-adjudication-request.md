@@ -1,6 +1,6 @@
 # Proposal C｜第一轮玩法闭合：裁定请求
 
-状态：Working Candidate。本文是提交给独立裁定人的问题单，不是 Contract，也不预设结论。
+状态：Decision Record。本文是 2026-10-30 提交的问题单，五项已由 Owner 在 [Issue #152](https://github.com/futouyiba/HitFish-Up/issues/152) 裁定；保留作来源记录，不再作为待办。
 
 基线：`futou-/exciting-payne-95a562`，提交 `3b7b2332`。追踪 Issue：[#152](https://github.com/futouyiba/HitFish-Up/issues/152)。
 
@@ -38,7 +38,7 @@
   - 所有 Activity 下快速都不如中等速度：该模型没有买出快搜。
   - 隐蔽 `coverage=0.55` 时，低警戒直接占优（0.089 vs 0.058），高警戒隐蔽占优（0.043 vs 0）。
 
-## 4. 待裁定
+## 4. 当时待裁定（已由 #152 裁定）
 
 ### 4.1 探索 / 信息覆盖收益是否立项
 

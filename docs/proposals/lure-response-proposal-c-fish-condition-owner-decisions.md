@@ -1,4 +1,4 @@
-# Proposal C｜Fish Condition 剩余七项：Owner 决定请求
+# Proposal C｜Fish Condition 七项：Owner 裁定记录（2026-10-30）
 
 状态：Owner Decided（2026-10-30）。Owner 已在 Issue #161 评论中裁定七项；本文保留问题与选项作为记录，执行结果写回鱼况契约与开放决策。
 

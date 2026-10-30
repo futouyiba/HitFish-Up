@@ -1,4 +1,4 @@
-# Proposal C｜Fish Condition 机制契约草案
+# Proposal C｜鱼况（Fish Condition）机制契约草案
 
 状态：Working Mechanism Draft / Candidate。按 2026-10-30 Owner 裁定（Issue #161）编写：本文只定义各 Condition 的语义、允许 cause、输出域、更新路径与验收，不定义生产曲线。
 

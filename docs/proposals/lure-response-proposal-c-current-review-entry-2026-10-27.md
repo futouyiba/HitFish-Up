@@ -1,4 +1,4 @@
-# Proposal C｜Current Review Entry（2026-10-27）
+# Proposal C｜当前审阅入口（2026-10-27）
 
 状态：Working Review Entry / Candidate。不是 Current，不是生产参数。
 
@@ -69,13 +69,13 @@
 
 ## 3. 当前仍成立的结构边界
 
-以下不应被 Reviewer 无反例地重新打开：
+以下不应被审阅者无反例地重新打开：
 
 1. FoodValue 与 FeedingMotivation 分离；
 2. Activity 与 FeedingMotivation 正交，Activity 只调制追赶负担，不降低物理速度能力；
 3. Reject 与 Poor typed semantics 分离，Poor 可在极端有利条件下弱响应；
 4. CurrentFoodValue 完整连续域 `[0,1]`；
-5. sudden turn 在诊断或候选评估中可以同时记录 Trigger 正效应与 Prediction 负效应，但不合并成新字段；第一版生产主体不含 Prediction，是否重入待裁定；
+5. sudden turn 在诊断或候选评估中可以同时记录 Trigger 正效应与 Prediction 负效应，但不合并成新字段；第一版生产主体不含 Prediction，只有出现独立策略价值证据时才重开；
 6. `u_close >= 1 → hard-zero` 已撤回，Closing 只解释径向分离负担；
 7. 垂直运动归 Spatial / Opportunity，不进入 `u_close`；
 8. sibling 使用有界部分解析，区间收敛才输出标量；
@@ -84,7 +84,7 @@
 11. temporal duration 不进入出手余量；
 12. Response 不内建 ExposureRate，也不按持续时间积分。
 
-## 4. Reviewer 建议攻击点
+## 4. 审阅者建议攻击点
 
 1. 五个评价项是否真的购买不同玩家策略，还是有两项在重复买同一维度；
 2. 攻击诱因是否可能变成免费收益；
@@ -95,7 +95,7 @@
 7. Prediction 是否出现独立策略价值证据；没有证据时维持不进第一版主体；
 8. 哪些开放项真正阻塞生产，哪些只是标定。
 
-Reviewer 必须区分事实、Candidate、Working seed、建议；不能把缺少 owner 的内容补造成生产规则。替代方案必须指出它替换哪个归属方、消除了什么重复计权，以及对回归证据的影响。
+审阅者必须区分事实、Candidate、Working seed、建议；不能把缺少 owner 的内容补造成生产规则。替代方案必须指出它替换哪个归属方、消除了什么重复计权，以及对回归证据的影响。
 
 ## 5. 可复核入口
 

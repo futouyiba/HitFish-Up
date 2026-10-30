@@ -73,7 +73,7 @@ PreySupport[type] = value | [lower, upper] | Unknown | NotConfigured | NoMatch
 
 ### 数值语义
 
-support 不是排序分数，而是 interpretation retention scale（来源：`lure-response-proposal-c-support-scale-contract.md`）：
+support 表示 interpretation retention scale，不是排序分数（来源：`lure-response-proposal-c-support-scale-contract.md`）：
 
 ```text
 support = 0    → 该解释不贡献 Feeding response
@@ -220,7 +220,7 @@ DecisionMargin(theta)
 
 - 正向 soft evidence：FoodValue、StateTriggerValue；
 - 负向 soft burden：ClosingCost、RiskCost，可被足够高的价值、触发或 Motivation 部分补偿；
-- Motivation 不是奖励项，而是移动门槛。
+- Motivation 只移动门槛，不充当奖励项。
 
 不可补偿语义必须在进入 Margin 前处理：
 

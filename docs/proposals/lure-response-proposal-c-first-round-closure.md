@@ -28,7 +28,7 @@
 - 它可低成本识别：转向与 burst 来自轨迹，不需要新硬件输入；
 - 它不能被已有项替代：Closing 只说“难追”，Risk 只说“可疑”，FoodValue 只说“值不值得吃”。
 
-其余两项不是被否决，而是仍未闭合：
+其余两项没有被否决，只是仍未闭合：
 
 - Injured / Struggling 与 imbalance-like vulnerability 在 joint 来源中都是 `CandidateUnresolved`，需要 cue-only holdout（控制物理轨迹、capture geometry、prey support、Perception、TaskDemand、dwell、Motivation，只改可感知的 vulnerability cue）；本仓目前没有生产闭合的输入映射。
 - pause 本身不单独进入 Trigger；这不等于否定 vulnerability 候选。
@@ -74,7 +74,7 @@ Risk MVP 当前只能实现退化路径：
 无已解析 cue → SuspicionLoad = 0 → RiskCost = 0
 ```
 
-这不是“风险机制已可用”，而是“没有输入时不处罚”。第一版要么保留接口并明确不生产 RiskCost，要么等 cue owner 落地；本轮不补造代理字段（例如用饵体积冒充 conspicuousness，或把入水动作直接当 EntryDisturbance）。
+这并不表示风险机制已经可用；当前只是没有输入时不处罚。第一版要么保留接口并明确不生产 RiskCost，要么等 cue owner 落地；本轮不补造代理字段（例如用饵体积冒充 conspicuousness，或把入水动作直接当 EntryDisturbance）。
 
 ## 4. C. 三个策略排序 Probe
 

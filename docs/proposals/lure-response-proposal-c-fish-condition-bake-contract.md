@@ -1,6 +1,8 @@
-# Proposal C｜Fish Condition 与 Bake 反推契约（Candidate）
+# Proposal C｜鱼况（Fish Condition）与烘焙（Bake）反推契约（Candidate）
 
 状态：Working Design / Candidate。本文只写 Response 需要 Bake 产出什么，不定义 Bake 的生成公式，也不修改术语或 V1 语义。
+
+文档关系：本文保留反推背景与架构裁定；载体、状态与校验以 [Fish Condition Production Contract](lure-response-proposal-c-fish-condition-production-contract.md) 为准，生成语义与 cause 骨架见[机制契约](lure-response-proposal-c-fish-condition-mechanisms.md)。
 
 2026-10-30 Owner 已就架构与七项作出裁定（Issue #161 评论）；本文按其执行。文档仍需审核合并后才成为 Contract。
 

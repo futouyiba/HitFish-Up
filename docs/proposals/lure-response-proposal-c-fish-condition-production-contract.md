@@ -1,4 +1,4 @@
-# Proposal C｜Fish Condition Production Contract（Candidate）
+# Proposal C｜鱼况（Fish Condition）生产契约（Candidate）
 
 状态：Working Contract Draft / Candidate。按 2026-10-30 Owner 裁定（Issue #161）编写，尚未审核合并，不冒充 Current Contract。
 
@@ -68,7 +68,7 @@ FishConditionBlock {
 | Wariness | `[0,1]`（Candidate 域） | 仅表示鱼侧警觉；不是 SuspicionLoad |
 | DietShift[family] | 与 FoodValue 同标尺的有符号偏移 | 只影响对应 family；无全局分量 |
 
-范围之外的值不是“截断后继续用”，而是 `InvalidInput` / `Unknown`，按第 6 节处理。
+范围之外的值按 `InvalidInput` / `Unknown` 处理，不截断后继续用，见第 6 节。
 
 ## 5. 状态
 

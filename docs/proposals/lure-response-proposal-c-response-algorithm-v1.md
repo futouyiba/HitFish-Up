@@ -1,4 +1,4 @@
-# Proposal C｜Response 端到端算法 v1（Candidate）
+# Proposal C｜响应（Response）端到端算法 v1（Candidate）
 
 状态：Working Algorithm / Candidate。把已收口的各层写成一条可执行规格；不引入新机制，不冻结生产参数。
 
