@@ -39,7 +39,7 @@ Fish Condition 是状态，不是分数。它描述鱼现在处于什么状态�
 |---|---|---|
 | 环境烘焙 | 不读取 | 不能把 Fish Condition 当作环境条件重新烘焙 |
 | Response | Activity、Feeding Motivation、Diet Shift、Wariness | 不能把 Fish Condition 直接当作最终权重 |
-| Feeding Event（候选） | Activity、Feeding Motivation、Wariness | 不能把 Fish Condition 当作动作能力或对象约束 |
+| Feeding Event（候选） | Activity、Feeding Motivation、Wariness | 读取 Wariness 属 Candidate 消费者语义，不继承 Response 的 `RiskCost` 权限；未获授权前保持关闭（#161）。不能把 Fish Condition 当作动作能力或对象约束 |
 | 圆桌 | 不直接读取 | 不能把鱼况乘进候选权重 |
 | Fish AI | Activity（边界） | 不在本仓定义具体消费公式 |
 
@@ -78,7 +78,7 @@ Fish Condition 是状态，不是分数。它描述鱼现在处于什么状态�
 ## 6. 与现有术语的缺口
 
 - `Feeding Readiness` 在候选文档中出现，但术语表没有定义。未裁定前，它只作为描述性说法，不作为独立状态落 Schema。
-- Fish Condition 的更新公式、时间粒度、记忆和衰减没有落仓。
+- Fish Condition 的 baseline 载体已由 [Issue #161](https://github.com/futouyiba/HitFish-Up/issues/161) 定为 DEF 条件组下的 snapshot / block；更新公式、时间粒度、记忆和衰减仍未落仓。当前只有 Wariness 具备 runtime overlay 的语义依据；具体运行时更新仍须由 Wariness 机制 Contract 授权，并闭合事件来源、粒度、衰减、有效期和会话记忆。Activity、Feeding Motivation、Diet Shift 不自动获得 runtime 更新。
 - Fish Condition 是否随地点、条件组或鱼个体变化，没有落仓。
 
 以上登记在 `decisions/conflict-register.md` 的 C-12a1、C-12a2、C-12a3、C-12b、C-13a、C-13b、C-14。

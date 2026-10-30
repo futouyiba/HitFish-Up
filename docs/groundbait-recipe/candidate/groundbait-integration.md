@@ -125,7 +125,7 @@ Response Stage 的候选接口
 
 - Feeding Place 的空间位置、水层和对象可接触状态；
 - Chemical Cue Field；
-- Fish Condition 的 Activity、Feeding Motivation、Wariness；
+- Fish Condition 的 Activity、Feeding Motivation、Wariness（Wariness 的数值消费属 Candidate，未获授权前不启用，见 `fish-condition-integration.md` §3）；
 - 当前 Response Condition / Presentation Signal。
 
 `Encounter` 不读取对象尺寸来宣布“更吸引”，也不把尺寸成功提前算进发现概率。
