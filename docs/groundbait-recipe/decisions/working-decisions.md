@@ -356,6 +356,27 @@ Attraction 是 encounter / selection 的上位解释词，可由事件派生摘�
 
 **状态：BOUNDARY**
 
-四条候选输出分别进入 Response Condition、Response Component 或 Persistent Response Field。最终聚合仍由现有 Response Stage 的 `SpatialDistributionWeight × AdaptationCoeff` 完成。
+四条候选输出分别进入 Response Condition、Response Component 或 Persistent Response Field。最终聚合仍由现有 Response Stage 或其已承接的上游接口完成。
 
-不建立 `RecipeFit = Food + Flavor + Particle + Physical`。`AdaptationCoeff` 公式、组件聚合算子和模式聚合算子仍是 OPEN。映射和顺序见 `candidate/response-aggregation-map.md`。
+不建立 `RecipeFit = Food + Flavor + Particle + Physical`。`AdaptationCoeff` 公式、组件聚合算子和模式聚合算子仍按对应接口和 Owner / Current 边界处理。映射和顺序见 `candidate/response-aggregation-map.md`。
+
+## WD-35｜端到端工作算法采用单一候选闭环
+
+**状态：ACTIVE CANDIDATE**
+
+本目录的端到端工作算法固定以下顺序，作为实现和反例审查的统一工作基线：
+
+```text
+Bake → Fish Condition → Opportunity(L) → Groundbait State
+→ Feeding Event → Response(C) → candidate weight → Roundtable → Draw
+```
+
+算法层面的默认候选为：
+
+- 同 Target 先合并，再做 Target 级饱和；多 Target 在实现试验中采用全局有界饱和，但仍不冒称 Owner 已裁决。
+- 物理释放采用竞争转移率，实体账本和化学线索账本分离。
+- Fish Condition 使用有界一阶记忆更新；具体 cause、时间尺度和生命周期由实现输入提供。
+- Response 先硬门、后软 Margin，再做有界投影；`Unknown`、`Invalid`、`Reject` 和合法零分开处理。
+- 通用 FCF 候选使用 `SpatialDistributionWeight × AdaptationCoeff`；Proposal C 候选使用 `q = L × C`。两条接口不得叠乘，需在候选类型上显式声明。
+
+这条工作基线不关闭 `conflict-register.md` 中的 Owner ballot，也不把校准参数或缺失的 Current Contract 补造成事实。它的作用是让实现可以继续，而不是替 Owner 完成产品裁定。

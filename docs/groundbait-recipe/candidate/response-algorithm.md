@@ -6,7 +6,7 @@
 
 ## 1. 已验证的 Current 语义
 
-候选输出如何进入本 Stage 的完整映射和求值顺序见 `response-aggregation-map.md`。
+完整的端到端工作算法（包括当前 Candidate 的状态更新、Food / Edible Size / Feeding Event、响应投影和圆桌接口）见 [`end-to-end-algorithm.md`](end-to-end-algorithm.md)。本页保留 Response Stage 的职责和接口说明；具体工作公式仍需在实现前按 Owner / Current 复核。
 
 `docs/terminology.md` §5.2 把响应阶段描述为：
 
