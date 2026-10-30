@@ -32,7 +32,8 @@ Recipe Facts
   → Physical Release
   → Feeding Place State
   → Feeding Event
-  → Food / Flavor / Edible Utilization / Candidate EIO
+  → Food / Flavor / Edible Utilization
+  → Candidate EIO（Groundbait 中间量，是否进入 Response 评价项见 §9）
   → Response 输入
 ```
 
