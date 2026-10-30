@@ -17,6 +17,8 @@
 
 术语同时写明：更新公式、时间粒度与下游消费关系由对应机制 Contract 定义。仓内目前没有这些公式。
 
+Fish Condition 的工作更新算法见 [`end-to-end-algorithm.md`](end-to-end-algorithm.md) §4。该算法只是 Candidate / Working Algorithm；时间尺度、cause 输入、生命周期和生产字段仍需对应 Owner / Current Contract 收口。
+
 ## 2. 状态位置
 
 ```text

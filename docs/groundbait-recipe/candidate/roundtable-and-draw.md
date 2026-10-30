@@ -4,6 +4,8 @@
 > 日期：2026-10-29
 > 边界：本页只整理响应输出如何进入圆桌候选权重，以及抽鱼、生成和 Fish AI 的边界。它不定义圆桌四件的 Current 规则，也不补造刺鱼或搏鱼算法。
 
+端到端工作算法见 [`end-to-end-algorithm.md`](end-to-end-algorithm.md) §10。本页只保留圆桌、抽鱼、生成和 Fish AI 的职责边界，不替 Current Contract 补造圆桌四件公式。
+
 ## 1. 已验证的 Current 语义
 
 `docs/terminology.md` 定义：

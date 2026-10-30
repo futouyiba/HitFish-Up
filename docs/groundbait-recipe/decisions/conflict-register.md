@@ -18,6 +18,12 @@
 - `CANDIDATE_BRANCH`：本目录暂时采用某一分支，只作为工作选择，不自动成为 Current。
 - `CURRENT_ALREADY_DECIDES`：仓内 Current 或 Owner 裁定已有明确结论，按该结论执行。
 
+## 1.1 上游 Owner 裁定依赖
+
+Proposal C 的 Issue #152 五项 Owner 裁定记录在 PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 的提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`，文件为 `docs/proposals/lure-response-proposal-c-owner-adjudication-2026-10-29.md`。截至 2026-10-30，PR #130 仍为 draft，裁定尚未进入 `main`，所以本页只把它记为 Proposal C 的上游 Working 裁定，不把它标成 Current。
+
+这份上游记录已经裁定或收窄以下边界：不新增快搜信息 bonus；Risk 只保留 `TackleConspicuousness`，未启用时 `RiskCost = 0`；删除 active `CapacityModifier`；Prediction 第一版 Deferred；`L` 的语义 owner 归 Opportunity，Spatial 只提供事实，`q = L × C`。Groundbait 后续若讨论这些交叉边界，应按该记录承接，不在本目录重新提出同一项 Owner ballot。若 PR #130 合并或该记录更新，必须以新的提交和实际文件为准重新核对；在此之前，Groundbait 自身仍保持 Candidate / OPEN 的成熟度，不因引用上游裁定而变成 Current。
+
 ## 2. 冲突清单
 
 ### C-01｜尺寸归属

@@ -4,6 +4,8 @@
 > 日期：2026-10-29
 > 权威边界：本页不是 FCF Current Contract；它只描述配方状态如何成为 Feeding Place 状态。
 
+本目录的端到端工作算法为 Physical Release 提供了可实现的竞争转移形式，见 [`end-to-end-algorithm.md`](end-to-end-algorithm.md) §6。该形式是 Candidate / Working Algorithm，不是生产参数或 Current Contract。
+
 ## 1. 职责
 
 Physical Release 不是“窝料的强弱分”。它是一个状态转换：
