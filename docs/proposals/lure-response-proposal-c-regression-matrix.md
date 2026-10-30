@@ -24,7 +24,10 @@
 - 研究分支的 `proposal_c_interpretation_probe.py` 与 `presentation_state_probe.py` 不在本分支，矩阵只引用其结论，不声称本地可跑；
 - 没有覆盖 Fish Condition 生成的真实数据；
 - 没有覆盖生产采样、滤波与设备输入；
-- 没有性能或稳定性回归。
+- 没有性能或稳定性回归；
+- 端到端 probe 未覆盖帧校验（`segment.valid`、装配版本、Fish Condition version/validity），未覆盖 `NoMatch`、`NotApplicable`、显式 `targetRelation` 与状态提取各状态；
+- Fish Condition probe 未覆盖 block 级 `source` / `producedAt`、key 与 overlay metadata；
+- 因此“9 个 probe 全部可运行”不等于端到端契约全覆盖。
 
 ## 3. 使用规则
 

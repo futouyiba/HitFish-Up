@@ -119,15 +119,15 @@ resolved(condition) =
 - 不允许在 Unknown 时回填 1.0、0.5 或最后值；
 - block 校验失败时整块标为不可用，而不是部分字段静默降级。
 
-## 9. 与 main 的待对齐点
+## 9. 与 main 窝料文档的核对状态
 
-`main` 的窝料端到端 Candidate（`docs/groundbait-recipe/candidate/end-to-end-algorithm.md`）有三处需要按 #161 重新核对，尚未在本分支改写：
+2026-10-30 已核对 `main` 的窝料端到端 Candidate（`docs/groundbait-recipe/candidate/end-to-end-algorithm.md`，含 PR #163/#164）：
 
-1. §4 对任意 `[0,1]` 状态使用通用一阶 runtime 更新；#161 只授权 Wariness，且 Activity 不在 `[0,1]` 上界内；
-2. §8.2 的 `w_wary × Wariness` 让 Feeding Event 直接消费 Wariness，属于新的 consumer 语义，不能用 Risk 的权限顺带继承；
-3. §9 的 `w_*` 加权和、顶层 `EIO` 项与 sigmoid 投影不是 Proposal C 已闭合的五评价项公式，只能作为 Groundbait 自己的 Candidate 接口。
+1. §4 的通用一阶更新已收窄为“仅机制授权且在该 Contract 里声明 `[0,1]` 的状态”，Activity 明确排除；
+2. §8.2 的 `w_wary × Wariness` 已标为 Groundbait 自有 Candidate 消费者，不继承 Risk 权限，未授权前关闭；
+3. §9 的 `w_*` 加权和、`EIO` 项与 sigmoid 已标为 Groundbait Candidate 接口，不是 Proposal C 的五项式。
 
-这些点在 main 侧核对前，不进入 Proposal C 的规则。
+这些内容属于 Groundbait 自己的 Candidate，不进入 Proposal C 的规则。此前“三处待对齐”的记录已失效，保留在 Git 历史中。
 
 ## 10. 未决
 

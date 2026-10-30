@@ -1,6 +1,6 @@
 # Proposal C｜响应（Response）端到端算法 v1（Candidate）
 
-状态：Working Algorithm / Candidate。把已收口的各层写成一条可执行规格；不引入新机制，不冻结生产参数。
+状态：Working Algorithm / Candidate。把已收口的各层写成一条可执行规格；不引入新机制，不冻结生产参数。本版是会议回写前的 Working 状态（逐 latent bearing 投影、有界 sibling 部分解析）；2026-10-30 会议方向（去掉 θ、sibling 取 max、一竿一 Snapshot）尚未回写，见[会议对齐稿](../alignment/lure-response/2026-10-30-lure-response-alignment-draft.md)。回写并复审前，本规格是实现与 probe 的算法基线。
 
 来源：设计骨架、语义契约、呈现解释与状态契约、五评价项契约、响应与机会契约、第一轮闭合审查、Fish Condition Production Contract。
 

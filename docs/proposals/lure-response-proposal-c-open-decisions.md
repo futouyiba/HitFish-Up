@@ -20,9 +20,9 @@
 - **CapacityModifier**：species / size 能力基线加 Activity 仍无法解释某类必要玩法差异，且该差异确实是“当前实际运动能力改变”，不是“愿不愿追”。
 - **Prediction**：固定 FoodValue、AttackTrigger、Closing、Risk、Motivation、Opportunity `L`，只改变运动可预测性，仍得到稳定、可复现、玩家能理解且足以改变打法选择的排序；不能只靠统计拟合改善。
 
-### 已知未同步
+### 已知未同步（历史记录）
 
-`origin/main` 上的 `docs/proposals/lure-response-proposal-c-current-review-entry-2026-10-27.md` 仍是六项式 `DecisionMargin`（含 `PredictionCost`），与本包的五项式和 #161 裁定不一致。按仓规，冲突按已批裁定执行并上报：本包用五项式，main 需另做对齐，不在本分支改写。
+2026-10-30 之前，`main` 的入口文档曾是含 `PredictionCost` 的六项式 `DecisionMargin`。PR #163/#164/#165 已于 2026-10-30 把 `main` 对齐为五项式；本分支同步后，入口文档改为导航页（`main` 保留公式版并已对齐五项式）。此条只作时间线记录，不再表示待对齐事项。
 
 ## 2. Owner 缺口
 
@@ -76,5 +76,5 @@
 2. `TackleConspicuousness`：按 2026-10-30 裁定暂不投入，`RiskCost` 保持 0；需要真实警戒玩法时再立项字段与 owner；
 3. 机会量 `L` 归 Opportunity 后，由该线补生产函数、单位与窗口口径；
 4. 用 `proposal_c_strategy_probe.py` 的排序结果检查参数敏感度，再进入生产标定；
-5. Fish Condition / Bake：Owner 已裁定架构与七项；[Production Contract](lure-response-proposal-c-fish-condition-production-contract.md)、[机制草案](lure-response-proposal-c-fish-condition-mechanisms.md) 与 [Response Algorithm v1](lure-response-proposal-c-response-algorithm-v1.md) 已给出载体、cause 骨架与端到端算法；下一步是各 Condition 的正式机制 Contract、生产曲线与 main 窝料文档的三处对齐；
+5. Fish Condition / Bake：Owner 已裁定架构与七项；[Production Contract](lure-response-proposal-c-fish-condition-production-contract.md)、[机制草案](lure-response-proposal-c-fish-condition-mechanisms.md) 与 [Response Algorithm v1](lure-response-proposal-c-response-algorithm-v1.md) 已给出载体、cause 骨架与端到端算法；下一步是各 Condition 的正式机制 Contract 与生产曲线。main 窝料文档的三处对齐已于 2026-10-30 核对完成；
 6. Prediction 保持 `Deferred Research`，满足重开条件时再单独开题。

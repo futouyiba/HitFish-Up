@@ -90,6 +90,7 @@ ActualPresentation
 - [第一轮玩法闭合审查](lure-response-proposal-c-first-round-closure.md)：AttackTrigger 准入、Risk 输入实证、策略排序 probe 与判断；
 - [Escape-like Trigger v1](lure-response-proposal-c-escape-trigger-v1.md)：事件、窗口、family 适用与 TriggerIntensity 判定；
 - [机会量支持](lure-response-proposal-c-opportunity-support.md)：`L`、遭遇饱和与单位时间收益的玩具模型；
+- [L 生产函数草案](lure-response-proposal-c-opportunity-l-production.md)：`r × τ` 结构、身份去重、覆盖与归约；
 - [鱼况/Bake 契约](lure-response-proposal-c-fish-condition-bake-contract.md)：从 Response 消费需求反推 Fish Condition 的产出要求；
 - [Fish Condition 裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md)：2026-10-30 的 A–H 裁决与执行后仍缺的机制细节；
 - [Fish Condition Owner 决定请求](lure-response-proposal-c-fish-condition-owner-decisions.md)：剩余七项与选项；

@@ -22,6 +22,7 @@
 | 第一轮玩法闭合：AttackTrigger、Risk 输入、策略 probe | [第一轮闭合审查](lure-response-proposal-c-first-round-closure.md) |
 | Escape-like 第一版事实与判定 | [Escape-like Trigger v1](lure-response-proposal-c-escape-trigger-v1.md) |
 | 机会量与单位时间收益的玩具模型 | [机会量支持](lure-response-proposal-c-opportunity-support.md) |
+| 机会量的生产结构：遭遇率、窗口、身份与归约 | [L 生产函数草案](lure-response-proposal-c-opportunity-l-production.md) |
 | 提交给独立裁定人的问题单 | [裁定请求](lure-response-proposal-c-adjudication-request.md) |
 | 顾问建议与 2026-10-30 Owner 确认 | [建议记录](lure-response-proposal-c-adjudication-recommendation-2026-10-30.md) |
 | Fish Condition 与 Bake 的反推需求 | [鱼况/Bake 契约](lure-response-proposal-c-fish-condition-bake-contract.md) |

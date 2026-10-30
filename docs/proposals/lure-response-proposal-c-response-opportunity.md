@@ -1,6 +1,6 @@
 # Proposal C｜响应与机会契约
 
-状态：Working Design / Candidate。本文写清第 5 到第 7 层：已解析的出手余量如何变成条件响应、同级猎物如何组成 feeding 结果、机会量如何接入候选。不是 Current Contract，也不是生产参数。
+状态：Working Design / Candidate。本文写清第 5 到第 7 层：已解析的出手余量如何变成条件响应、同级猎物如何组成 feeding 结果、机会量如何接入候选。不是 Current Contract，也不是生产参数。本版是会议回写前的 Working 状态；2026-10-30 会议方向（去掉 θ、sibling 取 max、一竿一 Snapshot）尚未回写，见[会议对齐稿](../alignment/lure-response/2026-10-30-lure-response-alignment-draft.md)。
 
 来源：`docs/lure-response-joint-evaluation` 的 `margin-response-projection`、`sibling-partial-resolution`、`opportunity-integration-closure`、`response-aggregation-topology-review`（按 `311ae70d` 快照核对；该分支持续更新）。
 

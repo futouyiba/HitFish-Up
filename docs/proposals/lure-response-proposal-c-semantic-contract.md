@@ -4,6 +4,10 @@
 
 口径来源：`docs/lure-response-joint-evaluation` 的 Working Closure，按 `311ae70d` 快照核对；该分支在此之后持续更新，本轮未逐条重新纳入。与旧 10-27 入口不一致处，以本文列出的来源文档为准。文中以代码体标注的 `lure-response-proposal-c-*.md` 文件名是研究分支的来源文件名，未在本分支落仓；本分支可读的接口定义以本文与设计包为准。
 
+本文描述会议回写前的 Working 状态（逐 latent bearing 投影、有界 sibling 部分解析、validity 覆盖每个 segment）；2026-10-30 会议方向（去掉 θ、sibling 取 max、一竿一 Snapshot）尚未回写，见[会议对齐稿](../alignment/lure-response/2026-10-30-lure-response-alignment-draft.md)。
+
+符号说明：`q` 在 Closing 段表示“相对速度 / InterceptSpeedLimit”，在机会段表示 `L × C` 的候选贡献；引用时带上下文。
+
 ## 1. 通用状态协议
 
 `ResolutionIncomplete` 是归约器对未能形成最终标量的外层输出，不是每个原子输入事实都必须携带的状态。

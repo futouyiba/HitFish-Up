@@ -17,6 +17,12 @@
 - **去掉 θ / latent bearing**：首版统一按“鱼正在追拟饵”估算追赶负担，不模拟迎面而来等相对方位特例；
 - **一竿一 Fish Condition Snapshot**：抛竿开始时按当前 DEF / ConditionGroup 解析 baseline，本竿固定读取；下一竿重新解析。
 
+> 与设计包的同步状态（2026-10-30）：以上四项 Owner 方向（去掉 θ、`TackleConspicuousness` 聚合公式、sibling 取 max、一竿一 Snapshot）尚未回写设计包。回写并复审前：
+>
+> - `docs/proposals/lure-response-proposal-c-response-algorithm-v1.md`、`response-opportunity.md`、`semantic-contract.md` 与 probe 仍描述回写前的 Working 状态（逐 latent bearing 投影、有界 sibling 部分解析、Fish Condition validity 覆盖每个 segment）；
+> - 本分支的实现基线暂以设计包的算法与 probe 为准；本文方向在回写后取代相应条目；
+> - `TackleConspicuousness` 的字段与 owner 未落地前，`RiskCost` 仍为 0（Issue #161）。
+
 ---
 
 ## 0. 这次会议希望先对齐什么
