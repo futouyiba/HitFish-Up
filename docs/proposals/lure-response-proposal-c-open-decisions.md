@@ -20,6 +20,10 @@
 - **CapacityModifier**：species / size 能力基线加 Activity 仍无法解释某类必要玩法差异，且该差异确实是“当前实际运动能力改变”，不是“愿不愿追”。
 - **Prediction**：固定 FoodValue、AttackTrigger、Closing、Risk、Motivation、Opportunity `L`，只改变运动可预测性，仍得到稳定、可复现、玩家能理解且足以改变打法选择的排序；不能只靠统计拟合改善。
 
+### 已知未同步
+
+`origin/main` 上的 `docs/proposals/lure-response-proposal-c-current-review-entry-2026-10-27.md` 仍是六项式 `DecisionMargin`（含 `PredictionCost`），与本包的五项式和 #161 裁定不一致。按仓规，冲突按已批裁定执行并上报：本包用五项式，main 需另做对齐，不在本分支改写。
+
 ## 2. Owner 缺口
 
 - Feeding、Defense、Investigation 的 Interaction composition；
