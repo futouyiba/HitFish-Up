@@ -80,4 +80,4 @@ SuspicionLoad = 0 → RiskCost = 0
 
 - 本记录来自用户指示的 Fable 子代理裁决（2026-10-30，基线 `bc79696d`）；
 - 依据文件与节见[鱼况/Bake 契约](lure-response-proposal-c-fish-condition-bake-contract.md)、[开放决策](lure-response-proposal-c-open-decisions.md)、[五评价项契约](lure-response-proposal-c-evaluation-items.md)；
-- 裁决不等于 Owner 批；第 3 节事项未决前不写成 Current。
+- 裁决不等于 Owner 批。第 3 节已由 Owner 在 [Issue #161](https://github.com/futouyiba/HitFish-Up/issues/161) 确认；经 PR 审核合并后才成为 Git Contract。

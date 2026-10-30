@@ -16,7 +16,7 @@
 2. Prediction 不在第一版主体；只有独立策略价值证据才重开。
 3. Activity 只调制追赶负担，不改物理速度能力；与摄食动机正交。
 4. Closing 只解释水平径向分离；`u_close >= 1` 不 hard-zero；垂直运动归 Opportunity。
-5. 机会接入是 `q = L × C`，只乘一次；`L` 由 Spatial / Opportunity 提供；Response 不建 ExposureRate。
+5. 机会接入是 `q = L × C`，只乘一次；`L` 的正式 owner 是 Opportunity，Spatial 只提供空间事实；Response 不建 ExposureRate。
 6. `Reject` 是 typed hard zero；`Unknown`、`NotConfigured`、`NoMatch`、`ResolutionIncomplete` 分开。
 7. 攻击诱因第一版只准入 Escape-like；Injured / Struggling 与 imbalance-like vulnerability 是 `CandidateUnresolved`；pause 本身不得作为 Trigger。
 8. sibling 用有界部分解析：区间收敛才输出标量。

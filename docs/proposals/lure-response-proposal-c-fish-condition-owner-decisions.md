@@ -2,6 +2,8 @@
 
 状态：Owner Decided（2026-10-30）。Owner 已在 Issue #161 评论中裁定七项；本文保留问题与选项作为记录，执行结果写回鱼况契约与开放决策。
 
+> 下面各节保留裁定前的问题原文与选项，供追溯。当前执行状态以[裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md) 第 3 节、[Fish Condition Production Contract](lure-response-proposal-c-fish-condition-production-contract.md) 与[开放决策](lure-response-proposal-c-open-decisions.md)为准；正文中“尚未 Contract 化”“owner 未指定”等表述属于当时的缺口描述。
+
 基线：`futou-/exciting-payne-95a562`，提交 `9d4ed83e`。裁决原文见[裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md)。追踪 Issue：[#161](https://github.com/futouyiba/HitFish-Up/issues/161)。
 
 ## 1. 路径 B 是否正式 Contract 化

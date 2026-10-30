@@ -75,7 +75,7 @@ ActualPresentation
 5. 读取鱼侧评价输入，先处理 typed status，再计算数值。
 6. 在局部 latent bearing 内计算出手余量并投影成条件响应。
 7. 聚合同级猎物解释，得到 feeding 区间或标量。
-8. 与 Spatial / Opportunity 的 `L` 做一次 `L × C`，交给 Candidate owner。
+8. 与 Opportunity 的 `L` 做一次 `L × C`（Spatial 只提供空间事实），交给 Candidate owner。
 
 任何一步的必要输入未解析，都不能把缺口静默转换为零。
 

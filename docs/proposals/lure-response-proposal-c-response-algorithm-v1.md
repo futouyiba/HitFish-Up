@@ -39,10 +39,13 @@ function response(segment, assembly, fc, opportunity, params):
   # 1. 猎物解释
   supports = interpret(segment, assembly)      # per family: value | [L,U] | status
   if supports covers no family: return NotApplicable
-  if targetRelation == Reject: return (Reject, 0)   # typed hard zero，不再计算
 
   # 2. 每个 sibling family
   for family in declaredSiblingSet:
+      relation = targetRelation(segment, family)   # 目标关系按 family 求值
+      if relation == Reject:
+          interval[family] = (Reject, 0.0, 0.0)    # typed hard zero，不再计算
+          continue
       support = supports[family]
 
       if support == Reject:
@@ -122,12 +125,16 @@ function evaluate(state, fc, params):
   # Returns a resolved conditional response, or a non-numeric status.
   food      = clamp(base + size + dietShift, 0, 1)
   trigger   = params.TriggerBudget * state.TriggerIntensity
-  closing   = K_close * u_close(theta)^2 * activityMultiplier(fc.activity)
-  risk      = K_wary * fc.wariness * suspicionLoad      # 无 cue 时为 0
-  threshold = f(fc.feedingMotivation)                    # 分段线性 + tail
+  risk      = params.K_wary * fc.wariness * suspicionLoad      # 无 cue 时为 0
+  threshold = f(fc.feedingMotivation)                          # 分段线性 + tail
 
-  margin(theta) =
-      food + trigger - closing(theta) - risk - threshold
+  # 逐 latent bearing：先算 Margin，再投影，最后聚合
+  for each latent bearing theta:
+      closing(theta) = params.K_close * u_close(theta)^2 * activityMultiplier(fc.activity)
+      margin(theta)  = food + trigger - closing(theta) - risk - threshold
+      C(theta)       = clamp((margin(theta) - params.M0) / (params.M1 - params.M0), 0, 1)
+
+  return E_theta[C(theta)]        # C_conditional；不能先平均 Margin 再投影
 
 
 function responseInterval([a, b], state, fc, params):

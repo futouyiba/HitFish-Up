@@ -112,7 +112,7 @@ Activity 不修改 `InterceptSpeedLimit`。低 Activity 不能表现为“鱼突
 
 - Closing 只解释径向分离负担，不是完整拦截模拟；
 - `u_close >= 1 → hard-zero` 已撤回；
-- 垂直主导呈现不进入 `u_close`，归 Spatial / Opportunity 的垂直可交互窗口；
+- 垂直主导呈现不进入 `u_close`，归 Opportunity 的垂直可交互窗口（Spatial 只提供空间事实）；
 - 高速的完整系统效果由追赶负担与机会量共同形成，Closing 不单独承担全部高速惩罚。
 
 ## 5. 风险顾虑
@@ -130,7 +130,7 @@ RiskCost = K_wary × Wariness × SuspicionLoad
 
 | cue | 表达 | 状态 |
 |---|---|---|
-| TackleConspicuousness | 终端连接、线、钩等已声明事实对当前目标的可见或侵入程度 | 2026-10-30 裁定立项，可后置实现 |
+| TackleConspicuousness | 终端连接、线、钩等已声明事实对当前目标的可见或侵入程度 | 正式保留的后续语义方向；当前未立生产字段或 owner，V1 `RiskCost=0` |
 | EntryDisturbance | 本次呈现进入局部区域时的已解析异常扰动 | 暂不实现 |
 
 `TackleConspicuousness` 当前仍缺生产字段；实现前：

@@ -2,7 +2,7 @@
 
 状态：Working Design / Candidate。本文只用于解释为什么 Response 单项无法完成快搜与隐蔽的策略翻转，不是生产函数，也不改变 `L` 的 owner。
 
-来源与约束：`lure-response-proposal-c-opportunity-integration-closure.md` 明确 `L` 由 Spatial / Opportunity 提供，`q = L × C` 只乘一次；`L(duration)` 的生产函数未冻结。本文的公式是**可替换的玩具模型**。
+来源与约束：[响应与机会契约](lure-response-proposal-c-response-opportunity.md) 与 Proposal C Working Closure（PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`）：`L` 的正式 owner 是 Opportunity，Spatial 只提供空间事实；`q = L × C` 只乘一次；`L(duration)` 的生产函数未冻结。本文的公式是**可替换的玩具模型**。
 
 ## 1. 为什么需要这一层
 
@@ -23,6 +23,12 @@ Y(q) = coverage × R(q) × L(q) × C(q)
 
 Working: D = 0.80, Q_cap = 1.00
 ```
+
+三个玩具参数的读法：
+
+- `D` 是停留/机会量随速度衰减的尺度：速度越快，单个颗粒被鱼遇到后有效停留的时间越短；
+- `Q_cap` 是单位时间遭遇率开始饱和的速度尺度：速度再高，遇到颗粒数的增长也会放缓；
+- `coverage` 是该方案实际覆盖多少空间，用来给隐蔽方案记上覆盖成本。
 
 - `C(q)` 来自现有响应链（`M0=0 / M1=0.40`，`K_close=0.76`）；
 - `Y` 是分析量，不是运行时字段，也不进入 Candidate；
@@ -68,7 +74,7 @@ Working: D = 0.80, Q_cap = 1.00
 
 ## 6. 边界
 
-- `L` 的 owner 仍是 Spatial / Opportunity；本文不实现 reducer；
+- `L` 的 owner 是 Opportunity；Spatial 只提供空间事实。本文不实现 reducer；
 - `D`、`Q_cap`、`coverage` 都是玩具参数，不是生产标定；
 - 不把 `Y` 写入 Candidate 或 Response；
 - 垂直运动仍通过有效窗口影响 `L`，不进入 Closing。

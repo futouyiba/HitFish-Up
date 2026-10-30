@@ -5,6 +5,8 @@
 用途：Proposal C 的统一审阅入口。本页只做导航和审阅指引，不重复维护公式与数值；当前设计语义以设计包为准，避免同一口径在入口和子文档各写一份。
 
 > 若本文与更高 Authority 冲突，以 `docs/authority-model.md` 与已合并 Current Owner 为准。本文是 `futou-/exciting-payne-95a562` 分支的审阅入口；Proposal C 的 Working 研究文档保留在 `docs/lure-response-joint-evaluation` 分支。
+>
+> 2026-10-30 同步：第一版 `DecisionMargin` 使用五项式；Prediction 为 `Deferred Research`；`L` 的正式 owner 是 Opportunity，Spatial 只提供空间事实。依据：Proposal C Working Closure（PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`）§4–§5、Issue [#152](https://github.com/futouyiba/HitFish-Up/issues/152) 与 Issue [#161](https://github.com/futouyiba/HitFish-Up/issues/161)。
 
 ## 1. 当前设计入口
 
@@ -64,7 +66,7 @@
 详细定义、数值范围与状态传播见语义契约。三条最容易在评审中读错的边界：
 
 - 预测困难当前不在主体内，只作为待证明的局部代价；
-- 机会量 `L` 由 Spatial / Opportunity 提供，`q = L × C` 只乘一次；
+- 机会量 `L` 归 Opportunity；Spatial 只提供位置、区域、几何等空间事实；`q = L × C` 只乘一次；
 - `Reject`、`Unknown`、`ResolutionIncomplete` 都是 typed 状态，不用超大 cost 或零值模拟。
 
 ## 3. 当前仍成立的结构边界
@@ -77,7 +79,7 @@
 4. CurrentFoodValue 完整连续域 `[0,1]`；
 5. sudden turn 在诊断或候选评估中可以同时记录 Trigger 正效应与 Prediction 负效应，但不合并成新字段；第一版生产主体不含 Prediction，只有出现独立策略价值证据时才重开；
 6. `u_close >= 1 → hard-zero` 已撤回，Closing 只解释径向分离负担；
-7. 垂直运动归 Spatial / Opportunity，不进入 `u_close`；
+7. 垂直运动经 Opportunity 的垂直可交互窗口进入 `L`，不进入 `u_close`（Spatial 只提供空间事实）；
 8. sibling 使用有界部分解析，区间收敛才输出标量；
 9. high speed / low prey support / pause 不产生匿名 Suspicion 或 bonus；
 10. combined soft burden 不加 runtime total cap；

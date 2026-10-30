@@ -59,7 +59,7 @@
 - 各鱼种 `InterceptSpeedLimit` 与体型缩放来源；
 - 猎物解释所需的可见性、遮挡和装配局部数据；
 - `TackleConspicuousness` 的装备 / 线组事实来源；
-- 机械操控暴露指标的实际采集口径（来源：`lure-response-proposal-c-mechanical-control-exposure-metrics.md`）。
+- 机械操控暴露指标的实际采集口径（来源：研究分支文件 `lure-response-proposal-c-mechanical-control-exposure-metrics.md`，未在本分支落仓）。
 
 ## 6. 本轮不做的事
 

@@ -2,7 +2,7 @@
 
 状态：Working Design / Candidate。本文只定义语义接口，不冻结生产参数或代码结构。
 
-口径来源：`docs/lure-response-joint-evaluation` 的 Working Closure，按 `311ae70d` 快照核对；该分支在此之后持续更新，本轮未逐条重新纳入。与旧 10-27 入口不一致处，以本文列出的来源文档为准。
+口径来源：`docs/lure-response-joint-evaluation` 的 Working Closure，按 `311ae70d` 快照核对；该分支在此之后持续更新，本轮未逐条重新纳入。与旧 10-27 入口不一致处，以本文列出的来源文档为准。文中以代码体标注的 `lure-response-proposal-c-*.md` 文件名是研究分支的来源文件名，未在本分支落仓；本分支可读的接口定义以本文与设计包为准。
 
 ## 1. 通用状态协议
 
@@ -191,7 +191,7 @@ ClosingCost(theta) = K_close * u_close(theta)^2 * ActivityCostMultiplier(Activit
 - Activity 与 FeedingMotivation 是两个正交问题，不能都退化成“鱼现在积极不积极”；
 - `u_close >= 1 → hard-zero` 已撤回；
 - Closing 只解释“当前运动是否把已有机会沿径向带离鱼”，不单独承担完整高速惩罚（来源：`lure-response-proposal-c-soft-closing-fast-burst-regression.md`）；
-- 垂直运动不进入 `u_close`；它按候选归属交给 Spatial / Opportunity 的垂直可交互窗口处理。该 seam 的正式 owner 尚未落仓，见[开放决策](lure-response-proposal-c-open-decisions.md)（来源：`lure-response-proposal-c-vertical-motion-ownership.md`）。
+- 垂直运动不进入 `u_close`；它交给 Opportunity 的垂直可交互窗口处理（Spatial 只提供空间事实）。该 seam 的具体实现尚未闭合，见[开放决策](lure-response-proposal-c-open-decisions.md)。
 
 ### 5.5 风险顾虑
 
@@ -268,7 +268,7 @@ U_feed = max_i(U_i)
 
 ## 9. Opportunity join
 
-来源：`lure-response-proposal-c-opportunity-integration-closure.md`。
+来源：Proposal C Working Closure（PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`）；本分支可读的 seam 定义见[响应与机会契约](lure-response-proposal-c-response-opportunity.md)。
 
 第一版不在 Response 内新增连续 `ExposureRate(t)`，也不由 Response 按持续时间积分。职责拆分为：
 

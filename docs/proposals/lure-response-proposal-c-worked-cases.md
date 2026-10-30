@@ -118,7 +118,7 @@ crayfish  = [0.10, 0.90]
 
 ## 7. 机会是 L × C，一次
 
-**事实：** 同一次呈现，Response 得到 `C=0.6`；Spatial / Opportunity 给出该颗粒的 `L=0.5`。
+**事实：** 同一次呈现，Response 得到 `C=0.6`；Opportunity 给出该颗粒的 `L=0.5`（Spatial 只提供空间事实）。
 
 **结果：**
 
@@ -128,7 +128,7 @@ q = 0.5 × 0.6 = 0.30
 
 只有一次乘法。Candidate 后段不再乘 Response。
 
-**事实 B：** Spatial / Opportunity 侧的 `L` 未配置或无法解析。
+**事实 B：** Opportunity 侧的 `L` 未配置或无法解析。
 
 **结果 B：** `ResolutionIncomplete`，不是零机会。
 
