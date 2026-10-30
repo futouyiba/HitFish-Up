@@ -24,6 +24,7 @@
 
 - Feeding、Defense、Investigation 的 Interaction composition；
 - `TackleConspicuousness` 的字段与数据 owner（方向已定，owner 未指定）；
+- Wariness 累积更新的 owner、事件、粒度、有效期与衰减（2026-10-30 裁决只定“归 Fish Condition / 动态机制”，未指定 owner）；
 - 若未来启用 `ExplicitDirectional` bearing prior，production directional support 的 owner；
 - 垂直可交互窗口的正式实现 owner（`L` 归 Opportunity 后由该线承接）。
 
@@ -33,6 +34,7 @@
 - Risk：只立 `TackleConspicuousness`，`EntryDisturbance` 暂不实现；实现前 `RiskCost = 0`，Wariness 暂无真实玩家策略消费方；
 - 完整自然度模型；
 - 非摄食咬击（护巢、领地、防御、烦躁）如何作为独立 family 组合；
+- Fish Condition：2026-10-30 裁决采用「Bake 基线 + 受限运行时更新」，当前只有 Wariness 有累积依据；日期与来源见[裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md)；
 - Fish Condition 名单与生成方式留待专门 Bake / Owner 讨论；本轮沿用现行四个鱼况，不重定名单；
 - 装配版本变化时，共用轨迹记忆可以保留到什么边界。
 
@@ -70,5 +72,5 @@
 2. `TackleConspicuousness`：确定字段、事实来源与 owner，再做窄 MVP；在此之前 `RiskCost` 保持 0；
 3. 机会量 `L` 归 Opportunity 后，由该线补生产函数、单位与窗口口径；
 4. 用 `proposal_c_strategy_probe.py` 的排序结果检查参数敏感度，再进入生产标定；
-5. 按[鱼况/Bake 契约](lure-response-proposal-c-fish-condition-bake-contract.md)进入 Fish Condition / Bake：先保证四个 Condition 的产出形态、粒度与 `Unknown` 边界，再谈生成公式；
+5. 按[鱼况/Bake 契约](lure-response-proposal-c-fish-condition-bake-contract.md)与[裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md)进入 Fish Condition / Bake：先落粒度、占位标注与 `Unknown` 边界；路径 B 的正式 Contract 化、Wariness owner 与过期协议仍需 Owner；
 6. Prediction 保持 `Deferred Research`，满足重开条件时再单独开题。

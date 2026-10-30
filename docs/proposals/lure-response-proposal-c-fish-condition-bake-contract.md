@@ -38,48 +38,50 @@ Response 消费什么
 ### 3.1 Activity
 
 - 只调制追赶负担，不进入 Closing 的结构速度上限；
-- 必须能表达“当前不积极但物理上仍追得上”；
+- `ActivityCostMultiplier` 非负；1.0 只是 Working reference，不是缺失默认值；
+- 当前无证据支持上界，不新增 runtime cap；
 - 不能与 Feeding Motivation 共用一个“积极程度”标量。
 
 ### 3.2 Feeding Motivation
 
 - 只移动门槛，不乘 FoodValue；
-- `M=0.5` 是参考摄食意愿，不是默认填充值；
+- `M ∈ [0,1]` 是 Candidate/Working 域；0.5 是参考锚，不是缺失 fallback；
 - 高 Motivation 不复活 `Reject`。
 
 ### 3.3 Diet Shift
 
-- 是相对基础食性的偏移，不是全局食欲；
-- 必须按 prey family 给出，不能只给一个总数；
+- 按 prey family 给出有符号偏移，只影响对应 family 的 FoodValue；
+- 不增加全局 Diet Shift 分量；全局摄食意愿由 Feeding Motivation 表示；
 - 与 Feeding Motivation 分开：前者改变“哪种食物更值”，后者改变“现在多愿意出手”。
 
 ### 3.4 Wariness
 
-- 只放大已解析的 `SuspicionLoad`；
+- `[0,1]` 仅为 Candidate 表示域；
+- 只放大已解析的 `SuspicionLoad`；Risk 只消费 Wariness，不生成它；
 - 没有可疑线索时，高 Wariness 不产生风险顾虑；
+- 累积更新归 Fish Condition / 动态机制，owner、事件、粒度与衰减待指定；
 - fishing pressure 若已作为 Wariness 的上游原因，不得再进入 SuspicionLoad。
 
 ## 4. 粒度与载体
 
-`DEF` 按条件组归并，并在中鱼习性模式下保存鱼况，这是术语表的 Working 语义。但「Fish Condition 只由 Bake 产出、运行时不再更新」**不是已裁定结论**：术语表说它随天气 / 时段变化，Wariness 还明确「随过程累积变化」。
+`DEF` 按条件组归并，并在中鱼习性模式下保存鱼况，这是术语表的 Working 语义。
 
-当前保留两条候选路径，待 Owner 选：
+2026-10-30 裁决采用路径 B（见[裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md)）：
 
 ```text
-路径 A（bake-only）
-条件组 × 模式 → Bake 产出 Fish Condition → Response 只读
-
-路径 B（Bake + 运行时累积）
-Bake 产出基线；Wariness 等允许按过程累积更新
-→ 必须声明粒度、有效期与来源
+Bake 产出 ConditionGroup × EngagementMode 基线
++ 运行时仅更新已有机制 Contract 明确授权的维度
+当前仓内只有 Wariness 有“随过程累积变化”的语义依据
 ```
 
-Proposal C 的边界要求（Candidate，待 Owner 确认）：
+边界：
 
 - Response 不写回 Fish Condition；
-- 无论走哪条路径，都必须声明更新粒度与有效期；
-- 过期、越界或缺来源时如何转 `Unknown` 尚未裁定，不能默认沿用最后值；
-- 窝料、持久响应场只提供上游原因或独立输入，不直接改写 Fish Condition。
+- Activity、Feeding Motivation、Diet Shift 目前只随上游重新求值或 Bake 刷新变化，不获得运行时累积权限；
+- 窝料、Persistent Response Field、玩家即时操作只提供上游原因或独立输入，不直接改写 Fish Condition；
+- 值必须携带来源、适用区间与解析状态；过期、越界或缺少必要来源不得沿用最后值，转为 `Unknown`。具体有效期、刷新频率与运行时 Wariness 的事件窗口待 Owner 定。
+
+路径 B 的正式 Contract 化、Wariness 累积 owner 与过期状态协议仍列在[裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md)第 3 节。
 
 ## 5. 上游输入边界
 
@@ -98,45 +100,50 @@ Proposal C 的边界要求（Candidate，待 Owner 确认）：
 - 时段只能作为上游原因，不能直接等于 Activity；
 - 任何 Condition 的生成都不得读取玩家当前操作或饵的呈现。
 
-## 6. 若采用路径 A 的最小输出
+## 6. 第一版最小输出
 
-若 Owner 选择 bake-only，最低可消费集合如下；范围与参考仍是 Candidate：
+路径 B 的 Bake 基线最低可消费集合如下；范围与参考仍是 Candidate：
 
 | 输出 | 最小要求 |
 |---|---|
 | Activity | 每个条件组 × 模式一个倍率或 `Unknown` |
 | Feeding Motivation | 每个条件组 × 模式一个 `[0,1]` 值或 `Unknown` |
 | Diet Shift | 每个条件组 × 模式 × prey family 一个偏移或 `Unknown` |
-| Wariness | 每个条件组 × 模式一个 `[0,1]` 值或 `Unknown` |
+| Wariness | 每个条件组 × 模式一个 `[0,1]` 基线值或 `Unknown`；运行时累积另需授权 |
 
-允许第一版只产出常量或按天气 / 时段分档的值；关键是状态与边界正确，不是公式复杂。
+允许第一版只产出常量或按天气 / 时段分档的 placeholder；必须标注 `Candidate/Working`、适用范围、版本、有效期、来源与未标定状态，不能冒充生产参数。
 
 ## 7. 验收
 
-无论采用哪条路径，Response 侧应能验证：
+Response 侧应能验证：
 
 1. `Unknown` 的 Activity 不会默认成 1.0；
 2. `Unknown` 的 Motivation 不会默认成 0.5；
 3. `Wariness` 高但没有 cue 时 `RiskCost=0`；
 4. 同一 prey family 的 Diet Shift 只影响该 family 的 FoodValue；
-5. 运行时玩家操作不会改写任何 Fish Condition。
+5. 运行时玩家操作不会改写任何 Fish Condition；
+6. 过期、越界或缺来源的 Fish Condition 不会被沿用为最后值。
 
-第 6 项「过期的 Fish Condition 被标为 `Unknown`，而不是沿用最后值」属于待 Owner 裁定的有效期规则，确认后再进验收。
+第 6 项的裁决建议是转 `Unknown`；正式状态协议仍待 Owner 确认。
 
 ## 8. 未决
 
-- 四个 Condition 的生成公式与时间粒度；
-- DEF 中 Fish Condition 的字段形态与版本；
-- 各 Condition 的 owner 与审核流程；
-- 天气 / 时段 / 钓压等上游数据来源；
-- 圆桌与其它消费者是否读取同一份 Fish Condition；
-- 第一版是否允许常量占位，以及占位值如何标注。
+裁决已定的部分见[裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md)。仍需 Owner 决定：
+
+- 路径 B 是否正式 Contract 化，以及 Wariness 之外是否有 Condition 获得运行时更新权限；
+- Wariness 累积的 owner、事件、粒度、有效期、衰减与会话记忆边界；
+- 过期转 `Unknown` 是否作为正式状态协议；
+- Activity 是否需要生产上界与标定来源；
+- `TackleConspicuousness` 的字段、数据 owner 与 schema；
+- DEF 中 Fish Condition 的版本与有效区间载体；
+- 四个 Condition 的生成公式、来源与审核职责。
 
 ## 9. 来源
 
 术语与边界：
 
 - [`docs/terminology.md`](../terminology.md) §4、§5.2（Working Terminology Ledger）；
+- [裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md)（2026-10-30 Fable 子代理裁决）；
 - [`common-semantics.md`](../fish-habit-editor-v1/common-semantics.md) §13（V1 负向清单）；
 - [`reference/0340-fixed-bake/README.md`](../../reference/0340-fixed-bake/README.md)（参考实现范围）；
 - [`response-stage-mapping.md`](../groundbait-recipe/candidate/response-stage-mapping.md)（只读边界）。

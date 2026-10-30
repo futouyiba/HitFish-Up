@@ -91,6 +91,7 @@ ActualPresentation
 - [Escape-like Trigger v1](lure-response-proposal-c-escape-trigger-v1.md)：事件、窗口、family 适用与 TriggerIntensity 判定；
 - [机会量支持](lure-response-proposal-c-opportunity-support.md)：`L`、遭遇饱和与单位时间收益的玩具模型；
 - [鱼况/Bake 契约](lure-response-proposal-c-fish-condition-bake-contract.md)：从 Response 消费需求反推 Fish Condition 的产出要求；
+- [Fish Condition 裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md)：2026-10-30 的 A–H 裁决与仍待 Owner 的事项；
 - [设计图](../mockups/proposal-c-design-map.html)：面向阅读的图形版本。
 
 这些材料共同构成 Proposal C 的设计工作包，不替代已审核的 Current Contract。
