@@ -1,6 +1,6 @@
 # Proposal C｜响应与机会契约
 
-状态：Working Design / Candidate。本文写清第 5 到第 7 层：已解析的出手余量如何变成条件响应、同级猎物如何组成 feeding 结果、机会量如何接入候选。不是 Current Contract，也不是生产参数。本版是会议回写前的 Working 状态；2026-10-30 会议方向（去掉 θ、sibling 取 max、一竿一 Snapshot）尚未回写，见[会议对齐稿](../alignment/lure-response/2026-10-30-lure-response-alignment-draft.md)。
+状态：Working Design / Candidate。本文写清第 5 到第 7 层：已解析的出手余量如何变成条件响应、同级猎物如何组成 feeding 结果、机会量如何接入候选。不是 Current Contract，也不是生产参数。已按 2026-10-30 会议方向回写：不模拟相对方位 θ、同级取最大值、一竿一快照。会议记录见[会议对齐稿](../alignment/lure-response/2026-10-30-lure-response-alignment-draft.md)。
 
 来源：`docs/lure-response-joint-evaluation` 的 `margin-response-projection`、`sibling-partial-resolution`、`opportunity-integration-closure`、`response-aggregation-topology-review`（按 `311ae70d` 快照核对；该分支持续更新）。
 
@@ -8,7 +8,7 @@
 
 ```text
 已解析 DecisionMargin
-→ 条件响应 C(theta)
+→ 条件响应 C
 → sibling 组成 C_feed
 → 机会接入 q = L × C
 → Opportunity Reduce
@@ -23,7 +23,7 @@
 ### 投影
 
 ```text
-C(theta) = clamp((Margin(theta) - M0) / (M1 - M0), 0, 1)
+C = clamp((Margin - M0) / (M1 - M0), 0, 1)
 
 Working: M0 = 0.00, M1 = 0.40
 ```
@@ -33,14 +33,12 @@ Working: M0 = 0.00, M1 = 0.40
 ### 计算顺序
 
 ```text
-theta
-→ local costs
-→ Margin(theta)
-→ C(theta)
-→ E_theta[C]
+local costs
+→ Margin
+→ C
 ```
 
-- 必须在每个 latent bearing 内先算成本与 Margin，再投影，最后聚合；
+- 单方向计算：第一版按“鱼在追拟饵”估算追赶负担，不跨方位平均；
 - 不能先平均 Margin 再投影；
 - 不能先平均 Margin 再加时间项。
 
@@ -63,55 +61,34 @@ Reject                         → typed zero，不进入连续计算
 
 ```text
 未进入该集合的猎物 → NotParticipating，不参与 max，也不构成 Unknown
-进入集合但缺配置或输入 → NotConfigured / ResolutionIncomplete，不能从集合里偷偷删除
+进入集合但缺配置或输入 → 该分支不参与 max，记录 provenance
 ```
 
-### 每条 sibling 映射到区间
-
-| 状态 | 区间 |
-|---|---|
-| `ResolvedResponsive`，`C=c` | `[c, c]` |
-| `ResolvedNonResponsive` | `[0, 0]` |
-| `Reject` | `[0, 0]`，它是硬零，不是 Unknown |
-| `NoMatch`，规则明确给出数值零 | `[0, 0]` |
-| `NoMatch`，规则只给“条件不成立”等非数值结论 | 保持 `ResolutionIncomplete`，携带当前可证明边界（默认 `[0, 1]`） |
-| `Unknown`，无更窄信息 | `[0, 1]` |
-| `Unknown`，已有部分信息 | 更窄的 `[L_i, U_i]` |
-| `NotConfigured`（已进入 sibling set） | `ResolutionIncomplete`，携带当前可证明边界（默认 `[0, 1]`），不丢上界 |
-
-已有部分信息时必须用更窄区间，不退回 `[0, 1]`。进入集合后缺配置，状态保持 `ResolutionIncomplete`，但仍保留上界，用来判断已知 sibling 是否已经赢。
-
-### 聚合
+### 取最大值
 
 ```text
-L_feed = max_i(L_i)
-U_feed = max_i(U_i)
-
-L_feed == U_feed → C_feed = L_feed，可进入机会接入；仍需已解析的 L 才能形成 q
-否则 → ResolutionIncomplete，携带 response_bounds，不可进入 roll
+C_feed = max_i(C_i)      # 只对已解析分支
 ```
+
+- `Reject` 分支贡献 `0`，不复活；
+- `Unknown`、`NotConfigured`、`ResolutionIncomplete` 分支跳过并记录；没有已解析分支时输出 `ResolutionIncomplete`；
+- `InvalidInput` 分支仍阻断；
+- 这是 2026-10-30 Owner 方向下的简化：部分分支未解析时仍可 roll，需在真实 sibling 分布上复核。
 
 例子：
 
 ```text
-baitfish = [0.80, 0.80]
-crayfish = [0.20, 0.60]
-L_feed = 0.80, U_feed = 0.80 → C_feed = 0.80
-
-baitfish = [0.45, 0.45]
-crayfish = [0.10, 0.90]
-L_feed = 0.45, U_feed = 0.90 → ResolutionIncomplete
-
-baitfish = [0.40, 0.40]
-crayfish = NotConfigured → [0, 1]
-L_feed = 0.40, U_feed = 1.00 → ResolutionIncomplete
+baitfish = 0.80, crayfish = Unknown   → C_feed = 0.80（记录 crayfish 未解析）
+baitfish = 0.45, crayfish = 0.30      → C_feed = 0.45
+baitfish = Reject, crayfish = 0.30    → C_feed = 0.30
+全部分支未解析                         → ResolutionIncomplete
 ```
 
 ### 边界
 
 - sibling 取 `max` 不授权所有 Interaction mode 使用 universal max；
-- 区间是缺失输入导致的可能范围，不是置信区间或概率；
-- `C_feed` 未收敛时，不得用已知下界冒充最终值。
+- 跳过未解析分支是有意的简化，不是把 `Unknown` 当作 0；
+- `C_feed` 只有在至少一个分支解析后才有值。
 
 ## 4. 机会接入
 
@@ -154,7 +131,7 @@ q_long = L_long × 0.6 > q_short
 - Response 内不新增连续 `ExposureRate(t)`；
 - Response 不按持续时间积分 `C(t)`；
 - 时间、停留、穿越有效区域、覆盖范围不进入出手余量；
-- 垂直运动通过“多久处在可交互垂直区域”影响 `L`，不进入 `u_close`。
+- 垂直运动通过“多久处在可交互垂直区域”影响 `L`，不进入 Closing。
 
 ## 5. Candidate join
 
@@ -176,9 +153,9 @@ q_i,j = L_i,j × C_i,j
 | 层 | 输出 | 下游处理 |
 |---|---|---|
 | Margin | 数值 / `ResolutionIncomplete` / `Reject` | 只有数值进入投影 |
-| C(theta) | `0` / `(0,1]` / 不输出 | 逐方位聚合后再乘 support |
-| C_prey | 数值 / 区间 | 区间进入 sibling 聚合 |
-| C_feed | 标量 / `ResolutionIncomplete` + bounds | 只有标量进入 `L × C` |
+| C | `0` / `(0,1]` / 不输出 | 单方向计算后乘 support |
+| C_prey | 数值 | 进入 sibling max |
+| C_feed | 标量 / `ResolutionIncomplete` | 只有标量进入 `L × C` |
 | L | 数值 / `ResolutionIncomplete` | 未解析不当作零 |
 | q | 数值 | 只有数值进入 Opportunity Reduce |
 | Candidate | native snapshot / 不可 roll | roll 由 Candidate owner 决定 |
@@ -188,7 +165,7 @@ q_i,j = L_i,j × C_i,j
 | 规则 | 可复核入口 | 能证明 | 不能证明 |
 |---|---|---|---|
 | 投影形状与端点 | `proposal_c_response_projection_probe.py` | 截断线性、端点为 0/1 | 生产锚点 |
-| 追赶成本形状 | `proposal_c_closing_cost_shape_probe.py` | q 与成本的单调关系 | 完整高速策略排序 |
+| 追赶成本形状 | `proposal_c_closing_cost_shape_probe.py` | 无 θ 的 soft closing 形状、单调性、活动度线性 | 完整高速策略排序 |
 | support × response | `proposal_c_support_retention_projection_probe.py` | 比例保留的形状 | 生产 support 尺度 |
 | Trigger 形状 | `proposal_c_prediction_challenge_probe.py` | 单次事件的衰减形状 | 生产 `tau_recover` |
 

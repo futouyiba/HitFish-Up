@@ -2,16 +2,19 @@
 
 Not production calibration. Numbers are Working seeds from the design package:
   threshold(M), M0=0 / M1=0.40, K_close=0.76, TriggerBudget=0.10, K_wary=1.0 (probe).
+
+2026-10-30 direction: no latent bearing. First version assumes the fish is
+chasing the lure, so closing cost is K_close * q^2 * activity with no angle
+average. Results differ from the earlier per-bearing tables.
+
 Run: python3 -I prototypes/lure-response/proposal_c_strategy_probe.py
 """
 
 from __future__ import annotations
 
-import math
-
 M0 = 0.0
 M1 = 0.40
-K_CLOSE = 0.76
+K_CLOSE = 0.19  # no-theta rescale: was 0.76 under bearing averaging (x 1/4)
 TRIGGER_BUDGET = 0.10
 K_WARY = 1.0
 
@@ -27,39 +30,25 @@ def threshold(motivation: float) -> float:
     return base
 
 
-def mean_response(margin_of_theta) -> float:
-    """E_theta[C], sampled on 0..2pi. Margin is computed per bearing first."""
-    n = 720
-    total = 0.0
-    for i in range(n):
-        theta = 2.0 * math.pi * (i + 0.5) / n
-        m = margin_of_theta(theta)
-        total += clamp01((m - M0) / (M1 - M0))
-    return total / n
-
-
-def closing_cost(q: float, activity_mult: float, theta: float) -> float:
-    u = max(0.0, q * math.cos(theta))
-    return K_CLOSE * u * u * activity_mult
-
-
-def margin(food: float, trigger: float, q: float, activity_mult: float,
-           risk: float, motivation: float, theta: float) -> float:
-    return food + trigger - closing_cost(q, activity_mult, theta) - risk - threshold(motivation)
+def closing_cost(q: float, activity_mult: float) -> float:
+    return K_CLOSE * q * q * activity_mult
 
 
 def response(food: float, trigger: float, q: float, activity_mult: float,
              risk: float, motivation: float) -> float:
-    return mean_response(lambda t: margin(food, trigger, q, activity_mult, risk, motivation, t))
+    margin = food + trigger - closing_cost(q, activity_mult) - risk - threshold(motivation)
+    return clamp01((margin - M0) / (M1 - M0))
 
 
 def case_a() -> None:
     print("== Case A: fast search vs slow finesse ==")
     food, trigger, risk, motivation = 0.70, 0.0, 0.0, 0.50
     print("activity\tq=0.45(slow)\tq=0.90(fast)")
+    rows = {}
     for activity in (0.8, 1.0, 1.3, 1.6):
         slow = response(food, trigger, 0.45, activity, risk, motivation)
         fast = response(food, trigger, 0.90, activity, risk, motivation)
+        rows[activity] = (slow, fast)
         print(f"{activity:.2f}\t\t{slow:.3f}\t\t{fast:.3f}")
 
     # ClosingLoad ~ 0: activity must not change response.
@@ -69,14 +58,10 @@ def case_a() -> None:
     assert abs(response(food, trigger, 0.0, 0.8, risk, motivation)
                - response(food, trigger, 0.0, 1.6, risk, motivation)) < 1e-12
 
-    # Fast search still has some response when suitable.
-    assert response(food, trigger, 0.90, 0.8, risk, motivation) > 0.20
-    # Under Working values the drop is measurable but small: Closing alone does not
-    # produce a sharp fast-search penalty (see report + K_close sweep).
-    ratio = (response(food, trigger, 0.90, 1.6, risk, motivation)
-             / response(food, trigger, 0.90, 0.8, risk, motivation))
-    print(f"fast low/high activity ratio = {ratio:.3f}")
-    assert ratio < 0.98
+    # Without angle averaging the fast presentation carries the full radial cost.
+    assert rows[0.8][1] < rows[0.8][0]
+    assert rows[1.6][1] < rows[1.6][0]
+    assert rows[1.6][1] <= rows[0.8][1] + 1e-12  # lower activity, no better
 
 
 def case_b() -> None:
@@ -121,12 +106,13 @@ def sweeps() -> None:
     food, risk, motivation = 0.70, 0.0, 0.50
 
     print("K_close\tslow\tfast\tfast/slow")
-    for k in (0.50, 0.76, 1.00):
+    for k in (0.12, 0.19, 0.30):
         globals()["K_CLOSE"] = k
         slow = response(food, 0.0, 0.45, 1.0, risk, motivation)
         fast = response(food, 0.0, 0.90, 1.0, risk, motivation)
-        print(f"{k:.2f}\t{slow:.3f}\t{fast:.3f}\t{fast / slow:.2f}")
-    globals()["K_CLOSE"] = 0.76
+        ratio = fast / slow if slow > 0 else 0.0
+        print(f"{k:.2f}\t{slow:.3f}\t{fast:.3f}\t{ratio:.2f}")
+    globals()["K_CLOSE"] = 0.19
 
     print("M1\tfood=0.70,M=0.5,ordinary")
     for m1 in (0.30, 0.40, 0.50):

@@ -3,6 +3,10 @@
 Toy implementation of docs/proposals/lure-response-proposal-c-response-algorithm-v1.md.
 Checks status propagation, sibling bounds, Reject handling and the single L×C multiply.
 
+2026-10-30 direction: no latent bearing. The first version assumes the fish is
+chasing the lure, so closing cost is K_close * q^2 * activity with no angle
+average.
+
 Run: python3 -I prototypes/lure-response/proposal_c_end_to_end_probe.py
 """
 
@@ -11,7 +15,7 @@ from __future__ import annotations
 import math
 
 M0, M1 = 0.0, 0.40
-K_CLOSE = 0.76
+K_CLOSE = 0.19  # no-theta rescale: was 0.76 under bearing averaging (x 1/4)
 TRIGGER_BUDGET = 0.10
 K_WARY = 1.0
 
@@ -46,17 +50,12 @@ def activity_multiplier(activity):
     return RESOLVED, float(activity)
 
 
-def conditional_c(food, trigger, activity, q, risk, motivation, n=720) -> float:
-    total = 0.0
-    th = threshold(motivation)
-    for i in range(n):
-        theta = 2.0 * math.pi * (i + 0.5) / n
-        cost = K_CLOSE * max(0.0, q * math.cos(theta)) ** 2 * activity
-        margin = food + trigger - cost - risk - th
-        if not math.isfinite(margin):
-            return None
-        total += clamp01((margin - M0) / (M1 - M0))
-    return total / n
+def conditional_c(food, trigger, activity, q, risk, motivation) -> float:
+    cost = K_CLOSE * q * q * activity
+    margin = food + trigger - cost - risk - threshold(motivation)
+    if not math.isfinite(margin):
+        return None
+    return clamp01((margin - M0) / (M1 - M0))
 
 
 def prey_response(support, state, food, activity, q, risk, motivation):
@@ -95,30 +94,29 @@ def prey_interval(support_lo, support_hi, state, food, activity, q, risk, motiva
 
 
 def compose(siblings):
-    """siblings: list of (status, interval). Return (status, C_feed or bounds)."""
-    bounds = []
+    """siblings: list of (status, value).
+
+    2026-10-30 direction: same-target sibling interpretations take a plain max.
+    Reject contributes 0; unresolved families are skipped and reported in
+    provenance; InvalidInput still blocks; no resolved family -> RI.
+    """
+    resolved = []
+    skipped = []
     invalid = False
     for status, value in siblings:
         if status == RESOLVED:
-            bounds.append((value, value))
+            resolved.append(value)
         elif status == REJECT:
-            bounds.append((0.0, 0.0))
-        elif status == RI:
-            lo, hi = value
-            bounds.append((lo, hi))
+            resolved.append(0.0)
         elif status == INVALID:
-            lo, hi = value
-            bounds.append((lo, hi))
             invalid = True
-        else:
-            return status, None
-    lo = max(b[0] for b in bounds)
-    hi = max(b[1] for b in bounds)
+        elif status in (RI, UNKNOWN, NOT_CONFIGURED):
+            skipped.append(status)
     if invalid:
-        return INVALID, (lo, hi)
-    if lo == hi:
-        return RESOLVED, lo
-    return RI, (lo, hi)
+        return INVALID, None, skipped
+    if not resolved:
+        return RI, None, skipped
+    return RESOLVED, max(resolved), skipped
 
 
 def join(c_feed, L):
@@ -156,17 +154,14 @@ def main() -> None:
     s7 = prey_response(1.0, float("nan"), **base)
     print("nan state:", s7)
 
-    comp1 = compose([(RESOLVED, 0.80), (RI, (0.20, 0.60))])
-    comp2 = compose([(RESOLVED, 0.45), (RI, (0.10, 0.90))])
-    comp3 = compose([(RESOLVED, 0.45), (INVALID, (0.0, 1.0))])
-    print("sibling converged:", comp1)
-    print("sibling open:", comp2)
+    comp1 = compose([(RESOLVED, 0.80), (RI, None)])
+    comp2 = compose([(RESOLVED, 0.45), (RI, None)])
+    comp3 = compose([(RESOLVED, 0.45), (INVALID, None)])
+    comp4 = compose([(RI, None), (UNKNOWN, None)])
+    print("sibling max with unresolved:", comp1)
+    print("sibling max two resolved/unresolved:", comp2)
     print("sibling invalid:", comp3)
-
-    interval_support = prey_interval(0.40, 0.75, 0.80, **base)
-    print("interval support:", interval_support)
-    interval_comp = compose([interval_support])
-    print("interval compose:", interval_comp)
+    print("sibling none resolved:", comp4)
 
     print("join ok:", join(0.80, 0.50))
     print("join missing L:", join(0.80, None))
@@ -180,13 +175,10 @@ def main() -> None:
     assert s5 == (INVALID, (0.0, 1.0))
     assert s6 == (INVALID, (0.0, 1.0))
     assert s7 == (INVALID, (0.0, 1.0))
-    assert comp1 == (RESOLVED, 0.80)
-    assert comp2[0] == RI and comp2[1] == (0.45, 0.90)
-    assert comp3[0] == INVALID and comp3[1] == (0.45, 1.0)
-    assert interval_support[0] == RI
-    lo, hi = interval_support[1]
-    assert 0 < lo < hi <= 1
-    assert interval_comp[0] == RI and interval_comp[1] == interval_support[1]
+    assert comp1 == (RESOLVED, 0.80, [RI])
+    assert comp2 == (RESOLVED, 0.45, [RI])
+    assert comp3[0] == INVALID
+    assert comp4[0] == RI
     assert join(0.80, 0.50) == (RESOLVED, 0.40)
     assert join(0.80, None) == (RI, None)
     assert join(0.80, INVALID) == (INVALID, None)

@@ -83,7 +83,8 @@ FishConditionBlock {
 
 - 每个值独立带状态；一个字段 `Unknown` 不抹掉其它已知字段；
 - block 的 `status` 只作汇总提示，最终是否可消费由消费方按自己需要的字段判断；
-- 不引入 `stale-but-usable`；过期即 `Unknown`。
+- 不引入 `stale-but-usable`；过期即 `Unknown`；
+- 抛竿时形成快照后，整竿内按快照使用，见 §6 的抛竿快照。
 
 ## 6. 解析规则
 
@@ -100,6 +101,23 @@ resolved(condition) =
 - 过期 overlay 回落到 baseline，不沿用旧增量；
 - 当前只有 Wariness 具备 runtime 语义依据；V1 可只消费 baseline；
 - Response 不得写回任何 Fish Condition。
+
+### 抛竿快照（2026-10-30 方向）
+
+```text
+CastFishConditionSnapshot {
+  castId
+  formedAt            # 抛竿开始
+  blockVersion
+  resolved { activity, feedingMotivation, wariness, dietShift[family] }
+}
+```
+
+- 抛竿开始时解析 resolved Fish Condition，形成快照；
+- 本竿内所有 Response 只读该快照；时段切换不触发重新解析；
+- 有效期、越界、缺来源的检查在形成快照时完成；形成失败时整竿 `ResolutionIncomplete`；
+- 快照形成之后才到达的 overlay 不进入本竿，下一竿重新解析；
+- 这不等于 `stale-but-usable`：快照自带形成时刻与 block 版本，可追溯。
 
 ## 7. 写入者与消费者
 

@@ -1,6 +1,6 @@
 # Proposal C｜响应（Response）端到端算法 v1（Candidate）
 
-状态：Working Algorithm / Candidate。把已收口的各层写成一条可执行规格；不引入新机制，不冻结生产参数。本版是会议回写前的 Working 状态（逐 latent bearing 投影、有界 sibling 部分解析）；2026-10-30 会议方向（去掉 θ、sibling 取 max、一竿一 Snapshot）尚未回写，见[会议对齐稿](../alignment/lure-response/2026-10-30-lure-response-alignment-draft.md)。回写并复审前，本规格是实现与 probe 的算法基线。
+状态：Working Algorithm / Candidate。把已收口的各层写成一条可执行规格；不引入新机制，不冻结生产参数。已按 2026-10-30 会议方向回写：不模拟相对方位 θ、同级猎物解释取最大值、Fish Condition 一竿一个快照。会议记录见[会议对齐稿](../alignment/lure-response/2026-10-30-lure-response-alignment-draft.md)，回写后的实现基线即本规格与 probe。
 
 来源：设计骨架、语义契约、呈现解释与状态契约、五评价项契约、响应与机会契约、第一轮闭合审查、Fish Condition Production Contract。
 
@@ -11,20 +11,21 @@
 ```text
 PresentationSegment   轨迹、时间、环境关系、局部记录
 AssemblySnapshot      证据绑定与适用标记
-FishCondition         resolved baseline（可选授权 overlay）
+CastFishCondition     抛竿时形成的鱼况快照（可选授权 overlay）
 OpportunityFacts      L 及其状态
 WorkingParams         K_close、TriggerBudget、M0/M1、tail 参数
 ```
 
 不变量：
 
-1. 先按 latent bearing 算成本与 Margin，再投影，最后聚合；不能先平均 Margin。
+1. 单方向算成本与 Margin，再投影为 `C`；不跨方位平均，也不先平均 Margin。
 2. 支持度只乘一次；机会量只乘一次，`q = L × C`。
 3. `Unknown`、`NotConfigured`、`InvalidInput` 不当作 0；`Reject` 是 typed zero。
-4. 过期、越界或缺来源的 Fish Condition 不沿用最后值。
+4. Fish Condition 在抛竿时形成快照，整竿内沿用；形成快照时过期、越界或缺来源的值不沿用旧值。
 5. 时间、停留、覆盖不进入出手余量。
 6. Candidate 后段不再乘 Response。
 7. 同一事实可被多层读取，但同一作用只在一个 owner 结算。
+8. 同级猎物解释取最大值；未解析分支跳过并记录，不当作 0。
 
 ## 2. 算法
 
@@ -33,7 +34,7 @@ function response(segment, assembly, fc, opportunity, params):
 
   # 0. 帧校验
   require segment.valid and assembly.version == segment.assemblyVersion
-  require fc.version matches segment, fc.validity covers segment.time
+  require castFC.snapshotId and castFC.castId == segment.castId   # 一竿一个快照
   if not satisfied: return ResolutionIncomplete
 
   # 1. 猎物解释
@@ -49,75 +50,71 @@ function response(segment, assembly, fc, opportunity, params):
       support = supports[family]
 
       if support == Reject:
-          interval[family] = (Reject, 0.0, 0.0)
+          results[family] = (Reject, 0.0)
           continue
       if support == NoMatch:
           if ruleReturnsNumber(family):
-              v = ruleValue(family)
-              interval[family] = (Resolved, v, v)
+              results[family] = (Resolved, ruleValue(family))
           else:
-              interval[family] = (ResolutionIncomplete, 0.0, 1.0)
+              results[family] = (ResolutionIncomplete, None)
           continue
       if support == Unknown:
-          lo, hi = knownSupportBounds(family)      # 默认 (0,1)，有部分信息就收窄
-          interval[family] = (ResolutionIncomplete, lo, hi)
+          results[family] = (ResolutionIncomplete, None)
           continue
       if support == InvalidInput:
-          interval[family] = (InvalidInput, 0.0, 1.0)
+          results[family] = (InvalidInput, None)
           continue
       if support == NotConfigured:
-          interval[family] = (ResolutionIncomplete, 0.0, 1.0)
+          results[family] = (ResolutionIncomplete, None)
           continue
 
       state = extractState(segment, family)        # dims, events, TriggerIntensity
       if state.status == Reject:
-          interval[family] = (Reject, 0.0, 0.0)     # typed zero，短路
+          results[family] = (Reject, 0.0)
           continue
       if state.status == InvalidInput:
-          interval[family] = (InvalidInput, 0.0, 1.0)
+          results[family] = (InvalidInput, None)
           continue
       if state.status in (Unknown, NotConfigured):
-          interval[family] = (ResolutionIncomplete, 0.0, 1.0)
+          results[family] = (ResolutionIncomplete, None)
           continue
 
-      if support is an interval:
-          interval[family] = responseInterval(support, state, fc, params)
-          continue
-
-      C_cond = evaluate(state, fc, params)         # 已解析输入下的条件响应
+      C_cond = evaluate(state, castFC, params)     # 已解析输入下的条件响应
       if C_cond == Reject:
-          interval[family] = (Reject, 0.0, 0.0)
+          results[family] = (Reject, 0.0)
           continue
       if C_cond == InvalidInput:
-          interval[family] = (InvalidInput, 0.0, 1.0)
+          results[family] = (InvalidInput, None)
           continue
       if C_cond is Unknown / NotConfigured:
-          interval[family] = (ResolutionIncomplete, 0.0, 1.0)
+          results[family] = (ResolutionIncomplete, None)
           continue
 
-      C_f = support.value * C_cond
-      interval[family] = (Resolved, C_f, C_f)
+      results[family] = (Resolved, support.value * C_cond)
 
-  # 3. sibling 组成
-  (status, L_feed, U_feed) = compose(interval)
+  # 3. sibling 组成：取最大值
+  (status, C_feed, skipped) = compose(results)
   if status != Resolved:
-      return (status, (L_feed, U_feed))   # response_bounds；status 可为 RI 或 InvalidInput
+      return status                     # RI 或 InvalidInput
 
   # 4. 机会接入
   if opportunity.L == InvalidInput: return InvalidInput
   if opportunity.L in (Unknown, NotConfigured): return ResolutionIncomplete
-  q = opportunity.L * L_feed
+  q = opportunity.L * C_feed
   return (Resolved, q)
 
 
-function compose(interval):
-  # Reject 分支按 (0,0) 参与 max；Unresolved 分支用已知边界参与
-  L_feed = max(branch.lower for branch in interval)
-  U_feed = max(branch.upper for branch in interval)
-  if any(branch.status == InvalidInput for branch in interval):
-      return (InvalidInput, L_feed, U_feed)
-  if L_feed == U_feed: return (Resolved, L_feed, U_feed)
-  return (ResolutionIncomplete, L_feed, U_feed)
+function compose(results):
+  # Reject 贡献 0；未解析分支跳过并记录；InvalidInput 阻断；没有已解析分支 -> RI
+  resolved = [value for (status, value) in results if status == Resolved]
+  resolved += [0.0 for (status, value) in results if status == Reject]
+  skipped  = [family for family, (status, _) in results
+              if status in (ResolutionIncomplete, Unknown, NotConfigured)]
+  if any(status == InvalidInput for (status, _) in results):
+      return (InvalidInput, None, skipped)
+  if not resolved:
+      return (ResolutionIncomplete, None, skipped)
+  return (Resolved, max(resolved), skipped)
 
 
 function evaluate(state, fc, params):
@@ -125,36 +122,24 @@ function evaluate(state, fc, params):
   # Returns a resolved conditional response, or a non-numeric status.
   food      = clamp(base + size + dietShift, 0, 1)
   trigger   = params.TriggerBudget * state.TriggerIntensity
+  closing   = params.K_close * state.q^2 * activityMultiplier(fc.activity)   # 单方向：鱼在追拟饵
   risk      = params.K_wary * fc.wariness * suspicionLoad      # 无 cue 时为 0
   threshold = f(fc.feedingMotivation)                          # 分段线性 + tail
 
-  # 逐 latent bearing：先算 Margin，再投影，最后聚合
-  for each latent bearing theta:
-      closing(theta) = params.K_close * u_close(theta)^2 * activityMultiplier(fc.activity)
-      margin(theta)  = food + trigger - closing(theta) - risk - threshold
-      C(theta)       = clamp((margin(theta) - params.M0) / (params.M1 - params.M0), 0, 1)
-
-  return E_theta[C(theta)]        # C_conditional；不能先平均 Margin 再投影
-
-
-function responseInterval([a, b], state, fc, params):
-  C_cond = evaluate(state, fc, params)     # 以 support=1 计算条件响应
-  if C_cond == Reject: return (Reject, 0.0, 0.0)
-  if C_cond is Unknown / NotConfigured / InvalidInput:
-      return (C_cond, 0.0, 1.0)
-  return (ResolutionIncomplete, a * C_cond, b * C_cond)   # 不提前取中点；收敛由 compose 判定
+  margin = food + trigger - closing - risk - threshold
+  return clamp((margin - params.M0) / (params.M1 - params.M0), 0, 1)   # C
 ```
 
 ### 2.1 各步状态
 
 | 步骤 | 可返回 |
 |---|---|
-| 帧校验 | `ResolutionIncomplete` |
-| 猎物解释 | 数值 / 区间 / `Unknown` / `NotConfigured` / `NoMatch` |
+| 帧校验 | `ResolutionIncomplete`（含快照缺失或错竿） |
+| 猎物解释 | 数值 / `Unknown` / `NotConfigured` / `NoMatch` |
 | 状态提取 | 状态维度、事件、`TriggerIntensity`；非数值状态向上传播 |
 | 评价 | 五项各自状态；`Reject` 单独处理 |
-| 投影 | 数值 `C(theta)`；不输出非数值 |
-| sibling 组成 | 标量或 `ResolutionIncomplete` + bounds |
+| 投影 | 数值 `C`；不输出非数值 |
+| sibling 组成 | 标量（max）或 `ResolutionIncomplete` |
 | 机会接入 | 标量 `q` 或 `ResolutionIncomplete` |
 
 ## 3. 状态代数
@@ -177,7 +162,7 @@ Reject > InvalidInput > NotConfigured > Unknown > Resolved
 ```
 
 - 同一分支出现 `Reject`（target relation、support、state 或评价项）时按 typed zero 短路，不再检查该分支其余输入；
-- sibling 之间不做优先级合并：各自映射为区间后取 max；
+- sibling 之间不做优先级合并：已解析分支取 max，未解析分支跳过并记录 provenance；
 - `NotApplicable` 的 family 不进入 sibling set，也不制造 `Unknown`；
 - 任何数值输入为 NaN / Infinity 时按 `InvalidInput` 处理，不进入 `clamp`。
 
@@ -191,7 +176,7 @@ Reject > InvalidInput > NotConfigured > Unknown > Resolved
 | Wariness 缺失且无 cue | `RiskCost=0` |
 | DietShift[family] 缺失 | 该 family 的 FoodValue 不可闭合 |
 | TriggerIntensity 缺失 | `ResolutionIncomplete` |
-| support 为区间 | 进入 sibling 区间，不提前取中点 |
+| support 未收敛为标量 | 该分支 `ResolutionIncomplete`，跳过并记录 |
 | `L` 缺失 | `ResolutionIncomplete`，不是零机会 |
 
 ## 4. 计算追溯
@@ -209,7 +194,7 @@ Motivation = 0.50 → threshold = 0.40
 M0 = 0, M1 = 0.40
 ```
 
-逐 bearing 算成本与 Margin，投影后取平均：
+单方向算成本与 Margin，再投影（Working `K_close = 0.19`，单方向标尺）：
 
 ```text
 C_conditional = 0.874
@@ -226,7 +211,7 @@ q = 0.50 × 0.874 = 0.437
 
 ## 5. 可执行入口
 
-- `prototypes/lure-response/proposal_c_end_to_end_probe.py`：跑通 happy path、Unknown Activity、Reject、Unknown support、sibling 收敛 / 未收敛、`L` 缺失与单次乘法。
+- `prototypes/lure-response/proposal_c_end_to_end_probe.py`：跑通 happy path、Unknown Activity、Reject、Unknown support、sibling 取最大与未解析跳过、`L` 缺失与单次乘法。
 - 各形状 probe：投影、Closing、Trigger、support retention、机会量。
 
 ## 6. 未闭口
@@ -234,5 +219,6 @@ q = 0.50 × 0.874 = 0.437
 - 各 Condition 的生成语义与标定；
 - 事件提取的滤波、采样与阈值；
 - `L` 的生产函数与窗口口径；
+- `K_close` 的 no-θ 重标定（Working 0.19，替代方位平均下的 0.76）；
 - 真实 encounter geometry 是否引入 hard gate；
 - 生产参数：`K_close`、Trigger budget、`K_wary`、`M0/M1`、tail 参数。

@@ -7,6 +7,8 @@
 > 若本文与更高 Authority 冲突，以 `docs/authority-model.md` 与已合并 Current Owner 为准。本文是 `futou-/exciting-payne-95a562` 分支的审阅入口；Proposal C 的 Working 研究文档保留在 `docs/lure-response-joint-evaluation` 分支。
 >
 > 2026-10-30 同步：第一版 `DecisionMargin` 使用五项式；Prediction 为 `Deferred Research`；`L` 的正式 owner 是 Opportunity，Spatial 只提供空间事实。依据：Proposal C Working Closure（PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`）§4–§5、Issue [#152](https://github.com/futouyiba/HitFish-Up/issues/152) 与 Issue [#161](https://github.com/futouyiba/HitFish-Up/issues/161)。
+>
+> 2026-10-30 会议方向已回写设计包：不模拟相对方位 θ、同级猎物解释取最大值、Fish Condition 一竿一个快照；`K_close` 按单方向标尺改为 `0.19`。
 
 ## 1. 当前设计入口
 
@@ -16,7 +18,7 @@
 | 每层的输入、输出、状态与 owner | [语义契约](lure-response-proposal-c-semantic-contract.md) |
 | 证据、支持度插值、区间与状态提取 | [呈现解释与状态契约](lure-response-proposal-c-presentation-interpretation.md) |
 | 五评价项的合成方式与边界 | [五评价项契约](lure-response-proposal-c-evaluation-items.md) |
-| 投影、sibling 区间与候选接入 | [响应与机会契约](lure-response-proposal-c-response-opportunity.md) |
+| 投影、sibling 取最大与候选接入 | [响应与机会契约](lure-response-proposal-c-response-opportunity.md) |
 | 用反例检查设计 | [工作案例](lure-response-proposal-c-worked-cases.md) |
 | 未收口、无 owner 或冲突的问题 | [开放决策](lure-response-proposal-c-open-decisions.md) |
 | 第一轮玩法闭合：AttackTrigger、Risk 输入、策略 probe | [第一轮闭合审查](lure-response-proposal-c-first-round-closure.md) |
@@ -47,7 +49,7 @@
 | 触发 | Escape-like v1 | 已准入一种 | 事件阈值、family 适用 |
 | 五评价项 | 五评价项契约 | 已写合成与边界 | 生产标定、Risk 无输入 |
 | 投影 | 响应与机会契约 | M0/M1 Working | reference calibration |
-| sibling | 响应与机会契约 | 有界部分解析 | 生产组合分布 |
+| sibling | 响应与机会契约 | 同级取最大 | 生产组合分布 |
 | 机会 | 响应与机会契约、机会量支持 | seam + 玩具模型 | `L` 生产函数与 reducer |
 | 候选 | 响应与机会契约 | 接口 | Candidate reducer |
 | Fish Condition | 契约、Production Contract、机制草案 | 架构已裁、机制骨架 | 生成曲线与数据 |
@@ -79,9 +81,9 @@
 3. Reject 与 Poor typed semantics 分离，Poor 可在极端有利条件下弱响应；
 4. CurrentFoodValue 完整连续域 `[0,1]`；
 5. sudden turn 在诊断或候选评估中可以同时记录 Trigger 正效应与 Prediction 负效应，但不合并成新字段；第一版生产主体不含 Prediction，只有出现独立策略价值证据时才重开；
-6. `u_close >= 1 → hard-zero` 已撤回，Closing 只解释径向分离负担；
-7. 垂直运动经 Opportunity 的垂直可交互窗口进入 `L`，不进入 `u_close`（Spatial 只提供空间事实）；
-8. sibling 使用有界部分解析，区间收敛才输出标量；
+6. `q >= 1 → hard-zero` 已撤回，Closing 只解释径向分离负担；
+7. 垂直运动经 Opportunity 的垂直可交互窗口进入 `L`，不进入 Closing（Spatial 只提供空间事实）；
+8. sibling 取最大值；未解析分支跳过并记录，不当作 0；
 9. high speed / low prey support / pause 不产生匿名 Suspicion 或 bonus；
 10. combined soft burden 不加 runtime total cap；
 11. temporal duration 不进入出手余量；
@@ -93,7 +95,7 @@
 2. 攻击诱因是否可能变成免费收益；
 3. 追赶负担在低活性与高速组合下是否给出正确排序；
 4. 风险顾虑的第一版实现层是否够用，是否会把自然呈现误判；
-5. 有界部分解析是否在真实 sibling 组合下频繁停在不完整状态；
+5. 同级取最大时，未解析分支跳过是否掩盖了应阻断的情况；
 6. 机会量与响应的 `L × C` 是否存在系统性过度衰减；
 7. Prediction 是否出现独立策略价值证据；没有证据时维持不进第一版主体；
 8. 哪些开放项真正阻塞生产，哪些只是标定。

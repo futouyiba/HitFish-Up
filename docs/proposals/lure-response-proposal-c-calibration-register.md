@@ -11,7 +11,7 @@
 | `M0` | 开始有响应的 Margin 门槛。Margin ≤ M0 时 C=0 | 0.00 |
 | `M1` | 达到满响应的 Margin 锚点。Margin ≥ M1 时 C=1 | 0.40 |
 | `TriggerBudget` | 反应口最多允许给 DecisionMargin 加多大一块，防止 Trigger 变成主导一切的超级奖励 | 0.10，护栏约 0.15 |
-| `K_close` | 追赶困难在 Margin 里有多“贵” | 0.76 |
+| `K_close` | 追赶困难在 Margin 里有多“贵”（单方向标尺） | 0.19 |
 | `K_wary` | `Wariness × SuspicionLoad` 换算成 RiskCost 时的总尺度 | 1.0（probe） |
 | Motivation tail start | Motivation 高到哪里以后，进入“门槛快速下降区” | 0.80 |
 | Motivation tail extra slope | 进入 tail 后，门槛额外下降多快 | 0.50 |
@@ -38,7 +38,7 @@
 | tail start | 进入门槛快速下降区的 Motivation | 0.80 | 摄食意愿门槛 | 高 Motivation 分布 |
 | tail extra slope | 进入 tail 后门槛额外下降的速度 | 0.50 | 摄食意愿门槛 | 同上 |
 | `TriggerBudget` | 反应口给 DecisionMargin 加分的上限 | 0.10（护栏 0.15） | 攻击诱因 | 反应口钓获对照 |
-| `K_close` | 追赶负担换算成 Margin 成本的尺度 | 0.76 | 追赶负担 | 速度与咬口的排序数据 |
+| `K_close` | 追赶负担换算成 Margin 成本的尺度（单方向标尺） | 0.19 | 追赶负担 | 速度与咬口的排序数据 |
 | `K_wary` | Wariness × SuspicionLoad 换算成 RiskCost 的尺度 | 1.0（probe） | 风险顾虑 | 钓压与警戒数据 |
 | support anchors | prey evidence 的参考档位 | 0.40 / 0.90 | 猎物解释 | 证据配置一致性 |
 | 机会 `D` | 停留/机会量随速度衰减的尺度（玩具模型） | 0.80 | 机会量玩具模型 | 有效区域尺寸与停留数据 |
@@ -49,6 +49,7 @@
 ## 3. 使用规则
 
 - 表中数值全部是 Working / Probe，不得写成生产参数；
+- `K_close` 的 `0.19` 是 no-θ 单方向标尺下的值；`0.76` 是带方位平均时的历史 Working 值；
 - 白话解释只帮助阅读，不改变参数归属与公式；
 - 任何参数改动都要同时更新使用它的文档与 probe；
 - 标定必须给出数据来源、样本范围与排序验收，而不只是拟合误差；

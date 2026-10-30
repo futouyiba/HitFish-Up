@@ -4,7 +4,7 @@
 
 口径来源：`docs/lure-response-joint-evaluation` 的 Working Closure，按 `311ae70d` 快照核对；该分支在此之后持续更新，本轮未逐条重新纳入。与旧 10-27 入口不一致处，以本文列出的来源文档为准。文中以代码体标注的 `lure-response-proposal-c-*.md` 文件名是研究分支的来源文件名，未在本分支落仓；本分支可读的接口定义以本文与设计包为准。
 
-本文描述会议回写前的 Working 状态（逐 latent bearing 投影、有界 sibling 部分解析、validity 覆盖每个 segment）；2026-10-30 会议方向（去掉 θ、sibling 取 max、一竿一 Snapshot）尚未回写，见[会议对齐稿](../alignment/lure-response/2026-10-30-lure-response-alignment-draft.md)。
+本文已按 2026-10-30 Owner 方向回写：第一版不模拟相对方位 θ，按“鱼在追拟饵”的单方向估算追赶负担；同级猎物解释取最大值；Fish Condition 采用一竿一个快照。会议记录见[会议对齐稿](../alignment/lure-response/2026-10-30-lure-response-alignment-draft.md)。
 
 符号说明：`q` 在 Closing 段表示“相对速度 / InterceptSpeedLimit”，在机会段表示 `L × C` 的候选贡献；引用时带上下文。
 
@@ -136,7 +136,7 @@ TriggerIntensity_p ∈ [0,1]
 ```text
 FoodValue
 StateTriggerValue
-ClosingCost(theta)
+ClosingCost
 RiskCost
 WillingnessThreshold(Motivation)
 ```
@@ -185,17 +185,18 @@ M > 0.80:
 
 ```text
 q = horizontal lure speed relative to water / InterceptSpeedLimit
-u_close(theta) = max(0, q * cos(theta))
 
-ClosingCost(theta) = K_close * u_close(theta)^2 * ActivityCostMultiplier(Activity)
+ClosingCost = K_close * q^2 * ActivityCostMultiplier(Activity)
 ```
+
+第一版不模拟鱼与拟饵的相对方位，统一按“鱼在追拟饵”估算；`q` 就是径向速度需求比。
 
 - `InterceptSpeedLimit` 只表达鱼种 / size cohort 的追赶能力，不受 Activity 修改；
 - Activity 表达“愿意为追赶付出多少行为代价”，只调制负担倍率（来源：`lure-response-proposal-c-activity-closing-cost-contract.md`、`lure-response-proposal-c-activity-motivation-separation.md`）；
 - Activity 与 FeedingMotivation 是两个正交问题，不能都退化成“鱼现在积极不积极”；
-- `u_close >= 1 → hard-zero` 已撤回；
+- `q >= 1 → hard-zero` 已撤回；
 - Closing 只解释“当前运动是否把已有机会沿径向带离鱼”，不单独承担完整高速惩罚（来源：`lure-response-proposal-c-soft-closing-fast-burst-regression.md`）；
-- 垂直运动不进入 `u_close`；它交给 Opportunity 的垂直可交互窗口处理（Spatial 只提供空间事实）。该 seam 的具体实现尚未闭合，见[开放决策](lure-response-proposal-c-open-decisions.md)。
+- 垂直运动不进入 Closing；它交给 Opportunity 的垂直可交互窗口处理（Spatial 只提供空间事实）。该 seam 的具体实现尚未闭合，见[开放决策](lure-response-proposal-c-open-decisions.md)。
 
 ### 5.5 风险顾虑
 
@@ -208,10 +209,10 @@ RiskCost = K_wary * Wariness * SuspicionLoad
 ## 6. DecisionMargin
 
 ```text
-DecisionMargin(theta)
+DecisionMargin
 = CurrentFoodValue
 + StateTriggerValue
-- ClosingCost(theta)
+- ClosingCost
 - RiskCost
 - WillingnessThreshold(FeedingMotivation)
 ```
@@ -250,25 +251,22 @@ Margin <= 0    → ResolvedNonResponsive, C = 0
 约束：
 
 - `ResolutionIncomplete` 不进入投影；
-- 先在每个 latent bearing 计算，再聚合；
+- 单方向计算 Margin，再投影为 `C`；不跨方位平均；
 - 不能先平均 Margin 再投影；
 - 不能先平均 Margin 再加 time bonus。
 
 ## 8. PreyModeResponse
 
-同一 Feeding route 的 sibling alternatives 使用有界部分解析（来源：`lure-response-proposal-c-sibling-partial-resolution.md`）：
+同一 Feeding route 的 sibling alternatives 取最大值（2026-10-30 Owner 方向）：
 
 ```text
-每条 sibling path 携带区间：C_i ∈ [L_i, U_i]
-
-L_feed = max_i(L_i)
-U_feed = max_i(U_i)
+C_feed = max_i(C_i)          # 只对已解析、属于同一 physical target 的 sibling
 ```
 
-- `L_feed == U_feed` 时才输出最终标量；
-- 否则保持 `ResolutionIncomplete`，携带 `response_bounds`，不可进入 roll；
-- `Unknown` 不等于 0，也不因为有已解析 sibling 就直接忽略未解析路径；
-- 已解析 sibling 可以把区间压缩，不能凭空填满。
+- `Reject` 的分支贡献 `0`，不复活；
+- `Unknown`、`NotConfigured`、`ResolutionIncomplete` 的分支不参与 max，但必须记录在 provenance 里；没有已解析分支时输出 `ResolutionIncomplete`；
+- `InvalidInput` 分支仍阻断；
+- 这个简化会放过“部分分支未解析”的情况，需在真实 sibling 分布上复核。
 
 ## 9. Opportunity join
 
