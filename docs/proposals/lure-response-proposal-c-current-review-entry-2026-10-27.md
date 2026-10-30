@@ -33,6 +33,22 @@
 
 口径来源：本包按 `docs/lure-response-joint-evaluation` 的 `311ae70d` Working Closure 快照核对。该分支在此之后持续更新，本轮未逐条重新纳入；引用前先核对该分支当前 head。研究分支更新后，先回写设计包，再更新本入口。
 
+### 各层状态（Candidate）
+
+| 层 | 文档 | 状态 | 主要缺口 |
+|---|---|---|---|
+| 呈现事实 | 呈现解释与状态契约 | 已写接口 | 生产采集、遮挡与可见性 |
+| 猎物解释 | 呈现解释与状态契约 | 已写规则 | 生产锚点、family 表 |
+| 状态提取 | 呈现解释与状态契约 | 已写规则 | 采样、滤波、姿态输入 |
+| 触发 | Escape-like v1 | 已准入一种 | 事件阈值、family 适用 |
+| 五评价项 | 五评价项契约 | 已写合成与边界 | 生产标定、Risk 无输入 |
+| 投影 | 响应与机会契约 | M0/M1 Working | reference calibration |
+| sibling | 响应与机会契约 | 有界部分解析 | 生产组合分布 |
+| 机会 | 响应与机会契约、机会量支持 | seam + 玩具模型 | `L` 生产函数与 reducer |
+| 候选 | 响应与机会契约 | 接口 | Candidate reducer |
+| Fish Condition | 契约、Production Contract、机制草案 | 架构已裁、机制骨架 | 生成曲线与数据 |
+| 端到端 | Response Algorithm v1 | 可执行规格 + probe | 生产参数 |
+
 ## 2. 第一版主体
 
 ```text
