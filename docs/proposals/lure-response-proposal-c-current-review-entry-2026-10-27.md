@@ -5,6 +5,8 @@
 用途：给其他 Agent / Reviewer 作为当前 Proposal C 的统一审阅入口。本文只保留当前仍成立的主链、最新 Working seed、已闭合边界和开放项。
 
 > 若本文与更高 Authority 冲突，以 `docs/authority-model.md` 与已合并 Current Owner 为准。本文是 `futou-/exciting-payne-95a562` 分支的审阅入口；Proposal C 的 Working 文档保留在 `docs/lure-response-joint-evaluation` 分支。
+>
+> 2026-10-30 同步：第一版 `DecisionMargin` 按 Proposal C 当前 Working Closure 使用五项式；Prediction 为 `Deferred Research`，不进入第一版裕量。本页此前含 `PredictionCost` 的六项式是未同步旧口径。依据：PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3` 的 [`lure-response-proposal-c-feeding-response-working-closure.md`](https://github.com/futouyiba/HitFish-Up/blob/5caf1f119ab6e5a5c595a4ba913e7962aa338ec3/docs/proposals/lure-response-proposal-c-feeding-response-working-closure.md) §4–§5，以及 Proposal C open-decisions 的「已知未同步」条目。
 
 ## 1. 当前主链
 
@@ -31,10 +33,11 @@ DecisionMargin(theta)
 = CurrentFoodValue
 + StateTriggerValue
 - ClosingCost(theta)
-- PredictionCost
 - RiskCost
 - WillingnessThreshold(FeedingMotivation)
 ```
+
+`Prediction` 第一版为 `Deferred Research`，不进入上式；重开条件见 §6。
 
 FoodValue：
 
@@ -86,7 +89,7 @@ upper guardrail ≈ 0.15
 - `NoMatch` 表示适用规则已完成检查但没有命中，按该规则定义的数值结果处理，不能与 `Unknown` 或 `NotConfigured` 混用；
 - 已解析的数值 0 才能进入公式并表示该项的真实零贡献。
 
-因此，`StateTriggerValue`、`PredictionCost`、`RiskCost` 和 `WillingnessThreshold` 的缺失状态必须先解决，才能输出 `DecisionMargin`。`CurrentFoodValue=0` 仍是合法的 Poor 输入；它不等于 `Reject`。
+因此，`StateTriggerValue`、`RiskCost` 和 `WillingnessThreshold` 的缺失状态必须先解决，才能输出 `DecisionMargin`。`CurrentFoodValue=0` 仍是合法的 Poor 输入；它不等于 `Reject`。
 
 ## 3. Poor 与 Reject：已闭合的 Working 区分
 
@@ -219,7 +222,13 @@ LowClosing     q_ref = 0.90
 
 由于 Closing hard-zero 已撤回，Fast / Burst 需要按纯 soft Closing 重新跑完整 response basket；旧 hard-infeasible share 只保留为诊断统计。
 
-## 6. Prediction
+## 6. Prediction（Deferred Research）
+
+第一版不进入 `DecisionMargin`，本节只保留研究材料。
+
+重开条件：必须证明 Prediction 提供独立的策略价值。固定 FoodValue、AttackTrigger、Closing、Risk、Motivation 和 Opportunity `L`，只改变运动可预测性，仍能得到稳定、可复现、玩家能理解且足以改变打法选择的排序；只靠统计拟合改善不构成重开依据。
+
+以下为待验证的研究形态，不是当前裕量项：
 
 ```text
 sudden direction change
@@ -243,7 +252,7 @@ PredictionCost
 = K_pred * PredictionChallenge
 ```
 
-Prediction 不 hard-zero。Pause 只通过时间推进让 challenge 衰减，不加额外 PauseBonus。
+若重开，Prediction 不 hard-zero。Pause 只通过时间推进让 challenge 衰减，不加额外 PauseBonus。
 
 ## 7. Wariness / Suspicion
 
@@ -406,9 +415,9 @@ vertical dart
 
 第一版至少需要明确 Horizontal2D 的 applicability；vertical-dominant presentation 不能静默宣称已被统一解决。
 
-### P1-B｜Prediction 的 max_recent 是否低估持续 erratic movement
+### P1-B｜Prediction 的 max_recent 是否低估持续 erratic movement（Deferred Research）
 
-需要 regression：
+若 Prediction 重开，需要 regression：
 
 ```text
 single turn
@@ -455,7 +464,7 @@ Preferred at very low M
 4. Reject 与 Poor typed semantics 分离；
 5. Poor 在极端有利条件下允许弱响应，Reject 永不复活；
 6. CurrentFoodValue 完整连续域 `[0,1]`；
-7. sudden turn 可同时产生 Trigger 正效应与 Prediction 负效应；
+7. Prediction 保持 `Deferred Research`；若重开，sudden turn 可同时产生 Trigger 正效应与 Prediction 负效应；
 8. 第一版 RelativeBearingPrior 使用显式 `Isotropic2D` modeling convention；
 9. Closing 只解释径向分离负担，不冒充完整 interception simulation；
 10. `u_close >= 1 → hard-zero` 已撤回；
@@ -471,7 +480,7 @@ Preferred at very low M
 2. `K_mot=0.60` 是否让低 Motivation 下 Good / Preferred 行为失真；
 3. 纯 soft Closing 在 Fast / Burst 下是否仍能形成正确策略排序；
 4. Horizontal2D 对哪些 presentation 必须标 NotApplicable / Incomplete；
-5. `max_recent` Prediction 是否低估持续 erratic pattern；
+5. Prediction 重开时，`max_recent` 是否低估持续 erratic pattern；
 6. prey support × response × temporal opportunity × Candidate 是否系统性过度衰减；
 7. 哪些 OPEN 真正阻塞 production，哪些只是 calibration。
 
@@ -481,7 +490,7 @@ Reviewer 必须区分事实、Candidate、Working seed、建议；不能把缺�
 
 本页只保留当前分支中可直接运行的 probe 入口。Proposal C 的 Working 文档留在其独立研究分支，不在本提交中复制。
 
-- [`proposal_c_prediction_challenge_probe.py`](../../prototypes/lure-response/proposal_c_prediction_challenge_probe.py)：Prediction regression；
+- [`proposal_c_prediction_challenge_probe.py`](../../prototypes/lure-response/proposal_c_prediction_challenge_probe.py)：Prediction regression（Deferred Research）；
 - [`proposal_c_response_projection_probe.py`](../../prototypes/lure-response/proposal_c_response_projection_probe.py)：Response projection；
 - [`proposal_c_closing_cost_shape_probe.py`](../../prototypes/lure-response/proposal_c_closing_cost_shape_probe.py)：soft Closing shape；
 - [`proposal_c_support_retention_projection_probe.py`](../../prototypes/lure-response/proposal_c_support_retention_projection_probe.py)：support × response retention。
