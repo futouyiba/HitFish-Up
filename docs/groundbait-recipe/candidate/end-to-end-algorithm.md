@@ -382,7 +382,7 @@ EIO = Σ_o E_event(o) × value(o)
 
 ## 9. Response Evaluation
 
-本节公式是 Groundbait 的 Candidate 接口，不是 Proposal C 的 Response 公式。按 Proposal C 的 Feeding Response Working Closure（PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`，`docs/proposals/lure-response-proposal-c-feeding-response-working-closure.md` §5）给出的工作形态，`DecisionMargin` 是五项名目量的无权求和：
+本节公式是 Groundbait 的 Candidate 接口，不是 Proposal C 的 Response 公式。按 Proposal C 的 Feeding Response Working Closure（PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`，[`lure-response-proposal-c-feeding-response-working-closure.md`](https://github.com/futouyiba/HitFish-Up/blob/5caf1f119ab6e5a5c595a4ba913e7962aa338ec3/docs/proposals/lure-response-proposal-c-feeding-response-working-closure.md) §5）给出的工作形态，`DecisionMargin` 是五项名目量的无权求和：
 
 ```text
 DecisionMargin(θ)
