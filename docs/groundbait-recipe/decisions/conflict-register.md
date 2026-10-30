@@ -20,7 +20,7 @@
 
 ## 1.1 上游 Owner 裁定依赖
 
-Proposal C 的 Issue #152 五项 Owner 裁定记录在 PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 的提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`，文件为 `docs/proposals/lure-response-proposal-c-owner-adjudication-2026-10-29.md`。截至 2026-10-30，PR #130 仍为 draft，裁定尚未进入 `main`，所以本页只把它记为 Proposal C 的上游 Working 裁定，不把它标成 Current。
+Proposal C 的 Issue #152 五项 Owner 裁定记录在 PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 的提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`，文件为 [`lure-response-proposal-c-owner-adjudication-2026-10-29.md`](https://github.com/futouyiba/HitFish-Up/blob/5caf1f119ab6e5a5c595a4ba913e7962aa338ec3/docs/proposals/lure-response-proposal-c-owner-adjudication-2026-10-29.md)。截至 2026-10-30，PR #130 仍为 draft，裁定尚未进入 `main`，所以本页只把它记为 Proposal C 的上游 Working 裁定，不把它标成 Current。
 
 这份上游记录已经裁定或收窄以下边界：不新增快搜信息 bonus；Risk 只保留 `TackleConspicuousness`，未启用时 `RiskCost = 0`；删除 active `CapacityModifier`；Prediction 第一版 Deferred；`L` 的语义 owner 归 Opportunity，Spatial 只提供事实，`q = L × C`。Groundbait 后续若讨论这些交叉边界，应按该记录承接，不在本目录重新提出同一项 Owner ballot。若 PR #130 合并或该记录更新，必须以新的提交和实际文件为准重新核对；在此之前，Groundbait 自身仍保持 Candidate / OPEN 的成熟度，不因引用上游裁定而变成 Current。
 
@@ -29,7 +29,7 @@ Proposal C 的 Issue #152 五项 Owner 裁定记录在 PR [#130](https://github.
 ### C-01｜尺寸归属
 
 - **主张 A**：Groundbait Candidate 认为尺寸是动作约束，只进入动作可行性和成功，不进入 Food Preference 或最终 Response。出处：`candidate/edible-size-response.md`、`candidate/feeding-event.md`、`decisions/working-decisions.md` 的 WD-09、WD-13。
-- **主张 B**：Proposal C 把尺寸放进食物价值：`CurrentFoodValue = clamp(BaseDietAffinity + SizePreferenceAdjustment + DietaryShiftDelta, 0, 1)`。出处：`docs/proposals/lure-response-proposal-c-current-review-entry-2026-10-27.md` 第 30–45 行。
+- **主张 B**：Proposal C 把尺寸放进食物价值：`CurrentFoodValue = clamp(BaseDietAffinity + SizePreferenceAdjustment + DietaryShiftDelta, 0, 1)`。出处：`docs/proposals/lure-response-proposal-c-current-review-entry-2026-10-27.md` §2。
 - **冲突点**：同一尺寸既可能被当成食物偏好修正，也可能被当成动作约束。两处都算会重复计权。
 - **影响**：Feeding Event、Food 选择、Response 聚合、Hookbait 复用。
 - **暂定处理**：`KEEP_OPEN`。本目录只使用主张 A 的候选分支；Proposal C 的尺寸项只作为冲突来源引用，不合并。
@@ -169,7 +169,7 @@ Proposal C 的 Issue #152 五项 Owner 裁定记录在 PR [#130](https://github.
 ### C-08｜发现与趋近的阶段划分
 
 - **主张 A**：Groundbait Candidate 把发现和趋近合并在 `Encounter` 里。出处：`candidate/feeding-event.md` §2.1。
-- **主张 B**：Proposal C 区分 `ClosingCost` 和 `RiskCost`，把接近与风险分开；Prediction 第一版为 `Deferred Research`，不进入当前五项式 `DecisionMargin`。外部研究也建议把“进入范围、试探、攻击、吞饵”拆成多阶段。出处：`docs/proposals/lure-response-proposal-c-feeding-response-working-closure.md` §4–§5（PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`）；截至 2026-10-30，`main` 上的 `docs/proposals/lure-response-proposal-c-current-review-entry-2026-10-27.md` 仍是含 `PredictionCost` 的六项式，属未同步旧文档，本目录不据此重开；外部研究 `programaticHitFish/docs/rf4_fishing_planet_bite_mechanism_research_report.md`。
+- **主张 B**：Proposal C 区分 `ClosingCost` 和 `RiskCost`，把接近与风险分开；Prediction 第一版为 `Deferred Research`，不进入当前五项式 `DecisionMargin`。外部研究也建议把“进入范围、试探、攻击、吞饵”拆成多阶段。出处：[`lure-response-proposal-c-feeding-response-working-closure.md`](https://github.com/futouyiba/HitFish-Up/blob/5caf1f119ab6e5a5c595a4ba913e7962aa338ec3/docs/proposals/lure-response-proposal-c-feeding-response-working-closure.md) §4–§5（PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`）；截至 2026-10-30，`main` 上的 `docs/proposals/lure-response-proposal-c-current-review-entry-2026-10-27.md` 仍是含 `PredictionCost` 的六项式，属未同步旧文档，本目录不据此重开；外部研究 `programaticHitFish/docs/rf4_fishing_planet_bite_mechanism_research_report.md`。
 - **冲突点**：`Encounter` 同时承担感知、接近和时间窗口，难以区分“没看见”“不想靠近”“没时间”。
 - **影响**：Feeding Event、Cue、Fish Condition、刺鱼接口。
 - **暂定处理**：`KEEP_OPEN`。本目录保留 `Encounter` 作为合并候选，但在对象模型里记录它可能拆成 Detection / Approach / Temporal Opportunity。
@@ -179,7 +179,7 @@ Proposal C 的 Issue #152 五项 Owner 裁定记录在 PR [#130](https://github.
 ### C-09｜刺鱼与抽鱼接口
 
 - **主张 A**：Groundbait Candidate 停在 `Effective Ingestion Opportunity`。出处：`candidate/object-model.md` §3。
-- **主张 B**：Proposal C 停在 `Candidate retention`，并说归约结果进入 Candidate retention，不能在 Candidate 后段再次乘 Response。出处：`docs/proposals/lure-response-proposal-c-current-review-entry-2026-10-27.md` 第 347、359 行。
+- **主张 B**：Proposal C 停在 `Candidate retention`，并说归约结果进入 Candidate retention，不能在 Candidate 后段再次乘 Response。出处：`docs/proposals/lure-response-proposal-c-current-review-entry-2026-10-27.md` §10。
 - **冲突点**：术语里没有 `Candidate retention` 这个阶段；`Effective Ingestion Opportunity` 也不等于“鱼已吞饵”。圆桌前是否还有“吞饵成功”层、刺鱼是否消费这些输出，都没有定义。
 - **影响**：Response、圆桌、抽鱼、刺鱼边界。
 - **暂定处理**：`KEEP_OPEN`。候选文档只声明“不进入刺鱼”，不补造接口。
@@ -216,7 +216,7 @@ Proposal C 的 Issue #152 五项 Owner 裁定记录在 PR [#130](https://github.
 
 - **主张 A**：术语把 `Diet Shift` 列为 `Fish Condition` 参数。出处：`docs/terminology.md` §5.2。
 - **主张 B**：Groundbait Candidate 把 Diet Shift 后置为慢变生态候选。出处：`candidate/proposal.md` §8.2、WD-14。
-- **主张 C**：Proposal C 把它作为 `CurrentFoodValue` 的加项。出处：`docs/proposals/lure-response-proposal-c-current-review-entry-2026-10-27.md` 第 45 行。
+- **主张 C**：Proposal C 把它作为 `CurrentFoodValue` 的加项。出处：`docs/proposals/lure-response-proposal-c-current-review-entry-2026-10-27.md` §2。
 - **冲突点**：Diet Shift 属于谁，和它影响 Food 还是 Flavor，是两个不同问题。本项只问所有权。
 - **影响**：Fish Condition、Food Preference、Response。
 - **暂定处理**：`CANDIDATE_BRANCH`。本目录把所有权放在 Fish Condition：Baseline Diet 是静态配置，Diet Shift 是动态偏移。
