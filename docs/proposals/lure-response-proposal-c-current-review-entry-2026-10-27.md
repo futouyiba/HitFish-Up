@@ -105,7 +105,9 @@ Reviewer 必须区分事实、Candidate、Working seed、建议；不能把缺�
 - [`proposal_c_support_retention_projection_probe.py`](../../prototypes/lure-response/proposal_c_support_retention_projection_probe.py)：support × response retention；
 - [`proposal_c_strategy_probe.py`](../../prototypes/lure-response/proposal_c_strategy_probe.py)：追赶、摄食意愿、警戒度三组策略排序与敏感度；
 - [`proposal_c_escape_trigger_probe.py`](../../prototypes/lure-response/proposal_c_escape_trigger_probe.py)：逃逸样事件窗口、family 适用与取 max 判定；
-- [`proposal_c_opportunity_support_probe.py`](../../prototypes/lure-response/proposal_c_opportunity_support_probe.py)：机会量、遭遇饱和与单位时间收益。
+- [`proposal_c_opportunity_support_probe.py`](../../prototypes/lure-response/proposal_c_opportunity_support_probe.py)：机会量、遭遇饱和与单位时间收益；
+- [`proposal_c_end_to_end_probe.py`](../../prototypes/lure-response/proposal_c_end_to_end_probe.py)：端到端状态传播与单次乘法；
+- [`proposal_c_fish_condition_probe.py`](../../prototypes/lure-response/proposal_c_fish_condition_probe.py)：Fish Condition baseline、过期与授权 overlay。
 
 这些 probe 是形状检查，不是生产标定；其参数与设计包中的 Working 值分开记录。
 

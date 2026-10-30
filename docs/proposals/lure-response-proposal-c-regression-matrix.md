@@ -17,6 +17,7 @@
 | 三组策略排序 | `proposal_c_strategy_probe.py` | 反应口成立、快搜只部分成立、隐蔽需要外部成本 | 生产参数、覆盖收益 |
 | 机会量与单位时间收益 | `proposal_c_opportunity_support_probe.py` | 内部最优、低活性更慢、隐蔽翻转 | 生产 `L` 函数、探索收益 |
 | 端到端状态传播 | `proposal_c_end_to_end_probe.py` | Unknown/Reject/区间/L 缺失、单次乘法 | 生产标定 |
+| Fish Condition 解析 | `proposal_c_fish_condition_probe.py` | baseline、过期、缺来源、授权 overlay 与回落 | 真实生成与曲线 |
 
 ## 2. 缺口
 
