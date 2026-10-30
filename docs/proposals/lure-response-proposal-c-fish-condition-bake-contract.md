@@ -26,12 +26,14 @@ Response 消费什么
 
 ## 3. Response 的消费需求
 
-| Condition | Response 消费点 | 必须满足的语义 | 范围与参考 | 缺失时 |
+| Condition | Response 消费点 | 需要的语义 | 范围与参考（Candidate） | 缺失时 |
 |---|---|---|---|---|
-| Activity | `ActivityCostMultiplier` | 当前愿意为主动追赶付出多少行为代价，不是物理速度能力 | 非负倍率；参考值 1.0 | `ResolutionIncomplete`，不能默认 1.0 |
-| Feeding Motivation | `WillingnessThreshold(M)` | 当前为了食物出手需要多强的理由 | `M ∈ [0,1]`，参考 0.5 | `ResolutionIncomplete`，不能默认 0.5 |
+| Activity | `ActivityCostMultiplier` | 当前愿意为主动追赶付出多少行为代价，不是物理速度能力 | 非负倍率；参考 1.0 是候选假设 | `ResolutionIncomplete`，不能默认 1.0 |
+| Feeding Motivation | `WillingnessThreshold(M)` | 当前为了食物出手需要多强的理由 | `M ∈ [0,1]`；0.5 是设计包的 Working 锚 | `ResolutionIncomplete`，不能默认 0.5 |
 | Diet Shift | `DietaryShiftDelta(prey family)` | 相对基础食性的动态偏移，按猎物家族分别给出 | 与 FoodValue 同标尺的有符号偏移 | 该 family 的 FoodValue 不可闭合 |
-| Wariness | `RiskCost` 的乘子 | 对已解析风险线索有多敏感 | `W ∈ [0,1]` | Risk 不可闭合；当前 Risk cue 未实现时整体为 0 |
+| Wariness | `RiskCost` 的乘子 | 对已解析风险线索有多敏感 | `[0,1]` 是候选假设，未裁定 | Risk 不可闭合；当前 Risk cue 未实现时整体为 0 |
+
+表中的范围与参考来自设计包的 Working 值或本页的 Candidate 假设，不是已批准 Contract。缺失时的归约遵循语义契约的通用状态协议。
 
 ### 3.1 Activity
 
@@ -59,19 +61,24 @@ Response 消费什么
 
 ## 4. 粒度与载体
 
-Response 读取的是已烘焙的 Fish Condition，不在运行时重新生成：
+`DEF` 按条件组归并，并在中鱼习性模式下保存鱼况，这是术语表的 Working 语义。但「Fish Condition 只由 Bake 产出、运行时不再更新」**不是已裁定结论**：术语表说它随天气 / 时段变化，Wariness 还明确「随过程累积变化」。
+
+当前保留两条候选路径，待 Owner 选：
 
 ```text
-条件组 × 中鱼习性模式
-→ Fish Condition（Activity / Motivation / Diet Shift / Wariness）
-→ Response 只读消费
+路径 A（bake-only）
+条件组 × 模式 → Bake 产出 Fish Condition → Response 只读
+
+路径 B（Bake + 运行时累积）
+Bake 产出基线；Wariness 等允许按过程累积更新
+→ 必须声明粒度、有效期与来源
 ```
 
-要求：
+Proposal C 的边界要求（Candidate，待 Owner 确认）：
 
-- 每个值必须带有效区间与来源；过期或越界即 `Unknown`；
-- Response 不得对 Fish Condition 做插值、平滑或反推；
-- 不得把运行时玩家操作写回 Fish Condition；
+- Response 不写回 Fish Condition；
+- 无论走哪条路径，都必须声明更新粒度与有效期；
+- 过期、越界或缺来源时如何转 `Unknown` 尚未裁定，不能默认沿用最后值；
 - 窝料、持久响应场只提供上游原因或独立输入，不直接改写 Fish Condition。
 
 ## 5. 上游输入边界
@@ -91,9 +98,9 @@ Response 读取的是已烘焙的 Fish Condition，不在运行时重新生成�
 - 时段只能作为上游原因，不能直接等于 Activity；
 - 任何 Condition 的生成都不得读取玩家当前操作或饵的呈现。
 
-## 6. 第一版 Bake 最小输出
+## 6. 若采用路径 A 的最小输出
 
-不需要先实现完整生态模型。最低可消费集合：
+若 Owner 选择 bake-only，最低可消费集合如下；范围与参考仍是 Candidate：
 
 | 输出 | 最小要求 |
 |---|---|
@@ -106,14 +113,15 @@ Response 读取的是已烘焙的 Fish Condition，不在运行时重新生成�
 
 ## 7. 验收
 
-Response 侧应能验证：
+无论采用哪条路径，Response 侧应能验证：
 
 1. `Unknown` 的 Activity 不会默认成 1.0；
 2. `Unknown` 的 Motivation 不会默认成 0.5；
 3. `Wariness` 高但没有 cue 时 `RiskCost=0`；
 4. 同一 prey family 的 Diet Shift 只影响该 family 的 FoodValue；
-5. 运行时玩家操作不会改写任何 Fish Condition；
-6. 过期的 Fish Condition 被标为 `Unknown`，而不是沿用最后值。
+5. 运行时玩家操作不会改写任何 Fish Condition。
+
+第 6 项「过期的 Fish Condition 被标为 `Unknown`，而不是沿用最后值」属于待 Owner 裁定的有效期规则，确认后再进验收。
 
 ## 8. 未决
 
@@ -126,7 +134,17 @@ Response 侧应能验证：
 
 ## 9. 来源
 
-- `docs/terminology.md` §4、§5.2（Working Terminology Ledger）；
-- `docs/fish-habit-editor-v1/common-semantics.md` §13（V1 负向清单）；
-- `reference/0340-fixed-bake/README.md`（参考实现范围）；
-- `docs/groundbait-recipe/candidate/response-stage-mapping.md`（只读边界）。
+术语与边界：
+
+- [`docs/terminology.md`](../terminology.md) §4、§5.2（Working Terminology Ledger）；
+- [`common-semantics.md`](../fish-habit-editor-v1/common-semantics.md) §13（V1 负向清单）；
+- [`reference/0340-fixed-bake/README.md`](../../reference/0340-fixed-bake/README.md)（参考实现范围）；
+- [`response-stage-mapping.md`](../groundbait-recipe/candidate/response-stage-mapping.md)（只读边界）。
+
+消费点与状态（本页表格与验收由这些设计包条目反推）：
+
+- [五评价项契约](lure-response-proposal-c-evaluation-items.md)（Activity / Motivation / Diet Shift / Wariness 的消费点与 Working 锚）；
+- [语义契约](lure-response-proposal-c-semantic-contract.md) §1（通用状态与 `ResolutionIncomplete`）；
+- [响应与机会契约](lure-response-proposal-c-response-opportunity.md)（`L × C` 与状态表）。
+
+本页的范围、参考值与有效期规则是 Candidate 要求，不是已批准 Contract。
