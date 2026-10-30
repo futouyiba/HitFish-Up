@@ -8,14 +8,13 @@
 
 ```text
 Recipe / Ingredient Facts
-  ├─ Food Identity ─────────────→ Food Target → 选择 / 对象价值
-  ├─ Chemical Cue Potential ────→ Chemical Cue Field → 发现 / 趋近 / 选择 / 回避
+  ├─ Food Identity ─────────────→ Food Target → 对象价值 / Response 输入
+  ├─ Chemical Cue Potential ────→ Chemical Cue Field → 发现 / 趋近 / 回避 / Response 输入
   ├─ Particle / Object Properties → 动作可行性 / 动作成功
   └─ Physical Properties ───────→ Physical Release → Feeding Place State
 ```
 
-同一 Ingredient 可以同时提供多类事实，但四条路径分别进入，不在末端合并成一个总分。整合的重点是每个事实只进入它该进的阶段，不是让四个都算。
-
+当前工作候选不在 `selection_m` 动作选择中重复消费 Food 或 Chemical Cue；若未来需要让它们影响动作选择，必须关闭对应 Response 消费路径并补 provenance / 去重规则。
 文中的 `Feeding Place State`（摄食地点状态）、`Feeding Event`（摄食事件）、`Effective Ingestion Opportunity`（有效摄食机会）都是本目录的 Candidate-local 工作词。
 
 ## 2. 完整候选链
@@ -48,8 +47,8 @@ Response Stage 的候选接口
 
 | 输入 | 进入阶段 | 可以影响 | 不能影响 |
 |---|---|---|---|
-| Food Identity | 动作选择、对象价值 | 鱼愿意尝试哪个对象、一次摄食值多少 | 动作可行性、释放速度 |
-| Chemical Cue | 发现、趋近、选择、回避 | 鱼是否感知、是否接近 | 尺寸成功、物理释放 |
+| Food Identity | 对象的 Food 属性 | 对象价值 / Response 输入 | 尺寸成功、释放速度 |
+| Chemical Cue | Chemical Cue Field | 发现、趋近、回避与 Response 输入 | 实体质量、尺寸成功 |
 | Edible Particle | 动作可行性、动作成功 | 能否捕获、吸入、处理可食对象 | 发现、Food Preference |
 | Carrier / Non-edible Particle | Physical Release | 雾化、扩散、沉降、留存 | Edible Utilization |
 | Physical Properties | 状态转换 | 对象何时、在哪、以什么状态出现 | 直接中鱼率、鱼偏好 |
@@ -84,8 +83,8 @@ Response Stage 的候选接口
 
 虾粉同时提供 Food、Cue、Particle 和 Physical 事实时：
 
-- Food 走对象选择与价值；
-- Cue 走线索场；
+- Food 进入 Response 的唯一 Food 输入或对象价值；不在 `selection_m` 动作选择中消费。
+- Cue 进入 Chemical Cue Field、Encounter / 趋近或 Response 的 Flavor 候选；不在 `selection_m` 动作选择中消费。
 - Particle 走动作约束；
 - Physical 走释放状态。
 

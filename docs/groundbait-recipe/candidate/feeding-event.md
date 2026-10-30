@@ -55,13 +55,13 @@ F(f, o, p, t) = {m | feasibility_m(f, o, p, t) > 0}
 
 ### 2.3 在可行路径中选择动作
 
-如果 `F` 为空，事件不能进入动作成功。若 `F` 不为空，鱼可能：
+如果 `F` 为空，事件不能进入动作成功。若 `F` 不为空，当前工作候选只允许动作代价、动作前提和 Fish Condition 参与路径选择；Food / Chemical Cue 的消费位置由 Response 候选接口统一处理，不能在此处再消费同一份输入：
 
 - 在唯一可行路径上尝试；
-- 在多个路径中按策略选择；
-- 受到 Fish Condition、对象 Food Identity、Chemical Cue、警戒和动作代价影响。
+- 在多个路径中按动作代价和鱼况选择；
+- 其它 Food / Cue 对象价值或呈现影响保留给 Response，不在 `selection_m` 重复计权。
 
-本页不先决定确定性 `argmax`、随机选择或其它策略。选择概率必须只在可行集合 `F` 内归一化：
+选择概率必须只在可行集合 `F` 内归一化：
 
 ```text
 Σ_{m ∈ F} P(select m | F, f, o, p, t) = 1
@@ -120,7 +120,7 @@ expected_ingested_value
 |---|---|---|---|
 | `encounter` | 鱼有没有机会遇到对象 | Place、Cue、Fish Condition | 颗粒处理成功 |
 | `feasibility_m` | 动作 m 在当前条件下能不能做 | Fish、Place、Object State | 鱼最终是否选择 |
-| `selection_m` | 已可行动作中选哪条 | Fish Condition、Food/Cue、动作代价 | 改变动作固有能力 |
+| `selection_m` | 已可行动作中选哪条 | Fish Condition、动作代价、动作前提 | 改变动作固有能力 |
 | `success_m` | 所选动作能否捕获/保留/处理 | Action、Object、Fish、Place | 发现对象 |
 | `handle_and_ingest` | 成功后是否产生有效摄食 | Object value、状态、鱼况 | 改变线索场 |
 | `Effective Ingestion Opportunity` | 一次事件能贡献多少有效机会 | 上述结果 | 直接等于 AdaptationCoeff |
@@ -166,7 +166,7 @@ Feeding Event
 ## 7. 三条硬边界
 
 1. 尺寸不直接决定 encounter、Food Preference 或最终 Response。
-2. Chemical Cue 不直接改变对象的尺寸成功；它影响发现、趋近、选择或回避。
+2. Chemical Cue 不直接改变对象的尺寸成功；它进入 encounter / 趋近或 Response 的 Flavor 候选，不在 `selection_m` 动作选择中再次消费。
 3. 一个对象的一次事件只有一条实际动作路径；复制机制、复制路径或复制 Ingredient ID 不能凭空增加结果。
 
 ## 8. 最小反例

@@ -17,7 +17,7 @@ Flavor 只回答：
 - 雾化、沉降或留存；
 - 最终中鱼概率。
 
-Flavor 可以进入 Feeding Event 的发现、趋近、选择或回避，不进入动作可行性、动作成功、环境权重或圆桌竞争。
+Flavor 当前可以影响 `encounter`、趋近、回避候选和 Response 的 Flavor 输入，不在 Feeding Event 的 `selection_m` 动作选择中再次消费 Chemical Cue。
 
 ## 2. 两条分支
 
@@ -172,8 +172,9 @@ FlavorResponse_B = F(fish, FlavorComposition, FlavorIntensity, Avoidance)
 Flavor 可以影响：
 
 - `encounter`：鱼是否可能发现或接近；
-- `selection`：鱼更愿意尝试哪个对象；
-- `avoidance`：显式排斥时压低响应。
+- Response 的 Flavor 候选：正向线索、排斥候选及其 provenance。
+
+当前工作候选不在 `selection_m` 动作选择中再次消费 Chemical Cue。若未来 Owner 选择让 Flavor 直接影响动作选择，必须关闭对应的 Response 消费路径并补充 provenance / 去重规则。
 
 Flavor 不直接影响：
 

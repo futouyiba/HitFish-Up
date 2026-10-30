@@ -23,10 +23,10 @@ Ingredient 质量 / 份额
   → 同 Food Target 的 Exposure 合并
   → Target 级边际递减
   → 鱼侧 Food Target Preference
-  → 进入选择或对象价值
+  → Response 的唯一 Food 输入 / 对象价值
 ```
 
-设计意图：
+当前工作候选不在 `selection_m` 动作选择中再次消费 Food。若未来 Owner 选择让 Food 直接影响动作选择，必须关闭对应的 Response 消费路径并补充 provenance / 去重规则。
 
 - 避免逐 Ingredient 饱和导致“拆成多个 ID 就变强”。
 - 允许鱼同时喜欢两个 Target 时出现有限混配价值。
@@ -36,10 +36,7 @@ Ingredient 质量 / 份额
 
 ### 2.2 在 Feeding Event 中的位置
 
-Food 影响两件事：
-
-- 动作选择：鱼更愿意尝试哪个对象；
-- 对象价值：一次有效摄食对鱼值多少。
+Food 当前通过 Response 的唯一 Food 输入或对象价值参与评估，不在 `selection_m` 动作选择中再次消费。
 
 Food 不直接影响：
 
@@ -90,11 +87,13 @@ Ingredient amount / dose
 
 ### 3.3 在 Feeding Event 中的位置
 
-Flavor / Chemical Cue 可以影响：
+Flavor / Chemical Cue 当前可以影响：
 
 - Encounter：鱼是否可能发现或接近；
-- Selection：鱼更愿意尝试哪个对象；
+- Response 的 Flavor 候选：正向线索、趋近或回避候选；
 - Avoidance：某些 Cue 主动压低响应。
+
+当前不在 Feeding Event 的 `selection_m` 动作选择中消费 Chemical Cue。若未来 Owner 选择让它进入动作选择，必须关闭对应 Response 消费路径并补充 provenance / 去重规则。
 
 Flavor 不直接影响：
 

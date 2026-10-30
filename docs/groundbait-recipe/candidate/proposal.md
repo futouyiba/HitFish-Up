@@ -55,8 +55,8 @@ Response Stage 的候选输入
 
 | 事实 | 进入的中间状态 | 主要被谁消费 | 不直接负责 |
 |---|---|---|---|
-| Food Identity | 实体对象的 Food 属性 | Food 目标选择、对象价值 | 尺寸成功、释放速度 |
-| Chemical Cue Potential | Chemical Cue Field | 发现、趋近、回避、选择 | 实体质量、尺寸成功 |
+| Food Identity | 实体对象的 Food 属性 | Food 目标 / Response 输入 | 尺寸成功、释放速度 |
+| Chemical Cue Potential | Chemical Cue Field | 发现、趋近、回避与 Response 输入 | 实体质量、尺寸成功 |
 | Particle / Object Properties | Particle Object / Object State | 动作可行性、动作成功 | 鱼种偏好、最终中鱼 |
 | 可食 / 载体区分 | Edible Particle Distribution / Carrier | Size Response / Physical Release | 不把载体算成可食 |
 | Physical Release Properties | Feeding Place State | 接触机会、位置、水层、持续时间 | 固定中鱼 Bonus |
@@ -96,7 +96,7 @@ Target Response with diminishing returns
 - Food Target 字典的正式成员和版本化 admission 流程。
 - 饱和函数族和参数如何标定。
 - 多 Target 聚合算子按基线 R0 保持 OPEN，不在本页选择 `sum`、`weighted average`、`max` 或 `Noisy-OR`。
-- Food 响应如何分配到动作选择与对象价值。
+- Food 只作为 Response 的唯一 Food 输入或对象价值来源；当前不在 `selection_m` 动作选择中再次消费。
 
 ## 5. Flavor：由 Cue Exposure 形成整体味型画像
 

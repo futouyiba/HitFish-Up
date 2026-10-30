@@ -15,7 +15,9 @@
   → Opportunity / L
   → 玩家呈现与窝料状态
   → Response Evaluation / C
-  → SpatialDistributionWeight × C
+  → 按接口类型组装：
+      GenericFCF: SpatialDistributionWeight × AdaptationCoeff
+      ProposalCOpportunity: q = L × C
   → Roundtable Weight List
   → Crowding-out / Clipping / Draw
   → Spawn
@@ -260,17 +262,17 @@ relation(fish, signature) ∈ {POSITIVE, NEUTRAL, AVOID}
 
 ```text
 if any AVOID:
-    FlavorGate = 0
     FlavorState = AVOID
+    FlavorSignal = explicit_penalty_candidate
 elif any POSITIVE:
-    FlavorGate = 1
     FlavorState = POSITIVE
+    FlavorSignal = positive_candidate
 else:
-    FlavorGate = 1
     FlavorState = NEUTRAL
+    FlavorSignal = neutral_candidate
 ```
 
-这是 Candidate 解释器；连续浓度、比例、Intensity 和 Overdose 未获得准入前不得进入计算。`Avoidance` 与 `Wariness` 必须分别追踪。
+`AVOID` 在当前 Owner ballot 未收口前只产生带 provenance 的排斥候选，不是硬门，也不直接变成 `Reject`。它在 Response 中的唯一消费位置仍待 C-13a / C-13b 与对应 Current 收口；同一签名不能同时作为硬门和软修正消费。连续浓度、比例、Intensity 和 Overdose 未获得准入前不得进入计算。`Avoidance` 与 `Wariness` 必须分别追踪。
 
 ### 7.2 Food
 
@@ -293,13 +295,13 @@ S_t(E_t) = E_t / (K_t + E_t)
 R_t = P_t × S_t(E_t)
 ```
 
-多目标工作聚合采用全局饱和：
+多目标聚合目前只保留参数化接口：
 
 ```text
-FoodValue = Σ_t R_t / (K_food + Σ_t R_t)
+FoodValue = AggFood({R_t}; aggregation_profile)
 ```
 
-这保留有限混配价值，避免直接求和无界，也避免把 `max` 当作生产聚合。`K_t`、`K_food` 和 `BaseAffinity` 是校准 / Owner 输入，不是本文给定的生产值。
+`AggFood` 必须满足非负、单调、有界、可交换、连续、跨 Target 边际递减、零处理和无隐式互补。`WD-26` 仍将具体算子标为 OPEN；全局饱和只保留为实验分支，不进入默认 V1 生产接入，也不能作为 Owner 已裁定的公式。`K_t`、`BaseAffinity` 和聚合 profile 是校准 / Owner 输入，不是本文给定的生产值。
 
 ## 8. Edible Size 与 Feeding Event
 
@@ -324,12 +326,10 @@ F = {m | feasibility_m > 0}
 
 ### 8.2 动作选择和成功
 
-在可行集合内产生选择分布：
+在可行集合内产生选择分布。当前工作算法只让选择读取动作自身代价和可行状态；Food / Flavor 不在此处再消费，避免与 Response 的候选输入重复计权：
 
 ```text
 z_m = β_m
-    + w_food × FoodValue(o)
-    + w_flavor × FlavorSignal(o)
     - w_cost × ActionCost_m
     - w_wary × Wariness
 
@@ -368,34 +368,36 @@ EIO = Σ_o E_event(o) × value(o)
 
 `value(o)` 必须声明为质量、数量、能量或其它单一价值空间；在未声明前只能使用无量纲相对值。EIO 是 Candidate 中间输入，不等于 `C`，也不等于抽样概率。
 
+EIO 在 Owner / Current 收口前不进入 active `DecisionMargin`，也不默认赋予独立的 `w_eio`。它只通过已声明的 Response Component / Candidate branch 接口消费；该接口必须明确单位、归一化基准、provenance 和唯一消费者。
 ## 9. Response Evaluation
 
 ### 9.1 硬门与软量
 
-先求硬门：
+先求已收口的硬门：
 
 ```text
-G = G_resolution × G_flavor × G_opportunity × G_prey
+G = G_resolution × G_opportunity × G_prey
 ```
 
 其中：
 
 - `G_resolution = 0` 仅用于显式非法 / Reject；`Unknown` 传播为 `ResolutionIncomplete`，不静默转 0；
-- `G_flavor = 0` 仅由显式 `AVOID` 触发；
 - `G_opportunity = 0` 表示没有有效 Opportunity / 可消费机会；
 - `G_prey = 0` 表示目标解释被明确 Reject。
 
+`AVOID` 当前只产生带 provenance 的 Flavor 排斥候选，不自动进入硬门；它的唯一消费位置须待 C-13a / C-13b 与对应 Current 收口。
 然后求软的 `DecisionMargin`：
 
 ```text
 M = b
   + w_food × FoodValue
-  + w_eio × normalize(EIO)
   + w_trigger × AttackTrigger
   - w_close × ClosingCost
   - w_risk × RiskCost
   - w_threshold × WillingnessThreshold
 ```
+
+`EIO` 不在 active `M` 中。若未来 Owner / Current 将 EIO 接入 Response，必须作为独立 Candidate branch 明确其唯一消费位置，并先补齐单位、归一化基准、provenance 和与 Feeding Event 的去重规则。
 
 Proposal C 的 active 边界要求：
 
@@ -404,7 +406,7 @@ Proposal C 的 active 边界要求：
 - `PredictionCost` 第一版不进入 `M`；
 - `CapacityModifier` 不进入 `M`；
 - `Activity` 只调制 Closing soft cost；
-- `L` 不进入 `M`，只在圆桌前与 `C` 相乘。
+- `L` 不进入 active `M`。Proposal C 中它只作为 `q = L × C` 的 Opportunity 支持；GenericFCF 不消费 `L`。
 
 ### 9.2 从 Margin 到响应系数
 
@@ -427,13 +429,34 @@ C = G × E_θ[C_conditional(θ)]
 
 ### 9.3 Groundbait 的接入
 
-Groundbait 通过 `FoodValue`、`FlavorGate`、`EIO` 和 `FeedingPlaceState` 接入 Response。它不直接写 Fish Condition，不直接改 `SpatialDistributionWeight`，不再乘一次 `L`。
+Groundbait 的 `FoodValue` 可作为 Response 的候选输入；`EIO` 在 Owner / Current 收口前不进入 active `M`。Flavor 的 `Avoidance` 只保留为带 provenance 的候选，不自动成为硬门。Food、Flavor、EIO 每份事实只能有一个已声明的主要消费者：不能在 Feeding Event 和 active Response Margin 中重复消费同一份输入。
 
+候选消费矩阵：
+
+| 事实 | Feeding Event | active Response `M` | 当前状态 |
+|---|---|---|---|
+| `FoodValue` | 不直接消费 | 可作为唯一 Food 响应输入 | Candidate / Working |
+| `FlavorSignal` / `Avoidance` | 不直接消费 | 消费位置待 C-13a / C-13b 收口 | Candidate / OPEN |
+| `EIO` | 由 Feeding Event 生产 | 不消费 | Candidate / OPEN |
+
+Groundbait 不直接写 Fish Condition，不直接改 `SpatialDistributionWeight`，不再乘一次 `L`。
 同一持续窝料效果只能进入持久响应场或即时响应条件中的一个有效增量；若同时保留来源状态和即时摘要，必须带 provenance 并明确只消费一次。
 
 ## 10. 圆桌、抽鱼与生成
 
-对 FCF 通用圆桌候选，现有接口仍表示为：
+每个响应候选必须带不可混淆的接口类型：
+
+```text
+GenericFCF
+  output: AdaptationCoeff
+  assembly: SpatialDistributionWeight × AdaptationCoeff
+
+ProposalCOpportunity
+  output: final candidate weight q = L × C
+  assembly: no additional SpatialDistributionWeight multiplication
+```
+
+调用者必须按接口类型选择唯一一条组装路径；禁止把 `q` 当作 `AdaptationCoeff`，也禁止把 `AdaptationCoeff` 当作已经包含 `L` 的 `q`。
 
 ```text
 RoundtableWeight_k

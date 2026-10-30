@@ -66,19 +66,24 @@ E_stack = Σ_k E_e,k
 
 ## 5. 与响应的接口
 
-当前只确认：
+当前保留两条互斥候选接口，具体候选必须携带接口类型：
 
 ```text
-SpatialDistributionWeight × AdaptationCoeff
-→ 下游候选权重
+GenericFCF
+  AdaptationCoeff
+  → SpatialDistributionWeight × AdaptationCoeff
+
+ProposalCOpportunity
+  q = L × C
+  → 直接进入候选权重，不再乘 SpatialDistributionWeight
 ```
 
-以下问题仍未闭合：
+接口类型缺失时阻断组装，不把 `q` 当作 `AdaptationCoeff`。
 
 - 适配系数是模式级、鱼种级还是 FishStock 级。
 - 多模式如何聚合成鱼种级系数集。
 - 权重组装时是否还有其他修正。
-- 响应是否读取空间权重作为上下文，以及是否会在圆桌处再次相乘。
+- 响应读取空间权重只作为对应接口的只读输入；组装时是否再次相乘由接口类型决定：GenericFCF 必须乘一次，ProposalCOpportunity 不得再乘。
 
 对应冲突登记 C-04a、C-04b。
 
@@ -96,7 +101,7 @@ SpatialDistributionWeight × AdaptationCoeff
 仓内没有这四件的完整 Current 公式。当前只保留接口问题：
 
 - 品质抽取调整改变权重还是改变品质抽样。
-- 圆桌权重表构建的输入是否就是 `SpatialDistributionWeight × AdaptationCoeff`。
+- 圆桌权重表构建的输入：`GenericFCF` 走 `SpatialDistributionWeight × AdaptationCoeff`；`ProposalCOpportunity` 走 `q = L × C`，不再乘空间权重。
 - 硬保底是权重下限、概率下限，还是独立控制层；它与归一化如何共存。
 - 动态权重调整的规则是什么，是否需要记忆。
 - 四件与挤占、裁剪的先后顺序。
