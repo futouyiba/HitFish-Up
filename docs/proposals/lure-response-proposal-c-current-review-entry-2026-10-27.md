@@ -21,6 +21,7 @@
 | Escape-like 第一版事实与判定 | [Escape-like Trigger v1](lure-response-proposal-c-escape-trigger-v1.md) |
 | 机会量与单位时间收益的玩具模型 | [机会量支持](lure-response-proposal-c-opportunity-support.md) |
 | 提交给独立裁定人的问题单 | [裁定请求](lure-response-proposal-c-adjudication-request.md) |
+| 顾问建议记录（待 Owner 确认） | [2026-10-30 建议](lure-response-proposal-c-adjudication-recommendation-2026-10-30.md) |
 | 图形化说明 | [设计图](../mockups/proposal-c-design-map.html) |
 
 口径来源：本包按 `docs/lure-response-joint-evaluation` 的 `311ae70d` Working Closure 快照核对。该分支在此之后持续更新，本轮未逐条重新纳入；引用前先核对该分支当前 head。研究分支更新后，先回写设计包，再更新本入口。

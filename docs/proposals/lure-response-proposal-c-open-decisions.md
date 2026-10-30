@@ -2,6 +2,8 @@
 
 状态：Working Design / Candidate。这里只列尚未收口、尚未有 owner 或两侧口径冲突的问题。
 
+> 2026-10-30 的顾问建议见[建议记录](lure-response-proposal-c-adjudication-recommendation-2026-10-30.md)。它尚未成为 Owner 裁定，下面的状态在确认前保持不变。
+
 ## 1. 两侧口径冲突
 
 本仓设计包已按 `docs/lure-response-joint-evaluation` 的 Working Closure 更新。旧 10-27 入口里的数字不再作为设计依据。仍存在的冲突只有一项：
