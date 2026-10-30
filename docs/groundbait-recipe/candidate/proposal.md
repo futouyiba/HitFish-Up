@@ -14,7 +14,7 @@
 4. 饵料如何在水中释放，决定开窝速度、扩散范围、沉降位置和持续时间。
 5. 小药、状态饵和主攻饵之间存在真实机会成本，而不是免费叠加 Buff。
 
-目标不是制造一个隐藏的“最佳 RecipeFit 公式”，而是让配方的不同组成承担不同职责，并能被玩家观察、试验和学习。
+目标不是算出一个隐藏的最佳配方总分，而是让不同组成承担不同职责，并能被玩家观察、试验和学习。
 
 ## 2. 总体因果结构
 
@@ -58,9 +58,12 @@ Response Stage 的候选输入
 | Food Identity | 实体对象的 Food 属性 | Food 目标选择、对象价值 | 尺寸成功、释放速度 |
 | Chemical Cue Potential | Chemical Cue Field | 发现、趋近、回避、选择 | 实体质量、尺寸成功 |
 | Particle / Object Properties | Particle Object / Object State | 动作可行性、动作成功 | 鱼种偏好、最终中鱼 |
+| 可食 / 载体区分 | Edible Particle Distribution / Carrier | Size Response / Physical Release | 不把载体算成可食 |
 | Physical Release Properties | Feeding Place State | 接触机会、位置、水层、持续时间 | 固定中鱼 Bonus |
 
-同一个 Ingredient 可以同时提供多类事实，但相同来源不意味着可以把不同路径相加。完整对象和所有权见 `object-model.md`。
+同一个 Ingredient 可以同时提供多类事实，但相同来源不意味着可以把不同路径相加。Ingredient Facts 是原料的固有事实；`Base / Target / State / Attractant` 是配方级角色和配比约束，不是 Ingredient 的固有分类。完整对象和所有权见 `object-model.md`。
+
+固体还要区分可食颗粒和载体 / 不可食颗粒。两者都可以有粒径，也都可以参与释放，但只有可食颗粒进入尺寸响应。完整分层见 `particle-distribution.md`。
 
 ## 4. Food：同 Target 合并后边际递减
 
@@ -88,14 +91,18 @@ Target Response with diminishing returns
 
 ### 4.2 仍未闭合
 
-- Target 字典如何定义。
-- `k` 等饱和参数如何标定。
-- Food Target 是否完全来自可摄食目标，还是还需拆更多语义。
-- 最终 Food Response 如何进入更高层响应。
+完整聚合见 `food-aggregation.md`。
+
+- Food Target 字典的正式成员和版本化 admission 流程。
+- 饱和函数族和参数如何标定。
+- 多 Target 聚合算子按基线 R0 保持 OPEN，不在本页选择 `sum`、`weighted average`、`max` 或 `Noisy-OR`。
+- Food 响应如何分配到动作选择与对象价值。
 
 ## 5. Flavor：由 Cue Exposure 形成整体味型画像
 
 ### 5.1 当前候选
+
+完整候选见 `flavor-and-avoidance.md`。在化学强度准入前，当前工作分支只使用化学签名集合；下面的 Cue Exposure 模型属于被阻塞的分支 B，不能当作当前可用公式。
 
 Flavor 不直接按 Ingredient 的质量百分比求“味型占比”。先由每个 Ingredient 的用量 / 剂量与 Chemical Cue Potency 生成各味型的 Exposure：
 
@@ -162,7 +169,7 @@ RF4 公开资料可以支持 attractant 很强，但“强且一定短效”目�
 
 > 当实体对象已经出现在鱼可接触的地点和状态中，这条鱼能否通过某种摄食动作有效利用它？
 
-完整 Candidate 见 `object-model.md`、`edible-size-response.md` 和 `feeding-event.md`。Groundbait 粒径分布与物理释放分别见 `particle-distribution.md` 和 `physical-release.md`；这些页面描述对象、状态和因果接口，不把归一化 Fixture 冒充生产参数。
+完整 Candidate 见 `object-model.md`、`edible-size-response.md` 和 `feeding-event.md`。Groundbait 粒径分布与物理释放分别见 `particle-distribution.md` 和 `physical-release.md`；这些页面描述对象、状态和因果接口，不把归一化 Fixture 冒充生产参数。尺寸的结构验证见 `edible-size-gold-fixture.md`。
 
 当前核心结构：
 
@@ -182,7 +189,7 @@ size-conditioned usability
 
 `Body Linear Size` 必须是体长等线性尺度。重量不能直接与无量纲 Ratio 相乘生成长度。
 
-Groundbait 用粒径分布求可利用份额；Hookbait 后续可用单颗饵球尺寸复用“Size Fit”语言，但 Hookbait 还会有入口性、硬度、持钩、姿态等其它因素，不等于整套 Groundbait Response 直接复用。
+Groundbait 用当前地点可接触的可食颗粒分布求 `EdibleUtilization`；载体和不可食颗粒只进入物理释放。Hookbait 后续可用单颗饵球尺寸复用“尺寸约束”语言，但 Hookbait 还会有入口性、硬度、持钩、姿态等其它因素，不等于整套 Groundbait Response 直接复用。
 
 ## 7. Physical Release：雾化、黏度不是直接中鱼系数
 
@@ -196,7 +203,7 @@ Groundbait 用粒径分布求可利用份额；Hookbait 后续可用单颗饵球
 - 沉降和所在水层；
 - 局部留存和持续时间。
 
-这些结果再形成 Feeding Place 的时空状态。当前不预设“某个物理属性越高越好”，也不把“高黏度必然更集中”等尚未验证关系写成硬规则。
+这些结果再形成 Feeding Place 的时空状态。当前不预设“某个物理属性越高越好”，也不把“高黏度必然更集中”等尚未验证关系写成硬规则。完整状态转移和守恒账本见 `physical-release.md`。
 
 ### 7.2 需要验证的策略故事
 
@@ -212,7 +219,7 @@ Groundbait 用粒径分布求可利用份额；Hookbait 后续可用单颗饵球
 
 ### 8.1 当前较稳边界
 
-天气、时段等环境输入优先通过现有 Fish Condition / Feeding Readiness / Activity 语义影响“现在愿不愿意响应”。
+天气、时段等环境输入优先通过现有 Fish Condition 语义影响“现在愿不愿意响应”。
 
 ### 8.2 Diet Shift 仍是后置候选
 
@@ -255,7 +262,7 @@ RecipeFit = FoodFit + FlavorFit + ParticleFit + PhysicalFit
 
 原因：这些量处于不同阶段。Food Identity、Chemical Cue、对象约束和物理释放必须先沿各自路径形成 Feeding Place 与 Feeding Event 状态，再由现有 Response Stage 消费。简单相加会重复计算。
 
-`Attraction`、`Retention`、`Ingestion`、`Selection` 仍只是解释候选，不是本目录已经确认的正式中间层；如需使用，必须明确它属于哪个阶段、由谁生产、由谁消费。
+`Attraction`、`Retention`、`Ingestion`、`Selection` 仍只是解释候选，不是本目录已经确认的正式中间层；如需使用，必须明确它属于哪个阶段、由谁生产、由谁消费。当前判断是 Attraction 和 Retention 都不独立成模块，理由和翻转条件见 `../decisions/attraction-retention-verdict.md`。最终聚合映射见 `response-aggregation-map.md`。
 
 以下只描述配方输入的资源与职责边界，不是平衡定值：
 

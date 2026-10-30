@@ -41,7 +41,7 @@
 
 同作用 Food Target 的 Exposure 先合并，再进入饱和 / 边际递减。目标是避免逐 Ingredient 拆分套利，并允许鱼同时喜欢两个 Food Target 时出现有限混配价值。
 
-这仍需证据或反例攻击，不等于最终数值公式已定，也不保证混配一定优于单一 Target 专精。
+这仍需证据或反例攻击，不等于最终数值公式已定，也不保证混配一定优于单一 Target 专精。具体合并与饱和公式见 WD-25 和 `candidate/food-aggregation.md`。
 
 ## WD-05｜Flavor 使用 Cue Exposure 形成整体画像
 
@@ -133,7 +133,7 @@ EdibleSizeUsability = aggregate over feasible action paths
 
 **状态：BOUNDARY**
 
-“下雨就喜欢腥、晴天就喜欢果香”目前证据不足，不作为候选机制。天气、时段等环境输入优先进入现有 Fish Condition / Feeding Readiness / Activity 语义。
+“下雨就喜欢腥、晴天就喜欢果香”目前证据不足，不作为候选机制。天气、时段等环境输入优先进入现有 Fish Condition 语义。
 
 Diet Shift 的驱动方式仍是 **OPEN**。若以后保留，可测试 Contextual Shift 和慢、有界、有记忆的随机漂移，但随机漂移本身尚未确认。
 
@@ -175,3 +175,208 @@ RecipeFit = Food + Flavor + Particle + Physical
 先闭合每条因果链，再检查是否需要 Attraction、Retention、Ingestion、Selection 等多个中间语义，最后接现有 Response / Adaptation Coefficient。
 
 这些中间名称本身仍是 Candidate，不应提前固化成新的正式术语。
+
+## WD-18｜端到端冲突显式登记
+
+**状态：BOUNDARY**
+
+完整中鱼链跨越环境烘焙、鱼况、响应、圆桌、抽鱼和 Fish AI，跨文档、跨候选栈的冲突不能靠某一份 Candidate 自行裁决。冲突与未决项统一登记在 `conflict-register.md`，每项标明出处、影响、暂定处理和裁决方。
+
+本目录任何文档不得把 `KEEP_OPEN` 项写成已确认规则，也不得把 `CANDIDATE_BRANCH` 当成 Owner 裁定。
+
+## WD-19｜Ingredient 固有事实与配方角色分开
+
+**状态：BOUNDARY**
+
+`Ingredient` 提供的是固有事实：可食物质、化学线索潜力、颗粒属性、物理属性。`Base / Target / State / Attractant` 是玩家在这次配方里赋予它的功能角色和配比约束，不是 Ingredient 的固有分类。
+
+同一个虾粉可以在不同配方里被当主攻饵、状态饵或填充料，但它的固有事实不变。不得写成 `Ingredient.Type = TARGET_BAIT`。
+
+## WD-20｜物理颗粒与可食颗粒分开
+
+**状态：BOUNDARY**
+
+窝料固体可以同时包含可食颗粒和不可食 / 载体颗粒。两者都可以有粒径，也都可以参与雾化、扩散和沉降，但只有可食颗粒进入 Size Response。
+
+```text
+Recipe solids
+├─ Edible particulate matter
+│    → Size Response → Edible Utilization
+└─ Non-edible / carrier particulate matter
+     → Physical Release
+     → 不进入 Edible Utilization
+```
+
+同一个 Ingredient 也可以同时贡献可食部分和载体部分。第一版不必把数据拆得很细，但语义必须先分开。
+
+## WD-21｜Edible Size 只回答有效利用
+
+**状态：BOUNDARY**
+
+Edible Size 只回答：这份实体可食物，目标鱼以当前体型和摄食方式有多容易有效利用。
+
+它不回答：
+
+- 鱼会不会被吸引过来；
+- 鱼愿不愿意留窝；
+- 香味强不强；
+- 吃了以后饱不饱；
+- 中鱼概率是多少。
+
+输出是摄食 / 利用约束，不是 Bite Bonus，也不是最终 Response。
+
+## WD-22｜Groundbait 与 Hookbait 只共享尺寸约束接口
+
+**状态：BOUNDARY**
+
+Groundbait 与 Hookbait 只共享鱼侧尺寸约束接口：体尺、形态、摄食动作能力、对象尺寸 / 状态对动作的影响。
+
+它们不共享完整的 Feeding Place、释放、分布或响应机制。Hookbait 还有入口性、硬度、钩体阻碍、持钩和姿态等额外因素。
+
+## WD-23｜先闭合 Size 前置语义，再做 Gold Fixture
+
+**状态：BOUNDARY**
+
+当前工作项按以下顺序：
+
+1. 修正 Size 所需的三个前置语义：Ingredient 与 Recipe Role、物理颗粒与可食颗粒、Edible Size 输出语义。
+2. 立即做窄版 Edible Size Gold Fixture。
+3. 如果 Fixture 失败，修 Size Candidate。
+4. 到此停止，不进入 Food、Flavor、Attraction、Retention 或完整 Recipe Grammar。
+
+Part A 必须保持很短。如果讨论开始扩张到 Attraction、Retention、Recipe Grammar、Food Taxonomy 或 Flavor Taxonomy，就说明已经偏离 Size blocker。
+
+## WD-24｜Particle Distribution 从 Ingredient 生成并守恒
+
+**状态：ACTIVE CANDIDATE**
+
+Particle Distribution 分两步：
+
+1. Ingredient → 配方分布：按 `recipe_share` 混合物理分布；用 `edible_fraction` 生成可食质量，再在可食部分内部归一化。
+2. 配方分布 → Feeding Place：用状态转换 `T` 把每个桶分成 available / left / consumed / unprocessable，物理账本和可食账本分别守恒。
+
+载体不进入可食分布，也不进入 Size Response。具体公式和结构 Fixture 见 `candidate/particle-distribution.md`。
+
+## WD-25｜Food 同 Target 先合并再饱和
+
+**状态：ACTIVE CANDIDATE**
+
+对每个 Food Target，先把同一目标下的 Ingredient 贡献合并成 `E_t`，再做 Target 级饱和：
+
+```text
+E_t = Σ_i recipe_share_i × food_identity_i(t) × potency_i
+R_t = P_t × S_t(E_t)
+```
+
+`S_t` 只要求 `S_t(0)=0`、单调、有界、连续、凹。函数族和参数仍是 OPEN。
+
+先合并再饱和是为了避免同一作用的 Ingredient 拆成多个 ID 后各自饱和，产生拆分套利。
+
+## WD-26｜多 Target 聚合保持 OPEN
+
+**状态：OPEN**
+
+多个 Food Target 如何聚合成 `FoodResponse` 尚未决定。基线 R0 明确禁止 Coding Agent 自行引入 `sum`、`weighted average`、`max` 或 `Noisy-OR`，并把 multi-target hypothesis aggregation 列为不冻结项。
+
+本目录只固定候选算子必须满足的性质：非负、单调、有界、可交换、连续、跨 Target 递减、无全家桶、零处理、无隐式互补。具体算子由 Owner 裁决。详见 `candidate/food-aggregation.md`。
+
+## WD-27｜Flavor 当前只用签名集合
+
+**状态：ACTIVE CANDIDATE**
+
+在化学强度准入前，Flavor 只使用 `presentation.chemical_signature` 的类型集合。Recipe 的签名集合是 Ingredient 签名的并集；同一签名由多个 Ingredient 提供时仍只算一个。
+
+分支 A 不表达浓度、比例或强度。需要这些量时，必须先把 `cue.chemical_intensity` / `cue.odor_concentration` 作为产品决策准入。
+
+候选聚合是优先级解析：显式 `AVOID` 优先，其次 `POSITIVE`，否则 `NEUTRAL`。该解析不是 Current 规则。
+
+## WD-28｜Avoidance 稀疏且显式
+
+**状态：BOUNDARY**
+
+Avoidance 只为有明显解释价值的 Fish × Signature 对配置，是显式 `AVOID` 关系，不是低偏好，也不是缺少配置。
+
+它与 Wariness 分开：Wariness 是动态状态，Avoidance 是静态稀疏关系。两者都压低响应时，来源和 trace 必须分别保留。
+
+## WD-29｜小药必须占成本
+
+**状态：BOUNDARY**
+
+小药可以增加化学签名或改变 Cue 画像，但必须占剂量或成本，且不增加实体食物质量。它不能提供固定 Bonus，也不能绕过签名集合直接改最终响应。
+
+## WD-30｜Physical Release 是离散时间状态转移
+
+**状态：ACTIVE CANDIDATE**
+
+Physical Release 用离散时间步记录四个账本：
+
+```text
+A(t) 当前地点可用
+L(t) 已离开地点
+C(t) 已被摄食
+U(t) 已不可处理
+```
+
+每步转移：
+
+```text
+A(t+1) = A(t) - B(t) - S(t) - E(t)
+L(t+1) = L(t) + S(t)
+U(t+1) = U(t) + B(t)
+C(t+1) = C(t) + E(t)
+```
+
+物理、可食和载体账本分别满足 `A + L + C + U = 1`。`E(t)` 只能来自 Feeding Event，不能由释放模块自行设置。`B`、`S`、`R` 的计算仍是 OPEN。
+
+## WD-31｜化学线索单独记账
+
+**状态：BOUNDARY**
+
+化学线索使用独立的累计释放账本 `Q(t)`，满足 `0 ≤ Q(t) ≤ 1`。它不与实体食物共享守恒式，也不默认与实体食物同步释放。
+
+线索可以比实体食物释放得更快或更慢。这种错位是机制的一部分，不是数据错误。
+
+## WD-32｜黏结、比重和水作用不直接写 Retention / Attraction
+
+**状态：BOUNDARY**
+
+黏结、比重、水作用和粒径先改变解体、沉降、漂移、暴露和线索释放，再形成 Feeding Place 状态。它们不能直接写成 `+Retention`、`+Attraction` 或 `+Bite`。
+
+同一物理变化可能同时扩大暴露、缩短留存、改变水层或降低可处理性，最终方向取决于地点、时间和鱼。
+
+## WD-33｜Attraction / Retention 暂不独立成模块
+
+**状态：BOUNDARY**
+
+Attraction 是 encounter / selection 的上位解释词，可由事件派生摘要；Retention 是重复 Feeding Event、Feeding Place 持久性和 Fish Condition 的组合结果。二者当前都不新增独立系数，避免与现有阶段重复计权。
+
+缺口是 Local Population / Residence 和 Overfeeding，应作为独立候选问题处理，而不是塞进 `AttractionCoeff` 或 `RetentionCoeff`。详见 `decisions/attraction-retention-verdict.md`。
+
+## WD-34｜不建立单一 RecipeFit
+
+**状态：BOUNDARY**
+
+四条候选输出分别进入 Response Condition、Response Component 或 Persistent Response Field。最终聚合仍由现有 Response Stage 或其已承接的上游接口完成。
+
+不建立 `RecipeFit = Food + Flavor + Particle + Physical`。`AdaptationCoeff` 公式、组件聚合算子和模式聚合算子仍按对应接口和 Owner / Current 边界处理。映射和顺序见 `candidate/response-aggregation-map.md`。
+
+## WD-35｜端到端工作算法采用单一候选闭环
+
+**状态：ACTIVE CANDIDATE**
+
+本目录的端到端工作算法固定以下顺序，作为实现和反例审查的统一工作基线：
+
+```text
+Bake → Fish Condition → Opportunity(L) → Groundbait State
+→ Feeding Event → Response(C) → candidate weight → Roundtable → Draw
+```
+
+算法层面的默认候选为：
+
+- 同 Target 先合并，再做 Target 级饱和；多 Target 在实现试验中采用全局有界饱和，但仍不冒称 Owner 已裁决。
+- 物理释放采用竞争转移率，实体账本和化学线索账本分离。
+- Fish Condition 使用有界一阶记忆更新；具体 cause、时间尺度和生命周期由实现输入提供。
+- Response 先硬门、后软 Margin，再做有界投影；`Unknown`、`Invalid`、`Reject` 和合法零分开处理。
+- 通用 FCF 候选使用 `SpatialDistributionWeight × AdaptationCoeff`；Proposal C 候选使用 `q = L × C`。两条接口不得叠乘，需在候选类型上显式声明。
+
+这条工作基线不关闭 `conflict-register.md` 中的 Owner ballot，也不把校准参数或缺失的 Current Contract 补造成事实。它的作用是让实现可以继续，而不是替 Owner 完成产品裁定。

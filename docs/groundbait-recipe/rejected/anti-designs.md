@@ -191,7 +191,7 @@ Flavor Profile 可以看作低维、显式、有业务语义的 Composition Vect
 
 ### 当前边界
 
-天气、时段等优先进入现有 Fish Condition / Feeding Readiness / Activity 语义。Diet Shift 的具体驱动仍是 Open；不能把“慢随机漂移”提前写成已确认替代方案。
+天气、时段等优先进入现有 Fish Condition 语义。Diet Shift 的具体驱动仍是 Open；不能把“慢随机漂移”提前写成已确认替代方案。
 
 ---
 
@@ -216,3 +216,23 @@ Pair Table 很快进入 N² 内容维护，且容易用隐藏 Bonus 掩盖原本
 ### 当前边界
 
 先验证 Food Target Saturation、Flavor Composition、Physical Release 是否已经产生足够策略。只有明确发现无法表达的重要组合关系时，才考虑极少数有证据的组合规则。
+
+---
+
+## 15. Attraction / Retention 独立系数
+
+例如：
+
+```text
+Response = ... × AttractionCoeff × RetentionCoeff
+```
+
+### 为什么当前排除
+
+- Attraction 已经被 Feeding Event 的 encounter / selection 覆盖，再乘一次会重复计权。
+- Retention 已经由重复 Feeding Event、Feeding Place 持久性和 Fish Condition 组合表达，再乘一次会重复计权。
+- 两个系数都没有独立输入、单位或生产者，容易变成无法解释的隐藏倍率。
+
+### 当前边界
+
+不新增 `AttractionCoeff` 或 `RetentionCoeff`。需要表达“吸引”或“留存”时，先说明它对应哪个现有阶段。需要单独处理的是 Local Population / Residence 和 Overfeeding，应作为独立问题，而不是塞进系数。详见 `../decisions/attraction-retention-verdict.md`。

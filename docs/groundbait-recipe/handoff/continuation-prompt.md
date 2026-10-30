@@ -7,6 +7,18 @@
 当前主脊：
 
 ```text
+数据
+  → 烘焙 / DEF / 空间分布权重 + 鱼侧动态参数
+  → 玩家策略与操作 / 呈现刺激
+  → 响应 / 鱼适配系数集
+  → 圆桌权重表 / 挤占
+  → 抽鱼和生成
+  → Fish AI（范围外）
+```
+
+Groundbait 是主脊上的第一个候选消费者：
+
+```text
 Recipe Facts
   → Physical Release
   → Feeding Place State
@@ -19,7 +31,7 @@ Recipe Facts
   → Response Stage 的候选输入
 ```
 
-新增对象模型见 `candidate/object-model.md`；一次摄食事件见 `candidate/feeding-event.md`。
+端到端对象与所有权见 `candidate/system-object-model.md`；冲突与未决项见 `decisions/conflict-register.md`；Groundbait 对象模型见 `candidate/object-model.md`；一次摄食事件见 `candidate/feeding-event.md`。
 
 当前最重要的概念修正：
 
@@ -30,12 +42,14 @@ Recipe Facts
 - Physical Release 的产物是 Feeding Place 状态，不是 `release_score`；
 - 粒径既可作为鱼侧对象属性，也可作为物理对象属性，两个影响必须经不同中间状态进入，不能跨链总加权。
 
-下一步按以下顺序推进，不能跳过前置语义：
+当前状态：
 
-1. 核对 `object-model.md` 的对象、状态和因果所有权。
-2. 核对 `feeding-event.md` 的 encounter、可行性、选择、成功和对象状态更新。
-3. 收窄 `edible-size-response.md`，只让尺寸、形态和状态进入动作约束。
-4. 把 `particle-distribution.md` 接到当前 Feeding Place 对象集合，而不是静态投放比例。
-5. 把 `physical-release.md` 接到 Feeding Place 状态转换。
-6. 用 `response-stage-mapping.md` 对照现有 Response Stage、Response Condition、Persistent Response Field 和 Fish Condition。
-7. 最后才保留少量反例，检查因果所有权、守恒和重复计权。
+候选链已在接口层闭合。Size、Food、Flavor、Physical Release、Attraction / Retention 的 Candidate 判断和 Response Aggregation 映射都已落文档。
+
+剩余工作是 Owner 决策和数值公式：`AdaptationCoeff`、组件聚合、模式聚合、多 Target 算子、化学强度准入、Local Population / Residence、Overfeeding，以及冲突登记里的 OPEN 项。
+
+如果讨论开始扩张到 Attraction、Retention、Recipe Grammar、Food Taxonomy 或 Flavor Taxonomy，就停下来，说明已经偏离当前工作项。
+
+端到端对象、烘焙、鱼况、响应和圆桌文档仍作为背景和边界，不是本轮任务。冲突与未决项见 `decisions/conflict-register.md`。
+
+不把 `KEEP_OPEN` 项写成已确认规则，也不把 `CANDIDATE_BRANCH` 当成 Owner 裁定。
