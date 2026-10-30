@@ -6,7 +6,7 @@
 >
 > 上游依赖：Proposal C 的 Issue #152 五项 Owner 裁定记录在 PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 的提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`。截至 2026-10-30，该 PR 仍为 draft。本文承接其工作边界，但每次实现前仍须以最新提交复核。
 >
-> 鱼况边界：Fish Condition 的七项 Owner 裁定见 [Issue #161](https://github.com/futouyiba/HitFish-Up/issues/161) 的 Owner 评论（2026-10-30）。runtime overlay 必须逐 Condition 由该 Condition 的机制 Contract 授权，当前只有 Wariness 有累积依据；Activity、Feeding Motivation、Diet Shift 不因此自动获得 runtime 更新；Activity 不设语义生产上界。本文 §4 与 §8.2 按此收窄为 Candidate，§9 的加权式另按 Proposal C closure 标为 Groundbait Candidate 接口。
+> 鱼况边界：Fish Condition 的七项 Owner 裁定见 [Issue #161](https://github.com/futouyiba/HitFish-Up/issues/161) 的 Owner 评论（2026-10-30）。runtime overlay 必须逐 Condition 由该 Condition 的机制 Contract 授权。当前只有 Wariness 具备 runtime overlay 的语义依据；具体运行时更新仍须由 Wariness 机制 Contract 授权，并闭合事件来源、粒度、衰减、有效期和会话记忆。Activity、Feeding Motivation、Diet Shift 不因此自动获得 runtime 更新；Activity 不设语义生产上界。本文 §4 与 §8.2 按此收窄为 Candidate，§9 的加权式另按 Proposal C closure 标为 Groundbait Candidate 接口。
 
 ## 1. 一句话版本
 
@@ -123,7 +123,7 @@ SpatialDistributionWeight
 
 四个参数是鱼侧状态，不是四个独立 Bonus。实现可以把状态按 FishStock、ConditionGroup、时间片保存，但必须声明键和生命周期。
 
-运行时更新是受机制授权的扩展点，不是四个 Condition 的通用默认。[Issue #161](https://github.com/futouyiba/HitFish-Up/issues/161) 的 Owner 裁定只授权 Wariness 的 runtime overlay，而且只是受限扩展点，V1 允许只实现 Bake baseline。Activity、FeedingMotivation 和 DietShift 不因此自动获得 runtime 更新。
+运行时更新是受机制授权的扩展点，不是四个 Condition 的通用默认。[Issue #161](https://github.com/futouyiba/HitFish-Up/issues/161) 的 Owner 裁定把 runtime overlay 定为受限扩展点：当前只有 Wariness 具备 runtime overlay 的语义依据，具体运行时更新仍须由 Wariness 机制 Contract 授权，并闭合事件来源、粒度、衰减、有效期和会话记忆；V1 允许只实现 Bake baseline。Activity、FeedingMotivation 和 DietShift 不因此自动获得 runtime 更新。
 
 下面的有界一阶更新是 Groundbait Candidate 的更新式，只适用于已由对应机制 Contract 授权、并在该 Contract 里声明为 `[0,1]` 的状态。它本身不构成任何 Condition 的 runtime 授权，也不能用来给未授权的 Condition 补一个运行时状态。
 
