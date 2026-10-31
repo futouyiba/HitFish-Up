@@ -11,12 +11,12 @@
 | 状态分段与移动后停留 | `presentation_state_probe.py`（研究分支） | 阈值、确认时刻、已观测下界 | 真实鱼行为 |
 | 逃逸触发窗口与取 max | `proposal_c_escape_trigger_probe.py` | 窗口过滤、family 适用、不累加、pause 不参与、状态传播 | 事件提取公式与生产阈值 |
 | 响应投影形状 | `proposal_c_response_projection_probe.py` | 截断线性的端点与单调性 | 生产 `M0/M1` |
-| Closing 成本形状 | `proposal_c_closing_cost_shape_probe.py` | `u_close` 与成本的单调关系 | 完整高速策略排序 |
+| Closing 成本形状 | `proposal_c_closing_cost_shape_probe.py` | 无 θ 的 soft closing 单调性、幂次与活动度线性 | 完整高速策略排序 |
 | support × response | `proposal_c_support_retention_projection_probe.py` | 比例保留形状 | 生产 support 尺度 |
 | Trigger 形状 | `proposal_c_prediction_challenge_probe.py` | 单次事件衰减 | 生产 `tau_recover` |
 | 三组策略排序 | `proposal_c_strategy_probe.py` | 反应口成立、快搜只部分成立、隐蔽需要外部成本 | 生产参数、覆盖收益 |
 | 机会量与单位时间收益 | `proposal_c_opportunity_support_probe.py` | 内部最优、低活性更慢、隐蔽翻转 | 生产 `L` 函数、探索收益 |
-| 端到端状态传播 | `proposal_c_end_to_end_probe.py` | Unknown/Reject/区间/L 缺失、单次乘法 | 生产标定 |
+| 端到端状态传播 | `proposal_c_end_to_end_probe.py` | Unknown/Reject/sibling 取最大与未解析跳过/L 缺失、单次乘法 | 生产标定 |
 | Fish Condition 解析 | `proposal_c_fish_condition_probe.py` | baseline、过期、缺来源、授权 overlay 与回落 | 真实生成与曲线 |
 
 ## 2. 缺口

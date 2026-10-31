@@ -73,8 +73,8 @@ ActualPresentation
 3. 按装配绑定运行适用的猎物解释规则，输出已校准的 support。
 4. 按猎物解释提取当前状态、事件和 TriggerIntensity。
 5. 读取鱼侧评价输入，先处理 typed status，再计算数值。
-6. 在局部 latent bearing 内计算出手余量并投影成条件响应。
-7. 聚合同级猎物解释，得到 feeding 区间或标量。
+6. 按“鱼在追拟饵”的单方向计算出手余量并投影成条件响应。
+7. 聚合同级猎物解释：已解析分支取最大，未解析分支跳过并记录。
 8. 与 Opportunity 的 `L` 做一次 `L × C`（Spatial 只提供空间事实），交给 Candidate owner。
 
 任何一步的必要输入未解析，都不能把缺口静默转换为零。
@@ -84,7 +84,7 @@ ActualPresentation
 - [语义契约](lure-response-proposal-c-semantic-contract.md)：逐层写输入、输出、状态、owner 和禁止事项；
 - [呈现解释与状态契约](lure-response-proposal-c-presentation-interpretation.md)：证据、支持度插值、区间与状态提取规则；
 - [五评价项契约](lure-response-proposal-c-evaluation-items.md)：食物价值、攻击诱因、追赶负担、风险顾虑与门槛的合成方式和边界；
-- [响应与机会契约](lure-response-proposal-c-response-opportunity.md)：投影、sibling 区间、`L × C` 与候选接入；
+- [响应与机会契约](lure-response-proposal-c-response-opportunity.md)：投影、sibling 取最大、`L × C` 与候选接入；
 - [工作案例](lure-response-proposal-c-worked-cases.md)：用反例检查每层是否真的区分了不同情况；
 - [开放决策](lure-response-proposal-c-open-decisions.md)：只保留尚未有 owner、尚未闭合或存在冲突的问题；
 - [第一轮玩法闭合审查](lure-response-proposal-c-first-round-closure.md)：AttackTrigger 准入、Risk 输入实证、策略排序 probe 与判断；
