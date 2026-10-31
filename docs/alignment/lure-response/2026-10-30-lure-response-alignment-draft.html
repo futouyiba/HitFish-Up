@@ -17,7 +17,7 @@
 <div class="badges"><span class="badge">先看三块响应</span><span class="badge">再看 4 个玩家选择</span><span class="badge">推出 5 个评价问题</span></div>
 </header>
 
-<div class="callout" style="margin-top:18px"><strong>状态边界：</strong>会议对齐草案，不是现行契约，不是生产参数。本稿四项方向（去掉相对方位 θ、终端钓组显眼度聚合、同级猎物解释取最大、一竿一鱼况快照）已由 PR #171（合并提交 <code>ad2ccb5f</code>）回写进设计包与 probe；实现以设计包与 probe 为准。终端钓组字段落地前风险顾虑为 0。</div>
+<div class="callout" style="margin-top:18px"><strong>状态边界：</strong>会议对齐草案，不是现行契约，不是生产参数。<strong>三项方向已由 PR #171（合并提交 <code>ad2ccb5f</code>）回写进设计包与 probe</strong>：去掉相对方位 θ、同级猎物解释取最大、一竿一鱼况快照。<strong>终端钓组显眼度聚合仍是会议候选</strong>，字段与 owner 未落地，<code>RiskCost = 0</code>。</div>
 
 <section>
 <h2 class="title">0. 响应不是一个模块，是三类问题</h2>
@@ -64,7 +64,7 @@
 <div class="grid g3">
 <div class="card"><span class="tag purple">第一步</span><h3>拆共同事实</h3><p>速度、轨迹、姿态、水层、部件动作；先不判断“它是什么”。</p></div>
 <div class="card"><span class="tag purple">第二步</span><h3>每种猎物分别解释</h3><p>每个解释器回答两件事：有多像（表达支持度）；按这种猎物看现在在干什么（当前状态）。</p></div>
-<div class="card"><span class="tag orange">第三步</span><h3>鱼侧评价</h3><p>五项评价合成适配系数 C；机会量 L 只乘一次，得到候选贡献。</p></div>
+<div class="card"><span class="tag orange">第三步</span><h3>鱼侧评价，按解释分别算</h3><p>每种解释分别评价五项、投影出条件响应，再乘该解释的表达支持度；多个同级解释取最大，最后与机会量 L 相乘一次。</p></div>
 </div>
 <div class="arch" style="margin-top:15px"><svg viewBox="0 0 1160 720" role="img" aria-label="响应系统模块图：一个拟饵同时像几种猎物，分别解释，再让鱼评价">
 <defs><marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#7d8ca3"/></marker></defs>
@@ -78,22 +78,22 @@
 <rect x="330" y="359" width="340" height="92" rx="15" fill="#eaf7f1" stroke="#6cb292" stroke-width="2"/><text x="500" y="389" text-anchor="middle" class="label">蛙类解释器</text><text x="500" y="414" text-anchor="middle" class="small">① 表达支持度　② 当前状态</text><text x="500" y="436" text-anchor="middle" class="small">像不像 · 在干什么</text>
 <path d="M255 320 C285 320 295 161 328 161" class="arrow"/><path d="M255 320 L328 283" class="arrow"/><path d="M255 320 C285 320 295 405 328 405" class="arrow"/>
 <rect x="760" y="60" width="380" height="105" rx="16" class="box fish"/><text x="950" y="91" text-anchor="middle" class="label">鱼侧上下文</text><text x="950" y="117" text-anchor="middle" class="small">鱼种 × 中鱼习性模式 × 体型档</text><text x="950" y="141" text-anchor="middle" class="small">+ 本竿鱼况快照</text>
-<rect x="760" y="215" width="380" height="220" rx="18" class="box resp"/><text x="950" y="248" text-anchor="middle" class="label">五项响应评价</text><text x="805" y="288" class="small">+ 食物价值</text><text x="805" y="317" class="small">+ 攻击诱因</text><text x="805" y="346" class="small">− 追赶负担</text><text x="805" y="375" class="small">− 风险顾虑</text><text x="805" y="404" class="small">− 摄食意愿门槛</text>
+<rect x="760" y="215" width="380" height="220" rx="18" class="box resp"/><text x="950" y="248" text-anchor="middle" class="label">五项响应评价</text><text x="950" y="268" text-anchor="middle" class="small">每种解释分别计算</text><text x="805" y="293" class="small">+ 食物价值</text><text x="805" y="320" class="small">+ 攻击诱因</text><text x="805" y="347" class="small">− 追赶负担</text><text x="805" y="374" class="small">− 风险顾虑</text><text x="805" y="401" class="small">− 摄食意愿门槛</text>
 <path d="M670 161 C710 161 718 265 758 265" class="arrow"/><path d="M670 283 L758 325" class="arrow"/><path d="M670 405 C710 405 718 395 758 395" class="arrow"/><path d="M950 165 L950 212" class="arrow"/>
 <rect x="395" y="505" width="255" height="74" rx="16" class="box out"/><text x="522" y="533" text-anchor="middle" class="label">各猎物适配系数</text><text x="522" y="557" text-anchor="middle" class="small">同级解释取最大值</text><path d="M860 435 C860 480 690 525 652 525" class="arrow"/>
 <rect x="755" y="520" width="190" height="76" rx="16" class="box fish"/><text x="850" y="550" text-anchor="middle" class="label">机会量 L</text><text x="850" y="574" text-anchor="middle" class="small">时间 / 空间有效机会</text>
-<rect x="985" y="520" width="165" height="76" rx="16" class="box out"/><text x="1068" y="550" text-anchor="middle" class="label">L × C</text><text x="1068" y="574" text-anchor="middle" class="small">候选贡献</text>
-<path d="M650 542 L752 558" class="arrow"/><path d="M945 558 L982 558" class="arrow"/>
+<rect x="985" y="520" width="165" height="76" rx="16" class="box out"/><text x="1068" y="550" text-anchor="middle" class="label">L × C_feed</text><text x="1068" y="574" text-anchor="middle" class="small">候选贡献</text>
+<path d="M650 537 C740 500 900 470 1000 519" class="arrow"/><path d="M945 558 L982 558" class="arrow"/>
 </svg></div>
 <div class="callout" style="margin-top:15px"><strong>一句话：</strong>拟饵不是猎物类型：同一个饵可以同时被解释成小鱼、小龙虾或蛙；系统分别解释“像不像、现在什么状态”，再让鱼评价。</div>
 </section>
 
 <section>
-<h2 class="title">4. 猎物解释器的价值：一个饵，多种解释，分开买策略</h2>
+<h2 class="title">4. 猎物解释器的价值：一个饵，多种解释，支持哪些策略选择</h2>
 <div class="grid g3">
 <div class="card"><span class="tag purple">为什么不选唯一身份</span><h3>一个饵可以同时像小鱼和小龙虾</h3><p>强行选一个，等于替玩家和鱼做了系统自己没做的判断。</p></div>
 <div class="card"><span class="tag blue">它输出什么</span><h3>表达支持度 + 当前状态</h3><p>像不像这种猎物；按这种猎物看，它现在在干什么。</p></div>
-<div class="card"><span class="tag orange">它买什么策略</span><h3>泛用与专精的分工</h3><p>泛用饵靠多个中等解释，专精饵押一种高解释；鱼侧偏向变化时，两者排序翻转。</p></div>
+<div class="card"><span class="tag orange">支持哪些策略</span><h3>泛用与专精的分工</h3><p>泛用饵靠多个中等解释，专精饵押一种高解释；鱼侧偏向变化会改变优劣，是否翻取决于支持度与分支响应。</p></div>
 </div>
 <div class="formula" style="margin-top:15px">同一物理目标的多个解释互斥，不叠加：<br>最终适配系数 = max(各猎物解释的适配系数)</div>
 </section>
@@ -152,8 +152,8 @@
 
 <section>
 <h2 class="title">13. 最终只接一次：机会量 L × 适配系数 C</h2>
-<div class="grid g2"><div class="card"><span class="tag green">机会量 L</span><h3>机会有没有真正形成</h3><p>回答时间、空间和有效交互窗口。</p></div><div class="card"><span class="tag orange">适配系数 C</span><h3>这个机会摆在鱼面前时，有多适配</h3><p>由五项响应评价产生，范围 0~1。</p></div></div>
-<div class="formula" style="margin-top:15px">候选贡献 = L × C<br>同一个物理目标的多个猎物解释 → 取最大适配系数</div>
+<div class="grid g2"><div class="card"><span class="tag green">机会量 L</span><h3>机会有没有真正形成</h3><p>回答时间、空间和有效交互窗口。</p></div><div class="card"><span class="tag orange">适配系数 C</span><h3>这个机会摆在鱼面前时，有多适配</h3><p>由每种解释的五项评价乘支持度后取最大，范围 0~1。</p></div></div>
+<div class="formula" style="margin-top:15px">候选贡献 = L × C_feed<br>各解释分支贡献（条件响应 × 支持度）取最大 → C_feed</div>
 </section>
 
 <section>
@@ -161,16 +161,18 @@
 <table class="table"><thead><tr><th>概念</th><th>回答什么</th><th>由谁产生</th><th>流向</th></tr></thead><tbody>
 <tr><td><strong>实际呈现</strong></td><td>这一竿实际是什么</td><td>玩家操作 + 环境</td><td>共同事实</td></tr>
 <tr><td><strong>共同事实</strong></td><td>可复用的客观输入</td><td>事实提取</td><td>各猎物解释器</td></tr>
-<tr><td><strong>表达支持度</strong></td><td>有多像这种猎物</td><td>猎物解释器</td><td>五项评价</td></tr>
+<tr><td><strong>表达支持度</strong></td><td>有多像这种猎物；按比例保留该解释的响应</td><td>猎物解释器</td><td>乘在该解释的条件响应上</td></tr>
 <tr><td><strong>当前状态</strong></td><td>按这种猎物看，现在在干什么</td><td>猎物解释器</td><td>攻击诱因</td></tr>
-<tr><td><strong>鱼侧上下文</strong></td><td>鱼是谁、当前状态如何</td><td>鱼种配置 + 本竿鱼况快照</td><td>五项评价</td></tr>
-<tr><td><strong>五项评价</strong></td><td>值不值得出手</td><td>评价规则</td><td>出手余量</td></tr>
-<tr><td><strong>出手余量</strong></td><td>五项净值</td><td>相加</td><td>适配系数</td></tr>
-<tr><td><strong>适配系数 C</strong></td><td>这个机会有多适配</td><td>投影</td><td>候选贡献</td></tr>
+<tr><td><strong>鱼侧上下文</strong></td><td>鱼是谁、当前状态如何</td><td>鱼种配置 + 本竿鱼况快照</td><td>每种解释的五项评价</td></tr>
+<tr><td><strong>五项评价</strong></td><td>值不值得出手（每种解释分别算）</td><td>评价规则</td><td>出手余量</td></tr>
+<tr><td><strong>出手余量</strong></td><td>五项净值</td><td>相加</td><td>条件响应</td></tr>
+<tr><td><strong>条件响应</strong></td><td>这个解释下有多适配</td><td>投影</td><td>乘支持度得分支贡献</td></tr>
+<tr><td><strong>分支贡献</strong></td><td>该解释保留的响应量</td><td>支持度 × 条件响应</td><td>同级取最大</td></tr>
+<tr><td><strong>同级适配系数 C_feed</strong></td><td>多个解释取最大后的适配系数</td><td>同级取最大</td><td>候选贡献</td></tr>
 <tr><td><strong>机会量 L</strong></td><td>机会形成了多少</td><td>Opportunity</td><td>候选贡献</td></tr>
-<tr><td><strong>候选贡献</strong></td><td>最终进入候选的量</td><td>L × C</td><td>候选</td></tr>
+<tr><td><strong>候选贡献</strong></td><td>最终进入候选的量</td><td>L × C_feed</td><td>候选</td></tr>
 </tbody></table>
-<div class="formula" style="margin-top:15px">实际呈现 → 共同事实 → 各猎物解释（支持度 + 状态）<br>→ 五项评价（鱼侧上下文参与）→ 出手余量 → 适配系数 C<br>→ 候选贡献（L × C）</div>
+<div class="formula" style="margin-top:15px">实际呈现 → 共同事实 → 各猎物解释（支持度 + 状态）<br>→ 每种解释分别评价五项 → 出手余量 → 条件响应<br>→ 乘该解释的支持度 → 分支贡献 → 同级取最大（C_feed）<br>→ 与 Opportunity 的 L 相乘一次（L × C_feed）</div>
 </section>
 
 <section>
@@ -188,7 +190,7 @@
 <tr><td>风险</td><td>终端钓组显眼度简单饱和聚合</td></tr>
 <tr><td>鱼况</td><td>一竿一个鱼况快照</td></tr>
 <tr><td>最终系数</td><td>C 叫适配系数，范围 0~1</td></tr>
-<tr><td>机会</td><td>L 叫机会量；最终只做一次 L × C</td></tr>
+<tr><td>机会</td><td>L 叫机会量；最终只做一次 L × C_feed</td></tr>
 <tr><td>刻意不做</td><td>独立运动可预测性、通用停顿奖励、复杂遭遇几何</td></tr>
 </tbody></table>
 </section>
