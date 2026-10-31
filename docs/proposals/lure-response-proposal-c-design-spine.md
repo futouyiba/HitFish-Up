@@ -2,7 +2,7 @@
 
 状态：Working Design / Candidate。本文用于收敛设计，不是 Current Contract，也不是生产参数批准。
 
-口径来源：本包按 `docs/lure-response-joint-evaluation` 的 `311ae70d` Working Closure 快照核对，整理成一份可审阅的设计包；该分支在此之后持续更新，本轮未逐条重新纳入。引用前先核对该分支当前 head。
+口径来源：设计包最初按 `docs/lure-response-joint-evaluation` 的 `311ae70d` Working Closure 快照整理；2026-10-30 会议方向（去 θ、同级取最大、一竿快照）已由 PR [#171](https://github.com/futouyiba/HitFish-Up/pull/171)（合并提交 `ad2ccb5f`）回写。研究分支持续更新，引用前先核对其当前 head。
 
 ## 1. 设计问题
 

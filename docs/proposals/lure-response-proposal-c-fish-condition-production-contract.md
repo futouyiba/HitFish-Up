@@ -1,6 +1,6 @@
 # Proposal C｜鱼况（Fish Condition）生产契约（Candidate）
 
-状态：Working Contract Draft / Candidate。按 2026-10-30 Owner 裁定（Issue #161）编写，尚未审核合并，不冒充 Current Contract。
+状态：Working Contract Draft / Candidate。按 Issue #161 编写，并已由 PR #167 与 #171 审核合并进入 `main`；仍是 Candidate，不冒充 Current Contract。
 
 本文只定义 Fish Condition 的载体、状态、来源与校验；各 Condition 的生成语义、曲线与标定仍归对应机制 Contract。
 
