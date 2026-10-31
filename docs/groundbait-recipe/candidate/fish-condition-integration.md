@@ -39,7 +39,7 @@ Fish Condition 是状态，不是分数。它描述鱼现在处于什么状态�
 |---|---|---|
 | 环境烘焙 | 不读取 | 不能把 Fish Condition 当作环境条件重新烘焙 |
 | Response | Activity、Feeding Motivation、Diet Shift、Wariness | 不能把 Fish Condition 直接当作最终权重 |
-| Feeding Event（候选） | Activity、Feeding Motivation、Wariness | 读取 Wariness 属 Candidate 消费者语义，不继承 Response 的 `RiskCost` 权限；未获授权前保持关闭（#161）。不能把 Fish Condition 当作动作能力或对象约束 |
+| Feeding Event（候选） | 不直接消费 Fish Condition 数值；仅保留候选边界和事件结构 | 未获对应 Condition Contract 授权前，不读取 Wariness 等数值；不能把 Fish Condition 当作动作能力或对象约束 |
 | 圆桌 | 不直接读取 | 不能把鱼况乘进候选权重 |
 | Fish AI | Activity（边界） | 不在本仓定义具体消费公式 |
 
@@ -61,7 +61,7 @@ Fish Condition 是状态，不是分数。它描述鱼现在处于什么状态�
 
 - 影响鱼是否愿意响应和摄食。
 - 与 Food / Flavor 的边界：Food 和 Flavor 描述刺激，Feeding Motivation 描述鱼当前的意愿；刺激不直接改写意愿。
-- 在 Feeding Event 中，它影响动作选择或更上层的响应，不影响对象尺寸约束。
+- 当前只按已声明的 Response 接口消费；若未来 Feeding Event 获得独立机制授权，才可讨论动作选择消费，不影响对象尺寸约束。
 
 ### 5.3 Diet Shift
 
