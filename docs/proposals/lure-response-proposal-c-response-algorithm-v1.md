@@ -89,7 +89,7 @@ function response(segment, assembly, castFC, opportunity, params):
           results[family] = (state.status, None)   # 保留原始状态
           continue
 
-      C_cond = evaluate(state, entry, params)      # 已解析输入下的条件响应
+      C_cond = evaluate(family, state, entry, params)   # 已解析输入下的条件响应
       if C_cond == Reject:
           results[family] = (Reject, 0.0)
           continue
@@ -129,10 +129,11 @@ function compose(results):
   return (Resolved, max(resolved + rejected), skipped)
 
 
-function evaluate(state, entry, params):
+function evaluate(family, state, entry, params):
 
   # entry = castFC.entries[(conditionGroupId, engagementModeId)]
-  food      = clamp(base + size + dietShift, 0, 1)
+  diet      = entry.dietShift[family]          # 缺失即该 family 不闭合（Unknown）
+  food      = clamp(base + size + diet, 0, 1)
   trigger   = params.TriggerBudget * state.TriggerIntensity
   closing   = params.K_close * state.q^2 * activityMultiplier(entry.activity)   # 单方向：鱼在追拟饵
   risk      = params.K_wary * entry.wariness * suspicionLoad      # 无 cue 时为 0

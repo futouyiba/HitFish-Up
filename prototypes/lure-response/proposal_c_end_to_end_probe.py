@@ -92,8 +92,8 @@ def cast_entry(cast_fc, cast_id, group, mode):
     return cast_fc.get("entries", {}).get((group, mode))
 
 
-def evaluate(state_trigger, entry, seg):
-    """entry fields: activity, feedingMotivation, wariness, dietShift."""
+def evaluate(family, state_trigger, entry, seg):
+    """entry fields: activity, feedingMotivation, wariness, dietShift[family]."""
     act_status, activity = activity_multiplier(entry.get("activity"))
     if act_status != RESOLVED:
         return act_status, None
@@ -106,6 +106,8 @@ def evaluate(state_trigger, entry, seg):
 
     wariness = entry.get("wariness")
     suspicion = seg.get("suspicionLoad", 0.0)
+    if not _finite(suspicion):
+        return INVALID, None
     if wariness in (UNKNOWN, NOT_CONFIGURED):
         if suspicion != 0.0:
             return wariness, None          # 缺失且有 cue：不闭合
@@ -113,7 +115,19 @@ def evaluate(state_trigger, entry, seg):
     elif not _finite(wariness):
         return INVALID, None
 
-    food = clamp01(seg["food"] + entry.get("dietShift", {}).get(seg.get("family"), 0.0))
+    if not _finite(seg.get("food")):
+        return INVALID, None
+    diet = entry.get("dietShift", {}).get(family)
+    if diet is None:
+        return UNKNOWN, None               # 缺失 family 偏移：该 family 不闭合
+    if diet in (UNKNOWN, NOT_CONFIGURED):
+        return diet, None
+    if not _finite(diet):
+        return INVALID, None
+    food = clamp01(seg["food"] + diet)
+
+    if not _finite(seg.get("q")):
+        return INVALID, None
     trigger = TRIGGER_BUDGET * state_trigger
     closing = K_CLOSE * seg["q"] ** 2 * activity
     risk = K_WARY * wariness * suspicion
@@ -136,7 +150,7 @@ def branch_response(family, support, state, entry, seg):
         return state, None
     if not _finite(state) or not 0.0 <= state <= 1.0:
         return INVALID, None
-    c_status, c = evaluate(state, entry, seg)
+    c_status, c = evaluate(family, state, entry, seg)
     if c_status != RESOLVED:
         return c_status, None
     return RESOLVED, value * c
@@ -203,7 +217,7 @@ def base_entry(**overrides):
         "activity": 1.0,
         "feedingMotivation": 0.5,
         "wariness": 0.0,
-        "dietShift": {},
+        "dietShift": {"baitfish": 0.0, "crayfish": 0.0},
     }
     entry.update(overrides)
     return entry
@@ -310,10 +324,41 @@ def main() -> None:
     print("unknown wariness no cue:", out_no_cue)
     print("unknown wariness with cue:", out_with_cue)
 
+    # DietShift is read per family; unknown family offset only skips that family
+    snap_diet = make_snapshot({
+        ("cg-1", "mode-stalk"): base_entry(dietShift={"baitfish": 0.10, "crayfish": -0.10})
+    })
+    out_diet = response(seg, asm, snap_diet, {"baitfish": 1.0, "crayfish": 0.30}, states, 0.50)
+    print("diet shift +0.10 baitfish:", out_diet)
+    snap_diet_unknown = make_snapshot({
+        ("cg-1", "mode-stalk"): base_entry(dietShift={"baitfish": UNKNOWN, "crayfish": 0.0})
+    })
+    out_diet_unknown = response(seg, asm, snap_diet_unknown, {"baitfish": 1.0, "crayfish": 0.30}, states, 0.50)
+    print("diet shift unknown baitfish:", out_diet_unknown)
+
     # Unknown activity blocks all families via evaluate status
     snap_unknown_activity = make_snapshot({("cg-1", "mode-stalk"): base_entry(activity=UNKNOWN)})
     out_unknown_activity = response(base_seg(), asm, snap_unknown_activity, supports, states, 0.50)
     print("unknown activity:", out_unknown_activity)
+
+    # Invalid numeric inputs
+    out_nan_food = response(base_seg(food=float("nan")), asm, snap, supports, states, 0.50)
+    out_nan_q = response(base_seg(q=float("nan")), asm, snap, supports, states, 0.50)
+    print("nan food:", out_nan_food)
+    print("nan q:", out_nan_q)
+
+    # L×C: missing/invalid L and a second ratio
+    out_L025 = response(seg, asm, snap, supports, states, 0.25)
+    out_L_missing = response(seg, asm, snap, supports, states, None)
+    out_L_invalid = response(seg, asm, snap, supports, states, INVALID)
+    print("L=0.25:", out_L025)
+    print("missing L:", out_L_missing)
+    print("invalid L:", out_L_invalid)
+
+    # formedAt is a distinct metadata guard
+    snap_no_formed_at = make_snapshot({("cg-1", "mode-stalk"): entry}, formed_at=None)
+    out_no_formed_at = response(base_seg(), asm, snap_no_formed_at, supports, states, 0.50)
+    print("missing formedAt:", out_no_formed_at)
 
     # assertions
     assert out[0] == RESOLVED and 0 < out[1] <= 1
@@ -337,8 +382,27 @@ def main() -> None:
     assert out_unknown_activity[0] == RI
     assert out_unknown_activity[2] == {"baitfish": UNKNOWN, "crayfish": UNKNOWN}
 
-    # single multiply: q is exactly L × C, no second factor
-    assert abs(0.5 * 0.6 - 0.30) < 1e-12
+    # DietShift per family: +0.10 pushes baitfish to full response
+    assert out_diet[0] == RESOLVED and abs(out_diet[1] - 0.50) < 1e-9
+    assert out_diet_unknown[0] == RESOLVED
+    assert out_diet_unknown[2] == {"baitfish": UNKNOWN}
+    assert out_diet_unknown[1] < out_diet[1]
+
+    # Invalid numbers must be InvalidInput, not swallowed by clamp
+    assert out_nan_food[0] == INVALID
+    assert out_nan_q[0] == INVALID
+
+    # L×C is really multiplied, with a second ratio and missing/invalid L
+    assert join(0.6, 0.5, {}) == (RESOLVED, 0.30, {})
+    assert join(0.6, None, {}) == (RI, None, {})
+    assert join(0.6, INVALID, {}) == (INVALID, None, {})
+    assert abs(out[1] - 0.437) < 1e-9
+    assert abs(out_L025[1] * 2 - out[1]) < 1e-12
+    assert out_L_missing[0] == RI
+    assert out_L_invalid[0] == INVALID
+
+    # formedAt is its own metadata guard
+    assert out_no_formed_at[0] == RI
 
     print("End-to-end response probe passed")
 
