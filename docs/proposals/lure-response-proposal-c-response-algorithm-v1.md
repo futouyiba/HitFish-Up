@@ -43,7 +43,7 @@ function response(segment, assembly, castFC, opportunity, params):
   if supports covers no family: return (NotApplicable, None, {})
 
   # 2. 每个 sibling family
-  results = {}                                 # family -> (status, value)
+  results = {}                                 # family -> (原始状态, value)
   for family in declaredSiblingSet:
       relation = targetRelation(segment, family)   # 目标关系按 family 求值
       if relation == Reject:
@@ -52,11 +52,13 @@ function response(segment, assembly, castFC, opportunity, params):
       support = supports[family]
 
       if support is an interval:
-          if support.lower == support.upper:
+          if not intervalValid(support):           # 形状、有限、0 ≤ lo ≤ hi ≤ 1
+              results[family] = (InvalidInput, None)
+          elif support.lower == support.upper:
               support = support.lower              # 退化区间按标量处理
           else:
               results[family] = (ResolutionIncomplete, None)
-              continue
+          if results.get(family): continue
       if support == Reject:
           results[family] = (Reject, 0.0)
           continue
@@ -67,13 +69,13 @@ function response(segment, assembly, castFC, opportunity, params):
               results[family] = (ResolutionIncomplete, None)
           continue
       if support == Unknown:
-          results[family] = (ResolutionIncomplete, None)
+          results[family] = (Unknown, None)        # 保留原始状态
           continue
       if support == InvalidInput:
           results[family] = (InvalidInput, None)
           continue
       if support == NotConfigured:
-          results[family] = (ResolutionIncomplete, None)
+          results[family] = (NotConfigured, None)  # 保留原始状态
           continue
 
       state = extractState(segment, family)        # dims, events, TriggerIntensity
@@ -84,7 +86,7 @@ function response(segment, assembly, castFC, opportunity, params):
           results[family] = (InvalidInput, None)
           continue
       if state.status in (Unknown, NotConfigured):
-          results[family] = (ResolutionIncomplete, None)
+          results[family] = (state.status, None)   # 保留原始状态
           continue
 
       C_cond = evaluate(state, entry, params)      # 已解析输入下的条件响应
@@ -95,7 +97,7 @@ function response(segment, assembly, castFC, opportunity, params):
           results[family] = (InvalidInput, None)
           continue
       if C_cond is Unknown / NotConfigured:
-          results[family] = (ResolutionIncomplete, None)
+          results[family] = (C_cond, None)         # 保留原始状态
           continue
 
       results[family] = (Resolved, support * C_cond)
@@ -113,7 +115,7 @@ function response(segment, assembly, castFC, opportunity, params):
 
 
 function compose(results):
-  # results: family -> (status, value)
+  # results: family -> (原始状态, value)；Unknown/NotConfigured 原样保留
   resolved = [value for (status, value) in results.values() if status == Resolved]
   rejected = [value for (status, value) in results.values() if status == Reject]
   skipped  = {family: status for family, (status, _) in results.items()
@@ -188,6 +190,7 @@ Reject > InvalidInput > NotConfigured > Unknown > Resolved
 | TriggerIntensity 缺失 | `ResolutionIncomplete` |
 | support 为退化区间 | 按标量处理 |
 | support 为非退化区间 | 该分支 `ResolutionIncomplete`，跳过并记录 |
+| support 区间非法（非有限、端点越界、倒置） | `InvalidInput`，不可 roll |
 | 全部已解析分支都是 `Reject` | `Reject`，typed zero |
 | 快照 `castId` 不符或元数据缺失 | 整竿 `ResolutionIncomplete` |
 | 快照缺少当前 `ConditionGroup × EngagementMode` 条目 | 整竿 `ResolutionIncomplete` |
@@ -225,7 +228,7 @@ q = 0.50 × 0.874 = 0.437
 
 ## 5. 可执行入口
 
-- `prototypes/lure-response/proposal_c_end_to_end_probe.py`：跑通 happy path、Unknown Activity、Reject、Unknown support、sibling 取最大与未解析跳过、`L` 缺失与单次乘法。
+- `prototypes/lure-response/proposal_c_end_to_end_probe.py`：端到端驱动覆盖帧校验、快照按 `ConditionGroup × EngagementMode` 选择（含错竿/缺元数据/缺条目）、target relation Reject、全 Reject、区间 support（退化/非退化/非法）、Unknown/NotConfigured 原始状态保留、未解析 provenance 沿 `L × C` 返回与单次乘法。
 - 各形状 probe：投影、Closing、Trigger、support retention、机会量。
 
 ## 6. 未闭口
