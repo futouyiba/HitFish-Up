@@ -12,7 +12,7 @@ from __future__ import annotations
 import math
 
 M0, M1 = 0.0, 0.40
-K_CLOSE = 0.76
+K_CLOSE = 0.19  # no-theta rescale: was 0.76 under bearing averaging (x 1/4)
 DWELL_UNITS = 0.80  # L = D / (D + q): smooth dwell decay as speed rises
 Q_CAP = 1.00        # encounter rate saturates: R = q / (1 + q / Q_CAP)
 K_WARY = 1.0
@@ -30,15 +30,10 @@ def threshold(motivation: float) -> float:
 
 
 def conditional_response(food, trigger, q, activity, risk, motivation) -> float:
-    total = 0.0
-    n = 720
-    th = threshold(motivation)
-    for i in range(n):
-        theta = 2.0 * math.pi * (i + 0.5) / n
-        cost = K_CLOSE * max(0.0, q * math.cos(theta)) ** 2 * activity
-        margin = food + trigger - cost - risk - th
-        total += clamp01((margin - M0) / (M1 - M0))
-    return total / n
+    """No latent bearing: closing cost is the full radial K_close * q^2."""
+    cost = K_CLOSE * q * q * activity
+    margin = food + trigger - cost - risk - threshold(motivation)
+    return clamp01((margin - M0) / (M1 - M0))
 
 
 def support(q: float) -> float:

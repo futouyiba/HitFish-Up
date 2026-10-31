@@ -211,7 +211,7 @@
         <li class="arrow" aria-hidden="true">→</li>
         <li class="node margin"><b>出手余量</b><span>五个评价项在同一标尺上竞争</span></li>
         <li class="arrow" aria-hidden="true">→</li>
-        <li class="node margin"><b>条件响应</b><span>逐方位计算后聚合，不先平均</span></li>
+        <li class="node margin"><b>条件响应</b><span>单方向：按“鱼在追拟饵”估算，不跨方位平均</span></li>
         <li class="arrow" aria-hidden="true">→</li>
         <li class="node join"><b>机会接入</b><span>L 归 Opportunity（Spatial 提供空间事实）；q = L × C，只乘一次</span></li>
       </ol>
@@ -228,7 +228,7 @@
 例：裙丝 Jig + 鱼形 T 尾，近底移动
 小鱼   = max(裙丝 0.40, 鱼形 0.90) = 0.90
 小龙虾 = 裙丝 0.40 + (0.75 − 0.40) × 1.0 = 0.75</code></pre>
-      <p>缺记录不是零：若裙丝展开变化未取得，小龙虾支持变成区间 <code>[0.40, 0.75]</code>；小鱼的 0.90 已闭合，不受影响。未评价的猎物类型保持未覆盖，也不自动填零。</p>
+      <p>缺记录不是零：若裙丝展开变化未取得，小龙虾支持停在已观测范围 <code>[0.40, 0.75]</code>，按 <code>Unknown</code> 处理，该分支跳过；小鱼的 0.90 已闭合，不受影响。未评价的猎物类型保持未覆盖，也不自动填零。</p>
     </section>
 
     <section aria-labelledby="items-title">
@@ -258,7 +258,7 @@
         <tbody>
           <tr><td>食物价值</td><td><code>clamp(BaseDietAffinity + SizePreferenceAdjustment + DietaryShiftDelta, 0, 1)</code></td></tr>
           <tr><td>攻击诱因</td><td><code>TriggerBudget × TriggerIntensity</code>，预算约 0.10~0.15</td></tr>
-          <tr><td>追赶负担</td><td><code>K_close × u_close² × ActivityCostMultiplier</code>，其中 <code>u_close = max(0, q·cosθ)</code></td></tr>
+          <tr><td>追赶负担</td><td><code>K_close × q² × ActivityCostMultiplier</code>；第一版按“鱼在追拟饵”单方向估算，Working <code>K_close = 0.19</code></td></tr>
           <tr><td>风险顾虑</td><td><code>K_wary × Wariness × SuspicionLoad</code></td></tr>
           <tr><td>摄食意愿门槛</td><td><code>M ≤ 0.8: 0.60 − 0.40M</code>；<code>M &gt; 0.8</code> 再减 <code>0.50(M − 0.8)</code></td></tr>
         </tbody>
@@ -268,26 +268,24 @@
 
     <section aria-labelledby="chain-title">
       <h2 id="chain-title">从余量到候选</h2>
-      <pre><code>C(θ)      = clamp(余量 / 0.40, 0, 1)      # 每个方位先算，再聚合
-C_prey    = support × E_θ[C]
-L_feed    = max(L_i)   U_feed = max(U_i)   # sibling 区间
-C_feed    = 标量，仅当 L_feed == U_feed
-q         = L × C                          # 只乘一次，进入候选</code></pre>
-      <p>区间没有收敛时保持 ResolutionIncomplete，携带上下界，不进入 roll；不能拿已知下界冒充最终值。机会量 <code>L</code> 由机会侧给出，时间与停留只影响 <code>L</code>，不回写余量。</p>
+      <pre><code>C        = clamp(余量 / 0.40, 0, 1)      # 单方向：鱼在追拟饵
+C_prey   = support × C
+C_feed   = max(已解析分支)               # sibling 取最大
+q        = L × C                          # 只乘一次，进入候选</code></pre>
+      <p>未解析分支跳过并记录；全部 sibling 都未解析时保持 ResolutionIncomplete，不进入 roll。不能拿未解析分支当 0。机会量 <code>L</code> 由机会侧给出，时间与停留只影响 <code>L</code>，不回写余量。</p>
     </section>
 
     <section aria-labelledby="algorithm-title">
       <h2 id="algorithm-title">端到端算法</h2>
-      <pre><code>响应(presentation, assembly, fishCondition, opportunity):
-  校验帧、版本、有效期
+      <pre><code>响应(presentation, assembly, castSnapshot, opportunity):
+  校验帧、版本、快照（一竿一快照）
   supports = 猎物解释(presentation, assembly)
   对每个 sibling family:
       state    = 状态提取 + TriggerIntensity
       margin   = 食物价值 + 攻击诱因 - 追赶负担 - 风险顾虑 - 门槛
-      C(theta) = clamp(余量 / 0.40)
-      C_prey   = support × E_theta[C]
-  L_feed = max(L_i), U_feed = max(U_i)
-  C_feed = 标量，仅当 L_feed == U_feed
+      C        = clamp(余量 / 0.40)
+      C_prey   = support × C
+  C_feed = max(已解析 C_prey)      # 未解析分支跳过并记录
   q      = L × C_feed</code></pre>
       <p>状态优先级：<code>Reject</code> 先于 <code>InvalidInput</code>，再于 <code>NotConfigured</code>、<code>Unknown</code>、<code>Resolved</code>。任一必需输入缺失或过期，输出 <code>ResolutionIncomplete</code>，不回填默认值。</p>
     </section>
@@ -309,9 +307,9 @@ q         = L × C                          # 只乘一次，进入候选</code>
       <h2 id="cases-title">四个能反驳错误实现的案例</h2>
       <div class="cases">
         <article class="case">
-          <h3>兄弟解释的区间收敛</h3>
-          <p>小鱼 <code>[0.80, 0.80]</code>，小龙虾 <code>[0.20, 0.60]</code>。上界取最大后仍是 0.80，未解析路径不可能改变赢家，可以输出标量。</p>
-          <p class="verdict">若换成 <code>[0.45, 0.45]</code> 与 <code>[0.10, 0.90]</code>，就必须保持 ResolutionIncomplete，并携带区间。</p>
+          <h3>兄弟解释取最大</h3>
+          <p>小鱼 <code>0.80</code> 已解析，小龙虾未解析。取最大得到 <code>C_feed = 0.80</code>，并记录小龙虾分支未解析。</p>
+          <p class="verdict">若全部 sibling 都未解析，就必须保持 ResolutionIncomplete；不能把未解析分支当作 0 参与比较。</p>
         </article>
         <article class="case bad">
           <h3>快速搜索的收益不在响应里</h3>

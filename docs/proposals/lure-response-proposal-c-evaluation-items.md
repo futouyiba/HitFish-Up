@@ -88,14 +88,15 @@ StateTriggerValue_p
 ### 合成
 
 ```text
-q = 拟饵水平径向远离速度 / InterceptSpeedLimit
-u_close(theta) = max(0, q * cos(theta))
+q = 拟饵相对水体水平速度 / InterceptSpeedLimit（单方向：在“鱼在追拟饵”假设下按径向需求计）
 
 追赶负担
 = K_close *
-  u_close(theta)^2 *
+  q^2 *
   ActivityCostMultiplier(Activity)
 ```
+
+第一版不模拟鱼与拟饵的相对方位，统一按“鱼在追拟饵”估算；`q` 就是径向速度需求比。`K_close` 的 Working 值按这个单方向标尺取 `0.19`（原 `0.76` 是带方位平均时的值）。
 
 ### 职责分离
 
@@ -111,8 +112,8 @@ Activity 不修改 `InterceptSpeedLimit`。低 Activity 不能表现为“鱼突
 ### 边界
 
 - Closing 只解释径向分离负担，不是完整拦截模拟；
-- `u_close >= 1 → hard-zero` 已撤回；
-- 垂直主导呈现不进入 `u_close`，归 Opportunity 的垂直可交互窗口（Spatial 只提供空间事实）；
+- `q >= 1 → hard-zero` 已撤回；
+- 垂直主导呈现不进入 Closing，归 Opportunity 的垂直可交互窗口（Spatial 只提供空间事实）；
 - 高速的完整系统效果由追赶负担与机会量共同形成，Closing 不单独承担全部高速惩罚。
 
 ## 5. 风险顾虑

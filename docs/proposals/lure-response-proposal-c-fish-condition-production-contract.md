@@ -83,7 +83,8 @@ FishConditionBlock {
 
 - 每个值独立带状态；一个字段 `Unknown` 不抹掉其它已知字段；
 - block 的 `status` 只作汇总提示，最终是否可消费由消费方按自己需要的字段判断；
-- 不引入 `stale-but-usable`；过期即 `Unknown`。
+- 不引入 `stale-but-usable`；过期即 `Unknown`；
+- 抛竿时形成快照后，整竿内按快照使用，见 §6 的抛竿快照。
 
 ## 6. 解析规则
 
@@ -100,6 +101,31 @@ resolved(condition) =
 - 过期 overlay 回落到 baseline，不沿用旧增量；
 - 当前只有 Wariness 具备 runtime 语义依据；V1 可只消费 baseline；
 - Response 不得写回任何 Fish Condition。
+
+### 抛竿快照（2026-10-30 方向）
+
+```text
+CastFishConditionSnapshot {
+  castId
+  formedAt            # 抛竿开始
+  blockVersion
+  entries {
+    [conditionGroupId × engagementModeId]: {
+      activity          { value, status }
+      feedingMotivation { value, status }
+      wariness          { value, status }
+      dietShift         { [preyFamily]: { value, status } }
+    }
+  }
+}
+```
+
+- 抛竿开始时解析 resolved Fish Condition，按源键（`ConditionGroup × EngagementMode`）冻结成快照；Response 按自己的 `conditionGroupId` 与 `engagementModeId` 选取条目，不跨模式取值；
+- 本竿内所有 Response 只读该快照；时段切换不触发重新解析；
+- **整快照不可用**只在元数据不成立时发生：`castId` 缺失或与当前抛竿不符、`blockVersion` 缺失、`formedAt` 缺失；此时整竿 `ResolutionIncomplete`；
+- **单个字段失效**（过期、越界、缺来源）按 §5 置该字段 `Unknown`，不抹掉同条目的其它字段；消费方按需判断，例如无 cue 时 Wariness 缺失仍 `RiskCost=0`，某 family 的 DietShift 缺失只阻断该 family；
+- 快照形成之后才到达的 overlay 不进入本竿，下一竿重新解析；
+- 这不等于 `stale-but-usable`：快照自带形成时刻与 block 版本，可追溯。
 
 ## 7. 写入者与消费者
 
