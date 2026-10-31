@@ -263,9 +263,10 @@ Margin <= 0    → ResolvedNonResponsive, C = 0
 C_feed = max_i(C_i)          # 只对已解析、属于同一 physical target 的 sibling
 ```
 
-- `Reject` 的分支贡献 `0`，不复活；
+- `Reject` 的分支贡献 `0`，不复活；全部已解析分支都是 `Reject` 时整体 `Reject`；
 - `Unknown`、`NotConfigured`、`ResolutionIncomplete` 的分支不参与 max，但必须记录在 provenance 里；没有已解析分支时输出 `ResolutionIncomplete`；
 - `InvalidInput` 分支仍阻断；
+- `skipped` 记录被跳过 family 的原始状态，沿结果返回；
 - 这个简化会放过“部分分支未解析”的情况，需在真实 sibling 分布上复核。
 
 ## 9. Opportunity join

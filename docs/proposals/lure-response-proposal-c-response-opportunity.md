@@ -73,6 +73,7 @@ C_feed = max_i(C_i)      # 只对已解析分支
 - `Reject` 分支贡献 `0`，不复活；
 - `Unknown`、`NotConfigured`、`ResolutionIncomplete` 分支跳过并记录；没有已解析分支时输出 `ResolutionIncomplete`；
 - `InvalidInput` 分支仍阻断；
+- `skipped` 记录被跳过 family 的原始状态，沿结果返回，便于复核；
 - 这是 2026-10-30 Owner 方向下的简化：部分分支未解析时仍可 roll，需在真实 sibling 分布上复核。
 
 例子：

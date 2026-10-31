@@ -1,7 +1,8 @@
 """Proposal C working probe: three strategy orderings.
 
 Not production calibration. Numbers are Working seeds from the design package:
-  threshold(M), M0=0 / M1=0.40, K_close=0.76, TriggerBudget=0.10, K_wary=1.0 (probe).
+  threshold(M), M0=0 / M1=0.40, K_close=0.19 (no-theta scale), TriggerBudget=0.10,
+  K_wary=1.0 (probe).
 
 2026-10-30 direction: no latent bearing. First version assumes the fish is
 chasing the lure, so closing cost is K_close * q^2 * activity with no angle

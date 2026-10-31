@@ -21,7 +21,7 @@ WorkingParams         K_close、TriggerBudget、M0/M1、tail 参数
 1. 单方向算成本与 Margin，再投影为 `C`；不跨方位平均，也不先平均 Margin。
 2. 支持度只乘一次；机会量只乘一次，`q = L × C`。
 3. `Unknown`、`NotConfigured`、`InvalidInput` 不当作 0；`Reject` 是 typed zero。
-4. Fish Condition 在抛竿时形成快照，整竿内沿用；形成快照时过期、越界或缺来源的值不沿用旧值。
+4. Fish Condition 在抛竿时按 `ConditionGroup × EngagementMode` 形成快照，整竿内沿用；形成快照时过期、越界或缺来源的值不沿用旧值。
 5. 时间、停留、覆盖不进入出手余量。
 6. Candidate 后段不再乘 Response。
 7. 同一事实可被多层读取，但同一作用只在一个 owner 结算。
@@ -30,25 +30,33 @@ WorkingParams         K_close、TriggerBudget、M0/M1、tail 参数
 ## 2. 算法
 
 ```text
-function response(segment, assembly, fc, opportunity, params):
+function response(segment, assembly, castFC, opportunity, params):
 
-  # 0. 帧校验
+  # 0. 帧校验与快照选择
   require segment.valid and assembly.version == segment.assemblyVersion
-  require castFC.snapshotId and castFC.castId == segment.castId   # 一竿一个快照
-  if not satisfied: return ResolutionIncomplete
+  require castFC.castId == segment.castId and castFC.blockVersion and castFC.formedAt
+  entry = castFC.entries[(segment.conditionGroupId, segment.engagementModeId)]
+  if not satisfied or entry missing: return (ResolutionIncomplete, None, {})
 
   # 1. 猎物解释
-  supports = interpret(segment, assembly)      # per family: value | [L,U] | status
-  if supports covers no family: return NotApplicable
+  supports = interpret(segment, assembly)      # per family: value | interval | status
+  if supports covers no family: return (NotApplicable, None, {})
 
   # 2. 每个 sibling family
+  results = {}                                 # family -> (status, value)
   for family in declaredSiblingSet:
       relation = targetRelation(segment, family)   # 目标关系按 family 求值
       if relation == Reject:
-          interval[family] = (Reject, 0.0, 0.0)    # typed hard zero，不再计算
+          results[family] = (Reject, 0.0)          # typed hard zero，不再计算
           continue
       support = supports[family]
 
+      if support is an interval:
+          if support.lower == support.upper:
+              support = support.lower              # 退化区间按标量处理
+          else:
+              results[family] = (ResolutionIncomplete, None)
+              continue
       if support == Reject:
           results[family] = (Reject, 0.0)
           continue
@@ -79,7 +87,7 @@ function response(segment, assembly, fc, opportunity, params):
           results[family] = (ResolutionIncomplete, None)
           continue
 
-      C_cond = evaluate(state, castFC, params)     # 已解析输入下的条件响应
+      C_cond = evaluate(state, entry, params)      # 已解析输入下的条件响应
       if C_cond == Reject:
           results[family] = (Reject, 0.0)
           continue
@@ -90,41 +98,43 @@ function response(segment, assembly, fc, opportunity, params):
           results[family] = (ResolutionIncomplete, None)
           continue
 
-      results[family] = (Resolved, support.value * C_cond)
+      results[family] = (Resolved, support * C_cond)
 
   # 3. sibling 组成：取最大值
   (status, C_feed, skipped) = compose(results)
   if status != Resolved:
-      return status                     # RI 或 InvalidInput
+      return (status, None, {skipped})
 
   # 4. 机会接入
-  if opportunity.L == InvalidInput: return InvalidInput
-  if opportunity.L in (Unknown, NotConfigured): return ResolutionIncomplete
+  if opportunity.L == InvalidInput: return (InvalidInput, None, {skipped})
+  if opportunity.L in (Unknown, NotConfigured): return (ResolutionIncomplete, None, {skipped})
   q = opportunity.L * C_feed
-  return (Resolved, q)
+  return (Resolved, q, {skipped})      # skipped provenance 沿结果返回
 
 
 function compose(results):
-  # Reject 贡献 0；未解析分支跳过并记录；InvalidInput 阻断；没有已解析分支 -> RI
-  resolved = [value for (status, value) in results if status == Resolved]
-  resolved += [0.0 for (status, value) in results if status == Reject]
-  skipped  = [family for family, (status, _) in results
-              if status in (ResolutionIncomplete, Unknown, NotConfigured)]
-  if any(status == InvalidInput for (status, _) in results):
+  # results: family -> (status, value)
+  resolved = [value for (status, value) in results.values() if status == Resolved]
+  rejected = [value for (status, value) in results.values() if status == Reject]
+  skipped  = {family: status for family, (status, _) in results.items()
+              if status in (ResolutionIncomplete, Unknown, NotConfigured)}
+  if any(status == InvalidInput for (status, _) in results.values()):
       return (InvalidInput, None, skipped)
-  if not resolved:
+  if not resolved and rejected:
+      return (Reject, 0.0, skipped)    # 全部已解析分支都是 Reject
+  if not resolved and not rejected:
       return (ResolutionIncomplete, None, skipped)
-  return (Resolved, max(resolved), skipped)
+  return (Resolved, max(resolved + rejected), skipped)
 
 
-function evaluate(state, fc, params):
+function evaluate(state, entry, params):
 
-  # Returns a resolved conditional response, or a non-numeric status.
+  # entry = castFC.entries[(conditionGroupId, engagementModeId)]
   food      = clamp(base + size + dietShift, 0, 1)
   trigger   = params.TriggerBudget * state.TriggerIntensity
-  closing   = params.K_close * state.q^2 * activityMultiplier(fc.activity)   # 单方向：鱼在追拟饵
-  risk      = params.K_wary * fc.wariness * suspicionLoad      # 无 cue 时为 0
-  threshold = f(fc.feedingMotivation)                          # 分段线性 + tail
+  closing   = params.K_close * state.q^2 * activityMultiplier(entry.activity)   # 单方向：鱼在追拟饵
+  risk      = params.K_wary * entry.wariness * suspicionLoad      # 无 cue 时为 0
+  threshold = f(entry.feedingMotivation)                          # 分段线性 + tail
 
   margin = food + trigger - closing - risk - threshold
   return clamp((margin - params.M0) / (params.M1 - params.M0), 0, 1)   # C
@@ -134,13 +144,13 @@ function evaluate(state, fc, params):
 
 | 步骤 | 可返回 |
 |---|---|
-| 帧校验 | `ResolutionIncomplete`（含快照缺失或错竿） |
-| 猎物解释 | 数值 / `Unknown` / `NotConfigured` / `NoMatch` |
+| 帧校验 | `ResolutionIncomplete`（快照元数据不成立、错竿或缺对应条目） |
+| 猎物解释 | 数值 / 区间 / `Unknown` / `NotConfigured` / `NoMatch` |
 | 状态提取 | 状态维度、事件、`TriggerIntensity`；非数值状态向上传播 |
 | 评价 | 五项各自状态；`Reject` 单独处理 |
 | 投影 | 数值 `C`；不输出非数值 |
-| sibling 组成 | 标量（max）或 `ResolutionIncomplete` |
-| 机会接入 | 标量 `q` 或 `ResolutionIncomplete` |
+| sibling 组成 | 标量（max）或 `ResolutionIncomplete`；`skipped` 记录被跳过的 family 与原始状态 |
+| 机会接入 | 标量 `q` 或 `ResolutionIncomplete`；`skipped` 沿结果返回 |
 
 ## 3. 状态代数
 
@@ -176,7 +186,11 @@ Reject > InvalidInput > NotConfigured > Unknown > Resolved
 | Wariness 缺失且无 cue | `RiskCost=0` |
 | DietShift[family] 缺失 | 该 family 的 FoodValue 不可闭合 |
 | TriggerIntensity 缺失 | `ResolutionIncomplete` |
-| support 未收敛为标量 | 该分支 `ResolutionIncomplete`，跳过并记录 |
+| support 为退化区间 | 按标量处理 |
+| support 为非退化区间 | 该分支 `ResolutionIncomplete`，跳过并记录 |
+| 全部已解析分支都是 `Reject` | `Reject`，typed zero |
+| 快照 `castId` 不符或元数据缺失 | 整竿 `ResolutionIncomplete` |
+| 快照缺少当前 `ConditionGroup × EngagementMode` 条目 | 整竿 `ResolutionIncomplete` |
 | `L` 缺失 | `ResolutionIncomplete`，不是零机会 |
 
 ## 4. 计算追溯

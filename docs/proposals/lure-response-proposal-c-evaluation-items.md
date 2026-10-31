@@ -88,7 +88,7 @@ StateTriggerValue_p
 ### 合成
 
 ```text
-q = 拟饵水平径向远离速度 / InterceptSpeedLimit
+q = 拟饵相对水体水平速度 / InterceptSpeedLimit（单方向：在“鱼在追拟饵”假设下按径向需求计）
 
 追赶负担
 = K_close *

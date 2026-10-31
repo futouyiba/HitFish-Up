@@ -109,13 +109,21 @@ CastFishConditionSnapshot {
   castId
   formedAt            # 抛竿开始
   blockVersion
-  resolved { activity, feedingMotivation, wariness, dietShift[family] }
+  entries {
+    [conditionGroupId × engagementModeId]: {
+      activity          { value, status }
+      feedingMotivation { value, status }
+      wariness          { value, status }
+      dietShift         { [preyFamily]: { value, status } }
+    }
+  }
 }
 ```
 
-- 抛竿开始时解析 resolved Fish Condition，形成快照；
+- 抛竿开始时解析 resolved Fish Condition，按源键（`ConditionGroup × EngagementMode`）冻结成快照；Response 按自己的 `conditionGroupId` 与 `engagementModeId` 选取条目，不跨模式取值；
 - 本竿内所有 Response 只读该快照；时段切换不触发重新解析；
-- 有效期、越界、缺来源的检查在形成快照时完成；形成失败时整竿 `ResolutionIncomplete`；
+- **整快照不可用**只在元数据不成立时发生：`castId` 缺失或与当前抛竿不符、`blockVersion` 缺失、`formedAt` 缺失；此时整竿 `ResolutionIncomplete`；
+- **单个字段失效**（过期、越界、缺来源）按 §5 置该字段 `Unknown`，不抹掉同条目的其它字段；消费方按需判断，例如无 cue 时 Wariness 缺失仍 `RiskCost=0`，某 family 的 DietShift 缺失只阻断该 family；
 - 快照形成之后才到达的 overlay 不进入本竿，下一竿重新解析；
 - 这不等于 `stale-but-usable`：快照自带形成时刻与 block 版本，可追溯。
 
