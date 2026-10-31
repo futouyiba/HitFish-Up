@@ -4,11 +4,11 @@
 
 用途：Proposal C 的统一审阅入口。本页只做导航和审阅指引，不重复维护公式与数值；当前设计语义以设计包为准，避免同一口径在入口和子文档各写一份。
 
-> 若本文与更高 Authority 冲突，以 `docs/authority-model.md` 与已合并 Current Owner 为准。本文是 `futou-/exciting-payne-95a562` 分支的审阅入口；Proposal C 的 Working 研究文档保留在 `docs/lure-response-joint-evaluation` 分支。
+> 若本文与更高 Authority 冲突，以 `docs/authority-model.md` 与已合并 Current Owner 为准。本页现在是 `main` 上 Proposal C Candidate 设计包的统一审阅入口；研究分支只作为持续研究与历史证据来源，不能覆盖已经回写并合并到 `main` 的设计包。
 >
 > 2026-10-30 同步：第一版 `DecisionMargin` 使用五项式；Prediction 为 `Deferred Research`；`L` 的正式 owner 是 Opportunity，Spatial 只提供空间事实。依据：Proposal C Working Closure（PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`）§4–§5、Issue [#152](https://github.com/futouyiba/HitFish-Up/issues/152) 与 Issue [#161](https://github.com/futouyiba/HitFish-Up/issues/161)。
 >
-> 2026-10-30 会议方向已回写设计包：不模拟相对方位 θ、同级猎物解释取最大值、Fish Condition 一竿一个快照；`K_close` 按单方向标尺改为 `0.19`。
+> 2026-10-30 会议方向已由 PR #171 回写并合并到设计包：不模拟相对方位 θ、同级猎物解释取最大值、Fish Condition 一竿一个快照；`K_close` 按单方向标尺改为 `0.19`。
 
 ## 1. 当前设计入口
 
@@ -37,7 +37,7 @@
 | 当前 Working 参数与缺数据 | [标定台账](lure-response-proposal-c-calibration-register.md) |
 | 图形化说明 | [设计图](../mockups/proposal-c-design-map.html) |
 
-口径来源：本包按 `docs/lure-response-joint-evaluation` 的 `311ae70d` Working Closure 快照核对。该分支在此之后持续更新，本轮未逐条重新纳入；引用前先核对该分支当前 head。研究分支更新后，先回写设计包，再更新本入口。
+口径状态：当前 Candidate 口径以 `main` 上本设计包为准。早期 `docs/lure-response-joint-evaluation` 的 `311ae70d` Working Closure 及后续研究提交保留为证据来源；新的研究结论只有在回写设计包并经 PR 合并后，才改变本入口所指向的当前 Candidate 设计。
 
 ### 各层状态（Candidate）
 
