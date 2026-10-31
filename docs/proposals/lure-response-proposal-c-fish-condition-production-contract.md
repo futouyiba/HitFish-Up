@@ -1,6 +1,6 @@
 # Proposal C｜鱼况（Fish Condition）生产契约（Candidate）
 
-状态：Working Contract Draft / Candidate。按 2026-10-30 Owner 裁定（Issue #161）编写，尚未审核合并，不冒充 Current Contract。
+状态：Working Contract Draft / Candidate。按 2026-10-30 Owner 裁定（Issue #161）编写，已随 Proposal C Candidate 设计包审核合并到 `main`；仍不是 Current Contract。
 
 本文只定义 Fish Condition 的载体、状态、来源与校验；各 Condition 的生成语义、曲线与标定仍归对应机制 Contract。
 
@@ -161,5 +161,4 @@ CastFishConditionSnapshot {
 - Wariness overlay 的事件、粒度、衰减、有效期与会话边界；
 - DEF block 的序列化与版本迁移；
 - 各 Condition 的 TTL 与刷新频率；
-- `TackleConspicuousness` 的字段与 owner（已后置）；
-- main 窝料文档的三处对齐。
+- `TackleConspicuousness` 的字段与 owner（已后置）。
