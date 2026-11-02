@@ -37,7 +37,7 @@
 | 当前 Working 参数与缺数据 | [标定台账](lure-response-proposal-c-calibration-register.md) |
 | 图形化说明 | [设计图](../mockups/proposal-c-design-map.html) |
 
-口径来源：本包按 `docs/lure-response-joint-evaluation` 的 `311ae70d` Working Closure 快照核对。该分支在此之后持续更新，本轮未逐条重新纳入；引用前先核对该分支当前 head。研究分支更新后，先回写设计包，再更新本入口。
+口径来源：本包最初按 `docs/lure-response-joint-evaluation` 的 `311ae70d` Working Closure 快照核对；2026-10-30 会议方向已由 PR [#171](https://github.com/futouyiba/HitFish-Up/pull/171)（合并提交 `ad2ccb5f`）回写。研究分支持续更新，引用前先核对其当前 head；研究分支更新后，先回写设计包，再更新本入口。
 
 ### 各层状态（Candidate）
 
