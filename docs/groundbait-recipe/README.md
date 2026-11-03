@@ -54,6 +54,10 @@ docs/groundbait-recipe/
 │  ├─ proposal.md
 │  ├─ system-object-model.md
 │  ├─ end-to-end-algorithm.md
+│  ├─ production-contracts.md
+│  ├─ fish-condition-contract-registry.md
+│  ├─ fish-condition-input-registry.md
+│  ├─ activity-motivation-consumption.md
 │  ├─ environment-bake-integration.md
 │  ├─ fish-condition-integration.md
 │  ├─ response-algorithm.md
@@ -91,26 +95,30 @@ docs/groundbait-recipe/
 5. [`candidate/proposal.md`](candidate/proposal.md)：整体提案。
 6. [`candidate/system-object-model.md`](candidate/system-object-model.md)：端到端对象、权重与阶段隔离。
 7. [`candidate/end-to-end-algorithm.md`](candidate/end-to-end-algorithm.md)：端到端工作算法、状态转移、响应和圆桌接口。
-8. [`candidate/environment-bake-integration.md`](candidate/environment-bake-integration.md)：环境烘焙与空间分布权重的消费边界。
-9. [`candidate/fish-condition-integration.md`](candidate/fish-condition-integration.md)：鱼况在完整链中的位置与消费者。
-10. [`candidate/response-algorithm.md`](candidate/response-algorithm.md)：Response Stage 的输入输出与聚合顺序。
-11. [`candidate/response-aggregation-map.md`](candidate/response-aggregation-map.md)：四条候选输出到现有 Response Stage 的最终映射。
-12. [`candidate/roundtable-and-draw.md`](candidate/roundtable-and-draw.md)：圆桌、抽鱼、生成与 Fish AI 边界。
-13. [`candidate/cross-stage-invariants.md`](candidate/cross-stage-invariants.md)：跨阶段不变量与最小反例。
-14. [`candidate/object-model.md`](candidate/object-model.md)：Groundbait 对象、状态与因果所有权。
-15. [`candidate/groundbait-integration.md`](candidate/groundbait-integration.md)：四条事实路径的整合与重复计权检查。
-16. [`candidate/food-flavor.md`](candidate/food-flavor.md)：Food 与 Flavor 的候选位置和准入问题。
-17. [`candidate/food-aggregation.md`](candidate/food-aggregation.md)：Food Target 合并、饱和和多 Target 聚合边界。
-18. [`candidate/flavor-and-avoidance.md`](candidate/flavor-and-avoidance.md)：Flavor 的类型集合分支、小药和 Avoidance。
-19. [`candidate/edible-size-response.md`](candidate/edible-size-response.md)：可摄食尺寸如何进入动作约束。
-20. [`candidate/edible-size-gold-fixture.md`](candidate/edible-size-gold-fixture.md)：窄版结构验证，不进入生产参数。
-21. [`candidate/feeding-event.md`](candidate/feeding-event.md)：一次摄食事件的可行性、选择与成功。
-22. [`candidate/particle-distribution.md`](candidate/particle-distribution.md)：Groundbait 粒径分布及对象状态候选。
-23. [`candidate/physical-release.md`](candidate/physical-release.md)：离散时间状态转移、守恒账本和线索分离。
-24. [`candidate/response-stage-mapping.md`](candidate/response-stage-mapping.md)：与现有 Response Stage 的候选接口映射。
-25. [`candidate/plain-language-explainer.md`](candidate/plain-language-explainer.md)：面向人类快速理解当前设计。
-26. [`rejected/anti-designs.md`](rejected/anti-designs.md)：只在评审、反例检查或需要理解边界时读取。
-27. [`handoff/continuation-prompt.md`](handoff/continuation-prompt.md)：跨会话继续工作用的临时上下文与任务提示。
+8. [`candidate/production-contracts.md`](candidate/production-contracts.md)：Fish Condition baseline、运行时 overlay、状态协议和响应接口载体。
+9. [`candidate/fish-condition-contract-registry.md`](candidate/fish-condition-contract-registry.md)：四个 Fish Condition 的 Contract 责任、消费权限和开工门。
+10. [`candidate/fish-condition-input-registry.md`](candidate/fish-condition-input-registry.md)：Condition 输入登记、状态判据和最小结构测试。
+11. [`candidate/activity-motivation-consumption.md`](candidate/activity-motivation-consumption.md)：Activity 成本函数的定义域、Motivation 门槛与联合响应验收。
+12. [`candidate/environment-bake-integration.md`](candidate/environment-bake-integration.md)：环境烘焙与空间分布权重的消费边界。
+13. [`candidate/fish-condition-integration.md`](candidate/fish-condition-integration.md)：鱼况在完整链中的位置和消费者。
+14. [`candidate/response-algorithm.md`](candidate/response-algorithm.md)：Response Stage 的输入输出与聚合顺序。
+15. [`candidate/response-aggregation-map.md`](candidate/response-aggregation-map.md)：四条候选输出到现有 Response Stage 的最终映射。
+16. [`candidate/roundtable-and-draw.md`](candidate/roundtable-and-draw.md)：圆桌、抽鱼、生成与 Fish AI 边界。
+17. [`candidate/cross-stage-invariants.md`](candidate/cross-stage-invariants.md)：跨阶段不变量与最小反例。
+18. [`candidate/object-model.md`](candidate/object-model.md)：Groundbait 对象、状态与因果所有权。
+19. [`candidate/groundbait-integration.md`](candidate/groundbait-integration.md)：四条事实路径的整合与重复计权检查。
+20. [`candidate/food-flavor.md`](candidate/food-flavor.md)：Food 与 Flavor 的候选位置和准入问题。
+21. [`candidate/food-aggregation.md`](candidate/food-aggregation.md)：Food Target 合并、饱和和多 Target 聚合边界。
+22. [`candidate/flavor-and-avoidance.md`](candidate/flavor-and-avoidance.md)：Flavor 的类型集合分支、小药和 Avoidance。
+23. [`candidate/edible-size-response.md`](candidate/edible-size-response.md)：可摄食尺寸如何进入动作约束。
+24. [`candidate/edible-size-gold-fixture.md`](candidate/edible-size-gold-fixture.md)：窄版结构验证，不进入生产参数。
+25. [`candidate/feeding-event.md`](candidate/feeding-event.md)：一次摄食事件的可行性、选择与成功。
+26. [`candidate/particle-distribution.md`](candidate/particle-distribution.md)：Groundbait 粒径分布及对象状态候选。
+27. [`candidate/physical-release.md`](candidate/physical-release.md)：离散时间状态转移、守恒账本和线索分离。
+28. [`candidate/response-stage-mapping.md`](candidate/response-stage-mapping.md)：与现有 Response Stage 的候选接口映射。
+29. [`candidate/plain-language-explainer.md`](candidate/plain-language-explainer.md)：面向人类快速理解当前设计。
+30. [`rejected/anti-designs.md`](rejected/anti-designs.md)：只在评审、反例检查或需要理解边界时读取。
+31. [`handoff/continuation-prompt.md`](handoff/continuation-prompt.md)：跨会话继续工作用的临时上下文与任务提示。
 
 当前设计主旨不是四个并列 Bonus，而是一条从数据到抽鱼的完整主脊：
 
@@ -154,7 +162,7 @@ Food、Flavor、Particle、Physical Release 各自进入主脊的不同位置，
 - Attraction / Retention：Candidate 判断已完成，当前不独立成模块。
 - Response Aggregation：四条候选输出映射到现有 Response Stage，不建立单一 `RecipeFit`。
 
-端到端工作算法已整理在 [`candidate/end-to-end-algorithm.md`](candidate/end-to-end-algorithm.md)，包括 Fish Condition 更新、Opportunity `L`、物理释放、Food、Edible Size、Feeding Event、Response 和圆桌接口。该算法是 Candidate / Working Algorithm；Current Contract、生产输入、Owner 尚未承接的语义和校准参数仍不能视为已收口。
+端到端工作算法已整理在 [`candidate/end-to-end-algorithm.md`](candidate/end-to-end-algorithm.md)，生产契约候选已整理在 [`candidate/production-contracts.md`](candidate/production-contracts.md)。前者覆盖 Fish Condition 更新、Opportunity `L`、物理释放、Food、Edible Size、Feeding Event、Response 和圆桌接口；后者固定已裁定的 baseline、overlay、状态协议和接口载体。两者都是 Candidate / Working 文档；Current Contract、生产输入、Owner 尚未承接的语义和校准参数仍不能视为已收口。
 
 ## 研究输入
 
