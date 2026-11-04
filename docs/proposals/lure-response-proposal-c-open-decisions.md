@@ -2,7 +2,7 @@
 
 状态：Working Design / Candidate。这里只列尚未收口、尚未有 owner 或两侧口径冲突的问题。
 
-> 2026-10-30 Owner 已确认五项顾问建议，记录见[建议记录](lure-response-proposal-c-adjudication-recommendation-2026-10-30.md)。下面的「已裁定」条目按该裁定执行；其余条目保持原状态。
+> 2026-10-30 Owner 已确认五项顾问建议，记录见[建议记录](../archive/lure-response-proposal-c-records/lure-response-proposal-c-adjudication-recommendation-2026-10-30.md)。下面的「已裁定」条目按该裁定执行；其余条目保持原状态。
 
 ## 1. 已裁定（2026-10-30）
 

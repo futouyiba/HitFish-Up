@@ -4,7 +4,7 @@
 
 文档关系：本文保留反推背景与架构裁定；载体、状态与校验以 [Fish Condition Production Contract](lure-response-proposal-c-fish-condition-production-contract.md) 为准，生成语义与 cause 骨架见[机制契约](lure-response-proposal-c-fish-condition-mechanisms.md)。
 
-2026-10-30 Owner 已就架构与七项作出裁定（Issue #161 评论）；本文按其执行。文档仍需审核合并后才成为 Contract。
+2026-10-30 Owner 已就架构与七项作出裁定（Issue #161 评论）；本文按其执行，并已随 Candidate 设计包合并入 `main`。仍是 Candidate，不是 Current Contract。
 
 ## 1. 目的与边界
 
@@ -177,7 +177,7 @@ Owner 2026-10-30 已裁定架构、加载路径、失效语义、Activity 上界
 术语与边界：
 
 - [`docs/terminology.md`](../terminology.md) §4、§5.2（Working Terminology Ledger）；
-- [裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md)（2026-10-30 Fable 子代理裁决）；
+- [裁决记录](../archive/lure-response-proposal-c-records/lure-response-proposal-c-fish-condition-rulings-2026-10-30.md)（2026-10-30 Fable 子代理裁决）；
 - [Issue #161](https://github.com/futouyiba/HitFish-Up/issues/161)（2026-10-30 Owner 对七项的裁定）；
 - [`common-semantics.md`](../fish-habit-editor-v1/common-semantics.md) §13（V1 负向清单）；
 - [`reference/0340-fixed-bake/README.md`](../../reference/0340-fixed-bake/README.md)（参考实现范围）；

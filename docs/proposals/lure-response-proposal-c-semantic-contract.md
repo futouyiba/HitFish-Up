@@ -2,7 +2,7 @@
 
 状态：Working Design / Candidate。本文只定义语义接口，不冻结生产参数或代码结构。
 
-口径来源：`docs/lure-response-joint-evaluation` 的 Working Closure，按 `311ae70d` 快照核对；该分支在此之后持续更新，本轮未逐条重新纳入。与旧 10-27 入口不一致处，以本文列出的来源文档为准。文中以代码体标注的 `lure-response-proposal-c-*.md` 文件名是研究分支的来源文件名，未在本分支落仓；本分支可读的接口定义以本文与设计包为准。
+口径来源：本文最初按 `docs/lure-response-joint-evaluation` 的 Working Closure（`311ae70d` 快照）核对；2026-10-30 会议方向已由 PR [#171](https://github.com/futouyiba/HitFish-Up/pull/171) 回写并合并入 `main`。研究分支的其它更新未逐条纳入，引用前先核对其当前 head。与旧 10-27 入口不一致处，以本文列出的来源文档为准。文中以代码体标注的 `lure-response-proposal-c-*.md` 文件名是研究分支的来源文件名，未在本分支落仓；本分支可读的接口定义以本文与设计包为准。
 
 本文已按 2026-10-30 Owner 方向回写：第一版不模拟相对方位 θ，按“鱼在追拟饵”的单方向估算追赶负担；同级猎物解释取最大值；Fish Condition 采用一竿一个快照。会议记录见[会议对齐稿](../alignment/lure-response/2026-10-30-lure-response-alignment-draft.md)。
 
