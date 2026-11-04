@@ -375,7 +375,7 @@ Bake → Fish Condition → Opportunity(L) → Groundbait State
 
 - 同 Target 先合并，再做 Target 级饱和；多 Target 只使用参数化 `AggFood` Candidate 接口，不进入默认 V1 生产接入，直到 WD-26 的 Owner 决定完成。
 - 物理释放采用竞争转移率，实体账本和化学线索账本分离。
-- Fish Condition 使用有界一阶记忆更新；具体 cause、时间尺度和生命周期由实现输入提供。
+- Fish Condition 使用 Bake baseline，只有逐 Condition 机制 Contract 授权的 runtime overlay 才可叠加；不采用四项通用的有界记忆更新。依据 Issue 161，Activity 不设语义上界，Response 只读。
 - Response 先硬门、后软 Margin，再做有界投影；`Unknown`、`Invalid`、`Reject` 和合法零分开处理。
 - 通用 FCF 候选使用 `SpatialDistributionWeight × AdaptationCoeff`；Proposal C 候选使用 `q = L × C`。两条接口不得叠乘，需在候选类型上显式声明。
 

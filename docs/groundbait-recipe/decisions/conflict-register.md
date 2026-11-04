@@ -4,6 +4,14 @@
 > 日期：2026-10-29
 > 边界：本页登记跨文档、跨候选栈的语义冲突和未决项。它不裁决 Owner 权限内的问题，只记录出处、双方主张、影响和暂定处理。
 
+## 2026-11-04 主线承接
+
+本轮用户明确窝料历史由持久响应承载、钩饵实时消费、过量从响应层研究，不写 DEF/Fish Condition/Opportunity；槽位配方不代表底层数量取消。其来源与固定基线见 [策略实验 §2](../candidate/float-strategy-experiments.md#2-documentation-rebase)。
+
+C-05a按上述边界执行；C-05b继续设计持久生命周期，不再把“是否研究独立持久语义”当停止条件。C-07a1旧后置推荐被本轮研究要求收窄，C-07a2不采用鱼况写入分支；这不批准全部首版生产。C-07b不模拟真实人口。C-02、C-11b、C-12b仍 OPEN。
+
+具体新增选择与翻转成本归 [Owner清单本轮窄决策](owner-decision-brief.md)，不在这里另建一套ballot。恒率库存、免费对象竞争、地点压力和共享房间均是实验候选，不是已批准字段。
+
 ## 1. 使用方式
 
 文中的 `Feeding Place State`（摄食地点状态）、`Feeding Event`（摄食事件）、`Effective Ingestion Opportunity`（有效摄食机会）都是本目录的 Candidate-local 工作词。

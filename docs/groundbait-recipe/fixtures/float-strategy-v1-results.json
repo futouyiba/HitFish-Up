@@ -1,0 +1,1030 @@
+{
+  "status": "WORKING_FIXTURE_NOT_PRODUCTION",
+  "fixture_version": "float-strategy-working-v1-20261104",
+  "food": [
+    {
+      "fish_profile": "specialist",
+      "recipe": "grain_focus",
+      "max": 0.4444444444444445,
+      "noisy_or": 0.4444444444444444,
+      "global": 0.3076923076923077
+    },
+    {
+      "fish_profile": "specialist",
+      "recipe": "animal_focus",
+      "max": 0.0,
+      "noisy_or": 0.0,
+      "global": 0.0
+    },
+    {
+      "fish_profile": "specialist",
+      "recipe": "mixed",
+      "max": 0.28571428571428575,
+      "noisy_or": 0.2857142857142858,
+      "global": 0.22222222222222224
+    },
+    {
+      "fish_profile": "generalist",
+      "recipe": "grain_focus",
+      "max": 0.3555555555555556,
+      "noisy_or": 0.3555555555555556,
+      "global": 0.26229508196721313
+    },
+    {
+      "fish_profile": "generalist",
+      "recipe": "animal_focus",
+      "max": 0.3555555555555556,
+      "noisy_or": 0.3555555555555556,
+      "global": 0.26229508196721313
+    },
+    {
+      "fish_profile": "generalist",
+      "recipe": "mixed",
+      "max": 0.22857142857142862,
+      "noisy_or": 0.40489795918367355,
+      "global": 0.3137254901960785
+    }
+  ],
+  "hooks": [
+    {
+      "fish_profile": "specialist",
+      "hook": "grain_small",
+      "hook_value": 0.26666666666666666,
+      "no_background": 0.26666666666666666,
+      "moderate": 0.7111111111111111,
+      "excess": 0.1627705627705628
+    },
+    {
+      "fish_profile": "specialist",
+      "hook": "animal_small",
+      "hook_value": 0.0,
+      "no_background": 0.0,
+      "moderate": 0.0,
+      "excess": 0.0
+    },
+    {
+      "fish_profile": "specialist",
+      "hook": "oversize",
+      "hook_value": 0.0,
+      "no_background": 0.0,
+      "moderate": 0.0,
+      "excess": 0.0
+    },
+    {
+      "fish_profile": "specialist",
+      "hook": "rejected",
+      "hook_value": 0.0,
+      "no_background": 0.0,
+      "moderate": 0.0,
+      "excess": 0.0
+    },
+    {
+      "fish_profile": "specialist",
+      "hook": "empty",
+      "hook_value": 0.0,
+      "no_background": 0.0,
+      "moderate": 0.0,
+      "excess": 0.0
+    },
+    {
+      "fish_profile": "generalist",
+      "hook": "grain_small",
+      "hook_value": 0.24761904761904766,
+      "no_background": 0.24761904761904766,
+      "moderate": 0.6603174603174604,
+      "excess": 0.15114409400123688
+    },
+    {
+      "fish_profile": "generalist",
+      "hook": "animal_small",
+      "hook_value": 0.24761904761904766,
+      "no_background": 0.24761904761904766,
+      "moderate": 0.6603174603174604,
+      "excess": 0.15114409400123688
+    },
+    {
+      "fish_profile": "generalist",
+      "hook": "oversize",
+      "hook_value": 0.24761904761904766,
+      "no_background": 0.24761904761904766,
+      "moderate": 0.6603174603174604,
+      "excess": 0.15114409400123688
+    },
+    {
+      "fish_profile": "generalist",
+      "hook": "rejected",
+      "hook_value": 0.0,
+      "no_background": 0.0,
+      "moderate": 0.0,
+      "excess": 0.0
+    },
+    {
+      "fish_profile": "generalist",
+      "hook": "empty",
+      "hook_value": 0.0,
+      "no_background": 0.0,
+      "moderate": 0.0,
+      "excess": 0.0
+    }
+  ],
+  "combinations": [
+    {
+      "fish_profile": "specialist",
+      "recipe": "grain_focus",
+      "hook": "grain_small",
+      "valued_background": 0.6153846153846154,
+      "trial_response": 0.6700280112044817
+    },
+    {
+      "fish_profile": "specialist",
+      "recipe": "grain_focus",
+      "hook": "animal_small",
+      "valued_background": 0.6153846153846154,
+      "trial_response": 0.0
+    },
+    {
+      "fish_profile": "specialist",
+      "recipe": "grain_focus",
+      "hook": "oversize",
+      "valued_background": 0.6153846153846154,
+      "trial_response": 0.0
+    },
+    {
+      "fish_profile": "specialist",
+      "recipe": "animal_focus",
+      "hook": "grain_small",
+      "valued_background": 0.0,
+      "trial_response": 0.26666666666666666
+    },
+    {
+      "fish_profile": "specialist",
+      "recipe": "animal_focus",
+      "hook": "animal_small",
+      "valued_background": 0.0,
+      "trial_response": 0.0
+    },
+    {
+      "fish_profile": "specialist",
+      "recipe": "animal_focus",
+      "hook": "oversize",
+      "valued_background": 0.0,
+      "trial_response": 0.0
+    },
+    {
+      "fish_profile": "specialist",
+      "recipe": "mixed",
+      "hook": "grain_small",
+      "valued_background": 0.4444444444444445,
+      "trial_response": 0.6209790209790211
+    },
+    {
+      "fish_profile": "specialist",
+      "recipe": "mixed",
+      "hook": "animal_small",
+      "valued_background": 0.4444444444444445,
+      "trial_response": 0.0
+    },
+    {
+      "fish_profile": "specialist",
+      "recipe": "mixed",
+      "hook": "oversize",
+      "valued_background": 0.4444444444444445,
+      "trial_response": 0.0
+    },
+    {
+      "fish_profile": "generalist",
+      "recipe": "grain_focus",
+      "hook": "grain_small",
+      "valued_background": 0.5245901639344263,
+      "trial_response": 0.6011530711991542
+    },
+    {
+      "fish_profile": "generalist",
+      "recipe": "grain_focus",
+      "hook": "animal_small",
+      "valued_background": 0.5245901639344263,
+      "trial_response": 0.6011530711991542
+    },
+    {
+      "fish_profile": "generalist",
+      "recipe": "grain_focus",
+      "hook": "oversize",
+      "valued_background": 0.5245901639344263,
+      "trial_response": 0.6011530711991542
+    },
+    {
+      "fish_profile": "generalist",
+      "recipe": "animal_focus",
+      "hook": "grain_small",
+      "valued_background": 0.5245901639344263,
+      "trial_response": 0.6011530711991542
+    },
+    {
+      "fish_profile": "generalist",
+      "recipe": "animal_focus",
+      "hook": "animal_small",
+      "valued_background": 0.5245901639344263,
+      "trial_response": 0.6011530711991542
+    },
+    {
+      "fish_profile": "generalist",
+      "recipe": "animal_focus",
+      "hook": "oversize",
+      "valued_background": 0.5245901639344263,
+      "trial_response": 0.6011530711991542
+    },
+    {
+      "fish_profile": "generalist",
+      "recipe": "mixed",
+      "hook": "grain_small",
+      "valued_background": 0.627450980392157,
+      "trial_response": 0.6245022734862693
+    },
+    {
+      "fish_profile": "generalist",
+      "recipe": "mixed",
+      "hook": "animal_small",
+      "valued_background": 0.627450980392157,
+      "trial_response": 0.6245022734862693
+    },
+    {
+      "fish_profile": "generalist",
+      "recipe": "mixed",
+      "hook": "oversize",
+      "valued_background": 0.627450980392157,
+      "trial_response": 0.6245022734862693
+    }
+  ],
+  "hypothetical_garlic_curd": [
+    {
+      "hypothesis_not_species_fact": "assume_garlic_positive",
+      "background": [],
+      "hook": "garlic",
+      "background_label": "NEUTRAL",
+      "hook_label": "POSITIVE",
+      "union_label": "POSITIVE"
+    },
+    {
+      "hypothesis_not_species_fact": "assume_garlic_positive",
+      "background": [],
+      "hook": "curd",
+      "background_label": "NEUTRAL",
+      "hook_label": "NEUTRAL",
+      "union_label": "NEUTRAL"
+    },
+    {
+      "hypothesis_not_species_fact": "assume_garlic_positive",
+      "background": [
+        "garlic"
+      ],
+      "hook": "garlic",
+      "background_label": "POSITIVE",
+      "hook_label": "POSITIVE",
+      "union_label": "POSITIVE"
+    },
+    {
+      "hypothesis_not_species_fact": "assume_garlic_positive",
+      "background": [
+        "garlic"
+      ],
+      "hook": "curd",
+      "background_label": "POSITIVE",
+      "hook_label": "NEUTRAL",
+      "union_label": "POSITIVE"
+    },
+    {
+      "hypothesis_not_species_fact": "assume_garlic_positive",
+      "background": [
+        "curd"
+      ],
+      "hook": "garlic",
+      "background_label": "NEUTRAL",
+      "hook_label": "POSITIVE",
+      "union_label": "POSITIVE"
+    },
+    {
+      "hypothesis_not_species_fact": "assume_garlic_positive",
+      "background": [
+        "curd"
+      ],
+      "hook": "curd",
+      "background_label": "NEUTRAL",
+      "hook_label": "NEUTRAL",
+      "union_label": "NEUTRAL"
+    },
+    {
+      "hypothesis_not_species_fact": "assume_curd_positive",
+      "background": [],
+      "hook": "garlic",
+      "background_label": "NEUTRAL",
+      "hook_label": "NEUTRAL",
+      "union_label": "NEUTRAL"
+    },
+    {
+      "hypothesis_not_species_fact": "assume_curd_positive",
+      "background": [],
+      "hook": "curd",
+      "background_label": "NEUTRAL",
+      "hook_label": "POSITIVE",
+      "union_label": "POSITIVE"
+    },
+    {
+      "hypothesis_not_species_fact": "assume_curd_positive",
+      "background": [
+        "garlic"
+      ],
+      "hook": "garlic",
+      "background_label": "NEUTRAL",
+      "hook_label": "NEUTRAL",
+      "union_label": "NEUTRAL"
+    },
+    {
+      "hypothesis_not_species_fact": "assume_curd_positive",
+      "background": [
+        "garlic"
+      ],
+      "hook": "curd",
+      "background_label": "NEUTRAL",
+      "hook_label": "POSITIVE",
+      "union_label": "POSITIVE"
+    },
+    {
+      "hypothesis_not_species_fact": "assume_curd_positive",
+      "background": [
+        "curd"
+      ],
+      "hook": "garlic",
+      "background_label": "POSITIVE",
+      "hook_label": "NEUTRAL",
+      "union_label": "POSITIVE"
+    },
+    {
+      "hypothesis_not_species_fact": "assume_curd_positive",
+      "background": [
+        "curd"
+      ],
+      "hook": "curd",
+      "background_label": "POSITIVE",
+      "hook_label": "POSITIVE",
+      "union_label": "POSITIVE"
+    }
+  ],
+  "time": {
+    "none": [
+      {
+        "time": 0,
+        "stored": 0,
+        "available": 0,
+        "lost": 0.0,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 0.0,
+        "trial_response": 0.4
+      },
+      {
+        "time": 5,
+        "stored": 0,
+        "available": 0,
+        "lost": 0.0,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 0.0,
+        "trial_response": 0.4
+      },
+      {
+        "time": 10,
+        "stored": 0,
+        "available": 0,
+        "lost": 0.0,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 0.0,
+        "trial_response": 0.4
+      },
+      {
+        "time": 20,
+        "stored": 0,
+        "available": 0,
+        "lost": 0.0,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 0.0,
+        "trial_response": 0.4
+      },
+      {
+        "time": 30,
+        "stored": 0,
+        "available": 0,
+        "lost": 0.0,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 0.0,
+        "trial_response": 0.4
+      },
+      {
+        "time": 60,
+        "stored": 0,
+        "available": 0,
+        "lost": 0.0,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 0.0,
+        "trial_response": 0.4
+      },
+      {
+        "time": 120,
+        "stored": 0,
+        "available": 0,
+        "lost": 0.0,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 0.0,
+        "trial_response": 0.4
+      },
+      {
+        "time": 240,
+        "stored": 0,
+        "available": 0,
+        "lost": 0.0,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 0.0,
+        "trial_response": 0.4
+      }
+    ],
+    "moderate": [
+      {
+        "time": 0,
+        "stored": 2.0,
+        "available": 0.0,
+        "lost": 0.0,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 0.4
+      },
+      {
+        "time": 5,
+        "stored": 0.7357588823428847,
+        "available": 1.159596553537919,
+        "lost": 0.10464456411919643,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 1.0689221154131585
+      },
+      {
+        "time": 10,
+        "stored": 0.2706705664732254,
+        "available": 1.4246657351649534,
+        "lost": 0.30466369836182117,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 1.0571384067241312
+      },
+      {
+        "time": 20,
+        "stored": 0.036631277777468364,
+        "available": 1.2482258757771585,
+        "lost": 0.7151428464453731,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 1.0667309907546207
+      },
+      {
+        "time": 30,
+        "stored": 0.004957504353332718,
+        "available": 0.950802135444548,
+        "lost": 1.0442403602021193,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 1.063939069979657
+      },
+      {
+        "time": 60,
+        "stored": 1.2288424706656423e-05,
+        "available": 0.38892410355113716,
+        "lost": 1.611063608024156,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 0.8975118213004474
+      },
+      {
+        "time": 120,
+        "stored": 7.550269088558198e-11,
+        "available": 0.06429111155186173,
+        "lost": 1.9357088883726354,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 0.5280048687896085
+      },
+      {
+        "time": 240,
+        "stored": 2.850328165481871e-21,
+        "available": 0.001756672490298071,
+        "lost": 1.9982433275097018,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 0.4038539012890723
+      }
+    ],
+    "repeated": [
+      {
+        "time": 0,
+        "stored": 2.0,
+        "available": 0.0,
+        "lost": 0.0,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 0.4
+      },
+      {
+        "time": 5,
+        "stored": 2.7357588823428847,
+        "available": 1.159596553537919,
+        "lost": 0.10464456411919643,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 4.0,
+        "trial_response": 1.0689221154131585
+      },
+      {
+        "time": 10,
+        "stored": 3.0064294488161103,
+        "available": 2.584262288702872,
+        "lost": 0.4093082624810176,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 6.0,
+        "trial_response": 0.929443392080518
+      },
+      {
+        "time": 20,
+        "stored": 3.1426348633293064,
+        "available": 5.215643654489229,
+        "lost": 1.641721482181464,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 10.0,
+        "trial_response": 0.6690678182527607
+      },
+      {
+        "time": 30,
+        "stored": 3.16106826168081,
+        "available": 7.262042509326552,
+        "lost": 3.5768892289926386,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 14.0,
+        "trial_response": 0.5418923368294449
+      },
+      {
+        "time": 60,
+        "stored": 0.00783550483423225,
+        "available": 4.455301378784712,
+        "lost": 9.536863116381054,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 14.0,
+        "trial_response": 0.7312008629668119
+      },
+      {
+        "time": 120,
+        "stored": 4.8143005597052694e-08,
+        "available": 0.7379800729519769,
+        "lost": 13.262019878905017,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 14.0,
+        "trial_response": 1.0365937997282988
+      },
+      {
+        "time": 240,
+        "stored": 1.817463234948556e-18,
+        "available": 0.02016436423255621,
+        "lost": 13.979835635767444,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 14.0,
+        "trial_response": 0.44297179636397355
+      }
+    ],
+    "excess": [
+      {
+        "time": 0,
+        "stored": 30.0,
+        "available": 0.0,
+        "lost": 0.0,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 30.0,
+        "trial_response": 0.4
+      },
+      {
+        "time": 5,
+        "stored": 11.03638323514327,
+        "available": 17.393948303068782,
+        "lost": 1.5696684617879484,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 30.0,
+        "trial_response": 0.27529436110766803
+      },
+      {
+        "time": 10,
+        "stored": 4.060058497098381,
+        "available": 21.3699860274743,
+        "lost": 4.569955475427317,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 30.0,
+        "trial_response": 0.23044201954959495
+      },
+      {
+        "time": 20,
+        "stored": 0.5494691666620255,
+        "available": 18.723388136657377,
+        "lost": 10.727142696680598,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 30.0,
+        "trial_response": 0.2584825449389057
+      },
+      {
+        "time": 30,
+        "stored": 0.07436256529999077,
+        "available": 14.262032031668218,
+        "lost": 15.66360540303179,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 30.0,
+        "trial_response": 0.325020516012045
+      },
+      {
+        "time": 60,
+        "stored": 0.00018432637059984634,
+        "available": 5.833861553267056,
+        "lost": 24.165954120362343,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 30.0,
+        "trial_response": 0.6251853236087204
+      },
+      {
+        "time": 120,
+        "stored": 1.1325403632837297e-09,
+        "available": 0.9643666732779257,
+        "lost": 29.035633325589533,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 30.0,
+        "trial_response": 1.0648022649590312
+      },
+      {
+        "time": 240,
+        "stored": 4.275492248222806e-20,
+        "available": 0.026350087354471054,
+        "lost": 29.973649912645527,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 30.0,
+        "trial_response": 0.4556138739923654
+      }
+    ],
+    "fast": [
+      {
+        "time": 0,
+        "stored": 2.0,
+        "available": 0.0,
+        "lost": 0.0,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 0.4
+      },
+      {
+        "time": 5,
+        "stored": 0.09957413673572789,
+        "available": 1.7072019116993555,
+        "lost": 0.19322395156491656,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 1.032301907963897
+      },
+      {
+        "time": 10,
+        "stored": 0.004957504353332717,
+        "available": 1.5543988810632663,
+        "lost": 0.44064361458340096,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 1.046840477683798
+      },
+      {
+        "time": 20,
+        "stored": 1.228842470665642e-05,
+        "available": 1.1553799829087854,
+        "lost": 0.8446077286665079,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 1.0689725180022918
+      },
+      {
+        "time": 30,
+        "stored": 3.045995948942526e-08,
+        "available": 0.8559360937065671,
+        "lost": 1.1440638758334734,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 1.0552421176540097
+      },
+      {
+        "time": 60,
+        "stored": 4.639045660487139e-16,
+        "available": 0.34799765941386596,
+        "lost": 1.6520023405861335,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 0.8684689051826456
+      },
+      {
+        "time": 120,
+        "stored": 1.0760372320042279e-31,
+        "available": 0.05752362620482646,
+        "lost": 1.9424763737951733,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 0.5157142793127308
+      },
+      {
+        "time": 240,
+        "stored": 5.789280623296602e-63,
+        "available": 0.001571759596582484,
+        "lost": 1.9984282404034173,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 0.4034492407005269
+      }
+    ],
+    "slow": [
+      {
+        "time": 0,
+        "stored": 2.0,
+        "available": 0.0,
+        "lost": 0.0,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 0.4
+      },
+      {
+        "time": 5,
+        "stored": 1.6374615061559636,
+        "available": 0.33581778677660756,
+        "lost": 0.026720707067428795,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 0.8590976400529466
+      },
+      {
+        "time": 10,
+        "stored": 1.3406400920712784,
+        "available": 0.5639853971686285,
+        "lost": 0.09537451076009318,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 0.9871029838146771
+      },
+      {
+        "time": 20,
+        "stored": 0.8986579282344431,
+        "available": 0.7958613758144386,
+        "lost": 0.3054806959511185,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 1.04697176111277
+      },
+      {
+        "time": 30,
+        "stored": 0.6023884238244042,
+        "available": 0.843003582627176,
+        "lost": 0.55460799354842,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 1.053658818305048
+      },
+      {
+        "time": 60,
+        "stored": 0.18143590657882502,
+        "available": 0.5966474794573923,
+        "lost": 1.2219166139637831,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 0.998865208189118
+      },
+      {
+        "time": 120,
+        "stored": 0.01645949409804006,
+        "available": 0.15275180318618026,
+        "lost": 1.83078870271578,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 0.6670767867207194
+      },
+      {
+        "time": 240,
+        "stored": 0.0001354574729817078,
+        "available": 0.0054308565750866055,
+        "lost": 1.994433685951932,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 0.41184531562512006
+      }
+    ],
+    "confirmed_ingestion": [
+      {
+        "time": 0,
+        "stored": 2.0,
+        "available": 0.0,
+        "lost": 0.0,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 0.4
+      },
+      {
+        "time": 5,
+        "stored": 0.7357588823428847,
+        "available": 1.159596553537919,
+        "lost": 0.10464456411919643,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 1.0689221154131585
+      },
+      {
+        "time": 10,
+        "stored": 0.2706705664732254,
+        "available": 0.9246657351649534,
+        "lost": 0.30466369836182117,
+        "consumed": 0.5,
+        "pressure": 0.25,
+        "deposited": 2.0,
+        "trial_response": 0.827103856900066
+      },
+      {
+        "time": 20,
+        "stored": 0.036631277777468364,
+        "available": 0.8778167654362994,
+        "lost": 0.5855519567862322,
+        "consumed": 0.5,
+        "pressure": 0.16758001150890983,
+        "deposited": 2.0,
+        "trial_response": 0.8944984969339574
+      },
+      {
+        "time": 30,
+        "stored": 0.004957504353332718,
+        "available": 0.6763963173975346,
+        "lost": 0.8186461782491326,
+        "consumed": 0.5,
+        "pressure": 0.1123322410293054,
+        "deposited": 2.0,
+        "trial_response": 0.9138899831478063
+      },
+      {
+        "time": 60,
+        "stored": 1.2288424706656423e-05,
+        "available": 0.27735902347692215,
+        "lost": 1.222628688098371,
+        "consumed": 0.5,
+        "pressure": 0.03383382080915318,
+        "deposited": 2.0,
+        "trial_response": 0.7820282814551452
+      },
+      {
+        "time": 120,
+        "stored": 7.550269088558198e-11,
+        "available": 0.0458495278512417,
+        "lost": 1.4541504720732554,
+        "consumed": 0.5,
+        "pressure": 0.0030693349757671116,
+        "deposited": 2.0,
+        "trial_response": 0.4923788520354071
+      },
+      {
+        "time": 240,
+        "stored": 2.850328165481871e-21,
+        "available": 0.0012527797757738146,
+        "lost": 1.498747220224226,
+        "consumed": 0.5,
+        "pressure": 2.525985045927335e-05,
+        "deposited": 2.0,
+        "trial_response": 0.4027404572630635
+      }
+    ],
+    "second_player": [
+      {
+        "time": 0,
+        "stored": 2.0,
+        "available": 0.0,
+        "lost": 0.0,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 0.4
+      },
+      {
+        "time": 5,
+        "stored": 0.7357588823428847,
+        "available": 1.159596553537919,
+        "lost": 0.10464456411919643,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 2.0,
+        "trial_response": 1.0689221154131585
+      },
+      {
+        "time": 10,
+        "stored": 2.2706705664732256,
+        "available": 1.4246657351649534,
+        "lost": 0.30466369836182117,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 4.0,
+        "trial_response": 1.0571384067241312
+      },
+      {
+        "time": 20,
+        "stored": 0.3073018442506938,
+        "available": 2.672891610942112,
+        "lost": 1.0198065448071942,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 4.0,
+        "trial_response": 0.9187304438216746
+      },
+      {
+        "time": 30,
+        "stored": 0.04158878213080108,
+        "available": 2.1990280112217064,
+        "lost": 1.7593832066474924,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 4.0,
+        "trial_response": 0.9763079052745984
+      },
+      {
+        "time": 60,
+        "stored": 0.00010308828423162614,
+        "available": 0.9138294217127075,
+        "lost": 3.0860674900030607,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 4.0,
+        "trial_response": 1.0611257696126886
+      },
+      {
+        "time": 120,
+        "stored": 6.33396309459367e-10,
+        "available": 0.15107503419255164,
+        "lost": 3.848924965174052,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 4.0,
+        "trial_response": 0.6647769673991095
+      },
+      {
+        "time": 240,
+        "stored": 2.3911562880589498e-20,
+        "available": 0.004127932323353392,
+        "lost": 3.995872067676647,
+        "consumed": 0.0,
+        "pressure": 0.0,
+        "deposited": 4.0,
+        "trial_response": 0.4090221023370083
+      }
+    ]
+  }
+}
