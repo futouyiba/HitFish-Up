@@ -12,14 +12,14 @@
 PresentationSegment   轨迹、时间、环境关系、局部记录
 AssemblySnapshot      证据绑定与适用标记
 CastFishCondition     抛竿时形成的鱼况快照（可选授权 overlay）
-OpportunityFacts      L 及其状态
+OpportunityFacts      L 及状态（不进入 Response；圆桌接口按 SDW × AdaptationCoeff）
 WorkingParams         K_close、TriggerBudget、M0/M1、tail 参数
 ```
 
 不变量：
 
 1. 单方向算成本与 Margin，再投影为 `C`；不跨方位平均，也不先平均 Margin。
-2. 支持度只乘一次；机会量只乘一次，`q = L × C`。
+2. 支持度只乘一次；2026-11-04 Owner 方向下，圆桌接口以 `SpatialDistributionWeight × AdaptationCoeff` 为准，`q = L × C` 不再是候选贡献公式；`L` 如何并入 SDW 待定。
 3. `Unknown`、`NotConfigured`、`InvalidInput` 不当作 0；`Reject` 是 typed zero。
 4. Fish Condition 在抛竿时按 `ConditionGroup × EngagementMode` 形成快照，整竿内沿用；形成快照时过期、越界或缺来源的值不沿用旧值。
 5. 时间、停留、覆盖不进入出手余量。
@@ -30,7 +30,7 @@ WorkingParams         K_close、TriggerBudget、M0/M1、tail 参数
 ## 2. 算法
 
 ```text
-function response(segment, assembly, castFC, opportunity, params):
+function response(segment, assembly, castFC, params):
 
   # 0. 帧校验与快照选择
   require segment.valid and assembly.version == segment.assemblyVersion
@@ -107,11 +107,10 @@ function response(segment, assembly, castFC, opportunity, params):
   if status != Resolved:
       return (status, None, {skipped})
 
-  # 4. 机会接入
-  if opportunity.L == InvalidInput: return (InvalidInput, None, {skipped})
-  if opportunity.L in (Unknown, NotConfigured): return (ResolutionIncomplete, None, {skipped})
-  q = opportunity.L * C_feed
-  return (Resolved, q, {skipped})      # skipped provenance 沿结果返回
+  # 4. 机会接入（2026-11-04 Owner 方向）
+  # 圆桌接口以 SpatialDistributionWeight × AdaptationCoeff 为准；
+  # L 如何并入 SDW 尚未指定，见开放决策；这里返回 C_feed 供圆桌使用。
+  return (Resolved, C_feed, {skipped})
 
 
 function compose(results):
@@ -136,6 +135,7 @@ function evaluate(family, state, entry, params):
   food      = clamp(base + size + diet, 0, 1)
   trigger   = params.TriggerBudget * state.TriggerIntensity
   closing   = params.K_close * state.q^2 * activityMultiplier(entry.activity)   # 单方向：鱼在追拟饵
+  # activityMultiplier(A) = clamp(1/A, 0.5, 2)，A=0 取 2；A 须在 [0,2]
   risk      = params.K_wary * entry.wariness * suspicionLoad      # 无 cue 时为 0
   threshold = f(entry.feedingMotivation)                          # 分段线性 + tail
 
@@ -153,7 +153,7 @@ function evaluate(family, state, entry, params):
 | 评价 | 五项各自状态；`Reject` 单独处理 |
 | 投影 | 数值 `C`；不输出非数值 |
 | sibling 组成 | 标量（max）或 `ResolutionIncomplete`；`skipped` 记录被跳过的 family 与原始状态 |
-| 机会接入 | 标量 `q` 或 `ResolutionIncomplete`；`skipped` 沿结果返回 |
+| 机会接入 | 标量 `C_feed`；`L` 的并入方式待定（2026-11-04 圆桌接口方向） |
 
 ## 3. 状态代数
 
@@ -219,17 +219,17 @@ C_conditional = 0.874
 C_prey        = 1.0 × 0.874 = 0.874
 ```
 
-若 `L = 0.50`：
+若在 Opportunity 内部玩具模型里取 `L = 0.50`：
 
 ```text
 q = 0.50 × 0.874 = 0.437
 ```
 
-只乘一次；Candidate 后段不再乘 Response。
+这只是 Opportunity 内部量，不是圆桌公式；最终圆桌权重按 `SpatialDistributionWeight × AdaptationCoeff` 形成（2026-11-04）。
 
 ## 5. 可执行入口
 
-- `prototypes/lure-response/proposal_c_end_to_end_probe.py`：端到端驱动覆盖帧校验、快照按 `ConditionGroup × EngagementMode` 选择（含错竿/缺元数据/缺条目）、target relation Reject、全 Reject、区间 support（退化/非退化/非法）、Unknown/NotConfigured 原始状态保留、未解析 provenance 沿 `L × C` 返回与单次乘法。
+- `prototypes/lure-response/proposal_c_end_to_end_probe.py`：端到端驱动覆盖帧校验、快照按 `ConditionGroup × EngagementMode` 选择（含错竿/缺元数据/缺条目）、target relation Reject、全 Reject、区间 support（退化/非退化/非法）、Unknown/NotConfigured 原始状态保留、未解析 provenance 沿结果返回，以及 Opportunity 内部玩具乘法。
 - 各形状 probe：投影、Closing、Trigger、support retention、机会量。
 
 ## 6. 未闭口
@@ -237,6 +237,7 @@ q = 0.50 × 0.874 = 0.437
 - 各 Condition 的生成语义与标定；
 - 事件提取的滤波、采样与阈值；
 - `L` 的生产函数与窗口口径；
+- 圆桌接口：`L` 如何并入 `SpatialDistributionWeight`（2026-11-04 Owner 方向）；
 - `K_close` 的 no-θ 重标定（Working 0.19，替代方位平均下的 0.76）；
 - 真实 encounter geometry 是否引入 hard gate；
 - 生产参数：`K_close`、Trigger budget、`K_wary`、`M0/M1`、tail 参数。

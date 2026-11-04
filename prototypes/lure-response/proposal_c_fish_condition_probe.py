@@ -18,6 +18,47 @@ INVALID = "InvalidInput"
 
 AUTHORIZED = {"wariness"}
 
+RANGES = {
+    "activity": (0.0, 2.0),          # normal state stays <= 1; >1 only rare extremes
+    "feedingMotivation": (0.0, 1.0),
+    "wariness": (0.0, 1.0),
+}
+
+
+def _value_in_range(name, value) -> bool:
+    limits = RANGES.get(name)
+    if limits is None:
+        return True
+    return _valid_number(value, limits[0], limits[1])
+
+
+def _resolve_diet_shift(item: dict) -> dict:
+    """Per-family DietShift: {family: {value,status,sourceRef}} -> {family: (status,value)}."""
+    out = {}
+    for family, entry in item.items():
+        status = entry.get("status", RESOLVED)
+        value = entry.get("value")
+        if status != RESOLVED or entry.get("sourceRef") is None:
+            out[family] = (UNKNOWN, None)
+            continue
+        if not _valid_number(value, -0.2, 0.2):
+            out[family] = (UNKNOWN, None)
+            continue
+        out[family] = (RESOLVED, value)
+    return out
+
+
+def activity_generate(normal_sum: float, rare_bonus: float = 0.0) -> float:
+    """Candidate: normal causes clamp to 1; only rare_bonus can exceed 1, hard cap 2."""
+    a_norm = min(1.0, max(0.0, 1.0 + normal_sum))
+    return min(2.0, max(0.0, a_norm + rare_bonus))
+
+
+def activity_cost_multiplier(a: float) -> float:
+    if a == 0:
+        return 2.0
+    return min(2.0, max(0.5, 1.0 / a))
+
 
 def _valid_number(v, lo=None, hi=None) -> bool:
     if not isinstance(v, (int, float)) or not math.isfinite(v):
@@ -40,10 +81,16 @@ def resolve(block, now, overlay=None):
         return {name: (UNKNOWN, None) for name in block["conditions"]}
 
     for name, item in block["conditions"].items():
+        if name == "dietShift" and isinstance(item, dict):
+            out[name] = _resolve_diet_shift(item)
+            continue
         status = item.get("status", RESOLVED)
         value = item.get("value")
         if status != RESOLVED or item.get("sourceRef") is None:
             out[name] = (UNKNOWN, None)
+            continue
+        if not _value_in_range(name, value):
+            out[name] = (UNKNOWN, None)     # out-of-range baseline -> Unknown
             continue
         out[name] = (RESOLVED, value)
 
@@ -107,6 +154,32 @@ def main() -> None:
     overflow_overlay = {"condition": "wariness", "delta": 0.9, "validity": (5.0, 15.0)}
     print("overflow overlay:", resolve(block, now, overflow_overlay))
 
+    activity_out_of_range = {
+        **block,
+        "conditions": {**block["conditions"],
+                       "activity": {"value": 2.5, "status": RESOLVED, "sourceRef": "bake:1"}},
+    }
+    motivation_out_of_range = {
+        **block,
+        "conditions": {**block["conditions"],
+                       "feedingMotivation": {"value": -0.1, "status": RESOLVED, "sourceRef": "bake:1"}},
+    }
+    print("activity out of range:", resolve(activity_out_of_range, now))
+    print("motivation out of range:", resolve(motivation_out_of_range, now))
+
+    diet_block = {
+        **block,
+        "conditions": {
+            **block["conditions"],
+            "dietShift": {
+                "baitfish": {"value": 0.10, "status": RESOLVED, "sourceRef": "bake:1"},
+                "crayfish": {"value": 0.50, "status": RESOLVED, "sourceRef": "bake:1"},
+                "frog": {"value": 0.0, "status": UNKNOWN, "sourceRef": "bake:1"},
+            },
+        },
+    }
+    print("diet shift per family:", resolve(diet_block, now))
+
     r = resolve(block, now)
     assert r["activity"] == (RESOLVED, 1.2)
     assert r["wariness"] == (RESOLVED, 0.3)
@@ -121,6 +194,28 @@ def main() -> None:
     assert resolve(block, now, bad_overlay)["activity"] == (INVALID, None)
     assert resolve(block, now, stale_overlay)["wariness"] == (RESOLVED, 0.3)
     assert resolve(block, now, overflow_overlay)["wariness"] == (INVALID, None)
+
+    # Baseline values outside the declared domain are Unknown, not clamped.
+    assert resolve(activity_out_of_range, now)["activity"] == (UNKNOWN, None)
+    assert resolve(motivation_out_of_range, now)["feedingMotivation"] == (UNKNOWN, None)
+    assert resolve(activity_out_of_range, now)["feedingMotivation"] == (RESOLVED, 0.5)
+
+    diet_out = resolve(diet_block, now)["dietShift"]
+    assert diet_out["baitfish"] == (RESOLVED, 0.10)
+    assert diet_out["crayfish"] == (UNKNOWN, None)   # out of [-0.2, 0.2]
+    assert diet_out["frog"] == (UNKNOWN, None)       # explicit Unknown
+
+    # Activity generation: normal causes stay <= 1; rare bonus can exceed 1; cap at 2.
+    assert activity_generate(0.5) == 1.0
+    assert activity_generate(-0.5) == 0.5
+    assert activity_generate(0.0, 0.5) == 1.5
+    assert activity_generate(0.8, 0.5) == 1.5
+    assert activity_generate(0.0, 1.5) == 2.0
+    # Cost multiplier is inverse and monotone decreasing.
+    assert activity_cost_multiplier(0.0) == 2.0
+    assert activity_cost_multiplier(0.5) == 2.0
+    assert activity_cost_multiplier(1.0) == 1.0
+    assert activity_cost_multiplier(2.0) == 0.5
 
     # Expired block must not reuse last values.
     assert resolve(dict(block, validity=(0.0, 20.0)), 25.0)["wariness"] == (UNKNOWN, None)

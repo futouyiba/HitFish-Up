@@ -115,17 +115,17 @@ crayfish  = Unknown
 
 **禁止：** 把 Unknown 当 0 后输出 `max(0.45, 0)`；或因为有 Unknown 就把整个 feeding 判成 Unknown。
 
-## 7. 机会是 L × C，一次
+## 7. 机会与响应只结算一次
 
-**事实：** 同一次呈现，Response 得到 `C=0.6`；Opportunity 给出该颗粒的 `L=0.5`（Spatial 只提供空间事实）。
+**事实：** 同一次呈现，Response 得到 `C_feed=0.6`；Opportunity 给出该颗粒的 `L=0.5`（Spatial 只提供空间事实）。
 
-**结果：**
+**结果（Opportunity 内部量）：**
 
 ```text
 q = 0.5 × 0.6 = 0.30
 ```
 
-只有一次乘法。Candidate 后段不再乘 Response。
+`q = L × C` 只在 Opportunity 内部结算一次；圆桌接口按 `SpatialDistributionWeight × AdaptationCoeff`（2026-11-04），不再重复乘 Response。
 
 **事实 B：** Opportunity 侧的 `L` 未配置或无法解析。
 

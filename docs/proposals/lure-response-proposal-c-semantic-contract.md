@@ -6,7 +6,7 @@
 
 本文已按 2026-10-30 Owner 方向回写：第一版不模拟相对方位 θ，按“鱼在追拟饵”的单方向估算追赶负担；同级猎物解释取最大值；Fish Condition 采用一竿一个快照。会议记录见[会议对齐稿](../alignment/lure-response/2026-10-30-lure-response-alignment-draft.md)。
 
-符号说明：`q` 在 Closing 段表示“相对速度 / InterceptSpeedLimit”，在机会段表示 `L × C` 的候选贡献；引用时带上下文。
+符号说明：`q` 在 Closing 段表示“相对速度 / InterceptSpeedLimit”，在机会段表示 Opportunity 内部的 `L × C`；圆桌权重按 `SpatialDistributionWeight × AdaptationCoeff`（2026-11-04），引用时带上下文。
 
 ## 1. 通用状态协议
 
@@ -282,12 +282,14 @@ C_feed = max_i(C_i)          # 只对已解析、属于同一 physical target �
 姿态颗粒 → Opportunity：计算该颗粒的 native opportunity support L（Spatial 提供空间事实）
 
 Candidate join
-→ q = L × C
+→ Opportunity 内部 q = L × C（圆桌按 SDW × AdaptationCoeff）
 → Opportunity Reduce
 → NativeCandidateSnapshot
 ```
 
-- `L × C` 只乘一次，Candidate 后段不重复乘 Response；
+- Opportunity 内部的 `L × C` 只结算一次，Candidate 后段不重复乘 Response；
+- 2026-11-04 Owner 方向：圆桌接口以 `SpatialDistributionWeight × AdaptationCoeff` 为准；`q = L × C` 不再是候选贡献公式，`L` 的并入方式待定，见[开放决策](lure-response-proposal-c-open-decisions.md)；
+- 一个 cast 内多个 `EngagementMode` **分别计算各自的 C**；`L` 属于机会 / 颗粒，不按 mode 复制；Candidate 阶段按 mode 竞争；
 - 时间、停留、穿越有效区域、覆盖范围不进入出手余量；
 - 垂直运动通过“多久处在可交互垂直区域”影响 `L`；该窗口由 Opportunity 承接，具体实现形态尚未落仓；
 - 若既有 Candidate pipeline 已把 `L` 定义为 opportunity 侧的量，复用该量，不另造第二个 Exposure multiplier。

@@ -2,7 +2,7 @@
 
 状态：Working Design / Candidate。本文只用于解释为什么 Response 单项无法完成快搜与隐蔽的策略翻转，不是生产函数，也不改变 `L` 的 owner。
 
-来源与约束：[响应与机会契约](lure-response-proposal-c-response-opportunity.md) 与 Proposal C Working Closure（PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`）：`L` 的正式 owner 是 Opportunity，Spatial 只提供空间事实；`q = L × C` 只乘一次；`L(duration)` 的生产函数未冻结。本文的公式是**可替换的玩具模型**。
+来源与约束：[响应与机会契约](lure-response-proposal-c-response-opportunity.md) 与 Proposal C Working Closure（PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`）：`L` 的正式 owner 是 Opportunity，Spatial 只提供空间事实；`q = L × C` 只作 Opportunity 内部量（2026-11-04 后圆桌按 `SpatialDistributionWeight × AdaptationCoeff`）；`L(duration)` 的生产函数未冻结。本文的公式是**可替换的玩具模型**。
 
 ## 1. 为什么需要这一层
 
@@ -38,7 +38,7 @@ Working: D = 0.80, Q_cap = 1.00
 
 食物价值 0.70、Motivation 0.5、无风险、无触发。
 
-| Activity 倍率 | 最优 q | 最优 Y | Y(q=0.45) | Y(q=0.90) | Y(q=1.50) |
+| 追赶成本倍率 | 最优 q | 最优 Y | Y(q=0.45) | Y(q=0.90) | Y(q=1.50) |
 |---|---|---|---|---|---|
 | 0.8（高活性） | 0.49 | 0.134 | 0.134 | 0.099 | 0.000 |
 | 1.0 | 0.47 | 0.130 | 0.130 | 0.081 | 0.000 |

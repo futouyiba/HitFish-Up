@@ -213,7 +213,7 @@
         <li class="arrow" aria-hidden="true">→</li>
         <li class="node margin"><b>条件响应</b><span>单方向：按“鱼在追拟饵”估算，不跨方位平均</span></li>
         <li class="arrow" aria-hidden="true">→</li>
-        <li class="node join"><b>机会接入</b><span>L 归 Opportunity（Spatial 提供空间事实）；q = L × C，只乘一次</span></li>
+        <li class="node join"><b>圆桌接口</b><span>圆桌权重 = SpatialDistributionWeight × C_feed；L 归 Opportunity，并入 SDW 待定</span></li>
       </ol>
     </section>
 
@@ -271,8 +271,10 @@
       <pre><code>C        = clamp(余量 / 0.40, 0, 1)      # 单方向：鱼在追拟饵
 C_prey   = support × C
 C_feed   = max(已解析分支)               # sibling 取最大
-q        = L × C                          # 只乘一次，进入候选</code></pre>
-      <p>未解析分支跳过并记录；全部 sibling 都未解析时保持 ResolutionIncomplete，不进入 roll。不能拿未解析分支当 0。机会量 <code>L</code> 由机会侧给出，时间与停留只影响 <code>L</code>，不回写余量。</p>
+
+圆桌权重 = SpatialDistributionWeight × C_feed
+q        = L × C_feed                    # 只作 Opportunity 内部量</code></pre>
+      <p>未解析分支跳过并记录；全部 sibling 都未解析时保持 ResolutionIncomplete，不进入 roll。不能拿未解析分支当 0。机会量 <code>L</code> 由机会侧给出，时间与停留只影响 <code>L</code>，不回写余量；2026-11-04 起圆桌按 <code>SDW × C_feed</code>，<code>L</code> 并入 SDW 的方式待定。</p>
     </section>
 
     <section aria-labelledby="algorithm-title">
@@ -286,7 +288,7 @@ q        = L × C                          # 只乘一次，进入候选</code><
       C        = clamp(余量 / 0.40)
       C_prey   = support × C
   C_feed = max(已解析 C_prey)      # 未解析分支跳过并记录
-  q      = L × C_feed</code></pre>
+  返回 C_feed；圆桌权重 = SDW × C_feed</code></pre>
       <p>状态优先级：<code>Reject</code> 先于 <code>InvalidInput</code>，再于 <code>NotConfigured</code>、<code>Unknown</code>、<code>Resolved</code>。任一必需输入缺失或过期，输出 <code>ResolutionIncomplete</code>，不回填默认值。</p>
     </section>
 

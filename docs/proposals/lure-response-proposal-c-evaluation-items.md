@@ -180,6 +180,24 @@ M > 0.80:
 - `Reject`、`Unknown`、`NotConfigured`、`ResolutionIncomplete` 在进入合成前按状态协议处理；
 - 顶层不再加交叉项。
 
+### 7.1 标尺、边界与可加性（Candidate）
+
+| 项 | 工作域 | 备注 |
+|---|---|---|
+| 食物价值 | `[0, 1]` | 已 clamp |
+| 攻击诱因 | `[0, 0.15]` | `TriggerBudget × TriggerIntensity`，预算为 Working 上限 |
+| 追赶负担 | `[0, 1.52]` | `K_close=0.19`、`q∈[0,2]`、`Activity∈[0,2]` 时的上界；不设硬 cap |
+| 风险顾虑 | `[0, 1]` | `K_wary=1` 的 Working 尺度；字段未落地时恒为 0 |
+| 摄食意愿门槛 | `[0.1, 0.6]` | `Motivation∈[0,1]` 与 tail 参数下的 Working 范围 |
+| 出手余量（理论域） | `[-3.12, 1.05]` | 五项端点的组合；当前 `RiskCost=0` 时为 `[-2.12, 1.05]`；具体 fixture 的观测范围更窄 |
+
+可加性是 **Working 假设**，不是已验证事实：
+
+- 每项先由自己的机制换算到同一标尺，再由标定把不同机制放到可比的量级；
+- 目前没有真实数据证明五项等距可加；投影的截断会掩盖加法误差，标定时要看排序与分档，不只看拟合；
+- 任何新增项、交叉项或非线性都必须先证明它不与现有五项重复计权；
+- Activity 的 `[0,2]` 域只影响追赶负担；`Activity>1` 的稀有极活跃情形不改变其它项。
+
 ## 8. 与 Fish Condition 的关系
 
 当前鱼况使用 Activity、Feeding Motivation、Diet Shift、Wariness。五项评价与它们不是一一对应：

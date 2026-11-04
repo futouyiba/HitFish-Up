@@ -58,8 +58,8 @@ V1 允许只实现 Bake baseline；runtime overlay 是受限扩展点，不是�
 ### 3.1 Activity
 
 - 只调制追赶负担，不进入 Closing 的结构速度上限；
-- `ActivityCostMultiplier` 必须非负且有限；1.0 只是 Working reference，不是缺失默认值；
-- 当前不设语义上的生产上界，也不新增 runtime cap；
+- Activity 的 Candidate 域是 `[0, 2]`；常规状态不突破 `1`，`>1` 仅用于极少数极活跃情形；`1.0` 只是 Working reference，不是缺失默认值；
+- `ActivityCostMultiplier` 与 Activity 方向相反，Candidate 映射为 `clamp(1/A, 0.5, 2)`（`A=0` 取 2）；越界按 Production Contract 处理，不截断；
 - 不能与 Feeding Motivation 共用一个“积极程度”标量。
 
 ### 3.2 Feeding Motivation
@@ -187,6 +187,6 @@ Owner 2026-10-30 已裁定架构、加载路径、失效语义、Activity 上界
 
 - [五评价项契约](lure-response-proposal-c-evaluation-items.md)（Activity / Motivation / Diet Shift / Wariness 的消费点与 Working 锚）；
 - [语义契约](lure-response-proposal-c-semantic-contract.md) §1（通用状态与 `ResolutionIncomplete`）；
-- [响应与机会契约](lure-response-proposal-c-response-opportunity.md)（`L × C` 与状态表）。
+- [响应与机会契约](lure-response-proposal-c-response-opportunity.md)（`L` 与状态表）。
 
 本页的范围、参考值与有效期规则是 Candidate 要求，不是已批准 Contract。

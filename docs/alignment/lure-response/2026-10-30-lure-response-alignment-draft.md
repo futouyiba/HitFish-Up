@@ -3,6 +3,8 @@
 状态：会议对齐草案 / 候选设计。不是现行契约，不是生产参数。
 
 > 与设计包的同步状态（2026-10-31 更新）：本稿的**三项方向已由 PR [#171](https://github.com/futouyiba/HitFish-Up/pull/171)（合并提交 `ad2ccb5f`）回写进设计包与 probe**：去掉相对方位 θ、同级猎物解释取最大、一竿一鱼况快照。**终端钓组显眼度聚合仍是会议候选**，字段与 owner 未落地，`RiskCost = 0`；实现以设计包与 probe 为准。
+>
+> 2026-11-04 补充：圆桌接口以 `SpatialDistributionWeight × AdaptationCoeff` 为准；文中 `L × C_feed` 只作 Opportunity 内部量，不再是候选贡献公式。
 
 ---
 
@@ -137,9 +139,9 @@ flowchart LR
     C1 --> MX[同级取最大]
     C2 --> MX
     C3 --> MX
-    MX --> J[L × C_feed]
-    O[机会量 L] --> J
-    J --> Q[候选贡献]
+    MX --> J[圆桌权重 SDW × C_feed]
+    J --> Q[进入圆桌]
+    O[机会量 L（内部量，并入 SDW 待定）]
 ```
 
 一句话：拟饵不是猎物类型：同一个饵可以同时被解释成小鱼、小龙虾或蛙；系统分别解释“像不像、现在什么状态”，再让鱼评价。
@@ -395,10 +397,12 @@ L = 机会量
 最终：
 
 ```text
-候选贡献 = L × C_feed
+圆桌权重 = SpatialDistributionWeight × C_feed
+
+Opportunity 内部（分析量）：q = L × C_feed
 ```
 
-`L × C_feed` 只乘一次。
+`L × C_feed` 只在 Opportunity 内部结算；圆桌不重复乘 Response。`L` 并入 `SpatialDistributionWeight` 的方式待定。
 
 ---
 
@@ -417,7 +421,7 @@ L = 机会量
 | 分支贡献 | 该解释保留的响应量 | 支持度 × 条件响应 | 同级取最大 |
 | 同级适配系数 C_feed | 多个解释取最大后的适配系数 | 同级取最大 | 候选贡献 |
 | 机会量 L | 机会形成了多少 | Opportunity | 候选贡献 |
-| 候选贡献 | 最终进入候选的量 | `L × C_feed` | 候选 |
+| 圆桌权重 | 最终进入圆桌的量 | `SpatialDistributionWeight × C_feed` | 圆桌 |
 
 主链：
 
@@ -429,7 +433,7 @@ L = 机会量
 → 出手余量 → 条件响应
 → 乘该解释的表达支持度 → 分支贡献
 → 同级取最大 → C_feed
-→ 与 Opportunity 的 L 相乘一次（L × C_feed）
+→ 圆桌权重（SpatialDistributionWeight × C_feed；L 并入 SDW 待定）
 → 候选贡献
 ```
 
@@ -451,7 +455,7 @@ L = 机会量
 | 风险 | 终端钓组显眼度用简单饱和聚合 |
 | 鱼况 | 一竿一个鱼况快照 |
 | 最终系数 | C 叫适配系数，范围 0~1 |
-| 机会 | L 叫机会量；最终只做一次 L × C_feed |
+| 机会 | L 叫机会量；圆桌按 `SDW × C_feed`，L 并入 SDW 待定 |
 | 刻意不做 | 独立运动可预测性、通用停顿奖励、复杂遭遇几何 |
 
 会后再继续做具体数据、采样、阈值和生产标定。

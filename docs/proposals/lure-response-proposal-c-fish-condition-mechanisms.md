@@ -2,7 +2,7 @@
 
 状态：Working Mechanism Draft / Candidate。按 2026-10-30 Owner 裁定（Issue #161）编写：本文只定义各 Condition 的语义、允许 cause、输出域、更新路径与验收，不定义生产曲线。
 
-生成语义与曲线仍归各 Condition 的正式机制 Contract；本文是它们的骨架与缺口清单。
+生成语义与曲线仍归各 Condition 的正式机制 Contract；本文是它们的骨架与缺口清单。Candidate 生成形状、输出域细化与验收已收进[机制契约 v0](lure-response-proposal-c-fish-condition-mechanism-contracts.md)。
 
 ## 1. 共同约束
 
@@ -18,7 +18,7 @@
 |---|---|
 | 语义 | 当前愿意为主动追赶付出多少行为代价；不是物理速度能力 |
 | 消费者 | `ActivityCostMultiplier`（只调制追赶负担） |
-| 输出域 | 有限、非负；`1.0` 是 Working reference；不设语义上界 |
+| 输出域 | `[0, 2]`；常规不突破 `1`，`>1` 只用于极少数极活跃情形；`1.0` 是 Working reference |
 | 更新路径 | Bake baseline；V1 不做 runtime 累积 |
 | 禁止 | 改 `InterceptSpeedLimit`；与 FeedingMotivation 共用“积极程度”；按玩家操作即时变化 |
 

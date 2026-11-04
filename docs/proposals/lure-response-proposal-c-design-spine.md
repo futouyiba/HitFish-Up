@@ -61,7 +61,7 @@ ActualPresentation
 - 缺少规则不等于 NoMatch。
 - `Reject` 不进入连续计算；`Poor=0` 仍是合法连续值。
 - 状态标签不自动附带 bonus 或 penalty。
-- 时间长度不进入出手余量；机会由 `L × C` 表达。
+- 时间长度不进入出手余量；机会由 Opportunity 的 `L` 表达，圆桌接口按 `SpatialDistributionWeight × AdaptationCoeff`（2026-11-04）。
 - Candidate 后段不能再次乘同一份 Response。
 - 没有独立 owner 的作用不能补进某个系数。
 - 不能用一个巨大的 cost 冒充 hard semantic boundary。
@@ -75,7 +75,7 @@ ActualPresentation
 5. 读取鱼侧评价输入，先处理 typed status，再计算数值。
 6. 按“鱼在追拟饵”的单方向计算出手余量并投影成条件响应。
 7. 聚合同级猎物解释：已解析分支取最大，未解析分支跳过并记录。
-8. 与 Opportunity 的 `L` 做一次 `L × C`（Spatial 只提供空间事实），交给 Candidate owner。
+8. 把 `C` 交给圆桌接口；圆桌权重按 `SpatialDistributionWeight × AdaptationCoeff` 形成（2026-11-04 Owner 方向）。`L` 的并入方式由 Opportunity 线补齐，见[开放决策](lure-response-proposal-c-open-decisions.md)。
 
 任何一步的必要输入未解析，都不能把缺口静默转换为零。
 
@@ -84,7 +84,7 @@ ActualPresentation
 - [语义契约](lure-response-proposal-c-semantic-contract.md)：逐层写输入、输出、状态、owner 和禁止事项；
 - [呈现解释与状态契约](lure-response-proposal-c-presentation-interpretation.md)：证据、支持度插值、区间与状态提取规则；
 - [五评价项契约](lure-response-proposal-c-evaluation-items.md)：食物价值、攻击诱因、追赶负担、风险顾虑与门槛的合成方式和边界；
-- [响应与机会契约](lure-response-proposal-c-response-opportunity.md)：投影、sibling 取最大、`L × C` 与候选接入；
+- [响应与机会契约](lure-response-proposal-c-response-opportunity.md)：投影、sibling 取最大、`L` 与圆桌接口；
 - [工作案例](lure-response-proposal-c-worked-cases.md)：用反例检查每层是否真的区分了不同情况；
 - [开放决策](lure-response-proposal-c-open-decisions.md)：只保留尚未有 owner、尚未闭合或存在冲突的问题；
 - [第一轮玩法闭合审查](lure-response-proposal-c-first-round-closure.md)：AttackTrigger 准入、Risk 输入实证、策略排序 probe 与判断；
@@ -97,6 +97,9 @@ ActualPresentation
 - [Fish Condition Production Contract](lure-response-proposal-c-fish-condition-production-contract.md)：DEF block、状态与校验；
 - [Response Algorithm v1](lure-response-proposal-c-response-algorithm-v1.md)：端到端算法与状态代数；
 - [Fish Condition 机制契约](lure-response-proposal-c-fish-condition-mechanisms.md)：四个 Condition 的语义、cause 与验收；
+- [Fish Condition 机制契约 v0](lure-response-proposal-c-fish-condition-mechanism-contracts.md)：四条 Candidate 曲线、输出域与标定需求；
+- [风险输入研究](lure-response-proposal-c-risk-inputs-research.md)：RF4 / Fishing Planet 的 cue 参考与候选聚合；
+- [时间模型](lure-response-proposal-c-time-model.md)：采样、事件窗口、快照、机会与记忆边界；
 - [回归矩阵](lure-response-proposal-c-regression-matrix.md)：规则到 probe 的覆盖与缺口；
 - [标定台账](lure-response-proposal-c-calibration-register.md)：当前 Working 参数与缺数据；
 - [设计图](../mockups/proposal-c-design-map.html)：面向阅读的图形版本。

@@ -9,6 +9,8 @@
 > 2026-10-30 同步：第一版 `DecisionMargin` 使用五项式；Prediction 为 `Deferred Research`；`L` 的正式 owner 是 Opportunity，Spatial 只提供空间事实。依据：Proposal C Working Closure（PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`）§4–§5、Issue [#152](https://github.com/futouyiba/HitFish-Up/issues/152) 与 Issue [#161](https://github.com/futouyiba/HitFish-Up/issues/161)。
 >
 > 2026-10-30 会议方向已由 PR #171 回写并合并到设计包：不模拟相对方位 θ、同级猎物解释取最大值、Fish Condition 一竿一个快照；`K_close` 按单方向标尺改为 `0.19`。
+>
+> 2026-11-04 Owner 方向：圆桌接口以 FCF 通用的 `SpatialDistributionWeight × AdaptationCoeff` 为准；`q = L × C` 不再作为候选贡献公式，`L` 如何并入 SDW 待定，见[开放决策](lure-response-proposal-c-open-decisions.md)。
 
 ## 1. 当前设计入口
 
@@ -33,6 +35,9 @@
 | Fish Condition 的载体、状态与校验 | [Fish Condition Production Contract](lure-response-proposal-c-fish-condition-production-contract.md) |
 | 端到端 Response 算法规格 | [Response Algorithm v1](lure-response-proposal-c-response-algorithm-v1.md) |
 | 四个 Fish Condition 的机制草案 | [Fish Condition 机制契约](lure-response-proposal-c-fish-condition-mechanisms.md) |
+| Fish Condition 四条机制契约：Candidate 曲线、输出域与验收 | [机制契约 v0](lure-response-proposal-c-fish-condition-mechanism-contracts.md) |
+| 风险输入：RF4 / Fishing Planet 参考与 cue 候选 | [风险输入研究](lure-response-proposal-c-risk-inputs-research.md) |
+| 时间语义：采样、窗口、快照、机会与记忆 | [时间模型](lure-response-proposal-c-time-model.md) |
 | 规则到 probe 的覆盖关系 | [回归矩阵](lure-response-proposal-c-regression-matrix.md) |
 | 当前 Working 参数与缺数据 | [标定台账](lure-response-proposal-c-calibration-register.md) |
 | 图形化说明 | [设计图](../mockups/proposal-c-design-map.html) |
@@ -69,7 +74,7 @@
 详细定义、数值范围与状态传播见语义契约。三条最容易在评审中读错的边界：
 
 - 预测困难当前不在主体内，只作为待证明的局部代价；
-- 机会量 `L` 归 Opportunity；Spatial 只提供位置、区域、几何等空间事实；`q = L × C` 只乘一次；
+- 机会量 `L` 归 Opportunity；Spatial 只提供位置、区域、几何等空间事实；圆桌接口按 `SpatialDistributionWeight × AdaptationCoeff`，`L` 的并入方式待定；
 - `Reject`、`Unknown`、`ResolutionIncomplete` 都是 typed 状态，不用超大 cost 或零值模拟。
 
 ## 3. 当前仍成立的结构边界
@@ -96,7 +101,7 @@
 3. 追赶负担在低活性与高速组合下是否给出正确排序；
 4. 风险顾虑的第一版实现层是否够用，是否会把自然呈现误判；
 5. 同级取最大时，未解析分支跳过是否掩盖了应阻断的情况；
-6. 机会量与响应的 `L × C` 是否存在系统性过度衰减；
+6. 机会量并入 SDW 后是否存在系统性过度衰减；
 7. Prediction 是否出现独立策略价值证据；没有证据时维持不进第一版主体；
 8. 哪些开放项真正阻塞生产，哪些只是标定。
 
