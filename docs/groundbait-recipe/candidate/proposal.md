@@ -10,6 +10,8 @@
 
 当前用户方向是离散槽位配方，窝料历史由持久响应承载，钩饵实时消费；不改 DEF、Fish Condition 或 Opportunity。该方向不批准连续 Cue 强度，也不替台钓选定 GenericFCF / ProposalCOpportunity。旧正文中连续 Flavor 画像仍只属于阻塞分支。
 
+V1把同一个食物背景量同时作为收益与竞争。[V2机制分解](float-mechanism-closure-v2.md)改为分开的背景签名语境、钩饵自身接受与可处理免费对象竞争，并补充状态处理和玩家观察候选。V2不替代Current，不批准连续Cue强度；V1保留为历史实验对照。
+
 ## 1. 设计目标
 
 这套机制要让玩家围绕以下问题做配方选择：

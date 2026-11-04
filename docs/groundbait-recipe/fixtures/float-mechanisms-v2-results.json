@@ -1,0 +1,129 @@
+{
+  "status": "UNADMITTED_GAMEPLAY_HYPOTHESES_NOT_BIOLOGY",
+  "cases": {
+    "no_background": {
+      "hook_label": "POSITIVE",
+      "background_label": "NEUTRAL",
+      "processable_free_value": 0.0,
+      "trial_response": 0.48
+    },
+    "cue_only": {
+      "hook_label": "POSITIVE",
+      "background_label": "POSITIVE",
+      "processable_free_value": 0.0,
+      "trial_response": 0.72
+    },
+    "cue_and_free": {
+      "hook_label": "POSITIVE",
+      "background_label": "POSITIVE",
+      "processable_free_value": 1.0,
+      "trial_response": 0.36
+    },
+    "free_only": {
+      "hook_label": "POSITIVE",
+      "background_label": "NEUTRAL",
+      "processable_free_value": 1.0,
+      "trial_response": 0.24
+    },
+    "hook_avoid_background_positive": {
+      "hook_label": "AVOID",
+      "background_label": "POSITIVE",
+      "processable_free_value": 0.0,
+      "trial_response": 0.21599999999999997
+    },
+    "unusable_free": {
+      "hook_label": "POSITIVE",
+      "background_label": "NEUTRAL",
+      "processable_free_value": 0.0,
+      "trial_response": 0.48
+    },
+    "wrong_layer_free": {
+      "hook_label": "POSITIVE",
+      "background_label": "NEUTRAL",
+      "processable_free_value": 0.0,
+      "trial_response": 0.48
+    }
+  },
+  "physical_treatments": [
+    {
+      "state": "open",
+      "time": 1,
+      "edible_input": 0.8,
+      "bottom": 0.11833808021809587,
+      "suspended": 0.2197707204050352,
+      "stored": 0.43904930887522114,
+      "lost": 0.02284189050164781,
+      "bottom_free_penalty": 0.8941839839746691
+    },
+    {
+      "state": "open",
+      "time": 5,
+      "edible_input": 0.8,
+      "bottom": 0.17465859870415684,
+      "suspended": 0.3243659690220056,
+      "stored": 0.03982965469429116,
+      "lost": 0.26114577757954643,
+      "bottom_free_penalty": 0.8513111819069521
+    },
+    {
+      "state": "open",
+      "time": 20,
+      "edible_input": 0.8,
+      "bottom": 0.03174913317697071,
+      "suspended": 0.05896267590008846,
+      "stored": 4.915369882662568e-06,
+      "lost": 0.7092832755530583,
+      "bottom_free_penalty": 0.9692278557296108
+    },
+    {
+      "state": "open",
+      "time": 60,
+      "edible_input": 0.8,
+      "bottom": 0.00026130503293175675,
+      "suspended": 0.0004852807754446912,
+      "stored": 1.8556182641948558e-16,
+      "lost": 0.7992534141916233,
+      "bottom_free_penalty": 0.9997387632295512
+    },
+    {
+      "state": "bound",
+      "time": 1,
+      "edible_input": 0.6,
+      "bottom": 0.031131653175230294,
+      "suspended": 0.003459072575025587,
+      "stored": 0.5650587201505493,
+      "lost": 0.00035055409919482194,
+      "bottom_free_penalty": 0.9698082654340359
+    },
+    {
+      "state": "bound",
+      "time": 5,
+      "edible_input": 0.6,
+      "bottom": 0.13285554985693573,
+      "suspended": 0.014761727761881746,
+      "stored": 0.4444909324090307,
+      "lost": 0.007891789972151786,
+      "bottom_free_penalty": 0.8827250748131891
+    },
+    {
+      "state": "bound",
+      "time": 20,
+      "edible_input": 0.6,
+      "bottom": 0.29899192563998417,
+      "suspended": 0.033221325071109344,
+      "stored": 0.18071652714732128,
+      "lost": 0.08707022214158516,
+      "bottom_free_penalty": 0.7698277258400373
+    },
+    {
+      "state": "bound",
+      "time": 60,
+      "edible_input": 0.6,
+      "bottom": 0.22183509646657676,
+      "suspended": 0.024648344051841856,
+      "stored": 0.01639423346837554,
+      "lost": 0.3371223260132058,
+      "bottom_free_penalty": 0.8184410505901317
+    }
+  ]
+}

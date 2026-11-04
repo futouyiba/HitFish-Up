@@ -20,6 +20,16 @@
 
 证据与数字见 [策略实验](../candidate/float-strategy-experiments.md)、[钩饵组合](../candidate/hookbait-groundbait-combination.md)、[时间模型](../candidate/groundbait-time-model.md)。真实欧鳊蒜/奶渣偏好、鲫/鲤食物偏好、释放原型及动作窗口尚缺可核证据，不由合成样本代填。
 
+### V2优先决策
+
+[V2分解](../candidate/float-mechanism-closure-v2.md)把以下选择从同一个背景总量中拆开：
+
+1. C-13/Response：是否接受“背景签名改变地点响应语境、钩饵签名改变自身接受”的不同后果。推荐仅作为下一实验分支；删除背景语境可回退，但会失去当前纯Cue正收益。系数是响应参数，不是浓度准入。
+2. C-07：免费竞争是否只计当前地点/水层可处理且被接受的对象。推荐是；动作前提未闭合时不能把全部可食库存当竞争。
+3. State角色：先采用有限的、带配方成本的物理处理原型，还是连续物性混合。推荐先有限原型；真实原料映射仍待证，不批准本轮样本率。
+
+这些是待裁候选，不是已经解决科学依据或产品语义。小药剂量、实际摄食、生产时间/作用域仍按前述OPEN，不用新增参数掩盖。
+
 ## 0. 给外部评审的说明
 
 这份文件来自 `docs/groundbait-recipe/`。该目录是 Candidate / Working Design，不是已收口的 Current Contract。
