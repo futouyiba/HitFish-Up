@@ -1,0 +1,33 @@
+{
+  "version": "float-strategy-working-v1-20261104",
+  "status": "All numbers and biological profiles are synthetic Working Fixtures, not RF4 or species facts.",
+  "ingredients": {
+    "grain": {"edible_fraction": 1, "targets": {"grain": 1}, "signatures": ["grain"]},
+    "animal": {"edible_fraction": 1, "targets": {"animal": 1}, "signatures": ["fish"]},
+    "carrier": {"edible_fraction": 0, "targets": {}, "signatures": []},
+    "cue_garlic": {"unit": "cue_dose", "edible_fraction": 0, "targets": {}, "signatures": ["garlic"]}
+  },
+  "recipes": {
+    "grain_focus": [["grain", 0.8], ["carrier", 0.2]],
+    "animal_focus": [["animal", 0.8], ["carrier", 0.2]],
+    "mixed": [["grain", 0.4], ["animal", 0.4], ["carrier", 0.2]]
+  },
+  "fish": {
+    "specialist": {"preference": {"grain": 1, "animal": 0}, "actions": [
+      {"id": "pick", "layer": "bottom", "min": 0.1, "max": 2, "weight": 1, "success": 0.8}
+    ]},
+    "generalist": {"preference": {"grain": 0.8, "animal": 0.8}, "actions": [
+      {"id": "pick", "layer": "bottom", "min": 0.1, "max": 6, "weight": 1, "success": 0.8},
+      {"id": "suction", "layer": "bottom", "min": 0.1, "max": 8, "weight": 2, "success": 0.9}
+    ]}
+  },
+  "hooks": {
+    "grain_small": {"targets": {"grain": 1}, "size": 1, "layer": "bottom", "legal": true, "rejected": false},
+    "animal_small": {"targets": {"animal": 1}, "size": 1, "layer": "bottom", "legal": true, "rejected": false},
+    "oversize": {"targets": {"grain": 1}, "size": 4, "layer": "bottom", "legal": true, "rejected": false},
+    "rejected": {"targets": {"grain": 1}, "size": 1, "layer": "bottom", "legal": true, "rejected": true},
+    "empty": {"targets": {}, "size": 1, "layer": "bottom", "legal": false, "rejected": false}
+  },
+  "rates": {"recovery": 0.04, "pressure_per_mass": 0.5},
+  "sample_times": [0, 5, 10, 20, 30, 60, 120, 240]
+}

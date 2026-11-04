@@ -303,3 +303,80 @@ Avoidance 只为有明显解释价值的 Fish × Signature 对配置，是显式
 **状态：BOUNDARY**
 
 小药可以增加化学签名或改变 Cue 画像，但必须占剂量或成本，且不增加实体食物质量。它不能提供固定 Bonus，也不能绕过签名集合直接改最终响应。
+
+## WD-30｜Physical Release 是离散时间状态转移
+
+**状态：ACTIVE CANDIDATE**
+
+Physical Release 用离散时间步记录四个账本：
+
+```text
+A(t) 当前地点可用
+L(t) 已离开地点
+C(t) 已被摄食
+U(t) 已不可处理
+```
+
+每步转移：
+
+```text
+A(t+1) = A(t) - B(t) - S(t) - E(t)
+L(t+1) = L(t) + S(t)
+U(t+1) = U(t) + B(t)
+C(t+1) = C(t) + E(t)
+```
+
+物理、可食和载体账本分别满足 `A + L + C + U = 1`。`E(t)` 只能来自 Feeding Event，不能由释放模块自行设置。`B`、`S`、`R` 的计算仍是 OPEN。
+
+## WD-31｜化学线索单独记账
+
+**状态：BOUNDARY**
+
+化学线索使用独立的累计释放账本 `Q(t)`，满足 `0 ≤ Q(t) ≤ 1`。它不与实体食物共享守恒式，也不默认与实体食物同步释放。
+
+线索可以比实体食物释放得更快或更慢。这种错位是机制的一部分，不是数据错误。
+
+## WD-32｜黏结、比重和水作用不直接写 Retention / Attraction
+
+**状态：BOUNDARY**
+
+黏结、比重、水作用和粒径先改变解体、沉降、漂移、暴露和线索释放，再形成 Feeding Place 状态。它们不能直接写成 `+Retention`、`+Attraction` 或 `+Bite`。
+
+同一物理变化可能同时扩大暴露、缩短留存、改变水层或降低可处理性，最终方向取决于地点、时间和鱼。
+
+## WD-33｜Attraction / Retention 暂不独立成模块
+
+**状态：BOUNDARY**
+
+Attraction 是 encounter / selection 的上位解释词，可由事件派生摘要；Retention 是重复 Feeding Event、Feeding Place 持久性和 Fish Condition 的组合结果。二者当前都不新增独立系数，避免与现有阶段重复计权。
+
+缺口是 Local Population / Residence 和 Overfeeding，应作为独立候选问题处理，而不是塞进 `AttractionCoeff` 或 `RetentionCoeff`。详见 `decisions/attraction-retention-verdict.md`。
+
+## WD-34｜不建立单一 RecipeFit
+
+**状态：BOUNDARY**
+
+四条候选输出分别进入 Response Condition、Response Component 或 Persistent Response Field。最终聚合仍由现有 Response Stage 或其已承接的上游接口完成。
+
+不建立 `RecipeFit = Food + Flavor + Particle + Physical`。`AdaptationCoeff` 公式、组件聚合算子和模式聚合算子仍按对应接口和 Owner / Current 边界处理。映射和顺序见 `candidate/response-aggregation-map.md`。
+
+## WD-35｜端到端工作算法采用单一候选闭环
+
+**状态：ACTIVE CANDIDATE**
+
+本目录的端到端工作算法固定以下顺序，作为实现和反例审查的统一工作基线：
+
+```text
+Bake → Fish Condition → Opportunity(L) → Groundbait State
+→ Feeding Event → Response(C) → candidate weight → Roundtable → Draw
+```
+
+算法层面的默认候选为：
+
+- 同 Target 先合并，再做 Target 级饱和；多 Target 只使用参数化 `AggFood` Candidate 接口，不进入默认 V1 生产接入，直到 WD-26 的 Owner 决定完成。
+- 物理释放采用竞争转移率，实体账本和化学线索账本分离。
+- Fish Condition 使用 Bake baseline，只有逐 Condition 机制 Contract 授权的 runtime overlay 才可叠加；不采用四项通用的有界记忆更新。依据 Issue 161，Activity 不设语义上界，Response 只读。
+- Response 先硬门、后软 Margin，再做有界投影；`Unknown`、`Invalid`、`Reject` 和合法零分开处理。
+- 通用 FCF 候选使用 `SpatialDistributionWeight × AdaptationCoeff`；Proposal C 候选使用 `q = L × C`。两条接口不得叠乘，需在候选类型上显式声明。
+
+这条工作基线不关闭 `conflict-register.md` 中的 Owner ballot，也不把校准参数或缺失的 Current Contract 补造成事实。它的作用是让实现可以继续，而不是替 Owner 完成产品裁定。

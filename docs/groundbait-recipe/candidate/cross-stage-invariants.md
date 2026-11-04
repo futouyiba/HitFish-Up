@@ -31,6 +31,8 @@
 | I-15 | 空鱼是伪候选：参与抽鱼，不进入生成 | 圆桌 |
 | I-16 | 0.3.4.1 空鱼扩张不修改单鱼实鱼权重，不替代现有挤占和裁剪 | 圆桌 |
 | I-17 | 可交换聚合顺序无关；相同输入产生相同输出 | 全链 |
+| I-18 | 通用 `SpatialDistributionWeight × AdaptationCoeff` 与 Proposal C 的 `q = L × C` 是互斥接口，不能未经声明叠乘 | 响应、Opportunity、圆桌 |
+
 
 ## 3. 最小结构反例
 
@@ -45,7 +47,7 @@
 ### 3.2 Groundbait 与响应
 
 - Groundbait 释放改变 Feeding Place State，不直接改变 `AdaptationCoeff`。
-- Flavor 改变发现或选择，不改变尺寸成功。
+- Flavor 改变发现、趋近或 Response 的 Flavor 候选，不改变尺寸成功，也不进入 `selection_m` 动作选择。
 - Particle 状态改变动作可行性或成功，不改变 Cue Exposure。
 - 重复动作路径不增加一次事件收益。
 - 摄食成功后对象仍保留完整价值，视为守恒失败。

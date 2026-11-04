@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Proposal C / 设计图</title>
+  <meta name="description" content="Proposal C 如何把一次实际呈现换算成出手余量，并进入候选留存。">
+  <style>
+    :root {
+      --ink: #12232b;
+      --muted: #566a74;
+      --paper: #eef4f5;
+      --panel: #fbfdfd;
+      --line: #c8d8dc;
+      --teal: #0f5f6b;
+      --teal-soft: #e2f0f2;
+      --sea: #2c7a8a;
+      --sea-soft: #e8f2f4;
+      --clay: #a2572c;
+      --clay-soft: #f8ece3;
+      --moss: #4f6b3a;
+      --moss-soft: #edf2e6;
+      --slate: #5d6a72;
+      --slate-soft: #eceff0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 16px/1.7 "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+    }
+    main { max-width: 1080px; margin: 0 auto; padding: 56px 28px 80px; }
+    header { border-bottom: 1px solid var(--line); padding-bottom: 34px; }
+    .eyebrow { margin: 0 0 14px; color: var(--teal); font: 600 12px/1.2 "IBM Plex Mono", ui-monospace, Menlo, monospace; letter-spacing: .14em; }
+    h1 {
+      margin: 0 0 16px;
+      max-width: 820px;
+      font-family: "Noto Serif SC", "Songti SC", Georgia, serif;
+      font-size: clamp(32px, 4.6vw, 56px);
+      line-height: 1.14;
+      font-weight: 700;
+      letter-spacing: -.01em;
+    }
+    .lede { max-width: 700px; margin: 0; color: var(--muted); font-size: 18px; }
+    h2 {
+      margin: 52px 0 18px;
+      font-family: "Noto Serif SC", "Songti SC", Georgia, serif;
+      font-size: 25px;
+      line-height: 1.25;
+      letter-spacing: -.01em;
+    }
+    h3 { margin: 0 0 6px; font-size: 18px; line-height: 1.3; }
+    p { max-width: 720px; margin: 0 0 14px; }
+    code { font-family: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .92em; }
+
+    /* balance */
+    .balance {
+      margin: 30px 0 8px;
+      padding: 26px 24px 22px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 4px;
+    }
+    .balance-head { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; align-items: baseline; }
+    .balance-title { font-weight: 700; }
+    .balance-note { color: var(--muted); font-size: 13px; }
+    .balance-row { display: grid; grid-template-columns: 1fr 44px 1fr; gap: 0; margin-top: 18px; align-items: stretch; }
+    .balance-col { padding: 14px 16px; border-radius: 3px; }
+    .balance-col.plus { background: var(--sea-soft); border-left: 3px solid var(--sea); }
+    .balance-col.minus { background: var(--clay-soft); border-left: 3px solid var(--clay); }
+    .balance-col h3 { font-size: 13px; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+    .balance-col ul { margin: 8px 0 0; padding: 0; list-style: none; }
+    .balance-col li { padding: 5px 0; border-top: 1px dashed rgba(18,35,43,.12); }
+    .balance-col li:first-child { border-top: 0; }
+    .balance-op { display: flex; align-items: center; justify-content: center; font: 600 22px/1 "IBM Plex Mono", monospace; color: var(--muted); }
+    .gate {
+      margin-top: 16px;
+      padding: 12px 16px;
+      border: 1px dashed var(--teal);
+      border-radius: 3px;
+      background: var(--teal-soft);
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .gate b { color: var(--teal); }
+    .gate span { color: var(--muted); font-size: 14px; }
+
+    /* flow */
+    .flow { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; margin: 20px 0 0; padding: 0; list-style: none; }
+    .flow li.node {
+      flex: 1 1 150px;
+      min-width: 150px;
+      padding: 14px 14px 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-top: 3px solid var(--slate);
+      border-radius: 3px;
+    }
+    .flow li.node b { display: block; font-size: 15px; }
+    .flow li.node span { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .flow li.node.fact { border-top-color: var(--sea); }
+    .flow li.node.interp { border-top-color: var(--teal); }
+    .flow li.node.state { border-top-color: var(--moss); }
+    .flow li.node.margin { border-top-color: var(--clay); }
+    .flow li.node.join { border-top-color: var(--slate); }
+    .flow li.arrow { align-self: center; color: #93a6ad; font-size: 20px; padding: 0 2px; }
+
+    /* table */
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; background: var(--panel); font-size: 15px; }
+    caption { text-align: left; color: var(--muted); font-size: 13px; padding-bottom: 8px; }
+    th, td { text-align: left; vertical-align: top; padding: 11px 12px; border-bottom: 1px solid var(--line); }
+    th { font-size: 13px; letter-spacing: .04em; color: var(--muted); font-weight: 600; background: var(--slate-soft); }
+    tbody tr:last-child td { border-bottom: 0; }
+
+    /* cases */
+    .cases { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 18px; }
+    .case { padding: 18px 18px 16px; background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--teal); border-radius: 3px; }
+    .case.bad { border-left-color: var(--clay); }
+    .case p { margin: 6px 0 0; font-size: 14px; color: var(--muted); }
+    .case .verdict { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--line); font-size: 14px; color: var(--ink); }
+
+    /* status chips */
+    .chips { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin: 18px 0 0; padding: 0; list-style: none; }
+    .chips li { padding: 12px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 3px; }
+    .chips b { display: block; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 13px; }
+    .chips span { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; line-height: 1.45; }
+
+    pre {
+      max-width: 720px;
+      margin: 16px 0;
+      overflow-x: auto;
+      padding: 16px 18px;
+      border-radius: 3px;
+      background: #16303a;
+      color: #e8f1f3;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    pre code { font-size: 14px; }
+    .footnote { margin-top: 46px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; max-width: 760px; }
+
+    @media (max-width: 820px) {
+      main { padding: 34px 18px 56px; }
+      .balance-row { grid-template-columns: 1fr; }
+      .balance-op { padding: 8px 0; }
+      .cases, .chips { grid-template-columns: 1fr; }
+      .flow li.arrow { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <p class="eyebrow">Proposal C / working design</p>
+      <h1>鱼有多愿意出手，取决于还剩多少余量</h1>
+      <p class="lede">一次实际呈现先被解释成猎物和状态，再换算成五个评价项：食物价值、攻击诱因、追赶负担、风险顾虑和摄食意愿门槛。它们的净值决定响应；机会量与响应相乘一次，进入候选。参数仍是 Working，不是生产规则。</p>
+    </header>
+
+    <section aria-labelledby="balance-title">
+      <h2 id="balance-title">出手余量</h2>
+      <div class="balance">
+        <div class="balance-head">
+          <span class="balance-title">值得出手的理由，减去需要承担的代价</span>
+          <span class="balance-note">各子机制先换算到同一标尺，顶层只做竞争</span>
+        </div>
+        <div class="balance-row">
+          <div class="balance-col plus">
+            <h3>增加余量</h3>
+            <ul>
+              <li>食物价值：这个目标本身值不值得吃</li>
+              <li>攻击诱因：当前猎物状态是否额外促使出手</li>
+            </ul>
+          </div>
+          <div class="balance-op" aria-hidden="true">−</div>
+          <div class="balance-col minus">
+            <h3>减少余量</h3>
+            <ul>
+              <li>追赶负担：当前呈现对这条鱼有多难追</li>
+              <li>风险顾虑：当前呈现有多容易露馅</li>
+            </ul>
+          </div>
+        </div>
+        <div class="gate">
+          <b>摄食意愿门槛</b>
+          <span>Motivation 不是奖励项，而是移动出手门槛；极高 Motivation 只额外提供很窄的 tail relief</span>
+        </div>
+      </div>
+      <pre><code>出手余量
+= 食物价值
++ 攻击诱因
+- 追赶负担
+- 风险顾虑
+- 摄食意愿门槛
+
+响应 = clamp(余量 / 0.40, 0, 1)   # Working M0=0, M1=0.40</code></pre>
+      <p>预测困难当前不在第一版主体内。它是否值得作为独立局部代价，留待证明：只有在控制其它因素后仍能产生稳定排序，才重新加入。</p>
+    </section>
+
+    <section aria-labelledby="flow-title">
+      <h2 id="flow-title">从呈现到候选</h2>
+      <ol class="flow">
+        <li class="node fact"><b>实际呈现</b><span>位置、轨迹、速度、停顿、环境关系，带来源和状态</span></li>
+        <li class="arrow" aria-hidden="true">→</li>
+        <li class="node interp"><b>猎物解释</b><span>support 是贡献保留比例，不是概率</span></li>
+        <li class="arrow" aria-hidden="true">→</li>
+        <li class="node state"><b>呈现状态</b><span>状态维度、事件、时序，以及 TriggerIntensity</span></li>
+        <li class="arrow" aria-hidden="true">→</li>
+        <li class="node margin"><b>出手余量</b><span>五个评价项在同一标尺上竞争</span></li>
+        <li class="arrow" aria-hidden="true">→</li>
+        <li class="node margin"><b>条件响应</b><span>单方向：按“鱼在追拟饵”估算，不跨方位平均</span></li>
+        <li class="arrow" aria-hidden="true">→</li>
+        <li class="node join"><b>机会接入</b><span>L 归 Opportunity（Spatial 提供空间事实）；q = L × C，只乘一次</span></li>
+      </ol>
+    </section>
+
+    <section aria-labelledby="support-title">
+      <h2 id="support-title">支持度怎么合成</h2>
+      <p>每份证据有自己的形态基值，动态路径只在基值与上限之间插值；同一猎物的多份证据取最强，不逐个相加。</p>
+      <pre><code>sat(x)   = min(1, max(0, x))
+路径分数 = 基值 + (上限 − 基值) × sat(动态匹配)
+一份证据 = max(基值, 各路径分数)
+某类猎物 = max(各适用证据)
+
+例：裙丝 Jig + 鱼形 T 尾，近底移动
+小鱼   = max(裙丝 0.40, 鱼形 0.90) = 0.90
+小龙虾 = 裙丝 0.40 + (0.75 − 0.40) × 1.0 = 0.75</code></pre>
+      <p>缺记录不是零：若裙丝展开变化未取得，小龙虾支持停在已观测范围 <code>[0.40, 0.75]</code>，按 <code>Unknown</code> 处理，该分支跳过；小鱼的 0.90 已闭合，不受影响。未评价的猎物类型保持未覆盖，也不自动填零。</p>
+    </section>
+
+    <section aria-labelledby="items-title">
+      <h2 id="items-title">每一项购买什么策略</h2>
+      <table>
+        <caption>鱼情变化改变收益和代价，玩家因此换打法，而不是只换一个系数</caption>
+        <thead>
+          <tr><th scope="col">评价项</th><th scope="col">回答的问题</th><th scope="col">玩家选择</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>食物价值</td><td>这个目标本身值不值得吃</td><td>广谱泛用，还是高匹配专攻</td></tr>
+          <tr><td>攻击诱因</td><td>当前猎物状态是否额外促使出手</td><td>普通自然呈现，还是强诱因反应口</td></tr>
+          <tr><td>追赶负担</td><td>当前呈现对这条鱼有多难追</td><td>快速搜索，还是慢速精细</td></tr>
+          <tr><td>风险顾虑</td><td>当前呈现有多容易露馅</td><td>直接强势，还是隐蔽自然</td></tr>
+          <tr><td>摄食意愿</td><td>现在需要多强的理由才愿意出手</td><td>门槛高低决定普通口够不够用</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section aria-labelledby="formulas-title">
+      <h2 id="formulas-title">每项怎么算</h2>
+      <table>
+        <caption>Working 形式；系数与 tail 参数仍待标定</caption>
+        <thead>
+          <tr><th scope="col">评价项</th><th scope="col">Working 合成</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>食物价值</td><td><code>clamp(BaseDietAffinity + SizePreferenceAdjustment + DietaryShiftDelta, 0, 1)</code></td></tr>
+          <tr><td>攻击诱因</td><td><code>TriggerBudget × TriggerIntensity</code>，预算约 0.10~0.15</td></tr>
+          <tr><td>追赶负担</td><td><code>K_close × q² × ActivityCostMultiplier</code>；第一版按“鱼在追拟饵”单方向估算，Working <code>K_close = 0.19</code></td></tr>
+          <tr><td>风险顾虑</td><td><code>K_wary × Wariness × SuspicionLoad</code></td></tr>
+          <tr><td>摄食意愿门槛</td><td><code>M ≤ 0.8: 0.60 − 0.40M</code>；<code>M &gt; 0.8</code> 再减 <code>0.50(M − 0.8)</code></td></tr>
+        </tbody>
+      </table>
+      <p>食物价值不用多个匿名乘数连乘；活动度只改追赶倍率，不改速度上限；风险顾虑只放大已解析的可疑线索，没有线索就不凭空处罚。</p>
+    </section>
+
+    <section aria-labelledby="chain-title">
+      <h2 id="chain-title">从余量到候选</h2>
+      <pre><code>C        = clamp(余量 / 0.40, 0, 1)      # 单方向：鱼在追拟饵
+C_prey   = support × C
+C_feed   = max(已解析分支)               # sibling 取最大
+q        = L × C                          # 只乘一次，进入候选</code></pre>
+      <p>未解析分支跳过并记录；全部 sibling 都未解析时保持 ResolutionIncomplete，不进入 roll。不能拿未解析分支当 0。机会量 <code>L</code> 由机会侧给出，时间与停留只影响 <code>L</code>，不回写余量。</p>
+    </section>
+
+    <section aria-labelledby="algorithm-title">
+      <h2 id="algorithm-title">端到端算法</h2>
+      <pre><code>响应(presentation, assembly, castSnapshot, opportunity):
+  校验帧、版本、快照（一竿一快照）
+  supports = 猎物解释(presentation, assembly)
+  对每个 sibling family:
+      state    = 状态提取 + TriggerIntensity
+      margin   = 食物价值 + 攻击诱因 - 追赶负担 - 风险顾虑 - 门槛
+      C        = clamp(余量 / 0.40)
+      C_prey   = support × C
+  C_feed = max(已解析 C_prey)      # 未解析分支跳过并记录
+  q      = L × C_feed</code></pre>
+      <p>状态优先级：<code>Reject</code> 先于 <code>InvalidInput</code>，再于 <code>NotConfigured</code>、<code>Unknown</code>、<code>Resolved</code>。任一必需输入缺失或过期，输出 <code>ResolutionIncomplete</code>，不回填默认值。</p>
+    </section>
+
+    <section aria-labelledby="status-title">
+      <h2 id="status-title">状态不是零</h2>
+      <ul class="chips">
+        <li><b>Unknown</b><span>必要事实缺失，结果可能改变。</span></li>
+        <li><b>NotConfigured</b><span>规则或归属方不存在。</span></li>
+        <li><b>NoMatch</b><span>规则已检查，没有命中；规则给出数值零才是零，否则保持非数值。</span></li>
+        <li><b>ResolutionIncomplete</b><span>归约仍不能形成最终标量。</span></li>
+        <li><b>ResolvedNonResponsive</b><span>输入完整，结果为零。</span></li>
+        <li><b>ResolvedResponsive</b><span>输入完整，结果为正响应。</span></li>
+        <li><b>Reject</b><span>类型硬边界，不进入连续计算，也不写成超大 cost。</span></li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="cases-title">
+      <h2 id="cases-title">四个能反驳错误实现的案例</h2>
+      <div class="cases">
+        <article class="case">
+          <h3>兄弟解释取最大</h3>
+          <p>小鱼 <code>0.80</code> 已解析，小龙虾未解析。取最大得到 <code>C_feed = 0.80</code>，并记录小龙虾分支未解析。</p>
+          <p class="verdict">若全部 sibling 都未解析，就必须保持 ResolutionIncomplete；不能把未解析分支当作 0 参与比较。</p>
+        </article>
+        <article class="case bad">
+          <h3>快速搜索的收益不在响应里</h3>
+          <p>快速搜索提高的是单位时间覆盖，不是单次遭遇的响应。它的代价由追赶负担、风险顾虑和机会量表达。</p>
+          <p class="verdict">若在响应里加搜索奖励，就会和覆盖收益重复计权。</p>
+        </article>
+        <article class="case">
+          <h3>垂直运动归机会</h3>
+          <p>垂直 jigging 的水平相对速度接近零，Closing 几乎不增加负担；垂直运动按候选边界交给机会侧，通过“多久处在可交互区域”影响 <code>L</code>。该 seam 的正式 owner 尚未落仓。</p>
+          <p class="verdict">不要虚构 3D 鱼方位把它塞进 Closing。</p>
+        </article>
+        <article class="case bad">
+          <h3>攻击诱因不能免费</h3>
+          <p>低摄食意愿下换用强逃逸样呈现，诱因帮助跨线，但追随难度和机械暴露的代价由已有机制产生。</p>
+          <p class="verdict">只加诱因不加代价，会退化成固定最优解。</p>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="closure-title">
+      <h2 id="closure-title">第一轮玩法闭合结果</h2>
+      <ul>
+        <li>攻击诱因只准入逃逸样；受伤挣扎与失衡样虚弱仍未闭合（CandidateUnresolved）；停顿本身不作为触发。</li>
+        <li>风险顾虑只立装备显眼度（TackleConspicuousness），可后置实现；实现前 <code>RiskCost</code> 为 0。</li>
+        <li>反应口策略成立；快搜与隐蔽只完成一半，另一半代价需要机会量 <code>L</code> 或外部成本。</li>
+        <li><code>CapacityModifier</code> 已从 active design 删除；Prediction 标为 Deferred；<code>L</code> 归 Opportunity。</li>
+        <li>Fish Condition 采用 Bake baseline + 仅授权的 runtime overlay；当前只有 Wariness 有累积依据。</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="open-title">
+      <h2 id="open-title">还没有收口的部分</h2>
+      <ul>
+        <li>四个 Fish Condition 的正式机制 Contract：上游 cause、曲线与标定；</li>
+        <li>Wariness runtime overlay 的事件、粒度、衰减与会话边界；</li>
+        <li>DEF baseline block 的序列化、版本与校验实现；</li>
+        <li>Opportunity 侧 <code>L</code> 的 reducer 与生产实现；</li>
+        <li>生产标定：tail 起点、触发器预算、追赶快慢的系数、机会分布护栏；</li>
+        <li>main 窝料文档按 #161 的三处对齐。</li>
+      </ul>
+    </section>
+
+    <p class="footnote">口径来源：<code>docs/lure-response-joint-evaluation</code> 的 Working Closure，按 <code>311ae70d</code> 快照核对；该分支在此之后持续更新。本文与设计骨架、语义契约、呈现解释与状态契约、五评价项契约、响应与机会契约、端到端算法、Fish Condition 契约、回归矩阵同属 Proposal C 设计包，不替代已审核的 Current Contract。</p>
+  </main>
+</body>
+</html>

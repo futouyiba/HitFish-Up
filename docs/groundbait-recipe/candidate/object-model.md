@@ -112,10 +112,10 @@ Fish State
 
 | 量 / 状态 | 生产者 | 主要消费者 | 所属阶段 | 当前状态 |
 |---|---|---|---|---|
-| Food Identity | Recipe / Ingredient Facts | 鱼侧目标选择与对象价值 | 配方事实 → Feeding Event | Candidate |
+| Food Identity | Recipe / Ingredient Facts | Response 的唯一 Food 输入或对象价值 | 配方事实 → Response / Feeding Event | Candidate |
 | edible particle fraction | Ingredient Facts + Particle Object | Size Response / Edible Utilization | Groundbait → Size | Candidate |
 | carrier particle fraction | Ingredient Facts + Particle Object | Physical Release | Groundbait → Release | Candidate |
-| Cue Exposure / Field | Ingredient + Physical Release | 发现、趋近、回避与选择 | Feeding Place | Candidate |
+| Cue Exposure / Field | Ingredient + Physical Release | Encounter / 趋近、回避与 Response 的 Flavor 候选 | Feeding Place | Candidate |
 | effective_size | Particle Object / Object State | 动作可行性与动作成功 | Feeding Event | Candidate |
 | shape / hardness / cohesion | Particle Object / Object State | 捕获、保留、处理 | Feeding Event | OPEN / Candidate |
 | contactable object set | Physical Release + place state | Encounter / Feeding Event | Feeding Place | Candidate |

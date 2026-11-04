@@ -17,6 +17,8 @@
 
 术语同时写明：更新公式、时间粒度与下游消费关系由对应机制 Contract 定义。仓内目前没有这些公式。
 
+Fish Condition 的工作更新算法见 [`end-to-end-algorithm.md`](end-to-end-algorithm.md) §4。该算法只是 Candidate / Working Algorithm；时间尺度、cause 输入、生命周期和生产字段仍需对应 Owner / Current Contract 收口。
+
 ## 2. 状态位置
 
 ```text
@@ -37,14 +39,14 @@ Fish Condition 是状态，不是分数。它描述鱼现在处于什么状态�
 |---|---|---|
 | 环境烘焙 | 不读取 | 不能把 Fish Condition 当作环境条件重新烘焙 |
 | Response | Activity、Feeding Motivation、Diet Shift、Wariness | 不能把 Fish Condition 直接当作最终权重 |
-| Feeding Event（候选） | Activity、Feeding Motivation、Wariness | 不能把 Fish Condition 当作动作能力或对象约束 |
+| Feeding Event（候选） | 不直接消费 Fish Condition 数值；仅保留候选边界和事件结构 | 未获对应 Condition Contract 授权前，不读取 Wariness 等数值；不能把 Fish Condition 当作动作能力或对象约束 |
 | 圆桌 | 不直接读取 | 不能把鱼况乘进候选权重 |
 | Fish AI | Activity（边界） | 不在本仓定义具体消费公式 |
 
 ## 4. 与窝料、Food、Flavor 的边界
 
 - 窝料产生 Feeding Place State，不直接写 `Activity`、`Feeding Motivation`、`Diet Shift`、`Wariness`。
-- Food 和 Flavor 的 Exposure 影响发现、趋近、选择，不直接写 Diet Shift。
+- Food 和 Flavor 的 Exposure 影响发现、趋近或 Response 候选，不直接写 Diet Shift。
 - 如果未来要表达持续摄食改变鱼况，必须单独定义时间、记忆和衰减，不在本页隐含发生。
 - 天气、时段等环境输入优先进入现有 Fish Condition 语义，不转换成简单的味型密码。
 
@@ -59,7 +61,7 @@ Fish Condition 是状态，不是分数。它描述鱼现在处于什么状态�
 
 - 影响鱼是否愿意响应和摄食。
 - 与 Food / Flavor 的边界：Food 和 Flavor 描述刺激，Feeding Motivation 描述鱼当前的意愿；刺激不直接改写意愿。
-- 在 Feeding Event 中，它影响动作选择或更上层的响应，不影响对象尺寸约束。
+- 当前只按已声明的 Response 接口消费；若未来 Feeding Event 获得独立机制授权，才可讨论动作选择消费，不影响对象尺寸约束。
 
 ### 5.3 Diet Shift
 
@@ -76,10 +78,10 @@ Fish Condition 是状态，不是分数。它描述鱼现在处于什么状态�
 ## 6. 与现有术语的缺口
 
 - `Feeding Readiness` 在候选文档中出现，但术语表没有定义。未裁定前，它只作为描述性说法，不作为独立状态落 Schema。
-- Fish Condition 的更新公式、时间粒度、记忆和衰减没有落仓。
+- Fish Condition 的 baseline 载体已由 [Issue #161](https://github.com/futouyiba/HitFish-Up/issues/161) 定为 DEF 条件组下的 snapshot / block；更新公式、时间粒度、记忆和衰减仍未落仓。当前只有 Wariness 具备 runtime overlay 的语义依据；具体运行时更新仍须由 Wariness 机制 Contract 授权，并闭合事件来源、粒度、衰减、有效期和会话记忆。Activity、Feeding Motivation、Diet Shift 不自动获得 runtime 更新。
 - Fish Condition 是否随地点、条件组或鱼个体变化，没有落仓。
 
-以上登记在 `decisions/conflict-register.md` 的 C-12、C-13、C-14。
+以上登记在 `decisions/conflict-register.md` 的 C-12a1、C-12a2、C-12a3、C-12b、C-13a、C-13b、C-14。
 
 ## 7. 最小结构反例
 

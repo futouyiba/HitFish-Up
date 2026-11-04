@@ -1,75 +1,56 @@
-import math
+"""Proposal C probe: soft closing cost shape without a latent bearing.
+
+2026-10-30 direction: the first version assumes the fish is chasing the lure,
+so closing cost is K_close * q^2 * activity with no angle average.
+
+What this probe can prove:
+- cost stays finite above the structural speed scale (the old q >= 1 hard gate
+  is withdrawn);
+- response falls monotonically as the speed ratio rises;
+- cost is linear in the activity multiplier;
+- higher convex powers buy limited extra separation at low utilisation.
+
+What it cannot prove: production K_close, real pursuit geometry.
+
+Run: python3 -I prototypes/lure-response/proposal_c_closing_cost_shape_probe.py
+"""
 
 
-def u_close(q: float, theta: float) -> float:
-    return max(0.0, q * math.cos(theta))
+def closing_cost(q: float, k_close: float = 1.0, power: int = 2, activity: float = 1.0) -> float:
+    return k_close * max(0.0, q) ** power * activity
 
 
-def closing_cost(u: float, k_close: float = 1.0, power: int = 2) -> float:
-    # Soft Closing: `u_close >= 1 -> hard infeasible` is withdrawn, so cost
-    # keeps its power-law shape past the structural speed scale. A margin clamp
-    # may still drive the response to zero; that is not an angle-local gate.
-    return k_close * (u ** power)
-
-
-def angle_response(q: float, theta: float, k_close: float = 1.0, power: int = 2) -> float:
-    # Probe-only response: margin = 1 - cost, clipped.
-    return max(0.0, min(1.0, 1.0 - closing_cost(u_close(q, theta), k_close, power)))
-
-
-def angle_average_response(
-    q: float, power: int, k_close: float = 1.0, samples: int = 7200
-) -> float:
-    total = 0.0
-    for i in range(samples):
-        theta = -math.pi + (2 * math.pi) * (i + 0.5) / samples
-        total += angle_response(q, theta, k_close, power)
-    return total / samples
-
-
-def radial_overload_share(q: float, samples: int = 7200) -> float:
-    """Diagnostic only: share of bearings above the structural speed scale."""
-    overloaded = 0
-    for i in range(samples):
-        theta = -math.pi + (2 * math.pi) * (i + 0.5) / samples
-        if u_close(q, theta) >= 1.0:
-            overloaded += 1
-    return overloaded / samples
+def response(q: float, k_close: float = 1.0, power: int = 2, activity: float = 1.0) -> float:
+    """Shape fixture: margin = 1 - cost, clipped to [0, 1]."""
+    return max(0.0, min(1.0, 1.0 - closing_cost(q, k_close, power, activity)))
 
 
 if __name__ == "__main__":
-    qs = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0]
+    qs = [0.0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 2.0]
     for q in qs:
-        vals = {p: angle_average_response(q, p) for p in (1, 2, 4)}
-        print(q, radial_overload_share(q), vals)
+        print(q, {p: round(response(q, 1.0, p), 4) for p in (1, 2, 4)})
 
     # The old `u_close >= 1 -> hard infeasible` rule is withdrawn. Cost stays
-    # finite and keeps its power-law shape above the structural speed scale.
+    # finite and keeps its power-law shape past the structural speed scale; a
+    # margin clamp may still drive response to zero, but that is not a gate.
     assert closing_cost(1.0, 1.0, 2) == 1.0
     assert closing_cost(1.5, 1.0, 2) == 2.25
     assert closing_cost(2.0, 1.0, 2) == 4.0
 
-    # With a sub-unit K_close fixture, a bearing past u_close == 1 still gets a
-    # nonzero response. The withdrawn hard gate would have forced it to zero.
-    # The 0.25 is a shape fixture here, not a production anchor.
-    assert abs(angle_response(1.5, 0.0, k_close=0.25, power=2) - 0.4375) < 1e-12
-    assert angle_response(1.5, 0.0, k_close=0.25, power=2) > 0.0
+    # Response decreases monotonically with the speed ratio.
+    for power in (1, 2, 4):
+        values = [response(q, 0.76, power) for q in qs]
+        assert all(a >= b for a, b in zip(values, values[1:]))
 
-    # Whole-mode response is not zero merely because q > 1.
-    assert angle_average_response(1.5, 2) > 0.0
+    # Convex forms are more permissive at low utilisation than linear.
+    assert response(0.5, 1.0, 2) > response(0.5, 1.0, 1)
+    assert response(0.5, 1.0, 4) > response(0.5, 1.0, 2)
 
-    # Convex forms are more permissive at low utilization than linear.
-    assert angle_average_response(0.5, 2) > angle_average_response(0.5, 1)
-    assert angle_average_response(0.5, 4) > angle_average_response(0.5, 2)
+    # With a sub-unit K_close fixture, q > 1 still yields non-zero response.
+    assert response(1.5, 0.25, 2) > 0.0
+    assert response(1.5, 0.25, 2) == 1.0 - 0.25 * 2.25
 
-    # A stronger retrieve lowers the average response. The overload share is a
-    # diagnostic, not a feasibility gate.
-    assert angle_average_response(2.0, 2) < angle_average_response(1.5, 2)
-    assert radial_overload_share(2.0) > radial_overload_share(1.5) > 0.0
-
-    # Higher powers buy limited additional separation in the q > 1 regime,
-    # entirely through the soft cost shape.
-    d24 = abs(angle_average_response(1.5, 2) - angle_average_response(1.5, 4))
-    assert d24 < 0.1
+    # Cost scales linearly with the activity multiplier.
+    assert closing_cost(0.8, 0.76, 2, 2.0) == 2.0 * closing_cost(0.8, 0.76, 2, 1.0)
 
     print("PASS")

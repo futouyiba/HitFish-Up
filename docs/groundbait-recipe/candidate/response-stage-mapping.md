@@ -4,7 +4,11 @@
 > 日期：2026-10-29
 > 权威边界：本页只做候选接口映射，不修改 `docs/terminology.md`，不定义 `Adaptation Coefficient` 或 `Persistent Response Field` 的新 Schema。
 
+最终聚合映射和求值顺序见 `response-aggregation-map.md`。
+
 ## 1. 现有 Current 语义
+
+Proposal C 的上游 Owner 裁定记录在 PR [#130](https://github.com/futouyiba/HitFish-Up/pull/130) 的提交 `5caf1f119ab6e5a5c595a4ba913e7962aa338ec3`。截至 2026-10-30，该记录仍未合并到 `main`，因此本页只按它作为 Proposal C 的 Working 上游约束，不将其写成 Current Contract。与本页交叉的 Opportunity、Risk、Prediction、Capacity 和 `L` owner 边界不得在 Groundbait 中重复投票；本页其余接口仍保持 Candidate / OPEN。
 
 仓内术语将响应阶段描述为：
 

@@ -129,7 +129,7 @@ Time
 - 有明确 trace；
 - 不与圆桌处的乘法重复计权。
 
-该规则对应冲突登记 C-04 与 Response Current 的待决问题。
+该规则对应冲突登记 C-04a、C-04b 与 Response Current 的待决问题。
 
 ## 8. 与 Groundbait Candidate 的接口
 

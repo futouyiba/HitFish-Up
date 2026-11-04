@@ -17,7 +17,7 @@ Flavor 只回答：
 - 雾化、沉降或留存；
 - 最终中鱼概率。
 
-Flavor 可以进入 Feeding Event 的发现、趋近、选择或回避，不进入动作可行性、动作成功、环境权重或圆桌竞争。
+Flavor 当前可以影响 `encounter`、趋近、回避候选和 Response 的 Flavor 输入，不在 Feeding Event 的 `selection_m` 动作选择中再次消费 Chemical Cue。
 
 ## 2. 两条分支
 
@@ -172,8 +172,9 @@ FlavorResponse_B = F(fish, FlavorComposition, FlavorIntensity, Avoidance)
 Flavor 可以影响：
 
 - `encounter`：鱼是否可能发现或接近；
-- `selection`：鱼更愿意尝试哪个对象；
-- `avoidance`：显式排斥时压低响应。
+- Response 的 Flavor 候选：正向线索、排斥候选及其 provenance。
+
+当前工作候选不在 `selection_m` 动作选择中再次消费 Chemical Cue。若未来 Owner 选择让 Flavor 直接影响动作选择，必须关闭对应的 Response 消费路径并补充 provenance / 去重规则。
 
 Flavor 不直接影响：
 
@@ -229,3 +230,13 @@ GARLIC = AVOID
 - 小药的剂量上限、成本、衰减和持续时间。
 - Overdose 与天生 Avoidance 是否首版同时建模。
 - `Diet Shift` 是否改变签名关系，时间尺度多大。
+
+## 11. 离散槽位与钩饵背景的限制（2026-11-04）
+
+用户当前选择离散槽位，不要求连续百分比。这不关闭底层剂量：模板仍需固定用量与成本；不能把每个槽位视为相同固体质量。
+
+集合分支有一个已暴露的玩法退化：任意正剂量都可把签名加入并集，0.001与1得到相同类型效果。有限槽位和标准剂量可以阻断玩家自行无限微量加料，但不会使集合具备剂量策略。不要暗加“最低有效浓度”阈值，这仍是 C-02 magnitude 准入问题。
+
+同味窝料与钩饵不自动获奖，不同味也不自动形成对比加成。同一语义的签名解析去重一次，来源仍分别留存。跨来源如何消费见 [钩饵与窝料](hookbait-groundbait-combination.md)；当前 Probe 只解析标签，不把 AVOID 强制变成 Reject 或数值零。
+
+欧鳊蒜面团/奶渣面团是待验证的完整场景，不是已核实物种偏好。本轮科学检索与RF4原帖获取均未取得可回读正文，因此不输出真实排序。嗅觉发现、味觉接受、最终吞食应分开提出证据；不能用“鱼能闻到”推导“某鱼偏爱蒜”。

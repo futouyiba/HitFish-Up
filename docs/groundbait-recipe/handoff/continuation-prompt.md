@@ -42,15 +42,11 @@ Recipe Facts
 - Physical Release 的产物是 Feeding Place 状态，不是 `release_score`；
 - 粒径既可作为鱼侧对象属性，也可作为物理对象属性，两个影响必须经不同中间状态进入，不能跨链总加权。
 
-当前工作项：
+当前状态：
 
-Step 0 完成：Size 前置语义闭合。
-Step 1 完成：`candidate/edible-size-gold-fixture.md`。
-Step 2 完成：`candidate/particle-distribution.md` 的 Ingredient → 配方分布、配方分布 → Feeding Place、守恒账本和载体隔离。
-Step 3 完成：`candidate/food-aggregation.md` 的同 Target 合并、Target 级饱和和多 Target 聚合边界；多 Target 算子仍为 OPEN。
-Step 4 完成：`candidate/flavor-and-avoidance.md` 的类型集合分支、小药成本和稀疏 Avoidance；连续强度分支仍阻塞。
+候选链已在接口层闭合。Size、Food、Flavor、Physical Release、Attraction / Retention 的 Candidate 判断和 Response Aggregation 映射都已落文档。
 
-下一步是 Step 5 Physical Release。进入前先确认是否继续；不自动进入 Attraction、Retention 或完整 Recipe Grammar。
+剩余工作是 Owner 决策和数值公式：`AdaptationCoeff`、组件聚合、模式聚合、多 Target 算子、化学强度准入、Local Population / Residence、Overfeeding，以及冲突登记里的 OPEN 项。
 
 如果讨论开始扩张到 Attraction、Retention、Recipe Grammar、Food Taxonomy 或 Flavor Taxonomy，就停下来，说明已经偏离当前工作项。
 

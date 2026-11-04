@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>响应系统思路：提案思路同步｜2026-10-30 会议版</title>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--ink:#172033;--muted:#667085;--line:#d9e0e8;--blue:#2f6fed;--bsoft:#eaf1ff;--green:#23875d;--gsoft:#eaf7f1;--purple:#7754b3;--psoft:#f2ecfb;--orange:#c96d19;--osoft:#fff2e5;--red:#b54747;--rsoft:#fdecec;--shadow:0 8px 26px rgba(20,34,55,.08)}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#f8fafc,#eef2f6);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.65}.page{max-width:1220px;margin:auto;padding:36px 22px 70px}.hero{background:linear-gradient(135deg,#101828,#203a59 62%,#265d87);color:#fff;border-radius:26px;padding:40px 44px;box-shadow:var(--shadow)}.hero h1{font-size:38px;line-height:1.18;margin:6px 0 12px}.hero p{margin:0;color:#dbe6f2;font-size:18px;max-width:930px}.eyebrow{font-size:13px;opacity:.75;letter-spacing:.08em}.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}.badge{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);font-size:13px}section{margin-top:32px}.title{font-size:27px;margin:0 0 8px}.lead{margin:0 0 17px;color:var(--muted)}.grid{display:grid;gap:15px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.card{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:19px;box-shadow:var(--shadow)}.card h3{margin:0 0 7px;font-size:18px}.card p{margin:0;color:var(--muted)}.tag{display:inline-block;font-size:12px;font-weight:800;padding:4px 8px;border-radius:999px;margin-bottom:8px}.blue{background:var(--bsoft);color:var(--blue)}.green{background:var(--gsoft);color:var(--green)}.purple{background:var(--psoft);color:var(--purple)}.orange{background:var(--osoft);color:var(--orange)}.red{background:var(--rsoft);color:var(--red)}.callout{background:var(--bsoft);border-left:5px solid var(--blue);border-radius:14px;padding:17px 19px}.formula{background:#111827;color:#e8eef7;border-radius:16px;padding:20px 22px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}.table{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:1px solid var(--line);border-radius:15px;overflow:hidden}.table th,.table td{padding:12px 13px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);vertical-align:top;text-align:left}.table th{background:#f8fafc;color:#475467;font-size:13px}.table th:last-child,.table td:last-child{border-right:0}.table tr:last-child td{border-bottom:0}.arch{background:#f9fbfd;border:1px solid var(--line);border-radius:20px;padding:14px;overflow:auto}.arch svg{display:block;width:100%;min-width:1020px;height:auto}.arch text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}.box{fill:#fff;stroke:#ccd6e3;stroke-width:1.5}.input{fill:#eaf1ff;stroke:#93b4fb}.interp{fill:#ede4fb;stroke:#7754b3;stroke-width:2}.fish{fill:#eaf7f1;stroke:#98cdb5}.resp{fill:#fff2e5;stroke:#e1b37f}.out{fill:#fdecec;stroke:#d8a6a6}.group{fill:#f8fafc;stroke:#cfd7e3;stroke-width:1.4;stroke-dasharray:7 6}.label{font-size:17px;font-weight:800;fill:#172033}.small{font-size:13px;fill:#667085}.arrow{stroke:#7d8ca3;stroke-width:2;fill:none;marker-end:url(#arr)}.foot{margin-top:40px;color:var(--muted);font-size:13px;text-align:center}@media(max-width:900px){.g2,.g3,.g4{grid-template-columns:1fr}.hero{padding:31px 25px}.hero h1{font-size:31px}}
+</style>
+</head>
+<body><div class="page">
+<header class="hero">
+<div class="eyebrow">提案思路同步 · 会议对齐草案 · 2026-10-30</div>
+<h1>响应系统思路：提案思路同步</h1>
+<p>这次先把路亚的姿态操作讲清楚；饵料混合与打窝后续单独讲。可复用的是分层原则，不是路亚公式。</p>
+<div class="badges"><span class="badge">先看三块响应</span><span class="badge">再看 4 个玩家选择</span><span class="badge">推出 5 个评价问题</span></div>
+</header>
+
+<div class="callout" style="margin-top:18px"><strong>状态边界：</strong>会议对齐草案，不是现行契约，不是生产参数。<strong>三项方向已由 PR #171（合并提交 <code>ad2ccb5f</code>）回写进设计包与 probe</strong>：去掉相对方位 θ、同级猎物解释取最大、一竿一鱼况快照。<strong>终端钓组显眼度聚合仍是会议候选</strong>，字段与 owner 未落地，<code>RiskCost = 0</code>。</div>
+
+<section>
+<h2 class="title">0. 响应不是一个模块，是三类问题</h2>
+<p class="lead">不同钓法主要落在不同的块上；这次会议只讲路亚的姿态操作。</p>
+<div class="grid g3">
+<div class="card"><span class="tag green">饵料混合</span><h3>配方、味型、状态、混合比例</h3><p>台钓、浮钓的重点。</p></div>
+<div class="card"><span class="tag blue">姿态操作</span><h3>当前这一竿的姿态、运动与即时呈现</h3><p>路亚的重点。</p></div>
+<div class="card"><span class="tag purple">打窝</span><h3>持续一段时间的窝料影响</h3><p>形成窝点；与饵料混合分开。</p></div>
+</div>
+<table class="table" style="margin-top:16px"><thead><tr><th>钓法</th><th>主要落在哪块</th><th>典型内容</th></tr></thead><tbody>
+<tr><td><strong>路亚</strong></td><td><strong>姿态操作</strong></td><td>拟饵像什么、怎么游、速度、停顿、逃逸样、终端钓组是否显眼</td></tr>
+<tr><td><strong>台钓</strong></td><td><strong>饵料混合为主，打窝为辅</strong></td><td>饵料配方、味型、状态、混合比例；补窝改变窝点</td></tr>
+<tr><td><strong>浮钓</strong></td><td><strong>饵料混合与即时呈现</strong></td><td>饵料状态、水层、漂流；涉及窝料时接打窝</td></tr>
+</tbody></table>
+<div class="callout" style="margin-top:16px"><strong>本轮范围：</strong>先闭合路亚的姿态操作。饵料混合与打窝后续单独讲；可复用的是“先解释、再评价”的分层原则，不是路亚公式。</div>
+</section>
+
+<section>
+<h2 class="title">1. 玩家实际在做的 4 个选择</h2>
+<p class="lead">响应必须让玩家在不同鱼情下真的有理由换打法。</p>
+<div class="grid g2">
+<div class="card"><span class="tag blue">选什么</span><h3>泛用，还是专精匹配？</h3><p>食性没有明显偏向时，泛用饵仍有竞争力；偏向某类猎物时，专精匹配值得换上去。玩家选的是换不换饵、换成什么。</p></div>
+<div class="card"><span class="tag green">搜多快</span><h3>快搜，还是慢钓？</h3><p>适合追时，快速搜索的局部响应仍可接受；不适合追时，高速明显吃亏。玩家选的是什么时候快搜、什么时候降速。</p></div>
+<div class="card"><span class="tag orange">反应口</span><h3>自然呈现，还是反应口？</h3><p>自然呈现已经合理但摄食动机低时，逃逸样等猎物状态可以额外促发捕食动作。玩家选的是什么时候值得做反应口。</p></div>
+<div class="card"><span class="tag red">隐蔽性</span><h3>直接，还是隐蔽？</h3><p>低警戒时可以更直接；高警戒时，前导线、钩、别针等终端钓组过于显眼应付出更高代价。玩家选的是什么时候为隐蔽付成本。</p></div>
+</div>
+</section>
+
+<section>
+<h2 class="title">2. 从这 4 个选择，推出我们需要 5 个评价问题</h2>
+<table class="table"><thead><tr><th>玩家选择</th><th>要回答的问题</th><th>落到哪个评价项</th></tr></thead><tbody>
+<tr><td>泛用还是专精</td><td>这个目标本身值不值得吃</td><td><strong>食物价值</strong></td></tr>
+<tr><td>快搜还是慢钓</td><td>当前呈现对这条鱼有多难追</td><td><strong>追赶负担</strong></td></tr>
+<tr><td>自然还是反应口</td><td>当前猎物状态是否额外促发出手</td><td><strong>攻击诱因</strong></td></tr>
+<tr><td>直接还是隐蔽</td><td>这次呈现有多容易露馅</td><td><strong>风险顾虑</strong></td></tr>
+<tr><td>共同前提</td><td>现在需要多强的理由才出手</td><td><strong>摄食意愿门槛</strong></td></tr>
+</tbody></table>
+<div class="formula" style="margin-top:15px">出手余量<br>= 食物价值<br>+ 攻击诱因<br>− 追赶负担<br>− 风险顾虑<br>− 摄食意愿门槛<br><br>出手余量 → 适配系数 C，且 0 ≤ C ≤ 1</div>
+<p class="lead" style="margin-top:13px">攻击诱因再强，也只能把适配系数推到 1，不会反过来放大基础鱼权重。</p>
+</section>
+
+<section>
+<h2 class="title">3. 系统怎么走：先解释，再评价，最后乘机会</h2>
+<div class="grid g3">
+<div class="card"><span class="tag purple">第一步</span><h3>拆共同事实</h3><p>速度、轨迹、姿态、水层、部件动作；先不判断“它是什么”。</p></div>
+<div class="card"><span class="tag purple">第二步</span><h3>每种猎物分别解释</h3><p>每个解释器回答两件事：有多像（表达支持度）；按这种猎物看现在在干什么（当前状态）。</p></div>
+<div class="card"><span class="tag orange">第三步</span><h3>鱼侧评价，按解释分别算</h3><p>每种解释分别评价五项、投影出条件响应，再乘该解释的表达支持度；多个同级解释取最大，最后与机会量 L 相乘一次。</p></div>
+</div>
+<div class="arch" style="margin-top:15px"><svg viewBox="0 0 1160 720" role="img" aria-label="响应系统模块图：一个拟饵同时像几种猎物，分别解释，再让鱼评价">
+<defs><marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#7d8ca3"/></marker></defs>
+<rect x="25" y="35" width="230" height="95" rx="16" class="box input"/><text x="140" y="66" text-anchor="middle" class="label">拟饵 / 饵装配</text><text x="140" y="90" text-anchor="middle" class="small">玩家选什么、怎么操作</text>
+<rect x="25" y="160" width="230" height="80" rx="16" class="box input"/><text x="140" y="191" text-anchor="middle" class="label">实际呈现</text><text x="140" y="214" text-anchor="middle" class="small">这一竿当下发生的动作与关系</text>
+<rect x="25" y="270" width="230" height="105" rx="16" class="box input"/><text x="140" y="300" text-anchor="middle" class="label">共同事实</text><text x="140" y="324" text-anchor="middle" class="small">速度 · 轨迹 · 姿态</text><text x="140" y="347" text-anchor="middle" class="small">水层 · 部件动作</text>
+<path d="M140 130 L140 158" class="arrow"/><path d="M140 240 L140 268" class="arrow"/>
+<rect x="300" y="40" width="400" height="430" rx="22" fill="#f7f3fd" stroke="#7754b3" stroke-width="2.4"/><text x="322" y="72" class="label" fill="#5b3f8f">猎物解释层</text><text x="322" y="94" class="small">同一个饵，被分别解释成三种猎物</text>
+<rect x="330" y="115" width="340" height="92" rx="15" fill="#eaf1ff" stroke="#6f9bf0" stroke-width="2"/><text x="500" y="145" text-anchor="middle" class="label">小鱼解释器</text><text x="500" y="170" text-anchor="middle" class="small">① 表达支持度　② 当前状态</text><text x="500" y="192" text-anchor="middle" class="small">像不像 · 在干什么</text>
+<rect x="330" y="237" width="340" height="92" rx="15" fill="#fff2e5" stroke="#d69a5c" stroke-width="2"/><text x="500" y="267" text-anchor="middle" class="label">小龙虾解释器</text><text x="500" y="292" text-anchor="middle" class="small">① 表达支持度　② 当前状态</text><text x="500" y="314" text-anchor="middle" class="small">像不像 · 在干什么</text>
+<rect x="330" y="359" width="340" height="92" rx="15" fill="#eaf7f1" stroke="#6cb292" stroke-width="2"/><text x="500" y="389" text-anchor="middle" class="label">蛙类解释器</text><text x="500" y="414" text-anchor="middle" class="small">① 表达支持度　② 当前状态</text><text x="500" y="436" text-anchor="middle" class="small">像不像 · 在干什么</text>
+<path d="M255 320 C285 320 295 161 328 161" class="arrow"/><path d="M255 320 L328 283" class="arrow"/><path d="M255 320 C285 320 295 405 328 405" class="arrow"/>
+<rect x="760" y="60" width="380" height="105" rx="16" class="box fish"/><text x="950" y="91" text-anchor="middle" class="label">鱼侧上下文</text><text x="950" y="117" text-anchor="middle" class="small">鱼种 × 中鱼习性模式 × 体型档</text><text x="950" y="141" text-anchor="middle" class="small">+ 本竿鱼况快照</text>
+<rect x="760" y="215" width="380" height="220" rx="18" class="box resp"/><text x="950" y="248" text-anchor="middle" class="label">五项响应评价</text><text x="950" y="268" text-anchor="middle" class="small">每种解释分别计算</text><text x="805" y="293" class="small">+ 食物价值</text><text x="805" y="320" class="small">+ 攻击诱因</text><text x="805" y="347" class="small">− 追赶负担</text><text x="805" y="374" class="small">− 风险顾虑</text><text x="805" y="401" class="small">− 摄食意愿门槛</text>
+<path d="M670 161 C710 161 718 265 758 265" class="arrow"/><path d="M670 283 L758 325" class="arrow"/><path d="M670 405 C710 405 718 395 758 395" class="arrow"/><path d="M950 165 L950 212" class="arrow"/>
+<rect x="395" y="505" width="255" height="74" rx="16" class="box out"/><text x="522" y="533" text-anchor="middle" class="label">各猎物适配系数</text><text x="522" y="557" text-anchor="middle" class="small">同级解释取最大值</text><path d="M860 435 C860 480 690 525 652 525" class="arrow"/>
+<rect x="755" y="520" width="190" height="76" rx="16" class="box fish"/><text x="850" y="550" text-anchor="middle" class="label">机会量 L</text><text x="850" y="574" text-anchor="middle" class="small">时间 / 空间有效机会</text>
+<rect x="985" y="520" width="165" height="76" rx="16" class="box out"/><text x="1068" y="550" text-anchor="middle" class="label">L × C_feed</text><text x="1068" y="574" text-anchor="middle" class="small">候选贡献</text>
+<path d="M650 537 C740 500 900 470 1000 519" class="arrow"/><path d="M945 558 L982 558" class="arrow"/>
+</svg></div>
+<div class="callout" style="margin-top:15px"><strong>一句话：</strong>拟饵不是猎物类型：同一个饵可以同时被解释成小鱼、小龙虾或蛙；系统分别解释“像不像、现在什么状态”，再让鱼评价。</div>
+</section>
+
+<section>
+<h2 class="title">4. 猎物解释器的价值：一个饵，多种解释，支持哪些策略选择</h2>
+<div class="grid g3">
+<div class="card"><span class="tag purple">为什么不选唯一身份</span><h3>一个饵可以同时像小鱼和小龙虾</h3><p>强行选一个，等于替玩家和鱼做了系统自己没做的判断。</p></div>
+<div class="card"><span class="tag blue">它输出什么</span><h3>表达支持度 + 当前状态</h3><p>像不像这种猎物；按这种猎物看，它现在在干什么。</p></div>
+<div class="card"><span class="tag orange">支持哪些策略</span><h3>泛用与专精的分工</h3><p>泛用饵靠多个中等解释，专精饵押一种高解释；鱼侧偏向变化会改变优劣，是否翻取决于支持度与分支响应。</p></div>
+</div>
+<div class="formula" style="margin-top:15px">同一物理目标的多个解释互斥，不叠加：<br>最终适配系数 = max(各猎物解释的适配系数)</div>
+</section>
+
+<section>
+<h2 class="title">5. 判断像不像：第一版先用四类信号</h2>
+<table class="table"><thead><tr><th>信号</th><th>回答什么</th><th>典型输入</th><th>边界</th></tr></thead><tbody>
+<tr><td><strong>外观信号（Appearance）</strong></td><td>看起来像什么</td><td>轮廓、比例、颜色 / 反光、部件布局</td><td>不读整体运动</td></tr>
+<tr><td><strong>整体运动信号（Whole-body Motion）</strong></td><td>整体怎么运动像什么</td><td>速度模式、方向变化、游 / 爬 / 跳 / 漂 / 下沉</td><td>不重复局部动作</td></tr>
+<tr><td><strong>局部动作信号（Articulation）</strong></td><td>局部怎么动像什么</td><td>尾摆、腿踢、裙丝动作</td><td>不重复整体轨迹</td></tr>
+<tr><td><strong>空间关系信号（Spatial Relation）</strong></td><td>出现在哪里更符合什么猎物</td><td>水面、近底、中层、触底、离底高度</td><td>默认只做弱信号</td></tr>
+</tbody></table>
+<p class="lead" style="margin-top:13px">同一猎物类型有多份替代信号时默认取最强，不把相近信号直接相加。只有 A+B 同时存在才形成新语义时，再显式配置联合信号。</p>
+</section>
+
+<section>
+<h2 class="title">6. 姿态：一个原子姿态 + 最多一个主导分子姿态</h2>
+<div class="grid g2"><div class="card"><span class="tag blue">原子姿态</span><h3>当前这一刻是什么</h3><p>移动、停顿、上升、下落等。</p></div><div class="card"><span class="tag purple">分子姿态</span><h3>当前姿态 + 必要前史</h3><p>例如抽动→停顿、爆发→停顿、爆发→转向→停顿。</p></div></div>
+<div class="callout" style="margin-top:15px">停顿有价值，但不做通用“停顿奖励”。它可以组成猎物特定的分子姿态，也会改变追赶负担和机会量；不预设“停越久，L 必然越大”。</div>
+</section>
+
+<section>
+<h2 class="title">7. “游得更像”与“额外促发攻击”分开</h2>
+<div class="grid g2"><div class="card"><span class="tag blue">更像猎物</span><h3>进入猎物表达支持度</h3><p>自然匀速游、正常尾摆可以让拟饵更像小鱼，但不必产生攻击诱因。</p></div><div class="card"><span class="tag orange">额外促发攻击</span><h3>进入攻击诱因</h3><p>已经接受“这是可吃猎物”以后，当前状态是否额外制造“现在扑上去”的理由。第一版采用逃逸样。</p></div></div>
+</section>
+
+<section>
+<h2 class="title">8. 鱼侧第一版：用体型档，不先生成具体鱼</h2>
+<div class="formula">鱼种 × 中鱼习性模式 × 体型档<br><br>捕食鱼体型档 + 猎物大小 → 猎物尺寸偏好修正<br>鱼种 × 体型档 → 追赶能力基线</div>
+<p class="lead" style="margin-top:13px">先按体型档算候选权重；选中候选后，再在体型档内生成具体长度、重量和品质。</p>
+</section>
+
+<section>
+<h2 class="title">9. 追赶第一版：不做鱼和拟饵的相对方位积分</h2>
+<div class="formula">产品假设：当前形成摄食机会时，鱼正在追拟饵。<br><br>速度需求比 = 拟饵相对水体水平速度 / 追赶能力基线<br>追赶负担 = K_close × 速度需求比² × 活跃度成本倍率</div>
+<p class="lead" style="margin-top:13px">不考虑“虽然很快，但刚好迎面朝鱼游来”的特殊情况。当前没有真实鱼世界坐标，就不为二阶遭遇几何伪造精度。</p>
+</section>
+
+<section>
+<h2 class="title">10. 运动可预测性：考虑过，第一版主动删掉</h2>
+<div class="grid g3"><div class="card"><h3>像不像猎物</h3><p>由猎物表达支持度承接。</p></div><div class="card"><h3>是不是逃逸 / 脆弱</h3><p>由攻击诱因承接。</p></div><div class="card"><h3>是否太快 / 窗口是否有效 / 是否露馅</h3><p>分别由追赶负担、机会量和风险顾虑承接。</p></div></div>
+<div class="callout" style="margin-top:15px">只有以后控制这些因素后，“纯运动可预测性”仍能稳定改变玩家选择，才值得重开。</div>
+</section>
+
+<section>
+<h2 class="title">11. 风险第一版：终端钓组显眼度简单聚合</h2>
+<div class="formula">终端钓组显眼度 = 1 - Π(1-cᵢ)<br><br>可疑负荷 ≈ 终端钓组显眼度<br>风险顾虑 = K_wary × 警戒度 × 可疑负荷</div>
+<p class="lead" style="margin-top:13px">只算目标饵以外、鱼能感知的终端钓组部件。拟饵主体属于猎物表达，不属于“是否露馅”。</p>
+</section>
+
+<section>
+<h2 class="title">12. 鱼况：一竿一个快照</h2>
+<div class="formula">抛竿开始 → 解析当前派生环境场 / 环境条件组 → 读取鱼况基线 → 生成本竿鱼况快照 → 本竿只读 → 下一竿重新解析</div>
+<p class="lead" style="margin-top:13px">例如 05:59 抛竿、06:00 切时段，本竿继续使用 05:59 的快照，下一竿再读新鱼况。</p>
+</section>
+
+<section>
+<h2 class="title">13. 最终只接一次：机会量 L × 适配系数 C</h2>
+<div class="grid g2"><div class="card"><span class="tag green">机会量 L</span><h3>机会有没有真正形成</h3><p>回答时间、空间和有效交互窗口。</p></div><div class="card"><span class="tag orange">适配系数 C</span><h3>这个机会摆在鱼面前时，有多适配</h3><p>由每种解释的五项评价乘支持度后取最大，范围 0~1。</p></div></div>
+<div class="formula" style="margin-top:15px">候选贡献 = L × C_feed<br>各解释分支贡献（条件响应 × 支持度）取最大 → C_feed</div>
+</section>
+
+<section>
+<h2 class="title">14. 概念清单：有哪些概念，谁流向谁</h2>
+<table class="table"><thead><tr><th>概念</th><th>回答什么</th><th>由谁产生</th><th>流向</th></tr></thead><tbody>
+<tr><td><strong>实际呈现</strong></td><td>这一竿实际是什么</td><td>玩家操作 + 环境</td><td>共同事实</td></tr>
+<tr><td><strong>共同事实</strong></td><td>可复用的客观输入</td><td>事实提取</td><td>各猎物解释器</td></tr>
+<tr><td><strong>表达支持度</strong></td><td>有多像这种猎物；按比例保留该解释的响应</td><td>猎物解释器</td><td>乘在该解释的条件响应上</td></tr>
+<tr><td><strong>当前状态</strong></td><td>按这种猎物看，现在在干什么</td><td>猎物解释器</td><td>攻击诱因</td></tr>
+<tr><td><strong>鱼侧上下文</strong></td><td>鱼是谁、当前状态如何</td><td>鱼种配置 + 本竿鱼况快照</td><td>每种解释的五项评价</td></tr>
+<tr><td><strong>五项评价</strong></td><td>值不值得出手（每种解释分别算）</td><td>评价规则</td><td>出手余量</td></tr>
+<tr><td><strong>出手余量</strong></td><td>五项净值</td><td>相加</td><td>条件响应</td></tr>
+<tr><td><strong>条件响应</strong></td><td>这个解释下有多适配</td><td>投影</td><td>乘支持度得分支贡献</td></tr>
+<tr><td><strong>分支贡献</strong></td><td>该解释保留的响应量</td><td>支持度 × 条件响应</td><td>同级取最大</td></tr>
+<tr><td><strong>同级适配系数 C_feed</strong></td><td>多个解释取最大后的适配系数</td><td>同级取最大</td><td>候选贡献</td></tr>
+<tr><td><strong>机会量 L</strong></td><td>机会形成了多少</td><td>Opportunity</td><td>候选贡献</td></tr>
+<tr><td><strong>候选贡献</strong></td><td>最终进入候选的量</td><td>L × C_feed</td><td>候选</td></tr>
+</tbody></table>
+<div class="formula" style="margin-top:15px">实际呈现 → 共同事实 → 各猎物解释（支持度 + 状态）<br>→ 每种解释分别评价五项 → 出手余量 → 条件响应<br>→ 乘该解释的支持度 → 分支贡献 → 同级取最大（C_feed）<br>→ 与 Opportunity 的 L 相乘一次（L × C_feed）</div>
+</section>
+
+<section>
+<h2 class="title">15. 会议最后留下这些结论</h2>
+<table class="table"><thead><tr><th>问题</th><th>当前结论</th></tr></thead><tbody>
+<tr><td>响应拆解</td><td>饵料混合、姿态操作、打窝三类问题</td></tr>
+<tr><td>本轮范围</td><td>先闭合路亚姿态操作；饵料混合与打窝后续承接</td></tr>
+<tr><td>拟饵与猎物</td><td>一个拟饵可同时表达多种猎物，不先选唯一身份</td></tr>
+<tr><td>猎物解释</td><td>分别产出表达支持度和当前状态</td></tr>
+<tr><td>信号</td><td>外观、整体运动、局部动作、空间关系</td></tr>
+<tr><td>姿态</td><td>1 个原子姿态 + 0/1 个主导分子姿态</td></tr>
+<tr><td>攻击诱因</td><td>只表达额外捕食促发；第一版采用逃逸样</td></tr>
+<tr><td>鱼体型</td><td>先用体型档，不要求先生成具体鱼</td></tr>
+<tr><td>追赶</td><td>按“鱼在追拟饵”估算，不做相对方位积分</td></tr>
+<tr><td>风险</td><td>终端钓组显眼度简单饱和聚合</td></tr>
+<tr><td>鱼况</td><td>一竿一个鱼况快照</td></tr>
+<tr><td>最终系数</td><td>C 叫适配系数，范围 0~1</td></tr>
+<tr><td>机会</td><td>L 叫机会量；最终只做一次 L × C_feed</td></tr>
+<tr><td>刻意不做</td><td>独立运动可预测性、通用停顿奖励、复杂遭遇几何</td></tr>
+</tbody></table>
+</section>
+<div class="foot">会议版 · 候选设计 · 参数与生产细节会后承接</div>
+</div></body></html>

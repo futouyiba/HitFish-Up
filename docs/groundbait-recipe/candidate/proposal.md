@@ -4,6 +4,12 @@
 > 日期：2026-10-29
 > 说明：本文记录当前整体提案。`decisions/working-decisions.md` 区分已收敛边界与仍待验证的算法候选；本文不把 Candidate 写成正式 Contract。
 
+## 本轮主线入口（2026-11-04）
+
+玩家从配方与钩饵选择开始，再处理投量、释放与补窝。[配方与作钓策略实验](float-strategy-experiments.md)按这一顺序给出算法比较、六组完整场景、可执行 Probe 与证据缺口；它不是新的总设计 Authority。
+
+当前用户方向是离散槽位配方，窝料历史由持久响应承载，钩饵实时消费；不改 DEF、Fish Condition 或 Opportunity。该方向不批准连续 Cue 强度，也不替台钓选定 GenericFCF / ProposalCOpportunity。旧正文中连续 Flavor 画像仍只属于阻塞分支。
+
 ## 1. 设计目标
 
 这套机制要让玩家围绕以下问题做配方选择：
@@ -55,8 +61,8 @@ Response Stage 的候选输入
 
 | 事实 | 进入的中间状态 | 主要被谁消费 | 不直接负责 |
 |---|---|---|---|
-| Food Identity | 实体对象的 Food 属性 | Food 目标选择、对象价值 | 尺寸成功、释放速度 |
-| Chemical Cue Potential | Chemical Cue Field | 发现、趋近、回避、选择 | 实体质量、尺寸成功 |
+| Food Identity | 实体对象的 Food 属性 | Food 目标 / Response 输入 | 尺寸成功、释放速度 |
+| Chemical Cue Potential | Chemical Cue Field | 发现、趋近、回避与 Response 输入 | 实体质量、尺寸成功 |
 | Particle / Object Properties | Particle Object / Object State | 动作可行性、动作成功 | 鱼种偏好、最终中鱼 |
 | 可食 / 载体区分 | Edible Particle Distribution / Carrier | Size Response / Physical Release | 不把载体算成可食 |
 | Physical Release Properties | Feeding Place State | 接触机会、位置、水层、持续时间 | 固定中鱼 Bonus |
@@ -96,7 +102,7 @@ Target Response with diminishing returns
 - Food Target 字典的正式成员和版本化 admission 流程。
 - 饱和函数族和参数如何标定。
 - 多 Target 聚合算子按基线 R0 保持 OPEN，不在本页选择 `sum`、`weighted average`、`max` 或 `Noisy-OR`。
-- Food 响应如何分配到动作选择与对象价值。
+- Food 只作为 Response 的唯一 Food 输入或对象价值来源；当前不在 `selection_m` 动作选择中再次消费。
 
 ## 5. Flavor：由 Cue Exposure 形成整体味型画像
 
@@ -203,7 +209,7 @@ Groundbait 用当前地点可接触的可食颗粒分布求 `EdibleUtilization`�
 - 沉降和所在水层；
 - 局部留存和持续时间。
 
-这些结果再形成 Feeding Place 的时空状态。当前不预设“某个物理属性越高越好”，也不把“高黏度必然更集中”等尚未验证关系写成硬规则。
+这些结果再形成 Feeding Place 的时空状态。当前不预设“某个物理属性越高越好”，也不把“高黏度必然更集中”等尚未验证关系写成硬规则。完整状态转移和守恒账本见 `physical-release.md`。
 
 ### 7.2 需要验证的策略故事
 
@@ -262,7 +268,7 @@ RecipeFit = FoodFit + FlavorFit + ParticleFit + PhysicalFit
 
 原因：这些量处于不同阶段。Food Identity、Chemical Cue、对象约束和物理释放必须先沿各自路径形成 Feeding Place 与 Feeding Event 状态，再由现有 Response Stage 消费。简单相加会重复计算。
 
-`Attraction`、`Retention`、`Ingestion`、`Selection` 仍只是解释候选，不是本目录已经确认的正式中间层；如需使用，必须明确它属于哪个阶段、由谁生产、由谁消费。
+`Attraction`、`Retention`、`Ingestion`、`Selection` 仍只是解释候选，不是本目录已经确认的正式中间层；如需使用，必须明确它属于哪个阶段、由谁生产、由谁消费。当前判断是 Attraction 和 Retention 都不独立成模块，理由和翻转条件见 `../decisions/attraction-retention-verdict.md`。最终聚合映射见 `response-aggregation-map.md`。
 
 以下只描述配方输入的资源与职责边界，不是平衡定值：
 

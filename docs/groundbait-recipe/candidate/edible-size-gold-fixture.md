@@ -164,6 +164,19 @@ absolute_edible_mass = edible_fraction_of_solids × total_solids × EdibleUtiliz
 - 不证明 Groundbait 聚合应该按质量、数量还是能量。
 - 不证明 Edible Size 可以进入 Attraction、Retention 或最终 Response。
 
-## 8. 下一步
+## 8. 可复算记录
+
+本页表格按第 3 节的分段线性 `fit`、第 2 节的参考尺寸和第 5 节的可食份额加权重算。2026-10-30 的独立复算得到：
+
+```text
+Fine mix / Small Benthic = 0.72
+Fine mix / Large Benthic = 0.5333... → 0.53
+Very coarse mix / Small Benthic = 0.5333... → 0.53
+Very coarse mix / Large Benthic = 0.9833... → 0.98
+```
+
+这只核对文档内部算术和四舍五入，不是生产标定，也不改变 `max` 仅作为结构 Fixture 上界的边界。若后续修改曲线、参考尺寸、颗粒桶或份额，必须同步重算表格和退化测试；不能把旧读数继续当作新版本证据。
+
+## 9. 下一步
 
 Fixture 通过后，只说明 Size 的结构没有混淆。接下来才考虑 Groundbait Particle Distribution 的实际数据接入；不进入 Food、Flavor 或完整 Recipe Grammar。
