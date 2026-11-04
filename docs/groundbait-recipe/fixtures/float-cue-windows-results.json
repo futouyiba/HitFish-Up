@@ -1,0 +1,196 @@
+{
+  "status": "UNADMITTED_CATEGORICAL_LIFETIME_FIXTURE",
+  "horizon": 30,
+  "plans": {
+    "none": {
+      "response_integral": 12.0,
+      "application_cost": 0,
+      "intervals": [
+        {
+          "from": 0,
+          "until": 30,
+          "signatures": [],
+          "metric": 0.4
+        }
+      ]
+    },
+    "one": {
+      "response_integral": 14.0,
+      "application_cost": 1,
+      "intervals": [
+        {
+          "from": 0,
+          "until": 2,
+          "signatures": [],
+          "metric": 0.4
+        },
+        {
+          "from": 2,
+          "until": 12,
+          "signatures": [
+            "grain"
+          ],
+          "metric": 0.6000000000000001
+        },
+        {
+          "from": 12,
+          "until": 30,
+          "signatures": [],
+          "metric": 0.4
+        }
+      ]
+    },
+    "simultaneous_three": {
+      "response_integral": 14.0,
+      "application_cost": 3,
+      "intervals": [
+        {
+          "from": 0,
+          "until": 2,
+          "signatures": [],
+          "metric": 0.4
+        },
+        {
+          "from": 2,
+          "until": 12,
+          "signatures": [
+            "grain"
+          ],
+          "metric": 0.6000000000000001
+        },
+        {
+          "from": 12,
+          "until": 30,
+          "signatures": [],
+          "metric": 0.4
+        }
+      ]
+    },
+    "overlap": {
+      "response_integral": 15.0,
+      "application_cost": 2,
+      "intervals": [
+        {
+          "from": 0,
+          "until": 2,
+          "signatures": [],
+          "metric": 0.4
+        },
+        {
+          "from": 2,
+          "until": 7,
+          "signatures": [
+            "grain"
+          ],
+          "metric": 0.6000000000000001
+        },
+        {
+          "from": 7,
+          "until": 12,
+          "signatures": [
+            "grain"
+          ],
+          "metric": 0.6000000000000001
+        },
+        {
+          "from": 12,
+          "until": 17,
+          "signatures": [
+            "grain"
+          ],
+          "metric": 0.6000000000000001
+        },
+        {
+          "from": 17,
+          "until": 30,
+          "signatures": [],
+          "metric": 0.4
+        }
+      ]
+    },
+    "just_in_time": {
+      "response_integral": 16.0,
+      "application_cost": 2,
+      "intervals": [
+        {
+          "from": 0,
+          "until": 2,
+          "signatures": [],
+          "metric": 0.4
+        },
+        {
+          "from": 2,
+          "until": 12,
+          "signatures": [
+            "grain"
+          ],
+          "metric": 0.6000000000000001
+        },
+        {
+          "from": 12,
+          "until": 22,
+          "signatures": [
+            "grain"
+          ],
+          "metric": 0.6000000000000001
+        },
+        {
+          "from": 22,
+          "until": 30,
+          "signatures": [],
+          "metric": 0.4
+        }
+      ]
+    },
+    "wrong_place": {
+      "response_integral": 12.0,
+      "application_cost": 1,
+      "intervals": [
+        {
+          "from": 0,
+          "until": 2,
+          "signatures": [],
+          "metric": 0.4
+        },
+        {
+          "from": 2,
+          "until": 12,
+          "signatures": [],
+          "metric": 0.4
+        },
+        {
+          "from": 12,
+          "until": 30,
+          "signatures": [],
+          "metric": 0.4
+        }
+      ]
+    },
+    "slow": {
+      "response_integral": 15.6,
+      "application_cost": 1,
+      "intervals": [
+        {
+          "from": 0,
+          "until": 8,
+          "signatures": [],
+          "metric": 0.4
+        },
+        {
+          "from": 8,
+          "until": 26,
+          "signatures": [
+            "grain"
+          ],
+          "metric": 0.6000000000000001
+        },
+        {
+          "from": 26,
+          "until": 30,
+          "signatures": [],
+          "metric": 0.4
+        }
+      ]
+    }
+  }
+}
