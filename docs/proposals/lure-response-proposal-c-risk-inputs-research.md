@@ -2,6 +2,8 @@
 
 状态：External Research / Candidate。本文汇总《俄罗斯钓鱼 4》与《Fishing Planet》公开资料中的“终端钓组显眼度 → 咬口”设计，用来推导 Proposal C 的 cue 候选。外部游戏机制不是本仓 Current，也不是可直接照搬的生产公式。
 
+来源标注：补丁说明与 Wiki 属官方 / 维护资料；Steam、论坛与攻略站属社区观察。两者在下面的来源列表中分别给出，不把社区经验当成官方机制。
+
 ## 1. 为什么看这两款
 
 Proposal C 的 Risk 链条目前是：
@@ -48,16 +50,18 @@ TackleConspicuousness（未立项字段）
 
 ```text
 终端钓组显眼度
-= 1 − Π_i (1 − c_i)
+= 1 − Π_i (1 − c_i')
+
+c_i' = c_i × ctx_visibility
 
 c_line     线 / 前导的直径与材料可见度（只看实际起作用的终端段）
 c_hook     钩与连接件的尺寸 / 形态显眼度
-c_context  水体透明度与光照，只通过一个已解析的可见度 cue 进入；不重复读 light
+ctx_visibility  水体透明度与光照，只调制装备 cue，不单独作为一项显眼度
 ```
 
 - `c_line` 需要直径、材料、是否使用前导、前导长度与颜色；
 - `c_hook` 需要钩号、钩型、连接件尺寸与材质；
-- `c_context` 不是新的装备字段，而是同一视觉原因只结算一次；
+- `ctx_visibility` 必须调制已有装备 cue：没有 `c_line` / `c_hook` 时它不产生显眼度，避免清水或强光单独造出一个风险值；
 - 鱼侧差异放在 `Wariness` baseline：鱼种、个体大小、钓压；
 - `SuspicionLoad` 只取以上具名 cue 的聚合，不读取 `1 − prey_support`、速度或转向。
 

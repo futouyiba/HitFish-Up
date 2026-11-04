@@ -31,14 +31,16 @@
 Candidate 生成形状：
 
 ```text
-A = clamp(1 + Σ_i w_i · g_i(x_i), 0, 2)
+A_norm = clamp(1 + Σ_i w_i · g_i(x_i), 0, 1)     # 常规带，Σ w_i ≤ 1，g_i ∈ [-1, 1]
+A      = clamp(A_norm + rare_bonus, 0, 2)         # rare_bonus ∈ [0, 1]，仅由显式稀有 cause 产生
 
-g_i(x_i) ∈ [-1, 1]        各 cause 的归一化响应
-w_i ≥ 0                   权重；常规带内 Σ w_i ≤ 1
+ActivityCostMultiplier(A) = clamp(1 / A, 0.5, 2)  # A=0 按 2 处理；单调递减
 ```
 
+- 常规 cause 只能让 `A_norm` 落在 `[0,1]`；`A > 1` 必须由稀有 cause 的 `rare_bonus` 产生；
+- `ActivityCostMultiplier` 与 Activity 方向相反：Activity 越高，追赶的行为代价倍率越低；probe 里的 0.8 / 1.6 是直接传入的倍率 fixture，不是 Activity 原值；
+- `A = 0` 的倍率按上界 2 处理，不除零；
 - `g_i` 的分段线性或单调曲线由各 cause 的机制数据给出；
-- `A > 1` 需要稀有 cause 共同满足（例如繁殖期、溶氧骤升、水温进入最适带），不能由单一常规 cause 常态推出；
 - 没有 cause 数据时保持 `Unknown`，不回填 `1.0`。
 
 候选 cause：时段、水温、溶氧、天气变化、近期摄食（全部未证实，见机制骨架 §2）。
@@ -48,7 +50,8 @@ w_i ≥ 0                   权重；常规带内 Σ w_i ≤ 1
 1. 低 Activity 不降低 `InterceptSpeedLimit`；
 2. `ClosingLoad ≈ 0` 时低 Activity 不凭空压低响应；
 3. 输出 `2.0` 以上判越界，不截断；
-4. 常规分布下 `A ≤ 1`，`A > 1` 的样本必须能追溯到稀有 cause。
+4. 常规 cause 组合下 `A ≤ 1`；`A > 1` 的样本必须能追溯到稀有 cause；
+5. `ActivityCostMultiplier` 随 `A` 单调递减；`A = 0` 时取 2，不除零。
 
 标定需求：各鱼种的时段活动曲线、水温响应、溶氧阈值、极端活跃事件记录；验收按分布分位数与排序，不按拟合误差。
 
@@ -93,12 +96,14 @@ h_j(y_j) ∈ [-1, 1]        各 cause 的归一化响应
 Candidate 生成形状：
 
 ```text
-Δ_f = clamp(Σ_k w_{k,f} · d_{k,f}(z_k), -0.2, 0.2)      对每个 prey family f
+Δ_f = Σ_k w_{k,f} · d_{k,f}(z_k)      对每个 prey family f；不在偏移阶段截断
+|Δ_f| > 0.2 → Unknown                  超出 Candidate 工作范围的 baseline 值不可消费
 ```
 
 - 只能按 family 给出，不设全局分量；
 - 缺失某个 family 的偏移时，只阻断该 family 的 FoodValue；
-- 正负号必须能追溯 cause。
+- 正负号必须能追溯 cause；
+- FoodValue 阶段的 `clamp(..., 0, 1)` 是唯一截断点。
 
 候选 cause：季节、近期摄食组成、猎物家族可得性（全部未证实）。
 
@@ -123,12 +128,13 @@ Candidate 生成形状：
 Candidate 生成形状：
 
 ```text
-baseline：W0 = clamp(Σ_m w_m · s_m(u_m), 0, 1)      钓压、环境、鱼种基线
-overlay ：W = clamp(W0 + Σ_n δ_n · decay_n(t), 0, 1)
+baseline：W0 = Σ_m w_m · s_m(u_m)          # 原始和，不 clamp；越界 → Unknown
+overlay ：W  = W0 + Σ_n δ_n · decay_n(t)    # 原始和，不 clamp；越界 → InvalidInput
 ```
 
 - 权重与 cause：钓压 / fishing pressure、近期受惊、重复见到同类饵或线组（历史遭遇摘要）、环境突变；
 - overlay 只做累加与衰减，不重新定义 baseline；
+- 合并结果越过 `[0,1]` 时按 Production Contract 判 `InvalidInput`，不截断成 1；
 - V1 允许完全不实现 overlay。
 
 Overlay 必须先闭合的接口（仍 OPEN）：
@@ -162,4 +168,5 @@ Overlay 必须先闭合的接口（仍 OPEN）：
 - cause 的数据来源、归一化与采样频率；
 - TTL、刷新频率与跨 session 记忆；
 - Wariness overlay 的事件与衰减；
-- 各 Condition 的审核 owner（Issue #161 已定归属线，具体 Contract 未立项）。
+- 各 Condition 的审核 owner（Issue #161 已定归属线，具体 Contract 未立项）；
+- **验证范围**：四条生成曲线与 cause 权重目前没有执行验证。`fish-condition probe` 只覆盖 Activity/Motivation/Wariness 的解析、范围与 DietShift 逐 family 状态，不覆盖曲线形状、TTL 或 overlay 衰减。

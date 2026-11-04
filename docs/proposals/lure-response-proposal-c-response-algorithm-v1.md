@@ -12,7 +12,7 @@
 PresentationSegment   轨迹、时间、环境关系、局部记录
 AssemblySnapshot      证据绑定与适用标记
 CastFishCondition     抛竿时形成的鱼况快照（可选授权 overlay）
-OpportunityFacts      L 及其状态
+OpportunityFacts      L 及状态（不进入 Response；圆桌接口按 SDW × AdaptationCoeff）
 WorkingParams         K_close、TriggerBudget、M0/M1、tail 参数
 ```
 
@@ -30,7 +30,7 @@ WorkingParams         K_close、TriggerBudget、M0/M1、tail 参数
 ## 2. 算法
 
 ```text
-function response(segment, assembly, castFC, opportunity, params):
+function response(segment, assembly, castFC, params):
 
   # 0. 帧校验与快照选择
   require segment.valid and assembly.version == segment.assemblyVersion
@@ -135,6 +135,7 @@ function evaluate(family, state, entry, params):
   food      = clamp(base + size + diet, 0, 1)
   trigger   = params.TriggerBudget * state.TriggerIntensity
   closing   = params.K_close * state.q^2 * activityMultiplier(entry.activity)   # 单方向：鱼在追拟饵
+  # activityMultiplier(A) = clamp(1/A, 0.5, 2)，A=0 取 2；A 须在 [0,2]
   risk      = params.K_wary * entry.wariness * suspicionLoad      # 无 cue 时为 0
   threshold = f(entry.feedingMotivation)                          # 分段线性 + tail
 

@@ -58,8 +58,8 @@ V1 允许只实现 Bake baseline；runtime overlay 是受限扩展点，不是�
 ### 3.1 Activity
 
 - 只调制追赶负担，不进入 Closing 的结构速度上限；
-- `ActivityCostMultiplier` 必须非负且有限；1.0 只是 Working reference，不是缺失默认值；
-- 当前不设语义上的生产上界，也不新增 runtime cap；
+- Activity 的 Candidate 域是 `[0, 2]`；常规状态不突破 `1`，`>1` 仅用于极少数极活跃情形；`1.0` 只是 Working reference，不是缺失默认值；
+- `ActivityCostMultiplier` 与 Activity 方向相反，Candidate 映射为 `clamp(1/A, 0.5, 2)`（`A=0` 取 2）；越界按 Production Contract 处理，不截断；
 - 不能与 Feeding Motivation 共用一个“积极程度”标量。
 
 ### 3.2 Feeding Motivation

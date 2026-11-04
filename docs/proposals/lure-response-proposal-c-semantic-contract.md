@@ -287,7 +287,7 @@ Candidate join
 → NativeCandidateSnapshot
 ```
 
-- `L × C` 只乘一次，Candidate 后段不重复乘 Response；
+- Opportunity 内部的 `L × C` 只结算一次，Candidate 后段不重复乘 Response；
 - 2026-11-04 Owner 方向：圆桌接口以 `SpatialDistributionWeight × AdaptationCoeff` 为准；`q = L × C` 不再是候选贡献公式，`L` 的并入方式待定，见[开放决策](lure-response-proposal-c-open-decisions.md)；
 - 一个 cast 内多个 `EngagementMode` **分别计算各自的 C**；`L` 属于机会 / 颗粒，不按 mode 复制；Candidate 阶段按 mode 竞争；
 - 时间、停留、穿越有效区域、覆盖范围不进入出手余量；
