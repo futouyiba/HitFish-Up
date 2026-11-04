@@ -84,6 +84,12 @@ docs/groundbait-recipe/
 
 `decisions/` 区分“已收敛边界”和“仍待推演的算法候选”，并登记跨文档冲突；`candidate/` 保存当前完整方案；`rejected/` 不参与正常主线读取，避免旧方案与最新方案并肩竞争注意力；`handoff/` 只服务跨会话接续。
 
+## 本轮台钓主线（2026-11-04）
+
+[配方与作钓策略实验](candidate/float-strategy-experiments.md)从玩家选择进入 Food 混配、离散味型、颗粒与钩饵组合，再接 [打窝时间模型](candidate/groundbait-time-model.md)。算法仍是 Candidate，参数全为 Working Fixture；[可执行输入](fixtures/float-strategy-v1.json)和[运行结果](fixtures/float-strategy-v1-results.json)可复核。
+
+PR 176 的持久响应方向按固定 head `d085ae6aeb8e64702958ea4db787f3fe09893ca3` 读取，本轮核实时仍为 Draft / OPEN，未合并。该专项不是台钓总设计。用户本轮明确的槽位、持久响应、实时钩饵与不改鱼况/L方向，已在实验页限定承接范围。
+
 ## 阅读顺序
 
 后续 Agent 处理台钓窝料、混饵、味型、粒径或小药机制时，按以下顺序读取：

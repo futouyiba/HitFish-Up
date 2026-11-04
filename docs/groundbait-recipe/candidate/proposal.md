@@ -4,6 +4,12 @@
 > 日期：2026-10-29
 > 说明：本文记录当前整体提案。`decisions/working-decisions.md` 区分已收敛边界与仍待验证的算法候选；本文不把 Candidate 写成正式 Contract。
 
+## 本轮主线入口（2026-11-04）
+
+玩家从配方与钩饵选择开始，再处理投量、释放与补窝。[配方与作钓策略实验](float-strategy-experiments.md)按这一顺序给出算法比较、六组完整场景、可执行 Probe 与证据缺口；它不是新的总设计 Authority。
+
+当前用户方向是离散槽位配方，窝料历史由持久响应承载，钩饵实时消费；不改 DEF、Fish Condition 或 Opportunity。该方向不批准连续 Cue 强度，也不替台钓选定 GenericFCF / ProposalCOpportunity。旧正文中连续 Flavor 画像仍只属于阻塞分支。
+
 ## 1. 设计目标
 
 这套机制要让玩家围绕以下问题做配方选择：
