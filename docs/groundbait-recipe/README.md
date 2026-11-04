@@ -75,7 +75,8 @@ docs/groundbait-recipe/
 │  ├─ particle-distribution.md
 │  ├─ physical-release.md
 │  ├─ response-stage-mapping.md
-│  └─ plain-language-explainer.md
+│  ├─ plain-language-explainer.md
+│  └─ persistent-response-working-direction-2026-11-04.md
 ├─ rejected/                         # 已排除 / 当前不采用的反设计
 │  └─ anti-designs.md
 └─ handoff/                          # 跨会话临时上下文，不是长期机制事实
@@ -119,6 +120,8 @@ docs/groundbait-recipe/
 29. [`candidate/plain-language-explainer.md`](candidate/plain-language-explainer.md)：面向人类快速理解当前设计。
 30. [`rejected/anti-designs.md`](rejected/anti-designs.md)：只在评审、反例检查或需要理解边界时读取。
 31. [`handoff/continuation-prompt.md`](handoff/continuation-prompt.md)：跨会话继续工作用的临时上下文与任务提示。
+
+**2026-11-04 台钓持续响应工作增量：** [`candidate/persistent-response-working-direction-2026-11-04.md`](candidate/persistent-response-working-direction-2026-11-04.md) 整理本轮讨论的持久响应场方向与六个待闭合问题。它是 Candidate/Owner 意向承接草案，不替代本目录既有决定、Owner ballot 或上游 Current；后续处理该主题请在上面的裁决/冲突阅读后核对此文。
 
 当前设计主旨不是四个并列 Bonus，而是一条从数据到抽鱼的完整主脊：
 
