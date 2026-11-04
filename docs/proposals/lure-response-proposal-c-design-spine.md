@@ -92,8 +92,8 @@ ActualPresentation
 - [机会量支持](lure-response-proposal-c-opportunity-support.md)：`L`、遭遇饱和与单位时间收益的玩具模型；
 - [L 生产函数草案](lure-response-proposal-c-opportunity-l-production.md)：`r × τ` 结构、身份去重、覆盖与归约；
 - [鱼况/Bake 契约](lure-response-proposal-c-fish-condition-bake-contract.md)：从 Response 消费需求反推 Fish Condition 的产出要求；
-- [Fish Condition 裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md)：2026-10-30 的 A–H 裁决与执行后仍缺的机制细节；
-- [Fish Condition Owner 决定请求](lure-response-proposal-c-fish-condition-owner-decisions.md)：剩余七项与选项；
+- [Fish Condition 裁决记录（已归档）](../archive/lure-response-proposal-c-records/lure-response-proposal-c-fish-condition-rulings-2026-10-30.md)：2026-10-30 的 A–H 裁决与执行后仍缺的机制细节；
+- [Fish Condition Owner 决定请求（已归档）](../archive/lure-response-proposal-c-records/lure-response-proposal-c-fish-condition-owner-decisions.md)：剩余七项与选项；
 - [Fish Condition Production Contract](lure-response-proposal-c-fish-condition-production-contract.md)：DEF block、状态与校验；
 - [Response Algorithm v1](lure-response-proposal-c-response-algorithm-v1.md)：端到端算法与状态代数；
 - [Fish Condition 机制契约](lure-response-proposal-c-fish-condition-mechanisms.md)：四个 Condition 的语义、cause 与验收；

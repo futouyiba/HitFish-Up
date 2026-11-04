@@ -25,11 +25,11 @@
 | Escape-like 第一版事实与判定 | [Escape-like Trigger v1](lure-response-proposal-c-escape-trigger-v1.md) |
 | 机会量与单位时间收益的玩具模型 | [机会量支持](lure-response-proposal-c-opportunity-support.md) |
 | 机会量的生产结构：遭遇率、窗口、身份与归约 | [L 生产函数草案](lure-response-proposal-c-opportunity-l-production.md) |
-| 提交给独立裁定人的问题单 | [裁定请求](lure-response-proposal-c-adjudication-request.md) |
-| 顾问建议与 2026-10-30 Owner 确认 | [建议记录](lure-response-proposal-c-adjudication-recommendation-2026-10-30.md) |
+| 提交给独立裁定人的问题单（已归档） | [裁定请求](../archive/lure-response-proposal-c-records/lure-response-proposal-c-adjudication-request.md) |
+| 顾问建议与 2026-10-30 Owner 确认（已归档） | [建议记录](../archive/lure-response-proposal-c-records/lure-response-proposal-c-adjudication-recommendation-2026-10-30.md) |
 | Fish Condition 与 Bake 的反推需求 | [鱼况/Bake 契约](lure-response-proposal-c-fish-condition-bake-contract.md) |
-| Fish Condition 裁决记录（2026-10-30） | [裁决记录](lure-response-proposal-c-fish-condition-rulings-2026-10-30.md) |
-| Fish Condition 剩余七项：Owner 决定请求 | [Owner 决定请求](lure-response-proposal-c-fish-condition-owner-decisions.md) |
+| Fish Condition 裁决记录（2026-10-30，已归档） | [裁决记录](../archive/lure-response-proposal-c-records/lure-response-proposal-c-fish-condition-rulings-2026-10-30.md) |
+| Fish Condition 剩余七项：Owner 决定请求（已归档） | [Owner 决定请求](../archive/lure-response-proposal-c-records/lure-response-proposal-c-fish-condition-owner-decisions.md) |
 | Fish Condition 的载体、状态与校验 | [Fish Condition Production Contract](lure-response-proposal-c-fish-condition-production-contract.md) |
 | 端到端 Response 算法规格 | [Response Algorithm v1](lure-response-proposal-c-response-algorithm-v1.md) |
 | 四个 Fish Condition 的机制草案 | [Fish Condition 机制契约](lure-response-proposal-c-fish-condition-mechanisms.md) |
