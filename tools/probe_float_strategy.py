@@ -103,7 +103,7 @@ def trial_response(hook, valued_mass, pressure, beta=6.0, gamma=0.5):
 class Field:
     def __init__(self, scope, rates):
         self.scope = scope
-        self.rates = rates
+        self.rates = deepcopy(rates)
         self.time = 0.0
         self.lots = {}
         self.seen = set()
@@ -435,6 +435,25 @@ class Tests(unittest.TestCase):
             self.assertEqual(state.save(), before)
         state.apply(deposit("valid", 5, 1))
         self.assertEqual(state.time, 5)
+
+    def test_rate_isolation_between_restored_branches(self):
+        original_rates = deepcopy(self.f["rates"])
+        state = Field("room1:cell1:bottom", self.f["rates"])
+        state.apply(deposit("a", 0, 2))
+        state.apply({"id": "eat", "time": 10, "type": "ingest", "mass": 0.5, "scope": state.scope})
+        snapshot = state.save()
+        untouched = deepcopy(snapshot)
+        left, right = Field.load(snapshot), Field.load(snapshot)
+        control = Field.load(deepcopy(snapshot))
+        left.rates["recovery"] = 0.4
+        state.rates["pressure_per_mass"] = 2
+        self.assertEqual(snapshot, untouched)
+        self.assertEqual(self.f["rates"], original_rates)
+        self.assertEqual(right.rates, original_rates)
+        right.advance(20)
+        control.advance(20)
+        self.assertEqual(right.save(), control.save())
+        self.assertAlmostEqual(right.pressure, 0.25 * math.exp(-0.04 * 10))
 
     def test_structural_isolation(self):
         state = Field("room1:cell1:bottom", self.f["rates"])
