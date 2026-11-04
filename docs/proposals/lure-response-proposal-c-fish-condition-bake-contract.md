@@ -187,6 +187,6 @@ Owner 2026-10-30 已裁定架构、加载路径、失效语义、Activity 上界
 
 - [五评价项契约](lure-response-proposal-c-evaluation-items.md)（Activity / Motivation / Diet Shift / Wariness 的消费点与 Working 锚）；
 - [语义契约](lure-response-proposal-c-semantic-contract.md) §1（通用状态与 `ResolutionIncomplete`）；
-- [响应与机会契约](lure-response-proposal-c-response-opportunity.md)（`L × C` 与状态表）。
+- [响应与机会契约](lure-response-proposal-c-response-opportunity.md)（`L` 与状态表）。
 
 本页的范围、参考值与有效期规则是 Candidate 要求，不是已批准 Contract。

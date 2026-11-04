@@ -12,7 +12,12 @@
 | Risk MVP | 只立 `TackleConspicuousness`，可后置实现；`EntryDisturbance` 暂不实现 | 实现前 `RiskCost` 仍为 0 |
 | CapacityModifier | 从 active design 删除 | 契约不再列可选聚合 |
 | Prediction | 第一版不含，状态改为 `Deferred Research` | 不再是当前待设计项 |
-| `L` owner | 正式归 Opportunity；Spatial 只提供空间事实 | `q = L × C` 不变 |
+| `L` owner | 正式归 Opportunity；Spatial 只提供空间事实 | `q = L × C` 只作 Opportunity 内部量；圆桌按 2026-11-04 方向 |
+| 圆桌接口（2026-11-04） | 以 FCF 通用的 `SpatialDistributionWeight × AdaptationCoeff` 为准；`q = L × C` 不再作为候选贡献公式 | `L` 如何并入 SDW 待定 |
+
+### 2026-11-04 圆桌接口
+
+Owner 明确 FCF 通用公式 `SpatialDistributionWeight × AdaptationCoeff` 是对的。Proposal C 不再把 `q = L × C` 当作候选贡献公式；`L` 的并入位置（是否进入 SDW、进入哪一项，或暂不单独使用）尚未指定，属 Opportunity 实现问题。
 
 ### 重开条件
 
@@ -34,6 +39,7 @@
 
 ## 3. 语义缺口
 
+- 非摄食 family 与 Engagement Mode 的归类（待确认）：现行术语表的 Engagement Mode 是伏击、开放游弋、护巢护卵；Defense / Investigation 目前是 interaction family，不是 mode。初步归类是“护巢护卵 mode 承接巢区防御；领地 / 防御与调查是否作为独立 family 或在现有 mode 下表达”仍未定，需 Owner 确认；
 - AttackTrigger：Escape-like 已准入；Injured / Struggling 与 imbalance-like vulnerability 为 `CandidateUnresolved`，等 cue-only holdout；pause 本身不得作为 Trigger；
 - Risk：只立 `TackleConspicuousness`，`EntryDisturbance` 暂不实现；实现前 `RiskCost = 0`，Wariness 暂无真实玩家策略消费方；
 - 完整自然度模型；

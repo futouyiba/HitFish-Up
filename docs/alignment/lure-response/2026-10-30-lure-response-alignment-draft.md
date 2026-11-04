@@ -3,6 +3,8 @@
 状态：会议对齐草案 / 候选设计。不是现行契约，不是生产参数。
 
 > 与设计包的同步状态（2026-10-31 更新）：本稿的**三项方向已由 PR [#171](https://github.com/futouyiba/HitFish-Up/pull/171)（合并提交 `ad2ccb5f`）回写进设计包与 probe**：去掉相对方位 θ、同级猎物解释取最大、一竿一鱼况快照。**终端钓组显眼度聚合仍是会议候选**，字段与 owner 未落地，`RiskCost = 0`；实现以设计包与 probe 为准。
+>
+> 2026-11-04 补充：圆桌接口以 `SpatialDistributionWeight × AdaptationCoeff` 为准；文中 `L × C_feed` 只作 Opportunity 内部量，不再是候选贡献公式。
 
 ---
 

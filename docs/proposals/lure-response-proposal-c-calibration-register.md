@@ -49,6 +49,7 @@
 ## 3. 使用规则
 
 - 表中数值全部是 Working / Probe，不得写成生产参数；
+- Activity 的 Candidate 域是 `[0, 2]`，常规状态不突破 `1`；`>1` 只用于极少数极活跃情形；
 - `K_close` 的 `0.19` 是 no-θ 单方向标尺下的值；`0.76` 是带方位平均时的历史 Working 值；
 - 换算依据：旧模型 `ClosingCost = K_close × max(0, q·cosθ)² × activity`，均匀方位下 `E[max(0, cosθ)²] = 1/4`，故 `0.76 / 4 = 0.19`。这是成本尺度等价，不是响应等价（投影截断会带来差异）；旧值来源见研究分支 `311ae70d` 快照的 closing 契约；
 - 白话解释只帮助阅读，不改变参数归属与公式；
@@ -56,7 +57,15 @@
 - 标定必须给出数据来源、样本范围与排序验收，而不只是拟合误差；
 - `Prediction`、`CapacityModifier` 已不在 active 主体，参数只在重开时才登记。
 
-## 4. 缺数据清单
+## 4. 示例配置与可执行样例
+
+这些是阅读和验证用的样例，不是生产标定表：
+
+- [Fixed Bake 参考实现](../../reference/0340-fixed-bake/README.md) 与 [Bass Q3 fixture](../../reference/0340-fixed-bake/fixtures/bass_q3.json)：Bake / DEF 的条件组与权重样例；参考实现明确不覆盖 Fish Condition 与 Response；
+- 形状 probe：`prototypes/lure-response/` 下的 `proposal_c_strategy_probe.py`、`proposal_c_end_to_end_probe.py`、`proposal_c_fish_condition_probe.py` 等，用来验证公式形状与状态传播；
+- Owner 裁定来源：[Issue #152](https://github.com/futouyiba/HitFish-Up/issues/152)、[Issue #161](https://github.com/futouyiba/HitFish-Up/issues/161)。
+
+## 5. 缺数据清单
 
 - Fish Condition 的 cause / 曲线数据（Activity、Motivation、Diet Shift、Wariness）；
 - 鱼种级 `InterceptSpeedLimit` 与体型缩放；

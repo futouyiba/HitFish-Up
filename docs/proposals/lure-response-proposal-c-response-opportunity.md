@@ -10,7 +10,7 @@
 已解析 DecisionMargin
 → 条件响应 C
 → sibling 组成 C_feed
-→ 机会接入 q = L × C
+→ 机会接入（Opportunity 内部 q = L × C）
 → Opportunity Reduce
 → NativeCandidateSnapshot
 → TrueRoll
@@ -103,6 +103,8 @@ baitfish = Reject, crayfish = 0.30    → C_feed = 0.30
 q_i,j = L_i,j × C_i,j
 ```
 
+> 2026-11-04 Owner 方向：圆桌接口以 FCF 通用的 `SpatialDistributionWeight × AdaptationCoeff` 为准。上面的 `q = L × C` 只保留为 Opportunity 内部量；`L` 如何并入 SDW、是否仍作为单独因子，尚未指定，见[开放决策](lure-response-proposal-c-open-decisions.md)。
+
 - 姿态颗粒必须有稳定语义身份或稳定 semantic partition；
 - 一个 runtime tick 或一次重复调用不是新机会；
 - 同一语义颗粒、同一 opportunity identity 的重算属于 replay，不增加机会计数；
@@ -144,7 +146,9 @@ q_i,j = L_i,j × C_i,j
 → TrueRoll
 ```
 
-- Response 只产生原生贡献，`L × C` 只乘一次；
+2026-11-04 Owner 方向下，圆桌权重按 `SpatialDistributionWeight × AdaptationCoeff` 形成；本节只描述 Opportunity 内部的 `L` 与 Response 的 `C` 如何对齐，最终候选公式以圆桌接口为准。
+
+- Response 只产生原生贡献；`L × C` 只在 Opportunity 内部结算一次，圆桌按 `SpatialDistributionWeight × AdaptationCoeff`（2026-11-04）；
 - Candidate 后段不再乘 Response；
 - `ResolutionIncomplete` 的候选不进入 roll；
 - Candidate 的 reducer 与 roll 规则属于 Candidate owner，本文不重定义。
@@ -156,7 +160,7 @@ q_i,j = L_i,j × C_i,j
 | Margin | 数值 / `ResolutionIncomplete` / `Reject` | 只有数值进入投影 |
 | C | `0` / `(0,1]` / 不输出 | 单方向计算后乘 support |
 | C_prey | 数值 | 进入 sibling max |
-| C_feed | 标量 / `ResolutionIncomplete` | 只有标量进入 `L × C` |
+| C_feed | 标量 / `ResolutionIncomplete` | 只有标量进入 Opportunity 内部 `L × C`；圆桌按 SDW × AdaptationCoeff |
 | L | 数值 / `ResolutionIncomplete` | 未解析不当作零 |
 | q | 数值 | 只有数值进入 Opportunity Reduce |
 | Candidate | native snapshot / 不可 roll | roll 由 Candidate owner 决定 |

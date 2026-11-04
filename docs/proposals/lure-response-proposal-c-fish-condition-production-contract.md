@@ -63,7 +63,7 @@ FishConditionBlock {
 
 | 字段 | 范围 | 说明 |
 |---|---|---|
-| Activity | 有限、非负 | `1.0` 是 Working reference，不是默认值；不设语义上界 |
+| Activity | `[0, 2]`；常规不突破 `1` | `1.0` 是 Working reference，不是默认值；`>1` 只用于极少数极活跃情形 |
 | FeedingMotivation | `[0,1]`（Candidate 域） | 0.5 是参考锚，不是 fallback |
 | Wariness | `[0,1]`（Candidate 域） | 仅表示鱼侧警觉；不是 SuspicionLoad |
 | DietShift[family] | 与 FoodValue 同标尺的有符号偏移 | 只影响对应 family；无全局分量 |
