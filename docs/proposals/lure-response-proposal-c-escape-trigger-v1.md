@@ -11,8 +11,9 @@
 ```text
 轨迹事件
 → prey-conditioned 逃逸样解释
-→ TriggerIntensity ∈ [0,1]
-→ StateTriggerValue = TriggerBudget × TriggerIntensity
+→ StateMatchStrength ∈ [0,1]              # 描述性强度，猎物侧，跨捕食鱼种共享
+→ TriggerEvaluation_f(p, state)           # 鱼侧评价；第一版默认 = StateMatchStrength
+→ StateTriggerValue = TriggerBudget × TriggerEvaluation_f
 ```
 
 不做：受伤 / 挣扎、失衡样虚弱、停顿触发、领地或护巢。
@@ -73,12 +74,26 @@ strengths[family] ∈ [0,1]
 2. 只保留该 prey family 声明适用的事件
 3. 每个 trigger-state explanation 取 max(适用事件强度)
 4. 多个 explanation 之间取 max，不求和
-5. 没有适用事件 → TriggerIntensity = 0（ResolvedNonResponsive）
+5. 没有适用事件 → StateMatchStrength = 0（ResolvedNonResponsive）
 6. 没有该 family 的配置 → NotConfigured，不当作 0
 7. family 有配置、但明确没有 trigger valuation → NotApplicable，输出 0
 8. family 适用但强度缺失 → Unknown；归约时转为 ResolutionIncomplete，不当作 0
 9. 强度越界或非有限 → InvalidInput，不静默 clamp
 ```
+
+规则 1–9 属于**猎物侧**，输出的是描述性强度。它们不读捕食鱼的食性、追赶能力或摄食意愿。
+
+### 鱼侧默认评价（第一版）
+
+```text
+TriggerEvaluation_f(p, state) = StateMatchStrength_p     # 共享默认规则
+StateTriggerValue_fp = TriggerBudget × TriggerEvaluation_f(p, state)
+```
+
+- 评价由 Response 在鱼侧完成，按 `f × EngagementMode × p` 分支结算；
+- 第一版不做鱼种专属曲线，也不造物种参数；没有配置时一律走默认规则，不判 `NotConfigured`；
+- 鱼侧不得重新把 raw turn / burst / event count 相加；它只读已经解释好的状态；
+- 未来允许替换 `TriggerEvaluation_f`，但必须另行立项与标定，不属于本版。
 
 ### 第一版 Working 提取参数（Candidate，待标定）
 
@@ -127,7 +142,8 @@ Exception：`ClosingLoad ≈ 0` 时，低活性不能凭空压低响应；Trigge
 
 ## 7. 验收向量
 
-窗口 0.50 秒；强度为配置输入；`now = 1.00`。
+窗口 0.50 秒；强度为配置输入；`now = 1.00`。表中 `I` 是猎物侧的 `StateMatchStrength`；
+在鱼侧默认评价下 `StateTriggerValue = 0.10 × I`。
 
 | 案例 | 事件 | 期望 |
 |---|---|---|

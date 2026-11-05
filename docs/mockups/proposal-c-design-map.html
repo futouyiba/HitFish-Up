@@ -207,7 +207,7 @@
         <li class="arrow" aria-hidden="true">→</li>
         <li class="node interp"><b>猎物解释</b><span>support 是贡献保留比例，不是概率</span></li>
         <li class="arrow" aria-hidden="true">→</li>
-        <li class="node state"><b>呈现状态</b><span>状态维度、事件、时序，以及 TriggerIntensity</span></li>
+        <li class="node state"><b>呈现状态</b><span>状态维度、事件、时序，以及描述性强度 StateMatchStrength</span></li>
         <li class="arrow" aria-hidden="true">→</li>
         <li class="node margin"><b>出手余量</b><span>五个评价项在同一标尺上竞争</span></li>
         <li class="arrow" aria-hidden="true">→</li>
@@ -257,7 +257,7 @@
         </thead>
         <tbody>
           <tr><td>食物价值</td><td><code>u = T(BaseDietAffinity)</code>；<code>u' = clamp(u + DietTierShift, 0, 3)</code>；<code>clamp(U(u') + SizePreferenceAdjustment, 0, 1)</code></td></tr>
-          <tr><td>攻击诱因</td><td><code>TriggerBudget × TriggerIntensity</code>，预算约 0.10~0.15</td></tr>
+          <tr><td>攻击诱因</td><td><code>TriggerBudget × TriggerEvaluation</code>，预算约 0.10~0.15；第一版 <code>TriggerEvaluation = StateMatchStrength</code>（鱼侧共享默认）</td></tr>
           <tr><td>追赶负担</td><td><code>K_close × q² × ActivityCostMultiplier</code>；第一版按“鱼在追拟饵”单方向估算，Working <code>K_close = 0.19</code></td></tr>
           <tr><td>风险顾虑</td><td><code>K_wary × Wariness × SuspicionLoad</code></td></tr>
           <tr><td>摄食意愿门槛</td><td><code>M ≤ 0.8: 0.60 − 0.40M</code>；<code>M &gt; 0.8</code> 再减 <code>0.50(M − 0.8)</code></td></tr>
@@ -283,7 +283,8 @@ q        = L × C_feed                    # 只作 Opportunity 内部量</code><
   校验帧、版本、快照（一竿一快照）
   supports = 猎物解释(presentation, assembly)
   对每个 sibling family:
-      state    = 状态提取 + TriggerIntensity
+      state    = 状态提取 + StateMatchStrength   # 猎物侧，描述性
+      trigger  = TriggerEvaluation(state)         # 鱼侧，第一版默认 = StateMatchStrength
       margin   = 食物价值 + 攻击诱因 - 追赶负担 - 风险顾虑 - 门槛
       C        = clamp(余量 / 0.40)
       C_prey   = support × C

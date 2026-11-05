@@ -36,8 +36,9 @@
 ### 第一版边界
 
 ```text
-TriggerIntensity_p ∈ [0,1]
-StateTriggerValue_p = 0.10 × TriggerIntensity_p
+StateMatchStrength_p ∈ [0,1]                     # 猎物侧，描述性
+TriggerEvaluation_f = StateMatchStrength_p        # 第一版共享默认，鱼侧
+StateTriggerValue_fp = 0.10 × TriggerEvaluation_f
 ```
 
 - 只按 prey interpretation 解释后的状态计算；

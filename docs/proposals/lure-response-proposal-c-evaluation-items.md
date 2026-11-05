@@ -78,20 +78,42 @@ U = T⁻¹；锚间为分片线性插值，单调连续。
 
 ## 3. 攻击诱因
 
-### 合成
+### 两个 owner
+
+攻击诱因跨两层，两个量各有唯一 owner：
 
 ```text
-StateTriggerValue_p
-= TriggerBudget × TriggerIntensity_p
+猎物侧（Prey Interpreter，跨捕食鱼种共享）
+    StateMatchStrength_p ∈ [0,1]
+    # 描述性：当前运动在多大程度上构成这种猎物状态
+    # 输入只有实际事实、事件、该猎物的状态规则；不读捕食鱼的食性、追赶能力或意愿
+
+鱼侧（Response，按捕食鱼 f × EngagementMode）
+    TriggerEvaluation_f(p, PreyState_p) ∈ [0,1]
+    StateTriggerValue_fp = TriggerBudget × TriggerEvaluation_f(p, PreyState_p)
 ```
 
-- `TriggerIntensity_p ∈ [0,1]` 由 prey-conditioned state interpreter 给出；
-- `TriggerBudget ≈ 0.10 ~ 0.15`，是 Working effect-size budget；
-- Response 不再对 raw trajectory 做第二套 Trigger 解释。
+- `StateMatchStrength_p` 由状态解释器给出，只回答“像不像”，不回答“这条鱼多想攻击”；
+- `TriggerEvaluation_f` 由 Response 在评价阶段计算，回答“这条鱼面对这个已解释状态，额外产生多少攻击诱因”；
+- `TriggerBudget ≈ 0.10 ~ 0.15`，仍是 Working effect-size budget，不因分层而改变；
+- 同一呈现、同一猎物类型，换捕食鱼时 `StateMatchStrength_p` 不变；只有鱼侧评价可以不同。
 
-### TriggerIntensity 不是什么
+### 第一版默认评价
+
+```text
+TriggerEvaluation_f(p, PreyState_p) = StateMatchStrength_p
+```
+
+- 第一版使用共享默认规则，不预设按鱼种或习性的动作偏好表，不捏造物种参数；
+- 默认规则下数值与分层前一致，排序不发生漂移；
+- 未来某鱼种或模式有实证差异时，可以替换 `TriggerEvaluation_f`；未配置的鱼种回落到默认规则，不判 `NotConfigured`，也不让默认逃逸规则失效；
+- 配置了鱼种专属评价但输出非有限或越界时，按 `InvalidInput` 处理，不静默截断。
+
+### StateMatchStrength 不是什么
 
 不是 raw turn magnitude、burst speed 或 event count。理由：一次 escape dart 往往同时包含转向和加速，按特征相加会重复奖励同一个行为；不同猎物对同一 raw feature 的含义不同；事件数不应无界累加。
+
+鱼侧评价也不得把这些 raw 特征重新相加。事件已经在猎物侧被解释成事件，鱼侧只读已解释状态。
 
 ### 准入边界
 
@@ -213,7 +235,7 @@ M > 0.80:
 | 项 | 工作域 | 备注 |
 |---|---|---|
 | 食物价值 | `[0, 1]` | 已 clamp |
-| 攻击诱因 | `[0, 0.15]` | `TriggerBudget × TriggerIntensity`，预算为 Working 上限 |
+| 攻击诱因 | `[0, 0.15]` | `TriggerBudget × TriggerEvaluation`，预算为 Working 上限 |
 | 追赶负担 | `[0, 1.52]` | `K_close=0.19`、`q∈[0,2]`、`Activity∈[0,2]` 时的上界；不设硬 cap |
 | 风险顾虑 | `[0, 1]` | `K_wary=1` 的 Working 尺度；字段未落地时恒为 0 |
 | 摄食意愿门槛 | `[0.1, 0.6]` | `Motivation∈[0,1]` 与 tail 参数下的 Working 范围 |
@@ -238,7 +260,7 @@ Fish Condition（鱼侧动态参数）
 
 - 本轮不重定 Fish Condition 名单；现行 Activity、Feeding Motivation、Diet Shift、Wariness 继续作为上游语义；
 - 它们各自如何生成、是否存在可派生量、是否有重复职责，留待专门的 Bake / Owner 讨论；
-- `BaseDietAffinity`、`InterceptSpeedLimit`、prey support、TriggerIntensity 都是派生中间量或解释结果，不自动成为 Fish Condition；
+- `BaseDietAffinity`、`InterceptSpeedLimit`、prey support、`StateMatchStrength`、`TriggerEvaluation` 都是派生中间量或解释结果，不自动成为 Fish Condition；
 - 一个来源只在一个 owner 结算，跨层读取允许，重复加成不允许。
 
 ## 9. 未决项

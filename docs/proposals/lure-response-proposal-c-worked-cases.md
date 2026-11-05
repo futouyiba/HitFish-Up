@@ -66,11 +66,12 @@ C = clamp(0.05 / 0.40) = 0.125
 
 ## 5. 同一次突然改向
 
-**事实：** 呈现发生一次 sudden redirection，state interpreter 判定 `TriggerIntensity=0.8`。
+**事实：** 呈现发生一次 sudden redirection，state interpreter 判定 `StateMatchStrength=0.8`。
 
 **结果（第一版生产主体）：**
 
 ```text
+TriggerEvaluation = 0.8          # 鱼侧默认 = StateMatchStrength
 StateTriggerValue = 0.10 * 0.8 = 0.08
 ```
 

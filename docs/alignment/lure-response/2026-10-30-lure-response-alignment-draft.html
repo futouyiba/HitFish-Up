@@ -162,7 +162,9 @@
 <tr><td><strong>实际呈现</strong></td><td>这一竿实际是什么</td><td>玩家操作 + 环境</td><td>共同事实</td></tr>
 <tr><td><strong>共同事实</strong></td><td>可复用的客观输入</td><td>事实提取</td><td>各猎物解释器</td></tr>
 <tr><td><strong>表达支持度</strong></td><td>有多像这种猎物；按比例保留该解释的响应</td><td>猎物解释器</td><td>乘在该解释的条件响应上</td></tr>
-<tr><td><strong>当前状态</strong></td><td>按这种猎物看，现在在干什么</td><td>猎物解释器</td><td>攻击诱因</td></tr>
+<tr><td><strong>当前状态</strong></td><td>按这种猎物看，现在在干什么</td><td>猎物解释器</td><td>鱼侧攻击诱因评价</td></tr>
+<tr><td><strong>状态描述强度 StateMatchStrength</strong></td><td>当前运动在多大程度上构成该状态（不带鱼侧偏好）</td><td>猎物解释器</td><td>鱼侧 <code>TriggerEvaluation</code></td></tr>
+<tr><td><strong>攻击诱因 TriggerEvaluation</strong></td><td>这条鱼面对这个已解释状态，额外多冲动</td><td>鱼侧评价规则（第一版 = StateMatchStrength）</td><td>出手余量</td></tr>
 <tr><td><strong>鱼侧上下文</strong></td><td>鱼是谁、当前状态如何</td><td>鱼种配置 + 本竿鱼况快照</td><td>每种解释的五项评价</td></tr>
 <tr><td><strong>五项评价</strong></td><td>值不值得出手（每种解释分别算）</td><td>评价规则</td><td>出手余量</td></tr>
 <tr><td><strong>出手余量</strong></td><td>五项净值</td><td>相加</td><td>条件响应</td></tr>
