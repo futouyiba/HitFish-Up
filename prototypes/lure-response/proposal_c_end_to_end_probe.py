@@ -30,29 +30,30 @@ REJECT = "Reject"
 INVALID = "InvalidInput"
 
 TIER_ANCHORS = (0.0, 0.40, 0.70, 1.0)  # Poor, Marginal, Good (G placeholder), Preferred
+SUPPORTED_TIER_SCALES = {"tier-v1": TIER_ANCHORS}
 
 
-def tier_coordinate(value: float) -> float:
+def tier_coordinate(value: float, anchors=TIER_ANCHORS) -> float:
     """Map FoodValue to the shared 0..3 tier coordinate (piecewise linear)."""
-    if value <= TIER_ANCHORS[0]:
+    if value <= anchors[0]:
         return 0.0
     for i in range(3):
-        lo, hi = TIER_ANCHORS[i], TIER_ANCHORS[i + 1]
+        lo, hi = anchors[i], anchors[i + 1]
         if value <= hi:
             return i + (value - lo) / (hi - lo)
     return 3.0
 
 
-def tier_value(coord: float) -> float:
+def tier_value(coord: float, anchors=TIER_ANCHORS) -> float:
     c = max(0.0, min(3.0, coord))
     i = int(c)
     if i >= 3:
-        return TIER_ANCHORS[3]
-    return TIER_ANCHORS[i] + (TIER_ANCHORS[i + 1] - TIER_ANCHORS[i]) * (c - i)
+        return anchors[3]
+    return anchors[i] + (anchors[i + 1] - anchors[i]) * (c - i)
 
 
-def shift_affinity(base: float, shift: float) -> float:
-    return tier_value(tier_coordinate(base) + shift)
+def shift_affinity(base: float, shift: float, anchors=TIER_ANCHORS) -> float:
+    return tier_value(tier_coordinate(base, anchors) + shift, anchors)
 
 
 def clamp01(x: float) -> float:
@@ -123,7 +124,10 @@ def cast_entry(cast_fc, cast_id, group, mode):
 
 
 def evaluate(family, state_trigger, entry, seg):
-    """entry fields: activity, feedingMotivation, wariness, baseDietAffinity[family], dietShift[family]."""
+    """entry: Fish Condition snapshot entry; seg carries static baseAffinity and sizeAdjustment."""
+    scale = SUPPORTED_TIER_SCALES.get(entry.get("tierScaleVersion"))
+    if scale is None:
+        return RI, None                     # missing or unsupported tier scale
     act_status, activity_mult = activity_multiplier(entry.get("activity"))
     if act_status != RESOLVED:
         return act_status, None
@@ -145,9 +149,11 @@ def evaluate(family, state_trigger, entry, seg):
     elif not _finite(wariness) or not 0.0 <= wariness <= 1.0:
         return INVALID, None
 
-    base = entry.get("baseDietAffinity", {}).get(family)
+    base = seg.get("baseAffinity", {}).get(family)
     if base is None:
         return UNKNOWN, None
+    if base in (UNKNOWN, NOT_CONFIGURED):
+        return base, None
     if not _finite(base) or not 0.0 <= base <= 1.0:
         return INVALID, None
     shift = entry.get("dietShift", {}).get(family)
@@ -157,8 +163,17 @@ def evaluate(family, state_trigger, entry, seg):
         return shift, None
     if not _finite(shift) or not -1.0 <= shift <= 1.0:
         return INVALID, None
-    food = clamp01(shift_affinity(base, shift) + seg.get("sizeAdjustment", 0.0))
+    size = seg.get("sizeAdjustment")
+    if size is None:
+        return UNKNOWN, None
+    if size in (UNKNOWN, NOT_CONFIGURED):
+        return size, None
+    if not _finite(size):
+        return INVALID, None
+    food = clamp01(shift_affinity(base, shift, scale) + size)
 
+    if not _finite(seg.get("q")):
+        return INVALID, None
     trigger = TRIGGER_BUDGET * state_trigger
     closing = K_CLOSE * seg["q"] ** 2 * activity_mult
     risk = K_WARY * wariness * suspicion
@@ -243,10 +258,10 @@ def make_snapshot(entries, cast_id="cast-1", version="v1", formed_at=10.0):
 
 def base_entry(**overrides):
     entry = {
+        "tierScaleVersion": "tier-v1",
         "activity": 1.0,
         "feedingMotivation": 0.5,
         "wariness": 0.0,
-        "baseDietAffinity": {"baitfish": 0.70, "crayfish": 0.70},
         "dietShift": {"baitfish": 0.0, "crayfish": 0.0},
     }
     entry.update(overrides)
@@ -261,6 +276,7 @@ def base_seg(**overrides):
         "conditionGroupId": "cg-1",
         "engagementModeId": "mode-stalk",
         "siblingSet": ["baitfish", "crayfish"],
+        "baseAffinity": {"baitfish": 0.70, "crayfish": 0.70},
         "sizeAdjustment": 0.0,
         "q": 0.40,
         "suspicionLoad": 0.0,
@@ -365,13 +381,33 @@ def main() -> None:
     out_shift_out = response(seg, asm, snap_shift_out, {"baitfish": 1.0, "crayfish": 0.30}, states)
     print("diet shift out of range:", out_shift_out)
 
-    snap_nan_base = make_snapshot({
-        ("cg-1", "mode-stalk"): base_entry(baseDietAffinity={"baitfish": float("nan"), "crayfish": 0.70})
-    })
-    out_nan_food = response(seg, asm, snap_nan_base, supports, states)
+    out_nan_base = response(
+        base_seg(baseAffinity={"baitfish": float("nan"), "crayfish": 0.70}), asm, snap, supports, states
+    )
+    out_unknown_base = response(
+        base_seg(baseAffinity={"baitfish": UNKNOWN, "crayfish": 0.70}),
+        asm, snap, {"baitfish": 1.0, "crayfish": 0.30}, states,
+    )
+    out_missing_q = response(base_seg(q=None), asm, snap, supports, states)
     out_nan_q = response(base_seg(q=float("nan")), asm, snap, supports, states)
-    print("nan base affinity:", out_nan_food)
+    out_nan_size = response(base_seg(sizeAdjustment=float("nan")), asm, snap, supports, states)
+    out_unknown_size = response(base_seg(sizeAdjustment=UNKNOWN), asm, snap, supports, states)
+    snap_no_scale = make_snapshot({
+        ("cg-1", "mode-stalk"): {k: v for k, v in entry.items() if k != "tierScaleVersion"}
+    })
+    out_no_scale = response(seg, asm, snap_no_scale, supports, states)
+    snap_bad_scale = make_snapshot({
+        ("cg-1", "mode-stalk"): {**entry, "tierScaleVersion": "tier-v0"}
+    })
+    out_bad_scale = response(seg, asm, snap_bad_scale, supports, states)
+    print("nan base affinity:", out_nan_base)
+    print("unknown base affinity:", out_unknown_base)
+    print("missing q:", out_missing_q)
     print("nan q:", out_nan_q)
+    print("nan size adjustment:", out_nan_size)
+    print("unknown size adjustment:", out_unknown_size)
+    print("missing tier scale:", out_no_scale)
+    print("unsupported tier scale:", out_bad_scale)
 
     joined = opportunity_join(out[1], 0.50, out[2])
     joined_low = opportunity_join(out[1], 0.25, out[2])
@@ -424,8 +460,13 @@ def main() -> None:
     assert out_diet_unknown[2] == {"baitfish": UNKNOWN}
     assert out_diet_unknown[1] < out_diet[1]
 
-    assert out_nan_food[0] == INVALID
+    assert out_nan_base[0] == INVALID
+    assert out_unknown_base[0] == RESOLVED and out_unknown_base[2] == {"baitfish": UNKNOWN}
+    assert out_missing_q[0] == INVALID
     assert out_nan_q[0] == INVALID
+    assert out_nan_size[0] == INVALID
+    assert out_unknown_size[0] == RI
+    assert out_no_scale[0] == RI and out_bad_scale[0] == RI
 
     # Opportunity-internal toy join only; roundtable is SDW x AdaptationCoeff.
     assert opportunity_join(0.6, 0.5, {}) == (RESOLVED, 0.30, {})

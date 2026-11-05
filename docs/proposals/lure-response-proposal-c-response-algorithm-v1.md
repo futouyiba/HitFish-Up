@@ -12,6 +12,7 @@
 PresentationSegment   轨迹、时间、环境关系、局部记录
 AssemblySnapshot      证据绑定与适用标记
 CastFishCondition     抛竿时形成的鱼况快照（可选授权 overlay）
+BaseDietAffinity      species × prey family 的静态基础亲和（非 Fish Condition）
 OpportunityFacts      L 及状态（不进入 Response；圆桌接口按 SDW × AdaptationCoeff）
 WorkingParams         K_close、TriggerBudget、M0/M1、tail 参数
 ```
@@ -30,7 +31,7 @@ WorkingParams         K_close、TriggerBudget、M0/M1、tail 参数
 ## 2. 算法
 
 ```text
-function response(segment, assembly, castFC, params):
+function response(segment, assembly, castFC, baseAffinity, params):
 
   # 0. 帧校验与快照选择
   require segment.valid and assembly.version == segment.assemblyVersion
@@ -89,7 +90,7 @@ function response(segment, assembly, castFC, params):
           results[family] = (state.status, None)   # 保留原始状态
           continue
 
-      C_cond = evaluate(family, state, entry, params)   # 已解析输入下的条件响应
+      C_cond = evaluate(family, state, baseAffinity, entry, params)   # 已解析输入下的条件响应
       if C_cond == Reject:
           results[family] = (Reject, 0.0)
           continue
@@ -128,13 +129,16 @@ function compose(results):
   return (Resolved, max(resolved + rejected), skipped)
 
 
-function evaluate(family, state, entry, params):
+function evaluate(family, state, baseAffinity, entry, params):
 
   # entry = castFC.entries[(conditionGroupId, engagementModeId)]
-  affinity  = entry.baseDietAffinity[family]    # 参考鱼况、参考尺寸
-  shift     = entry.dietShift[family]           # 档，[-1,+1]；缺失即该 family 不闭合（Unknown）
-  u         = T(affinity)                       # 公共档位坐标 Poor/Marginal/Good/Preferred
-  shifted   = U(clamp(u + shift, 0, 3))         # 档位坐标端点饱和是合法饱和
+  if entry.tierScaleVersion not in supportedTierScales:
+      return ResolutionIncomplete       # 缺版本或不支持的标尺
+  scale     = supportedTierScales[entry.tierScaleVersion]   # 锚 a=(0, 0.40, G, 1)
+  affinity  = baseAffinity[family]      # 静态输入，不在 Fish Condition 快照里
+  shift     = entry.dietShift[family]   # 档，[-1,+1]；缺失即该 family 不闭合（Unknown）
+  u         = T(affinity, scale)        # 公共档位坐标 Poor/Marginal/Good/Preferred
+  shifted   = U(clamp(u + shift, 0, 3), scale)   # 档位坐标端点饱和是合法饱和
   food      = clamp(shifted + sizeAdjustment, 0, 1)
   trigger   = params.TriggerBudget * state.TriggerIntensity
   closing   = params.K_close * state.q^2 * activityMultiplier(entry.activity)   # 单方向：鱼在追拟饵
@@ -191,6 +195,9 @@ Reject > InvalidInput > NotConfigured > Unknown > Resolved
 | Wariness 缺失且存在 cue | `ResolutionIncomplete` |
 | Wariness 缺失且无 cue | `RiskCost=0` |
 | DietShift[family] 缺失 | 该 family 的 FoodValue 不可闭合 |
+| `tierScaleVersion` 缺失或不支持 | 整竿 `ResolutionIncomplete` |
+| BaseDietAffinity[family] 缺失或 `Unknown` | 该 family 的 FoodValue 不可闭合 |
+| SizePreferenceAdjustment 缺失或非有限 | `Unknown` / `InvalidInput`，不按 0 处理 |
 | TriggerIntensity 缺失 | `ResolutionIncomplete` |
 | support 为退化区间 | 按标量处理 |
 | support 为非退化区间 | 该分支 `ResolutionIncomplete`，跳过并记录 |

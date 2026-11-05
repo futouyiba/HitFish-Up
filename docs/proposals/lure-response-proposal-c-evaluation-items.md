@@ -38,8 +38,16 @@ ShiftedDietAffinity_f = U(u'_f)         # 回到 FoodValue 标尺
 
 ```text
 档位坐标 0 / 1 / 2 / 3  ↔  Poor / Marginal / Good / Preferred
-参考锚：Poor = 0，Marginal = 0.40，Good = G，Preferred = 1
+锚 a = (a0, a1, a2, a3) = (0, 0.40, G, 1)，要求 0 < 0.40 < G < 1
 G 是 Working 占位，未标定；同一标尺版本内所有 family 共用，不按 family 另配档距。
+
+T(x)：x 先 clamp 到 [0,1]；对 a_i ≤ x ≤ a_(i+1)，
+      T(x) = i + (x − a_i) / (a_(i+1) − a_i)
+
+U(u)：u 先 clamp 到 [0,3]；对 i ≤ u ≤ i+1，
+      U(u) = a_i + (a_(i+1) − a_i) × (u − i)
+
+U = T⁻¹；锚间为分片线性插值，单调连续。
 ```
 
 `DietTierShift_f`（简称 `s_f`）是 DietShift 的输出，单位是“档”，有符号连续值：

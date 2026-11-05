@@ -157,7 +157,7 @@ Response 侧应能验证：
 1. `Unknown` 的 Activity 不会默认成 1.0；
 2. `Unknown` 的 Motivation 不会默认成 0.5；
 3. `Wariness` 高但没有 cue 时 `RiskCost=0`；
-4. 同一 prey family 的 Diet Shift 只影响该 family 的 FoodValue；`s=0` 复现基础值，`s±1` 落到相邻锚；
+4. 同一 prey family 的 Diet Shift 只影响该 family 的 FoodValue；`s=0` 复现基础值；基础值在锚点时 `s±1` 落到相邻锚，非锚点移动一档保持小数坐标；
 5. 运行时玩家操作不会改写任何 Fish Condition；
 6. 过期、越界或缺来源的 Fish Condition 不会被沿用为最后值。
 

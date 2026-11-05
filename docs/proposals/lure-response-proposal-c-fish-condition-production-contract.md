@@ -97,6 +97,8 @@ resolved(condition) =
 ```
 
 - overlay 必须声明来源、适用区间与规则版本；
+- `tierScaleVersion` 必须随 `dietShift` 进入快照；消费端只接受已知版本，缺版本或版本不支持时 `ResolutionIncomplete`；
+- baseline 形成时越界 `s` 转 `Unknown`；消费端收到声称 `Resolved` 但非有限或越界的值转 `InvalidInput`；
 - overlay 只能修改被机制 Contract 明确授权的 Condition；越权 overlay 是配置错误，标 `InvalidInput`，不能静默应用；
 - 过期 overlay 回落到 baseline，不沿用旧增量；
 - 当前只有 Wariness 具备 runtime 语义依据；V1 可只消费 baseline；
@@ -114,7 +116,7 @@ CastFishConditionSnapshot {
       activity          { value, status }
       feedingMotivation { value, status }
       wariness          { value, status }
-      dietShift         { [preyFamily]: { value, status } }
+      dietShift         { tierScaleVersion, [preyFamily]: { value, status } }
     }
   }
 }
