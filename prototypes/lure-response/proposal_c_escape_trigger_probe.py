@@ -15,6 +15,7 @@ Run: python3 -I prototypes/lure-response/proposal_c_escape_trigger_probe.py
 from __future__ import annotations
 
 import math
+import inspect
 from dataclasses import dataclass, field
 
 WINDOW = 0.50
@@ -66,8 +67,10 @@ def state_match_strength(events, family: str, now: float, window: float = WINDOW
     used = []
     for e in applicable:
         if family not in e.strengths:
-            return "Unknown", None
+            return "Missing", None
         value = e.strengths[family]
+        if value is None:
+            return "Unknown", None
         if not _valid_strength(value):
             return "InvalidInput", None
         used.append(float(value))
@@ -100,12 +103,12 @@ def trigger_value(events, family: str, now: float, predator: str = "default",
                   table=None) -> float:
     """Prey description -> fish-side evaluation -> StateTriggerValue.
 
-    Unknown propagates as ResolutionIncomplete; NotConfigured / InvalidInput stay
-    unrollable.
+    Missing and Unknown both propagate as ResolutionIncomplete; NotConfigured /
+    InvalidInput stay unrollable.
     """
     status, strength = state_match_strength(events, family, now)
-    if status == "Unknown":
-        raise ValueError("ResolutionIncomplete: trigger evidence is unknown")
+    if status in ("Missing", "Unknown"):
+        raise ValueError(f"ResolutionIncomplete: trigger evidence is {status.lower()}")
     if status in ("NotConfigured", "InvalidInput"):
         raise ValueError(f"not rollable: {status}")
     eval_status, evaluated = trigger_evaluation(family, strength, predator, table)
@@ -125,6 +128,7 @@ def main() -> None:
     f = [Event(0.95, "alternation", frozenset({"baitfish"}), {"baitfish": 0.90})]
     h = [Event(0.90, "turn", frozenset({"crayfish"}), {"crayfish": 0.80})]
     missing = [Event(0.90, "turn", frozenset({"baitfish"}), {})]
+    unresolved = [Event(0.90, "turn", frozenset({"baitfish"}), {"baitfish": None})]
     invalid = [Event(0.90, "turn", frozenset({"baitfish"}), {"baitfish": 1.40})]
 
     cases = [
@@ -136,7 +140,8 @@ def main() -> None:
         ("F alternation ignored", f, "baitfish", "ResolvedNonResponsive", 0.0),
         ("G no events", [], "baitfish", "ResolvedNonResponsive", 0.0),
         ("H other family only", h, "baitfish", "ResolvedNonResponsive", 0.0),
-        ("J missing strength", missing, "baitfish", "Unknown", None),
+        ("J missing strength", missing, "baitfish", "Missing", None),
+        ("J2 unresolved strength", unresolved, "baitfish", "Unknown", None),
         ("K no trigger valuation", a, "bass_static", "NotApplicable", 0.0),
         ("L out of range", invalid, "baitfish", "InvalidInput", None),
         ("M unknown family", a, "shrimp", "NotConfigured", None),
@@ -176,6 +181,16 @@ def main() -> None:
     assert state_match_strength(future, "baitfish", now) == ("ResolvedNonResponsive", 0.0)
 
     # --- layer ownership ---
+    # Structural guard: the prey description must not accept a predator at all.
+    # If someone later adds fish-side input here, this assertion fails.
+    assert set(inspect.signature(state_match_strength).parameters) == {
+        "events", "family", "now", "window"
+    }
+    try:
+        state_match_strength(a, "baitfish", now, predator="pike")
+        raise AssertionError("prey description must not accept a predator")
+    except TypeError:
+        pass
     # The prey-side description does not depend on the predator.
     assert state_match_strength(a, "baitfish", now)[1] == 0.80
     # With no per-species configuration, every predator uses the shared default.

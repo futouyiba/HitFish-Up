@@ -533,6 +533,14 @@ def main() -> None:
         base_seg(predator="pike"), asm, snap, supports, states
     )
     assert abs(out_pred[1] - out[1]) < 1e-12
+    # A fish-side rule changes C without touching the prey description.
+    pike_cfg = {("pike", "baitfish"): lambda s: (RESOLVED, 0.5 * s)}
+    out_pike_cfg = response(
+        base_seg(predator="pike", triggerTable=pike_cfg), asm, snap, supports, states
+    )
+    assert abs(out_pike_cfg[1] - 0.774) < 1e-9
+    assert out_pike_cfg[1] < out[1]
+    assert states == {"baitfish": 0.80, "crayfish": 0.40}
 
     # Opportunity-internal toy join only; roundtable is SDW x AdaptationCoeff.
     assert opportunity_join(0.6, 0.5, {}) == (RESOLVED, 0.30, {})

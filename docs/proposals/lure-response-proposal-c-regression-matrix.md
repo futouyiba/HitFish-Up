@@ -6,11 +6,11 @@
 
 | 规则 | 可执行入口 | 能证明 | 不能证明 |
 |---|---|---|---|
-| 支持度插值 `s = b + (u-b)·f` 与取 max | `proposal_c_interpretation_probe.py`（研究分支） | 插值、单证据取 max、类型汇总 | 生产锚点、真实识别 |
-| 支持区间与缺失传播 | 同上 | 区间上下界、未知不填零 | 采样频率下的稳定性 |
-| 状态分段与移动后停留 | `presentation_state_probe.py`（研究分支） | 阈值、确认时刻、已观测下界 | 真实鱼行为 |
+| 支持度插值 `s = b + (u-b)·f` 与取 max | 研究分支 `proposal_c_interpretation_probe.py`（不在本检出） | 插值、单证据取 max、类型汇总 | 生产锚点、真实识别 |
+| 支持区间与缺失传播 | 同上（不在本检出） | 区间上下界、未知不填零 | 采样频率下的稳定性 |
+| 状态分段与移动后停留 | 研究分支 `presentation_state_probe.py`（不在本检出） | 阈值、确认时刻、已观测下界 | 真实鱼行为 |
 | 逃逸触发窗口与取 max | `proposal_c_escape_trigger_probe.py` | 窗口过滤、family 适用、不累加、pause 不参与、状态传播；猎物侧只输出 `StateMatchStrength` | 事件提取公式与生产阈值 |
-| 状态描述与鱼侧评价分层 | `proposal_c_escape_trigger_probe.py`、`proposal_c_end_to_end_probe.py` | 换捕食鱼不改猎物侧强度；默认评价等价于旧数值；缺鱼种配置走默认；prey A 的诱因不泄漏给 prey B | 鱼种专属曲线（未立项） |
+| 状态描述与鱼侧评价分层 | `proposal_c_escape_trigger_probe.py`、`proposal_c_end_to_end_probe.py` | 猎物侧函数签名不接受捕食鱼；换捕食鱼不改描述；默认评价等价于旧数值；缺鱼种配置走默认；prey A 的诱因不泄漏给 prey B | 鱼种专属曲线（未立项） |
 | 响应投影形状 | `proposal_c_response_projection_probe.py` | 截断线性的端点与单调性 | 生产 `M0/M1` |
 | Closing 成本形状 | `proposal_c_closing_cost_shape_probe.py` | 无 θ 的 soft closing 单调性、幂次与活动度线性 | 完整高速策略排序 |
 | support × response | `proposal_c_support_retention_projection_probe.py` | 比例保留形状 | 生产 support 尺度 |
@@ -22,7 +22,7 @@
 
 ## 2. 缺口
 
-- 研究分支的 `proposal_c_interpretation_probe.py` 与 `presentation_state_probe.py` 不在本分支，矩阵只引用其结论，不声称本地可跑；
+- 标为「不在本检出」的行只引用研究分支结论，本仓无法执行；其余行都指向本检出内可运行的 probe；
 - 没有覆盖 Fish Condition 生成的真实数据；
 - 没有覆盖生产采样、滤波与设备输入；
 - 没有性能或稳定性回归；

@@ -77,7 +77,7 @@ strengths[family] ∈ [0,1]
 5. 没有适用事件 → StateMatchStrength = 0（ResolvedNonResponsive）
 6. 没有该 family 的配置 → NotConfigured，不当作 0
 7. family 有配置、但明确没有 trigger valuation → NotApplicable，输出 0
-8. family 适用但强度缺失 → Unknown；归约时转为 ResolutionIncomplete，不当作 0
+8. 事件缺少该 family 的强度字段 → `Missing`；字段存在但值未解析 → `Unknown`；归约时两者都转 `ResolutionIncomplete`，不当作 0。`Missing` 是猎物侧的字段级状态，不是顶层状态代数的新增成员；
 9. 强度越界或非有限 → InvalidInput，不静默 clamp
 ```
 
@@ -156,7 +156,8 @@ Exception：`ClosingLoad ≈ 0` 时，低活性不能凭空压低响应；Trigge
 | G | 无事件 | I=0（已解析不响应） |
 | H | 事件只标 crayfish，当前解释为 baitfish | I=0（该 family 不适用） |
 | I | 当前 family 无配置 | NotConfigured |
-| J | family 适用但强度缺失 | Unknown（不可 roll） |
+| J | family 适用但缺强度字段 | Missing（归约时 ResolutionIncomplete） |
+| J2 | 强度字段存在但值未解析 | Unknown（归约时 ResolutionIncomplete） |
 | K | family 有配置、无 trigger valuation | NotApplicable，I=0 |
 | L | 强度 1.40 / NaN | InvalidInput（不 clamp） |
 | M | 未来时间戳事件 | I=0（不预读） |
