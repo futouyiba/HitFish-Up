@@ -125,7 +125,8 @@ def cast_entry(cast_fc, cast_id, group, mode):
 
 def evaluate(family, state_trigger, entry, seg):
     """entry: Fish Condition snapshot entry; seg carries static baseAffinity and sizeAdjustment."""
-    scale = SUPPORTED_TIER_SCALES.get(entry.get("tierScaleVersion"))
+    diet_map = entry.get("dietShift", {})
+    scale = SUPPORTED_TIER_SCALES.get(diet_map.get("tierScaleVersion"))
     if scale is None:
         return RI, None                     # missing or unsupported tier scale
     act_status, activity_mult = activity_multiplier(entry.get("activity"))
@@ -156,7 +157,7 @@ def evaluate(family, state_trigger, entry, seg):
         return base, None
     if not _finite(base) or not 0.0 <= base <= 1.0:
         return INVALID, None
-    shift = entry.get("dietShift", {}).get(family)
+    shift = diet_map.get(family)
     if shift is None:
         return UNKNOWN, None
     if shift in (UNKNOWN, NOT_CONFIGURED):
@@ -237,6 +238,8 @@ def response(seg, asm, cast_fc, supports, states):
     entry = cast_entry(cast_fc, seg["castId"], seg["conditionGroupId"], seg["engagementModeId"])
     if entry is None:
         return RI, None, {}
+    if entry.get("dietShift", {}).get("tierScaleVersion") not in SUPPORTED_TIER_SCALES:
+        return RI, None, {}                 # whole-entry metadata failure
 
     results = {}
     for family in seg["siblingSet"]:
@@ -258,11 +261,10 @@ def make_snapshot(entries, cast_id="cast-1", version="v1", formed_at=10.0):
 
 def base_entry(**overrides):
     entry = {
-        "tierScaleVersion": "tier-v1",
         "activity": 1.0,
         "feedingMotivation": 0.5,
         "wariness": 0.0,
-        "dietShift": {"baitfish": 0.0, "crayfish": 0.0},
+        "dietShift": {"tierScaleVersion": "tier-v1", "baitfish": 0.0, "crayfish": 0.0},
     }
     entry.update(overrides)
     return entry
@@ -357,12 +359,16 @@ def main() -> None:
     print("unknown wariness with cue:", out_with_cue)
 
     snap_diet = make_snapshot({
-        ("cg-1", "mode-stalk"): base_entry(dietShift={"baitfish": 0.10, "crayfish": -0.10})
+        ("cg-1", "mode-stalk"): base_entry(
+            dietShift={"tierScaleVersion": "tier-v1", "baitfish": 0.10, "crayfish": -0.10}
+        )
     })
     out_diet = response(seg, asm, snap_diet, {"baitfish": 1.0, "crayfish": 0.30}, states)
     print("diet shift +0.10 baitfish:", out_diet)
     snap_diet_unknown = make_snapshot({
-        ("cg-1", "mode-stalk"): base_entry(dietShift={"baitfish": UNKNOWN, "crayfish": 0.0})
+        ("cg-1", "mode-stalk"): base_entry(
+            dietShift={"tierScaleVersion": "tier-v1", "baitfish": UNKNOWN, "crayfish": 0.0}
+        )
     })
     out_diet_unknown = response(seg, asm, snap_diet_unknown, {"baitfish": 1.0, "crayfish": 0.30}, states)
     print("diet shift unknown baitfish:", out_diet_unknown)
@@ -376,7 +382,9 @@ def main() -> None:
     print("activity out of range:", out_activity_out)
 
     snap_shift_out = make_snapshot({
-        ("cg-1", "mode-stalk"): base_entry(dietShift={"baitfish": 1.5, "crayfish": 0.0})
+        ("cg-1", "mode-stalk"): base_entry(
+            dietShift={"tierScaleVersion": "tier-v1", "baitfish": 1.5, "crayfish": 0.0}
+        )
     })
     out_shift_out = response(seg, asm, snap_shift_out, {"baitfish": 1.0, "crayfish": 0.30}, states)
     print("diet shift out of range:", out_shift_out)
@@ -393,13 +401,20 @@ def main() -> None:
     out_nan_size = response(base_seg(sizeAdjustment=float("nan")), asm, snap, supports, states)
     out_unknown_size = response(base_seg(sizeAdjustment=UNKNOWN), asm, snap, supports, states)
     snap_no_scale = make_snapshot({
-        ("cg-1", "mode-stalk"): {k: v for k, v in entry.items() if k != "tierScaleVersion"}
+        ("cg-1", "mode-stalk"): {**entry, "dietShift": {"baitfish": 0.0, "crayfish": 0.0}}
     })
     out_no_scale = response(seg, asm, snap_no_scale, supports, states)
     snap_bad_scale = make_snapshot({
-        ("cg-1", "mode-stalk"): {**entry, "tierScaleVersion": "tier-v0"}
+        ("cg-1", "mode-stalk"): {
+            **entry,
+            "dietShift": {"tierScaleVersion": "tier-v0", "baitfish": 0.0, "crayfish": 0.0},
+        }
     })
     out_bad_scale = response(seg, asm, snap_bad_scale, supports, states)
+    # Reject sibling + missing scale: whole-entry metadata failure wins, no Reject result.
+    out_reject_no_scale = response(
+        base_seg(targetRelations={"baitfish": REJECT}), asm, snap_no_scale, supports, states
+    )
     print("nan base affinity:", out_nan_base)
     print("unknown base affinity:", out_unknown_base)
     print("missing q:", out_missing_q)
@@ -467,6 +482,7 @@ def main() -> None:
     assert out_nan_size[0] == INVALID
     assert out_unknown_size[0] == RI
     assert out_no_scale[0] == RI and out_bad_scale[0] == RI
+    assert out_reject_no_scale == (RI, None, {})   # metadata failure, not Reject
 
     # Opportunity-internal toy join only; roundtable is SDW x AdaptationCoeff.
     assert opportunity_join(0.6, 0.5, {}) == (RESOLVED, 0.30, {})

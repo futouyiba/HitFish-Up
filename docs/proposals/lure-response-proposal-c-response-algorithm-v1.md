@@ -38,6 +38,8 @@ function response(segment, assembly, castFC, baseAffinity, params):
   require castFC.castId == segment.castId and castFC.blockVersion and castFC.formedAt
   entry = castFC.entries[(segment.conditionGroupId, segment.engagementModeId)]
   if not satisfied or entry missing: return (ResolutionIncomplete, None, {})
+  if entry.dietShift.tierScaleVersion not in supportedTierScales:
+      return (ResolutionIncomplete, None, {})   # 整竿元数据失败，逐 family 不再评价
 
   # 1. 猎物解释
   supports = interpret(segment, assembly)      # per family: value | interval | status
@@ -97,7 +99,7 @@ function response(segment, assembly, castFC, baseAffinity, params):
       if C_cond == InvalidInput:
           results[family] = (InvalidInput, None)
           continue
-      if C_cond is Unknown / NotConfigured:
+      if C_cond is Unknown / NotConfigured / ResolutionIncomplete:
           results[family] = (C_cond, None)         # 保留原始状态
           continue
 
@@ -132,9 +134,7 @@ function compose(results):
 function evaluate(family, state, baseAffinity, entry, params):
 
   # entry = castFC.entries[(conditionGroupId, engagementModeId)]
-  if entry.tierScaleVersion not in supportedTierScales:
-      return ResolutionIncomplete       # 缺版本或不支持的标尺
-  scale     = supportedTierScales[entry.tierScaleVersion]   # 锚 a=(0, 0.40, G, 1)
+  scale     = supportedTierScales[entry.dietShift.tierScaleVersion]   # 锚 a=(0, 0.40, G, 1)
   affinity  = baseAffinity[family]      # 静态输入，不在 Fish Condition 快照里
   shift     = entry.dietShift[family]   # 档，[-1,+1]；缺失即该 family 不闭合（Unknown）
   u         = T(affinity, scale)        # 公共档位坐标 Poor/Marginal/Good/Preferred
@@ -154,7 +154,7 @@ function evaluate(family, state, baseAffinity, entry, params):
 
 | 步骤 | 可返回 |
 |---|---|
-| 帧校验 | `ResolutionIncomplete`（快照元数据不成立、错竿或缺对应条目） |
+| 帧校验 | `ResolutionIncomplete`（快照元数据不成立、错竿、缺对应条目、`dietShift.tierScaleVersion` 缺失或不支持） |
 | 猎物解释 | 数值 / 区间 / `Unknown` / `NotConfigured` / `NoMatch` |
 | 状态提取 | 状态维度、事件、`TriggerIntensity`；非数值状态向上传播 |
 | 评价 | 五项各自状态；`Reject` 单独处理 |

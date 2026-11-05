@@ -129,6 +129,18 @@ CastFishConditionSnapshot {
 - 快照形成之后才到达的 overlay 不进入本竿，下一竿重新解析；
 - 这不等于 `stale-but-usable`：快照自带形成时刻与 block 版本，可追溯。
 
+### `dietShift` 的解析结构与快照包装
+
+Bake 侧解析器（`proposal_c_fish_condition_probe.py` 的 `_resolve_diet_shift`）输出：
+
+```text
+{ tierScaleVersion, families: { [preyFamily]: { value, status, sourceRef } } }
+```
+
+写入快照时把 `families` 展开到同一层，得到 `dietShift { tierScaleVersion, [preyFamily]: { value, status, sourceRef } }`；消费者只从 `entry.dietShift.tierScaleVersion` 读版本、从 `entry.dietShift[family]` 读该 family 的 `{value, status}`，不存在顶层的第二份版本字段。
+
+`proposal_c_end_to_end_probe.py` 使用简化 fixture：`dietShift` 里除 `tierScaleVersion` 外直接放数值或状态字符串（`Unknown` / `NotConfigured`），数值即 `Resolved`。这是 fixture 简化，不是契约形状；契约形状以上面两种为准。probe 的 `evaluate` 读的就是 `entry["dietShift"]`，与生产路径同一 carrier。
+
 ## 7. 写入者与消费者
 
 | 角色 | 权限 |

@@ -70,7 +70,7 @@ U = T⁻¹；锚间为分片线性插值，单调连续。
 ### 边界
 
 - 不使用多个匿名 multiplier 连乘；
-- 档位坐标的两端饱和是合法饱和，与“非法输入被截断”不同；非法 `s` 必须按 `InvalidInput` 处理，不能先截到合法域再消费；
+- 档位坐标的两端饱和是合法饱和，与“非法输入被截断”不同；消费端收到声称已解析但非法的 `s` 必须按 `InvalidInput` 处理，不能先截到合法域再消费；
 - `Reject` 是连续轴外的 typed hard boundary，不等于 `FoodValue=0`；
 - 若未来有权威规则确认某尺寸在物理或摄食方式上不可接受，用独立 hard boundary，不塞进 SizePreferenceAdjustment；
 - 全局食欲不进入 FoodValue，它属于摄食意愿。

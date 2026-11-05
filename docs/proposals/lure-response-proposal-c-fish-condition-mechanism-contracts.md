@@ -97,7 +97,7 @@ Candidate 生成形状：
 
 ```text
 s_f = H_f(具名且准入的 cause)          对每个 prey family f
-s_f ∈ [-1, +1]；超出工作域 → InvalidInput
+s_f ∈ [-1, +1]；超出工作域按阶段语义处理（见下：baseline → Unknown，消费端 → InvalidInput）
 ```
 
 - `0` 是已解析的无偏移，不是缺失 fallback；
