@@ -137,7 +137,7 @@ Bake 侧解析器（`proposal_c_fish_condition_probe.py` 的 `_resolve_diet_shif
 { tierScaleVersion, families: { [preyFamily]: (status, value) } }
 ```
 
-写快照时按 `{ tierScaleVersion, [preyFamily]: { value, status, sourceRef } }` 组装：版本进同一层，`families` 展开到同一层，`sourceRef` 沿用解析器输入里该 family 的原值。probe 的解析器只产出 `(status, value)`、不保留 `sourceRef`，因为解析层不消费来源；快照的 `sourceRef` 由写出方从输入补齐，契约形状以上面的快照定义为准。消费者只从 `entry.dietShift.tierScaleVersion` 读版本、从 `entry.dietShift[family]` 读该 family 的 `{value, status}`，不存在顶层的第二份版本字段。
+写快照时按 `{ tierScaleVersion, [preyFamily]: { value, status, sourceRef } }` 组装：版本进同一层，`families` 展开到同一层，`sourceRef` 沿用解析器输入里该 family 的原值。probe 的解析器只产出 `(status, value)`，不把 `sourceRef` 转发到输出；它会检查 `sourceRef` 是否存在（缺失即把该 family 转成 `Unknown`），但不保留它。快照的 `sourceRef` 由写出方从输入补齐，契约形状以上面的快照定义为准。消费者只从 `entry.dietShift.tierScaleVersion` 读版本、从 `entry.dietShift[family]` 读该 family 的 `{value, status}`，不存在顶层的第二份版本字段。
 
 `proposal_c_end_to_end_probe.py` 使用简化 fixture：`dietShift` 里除 `tierScaleVersion` 外直接放数值或状态字符串（`Unknown` / `NotConfigured`），数值即 `Resolved`。这是 fixture 简化，不是契约形状；契约形状以上面两种为准。probe 的 `evaluate` 读的就是 `entry["dietShift"]`，与生产路径同一 carrier。
 
