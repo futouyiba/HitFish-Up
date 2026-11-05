@@ -123,7 +123,26 @@ def cast_entry(cast_fc, cast_id, group, mode):
     return cast_fc.get("entries", {}).get((group, mode))
 
 
-def evaluate(family, state_trigger, entry, seg):
+def trigger_evaluation(family, match_strength, predator="default", table=None):
+    """Fish side: map an already explained prey state to a normalized trigger effect.
+
+    v1 default is the shared rule TriggerEvaluation = StateMatchStrength. A missing
+    species entry falls back to the default instead of NotConfigured. Any table is a
+    probe fixture, not an approved per-species parameter set.
+    """
+    if table is not None:
+        rule = table.get((predator, family))
+        if rule is not None:
+            status, value = rule(match_strength)
+            if status != RESOLVED:
+                return status, None
+            if not _finite(value) or not 0.0 <= value <= 1.0:
+                return INVALID, None
+            return RESOLVED, float(value)
+    return RESOLVED, match_strength
+
+
+def evaluate(family, state_match_strength, entry, seg):
     """entry: Fish Condition snapshot entry; seg carries static baseAffinity and sizeAdjustment."""
     diet_map = entry.get("dietShift", {})
     scale = SUPPORTED_TIER_SCALES.get(diet_map.get("tierScaleVersion"))
@@ -175,7 +194,12 @@ def evaluate(family, state_trigger, entry, seg):
 
     if not _finite(seg.get("q")):
         return INVALID, None
-    trigger = TRIGGER_BUDGET * state_trigger
+    eval_status, evaluated = trigger_evaluation(
+        family, state_match_strength, seg.get("predator", "default"), seg.get("triggerTable")
+    )
+    if eval_status != RESOLVED:
+        return eval_status, None
+    trigger = TRIGGER_BUDGET * evaluated
     closing = K_CLOSE * seg["q"] ** 2 * activity_mult
     risk = K_WARY * wariness * suspicion
     margin = food + trigger - closing - risk - threshold(motivation)
@@ -487,6 +511,36 @@ def main() -> None:
     assert out_unknown_size[0] == RI
     assert out_no_scale[0] == RI and out_bad_scale[0] == RI
     assert out_reject_no_scale == (RI, None, {})   # metadata failure, not Reject
+
+    # Fish-side evaluation owns the trigger mapping; the prey description does not.
+    assert trigger_evaluation("baitfish", 0.80) == (RESOLVED, 0.80)
+    for predator in ("bass", "pike", "catfish"):
+        assert trigger_evaluation("baitfish", 0.80, predator) == (RESOLVED, 0.80)
+    tbl = {("pike", "baitfish"): lambda s: (RESOLVED, 0.5 * s)}
+    assert trigger_evaluation("baitfish", 0.80, "bass", tbl) == (RESOLVED, 0.80)
+    assert trigger_evaluation("baitfish", 0.80, "pike", tbl) == (RESOLVED, 0.40)
+    bad_tbl = {("pike", "baitfish"): lambda s: (RESOLVED, 1.40)}
+    assert trigger_evaluation("baitfish", 0.80, "pike", bad_tbl)[0] == INVALID
+
+    # Prey A has an escape event, prey B does not: B contributes zero, A is unchanged.
+    out_iso = response(
+        seg, asm, snap, {"baitfish": 1.0, "crayfish": 1.0},
+        {"baitfish": 0.80, "crayfish": 0.0},
+    )
+    assert abs(out_iso[1] - out[1]) < 1e-12
+    # Changing the predator with no per-species rule keeps both the description and C.
+    out_pred = response(
+        base_seg(predator="pike"), asm, snap, supports, states
+    )
+    assert abs(out_pred[1] - out[1]) < 1e-12
+    # A fish-side rule changes C without touching the prey description.
+    pike_cfg = {("pike", "baitfish"): lambda s: (RESOLVED, 0.5 * s)}
+    out_pike_cfg = response(
+        base_seg(predator="pike", triggerTable=pike_cfg), asm, snap, supports, states
+    )
+    assert abs(out_pike_cfg[1] - 0.774) < 1e-9
+    assert out_pike_cfg[1] < out[1]
+    assert states == {"baitfish": 0.80, "crayfish": 0.40}
 
     # Opportunity-internal toy join only; roundtable is SDW x AdaptationCoeff.
     assert opportunity_join(0.6, 0.5, {}) == (RESOLVED, 0.30, {})

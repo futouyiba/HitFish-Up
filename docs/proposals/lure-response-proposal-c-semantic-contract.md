@@ -112,13 +112,15 @@ StateDimension = { name, value, status, evidence, observed_interval }
 StateEvent     = { name, start, end, confirmation_time, status, evidence }
 ```
 
-同时输出攻击触发强度：
+同时输出该状态的描述性强度：
 
 ```text
-TriggerIntensity_p ∈ [0,1]
+StateMatchStrength_p ∈ [0,1]
 ```
 
-它由 prey-conditioned state interpreter 完成语义判断后给出，不是 raw turn magnitude、burst speed 或 event count（来源：`lure-response-proposal-c-state-trigger-intensity-contract.md`）。
+它由 prey-conditioned state interpreter 完成语义判断后给出，只描述“当前运动在多大程度上构成这种猎物状态”，不代表任何捕食鱼的攻击意愿。不是 raw turn magnitude、burst speed 或 event count（来源：`lure-response-proposal-c-state-trigger-intensity-contract.md`）。
+
+这一层不读捕食鱼的食性、追赶能力或摄食意愿。同一呈现、同一猎物类型，换捕食鱼时这个值不变；鱼侧的攻击诱因评价在第 5 节完成。
 
 ### 约束
 
@@ -160,11 +162,16 @@ CurrentFoodValue = clamp(ShiftedDietAffinity + SizePreferenceAdjustment, 0, 1)
 ### 5.2 攻击诱因
 
 ```text
-StateTriggerValue_p
-= TriggerBudget × TriggerIntensity_p
+StateTriggerValue_fp
+= TriggerBudget × TriggerEvaluation_f(p, PreyState_p)
 
 TriggerBudget ≈ 0.10 ~ 0.15   # Working effect-size budget
 ```
+
+- `StateMatchStrength_p`（猎物侧）只描述状态；`TriggerEvaluation_f`（鱼侧）把它换算成这条鱼当前的攻击诱因；
+- 第一版使用共享默认规则 `TriggerEvaluation_f = StateMatchStrength_p`，不预设鱼种偏好表，数值与分层前一致；
+- 未配置的鱼种回落到默认规则，不判 `NotConfigured`；配置值非有限或越界判 `InvalidInput`；
+- 鱼侧不得重新把 raw turn / burst / event count 相加；事件已在猎物侧解释完成。
 
 Response 不再对原始轨迹特征做第二套 Trigger 解释。
 

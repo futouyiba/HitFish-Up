@@ -61,6 +61,7 @@ ActualPresentation
 - 缺少规则不等于 NoMatch。
 - `Reject` 不进入连续计算；`Poor=0` 仍是合法连续值。
 - 状态标签不自动附带 bonus 或 penalty。
+- 猎物侧只描述状态，鱼侧才评价攻击诱因；同一个事实可以被多层读取，但同一个效果只结算一次。
 - 时间长度不进入出手余量；机会由 Opportunity 的 `L` 表达，圆桌接口按 `SpatialDistributionWeight × AdaptationCoeff`（2026-11-04）。
 - Candidate 后段不能再次乘同一份 Response。
 - 没有独立 owner 的作用不能补进某个系数。
@@ -71,8 +72,8 @@ ActualPresentation
 1. 校验呈现实例、装配版本和时间范围。
 2. 读取实际事实及其解析状态。
 3. 按装配绑定运行适用的猎物解释规则，输出已校准的 support。
-4. 按猎物解释提取当前状态、事件和 TriggerIntensity。
-5. 读取鱼侧评价输入，先处理 typed status，再计算数值。
+4. 按猎物解释提取当前状态、事件和描述性强度 `StateMatchStrength`。
+5. 读取鱼侧评价输入，先处理 typed status，再由 `TriggerEvaluation_f` 把已解释状态换算成攻击诱因，并计算其余四项。
 6. 按“鱼在追拟饵”的单方向计算出手余量并投影成条件响应。
 7. 聚合同级猎物解释：已解析分支取最大，未解析分支跳过并记录。
 8. 把 `C` 交给圆桌接口；圆桌权重按 `SpatialDistributionWeight × AdaptationCoeff` 形成（2026-11-04 Owner 方向）。`L` 的并入方式由 Opportunity 线补齐，见[开放决策](lure-response-proposal-c-open-decisions.md)。
@@ -88,7 +89,7 @@ ActualPresentation
 - [工作案例](lure-response-proposal-c-worked-cases.md)：用反例检查每层是否真的区分了不同情况；
 - [开放决策](lure-response-proposal-c-open-decisions.md)：只保留尚未有 owner、尚未闭合或存在冲突的问题；
 - [第一轮玩法闭合审查](lure-response-proposal-c-first-round-closure.md)：AttackTrigger 准入、Risk 输入实证、策略排序 probe 与判断；
-- [Escape-like Trigger v1](lure-response-proposal-c-escape-trigger-v1.md)：事件、窗口、family 适用与 TriggerIntensity 判定；
+- [Escape-like Trigger v1](lure-response-proposal-c-escape-trigger-v1.md)：事件、窗口、family 适用与 `StateMatchStrength` 判定；鱼侧默认 `TriggerEvaluation`；
 - [机会量支持](lure-response-proposal-c-opportunity-support.md)：`L`、遭遇饱和与单位时间收益的玩具模型；
 - [L 生产函数草案](lure-response-proposal-c-opportunity-l-production.md)：`r × τ` 结构、身份去重、覆盖与归约；
 - [鱼况/Bake 契约](lure-response-proposal-c-fish-condition-bake-contract.md)：从 Response 消费需求反推 Fish Condition 的产出要求；

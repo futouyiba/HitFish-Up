@@ -51,6 +51,8 @@ DEF 与快照必须带 `tierScaleVersion`，消费端只接受已知版本，缺
 
 - 非摄食 family 与 Engagement Mode 的归类（待确认）：现行术语表的 Engagement Mode 是伏击、开放游弋、护巢护卵；Defense / Investigation 目前是 interaction family，不是 mode。初步归类是“护巢护卵 mode 承接巢区防御；领地 / 防御与调查是否作为独立 family 或在现有 mode 下表达”仍未定，需 Owner 确认；
 - AttackTrigger：Escape-like 已准入；Injured / Struggling 与 imbalance-like vulnerability 为 `CandidateUnresolved`，等 cue-only holdout；pause 本身不得作为 Trigger；
+- 鱼侧 `TriggerEvaluation_f` 目前只有共享默认规则（等于 `StateMatchStrength`）。鱼种或 EngagementMode 专属曲线需要独立实证与立项，本版不造物种参数；
+- 支持度与异常运动的矛盾：当前 support 汇总只取 max，不能表达“动作异常到反而不像猎物”的负向证据。这是独立缺口，不在 Trigger ownership 修订里顺手加惩罚项；
 - Risk：只立 `TackleConspicuousness`，`EntryDisturbance` 暂不实现；实现前 `RiskCost = 0`，Wariness 暂无真实玩家策略消费方；
 - 完整自然度模型；
 - 非摄食咬击（护巢、领地、防御、烦躁）如何作为独立 family 组合；

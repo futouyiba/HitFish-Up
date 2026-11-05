@@ -14,7 +14,7 @@ AssemblySnapshot      证据绑定与适用标记
 CastFishCondition     抛竿时形成的鱼况快照（可选授权 overlay）
 BaseDietAffinity      species × prey family 的静态基础亲和（非 Fish Condition）
 OpportunityFacts      L 及状态（不进入 Response；圆桌接口按 SDW × AdaptationCoeff）
-WorkingParams         K_close、TriggerBudget、M0/M1、tail 参数
+WorkingParams         K_close、TriggerBudget、M0/M1、tail 参数、默认 TriggerEvaluation 规则
 ```
 
 不变量：
@@ -83,7 +83,7 @@ function response(segment, assembly, castFC, baseAffinity, params):
           results[family] = (NotConfigured, None)  # 保留原始状态
           continue
 
-      state = extractState(segment, family)        # dims, events, TriggerIntensity
+      state = extractState(segment, family)        # dims, events, StateMatchStrength
       if state.status == Reject:
           results[family] = (Reject, 0.0)
           continue
@@ -142,7 +142,9 @@ function evaluate(family, state, baseAffinity, entry, params):
   u         = T(affinity, scale)        # 公共档位坐标 Poor/Marginal/Good/Preferred
   shifted   = U(clamp(u + shift, 0, 3), scale)   # 档位坐标端点饱和是合法饱和
   food      = clamp(shifted + sizeAdjustment, 0, 1)
-  trigger   = params.TriggerBudget * state.TriggerIntensity
+  trigger   = params.TriggerBudget * triggerEvaluation(family, state)
+  # triggerEvaluation 属鱼侧：默认 = state.StateMatchStrength（共享规则，不按鱼种配置）
+  # 未来可用鱼种 / 模式专属评价替换；缺配置时回落默认，不判 NotConfigured
   closing   = params.K_close * state.q^2 * activityMultiplier(entry.activity)   # 单方向：鱼在追拟饵
   # activityMultiplier(A) = clamp(1/A, 0.5, 2)，A=0 取 2；A 须在 [0,2]
   risk      = params.K_wary * entry.wariness * suspicionLoad      # 无 cue 时为 0
@@ -158,8 +160,8 @@ function evaluate(family, state, baseAffinity, entry, params):
 |---|---|
 | 帧校验 | `ResolutionIncomplete`（快照元数据不成立、错竿、缺对应条目、`dietShift.tierScaleVersion` 缺失或不支持） |
 | 猎物解释 | 数值 / 区间 / `Unknown` / `NotConfigured` / `NoMatch` |
-| 状态提取 | 状态维度、事件、`TriggerIntensity`；非数值状态向上传播 |
-| 评价 | 五项各自状态；`Reject` 单独处理 |
+| 状态提取 | 状态维度、事件、`StateMatchStrength`；非数值状态向上传播 |
+| 评价 | 五项各自状态；鱼侧 `TriggerEvaluation` 由已解释状态计算；`Reject` 单独处理 |
 | 投影 | 数值 `C`；不输出非数值 |
 | sibling 组成 | 标量（max）或 `ResolutionIncomplete`；`skipped` 记录被跳过的 family 与原始状态 |
 | 机会接入 | 标量 `C_feed`；`L` 的并入方式待定（2026-11-04 圆桌接口方向） |
@@ -200,7 +202,7 @@ Reject > InvalidInput > NotConfigured > Unknown > Resolved
 | `tierScaleVersion` 缺失或不支持 | 整竿 `ResolutionIncomplete` |
 | BaseDietAffinity[family] 缺失或 `Unknown` | 该 family 的 FoodValue 不可闭合 |
 | SizePreferenceAdjustment 缺失或非有限 | `Unknown` / `InvalidInput`，不按 0 处理 |
-| TriggerIntensity 缺失 | `ResolutionIncomplete` |
+| `StateMatchStrength` 缺失 | `ResolutionIncomplete` |
 | support 为退化区间 | 按标量处理 |
 | support 为非退化区间 | 该分支 `ResolutionIncomplete`，跳过并记录 |
 | support 区间非法（非有限、端点越界、倒置） | `InvalidInput`，不可 roll |
@@ -216,7 +218,7 @@ Reject > InvalidInput > NotConfigured > Unknown > Resolved
 ```text
 support = 1.0
 FoodValue = 0.70
-TriggerIntensity = 0.80 → StateTriggerValue = 0.08
+StateMatchStrength = 0.80 → TriggerEvaluation = 0.80 → StateTriggerValue = 0.08
 Activity multiplier = 1.0
 q = 0.40
 RiskCost = 0
