@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proposal C 响应模型：核心机制说明</title>
+<style>
+  :root {
+    --paper: #fbf9f4;
+    --ink: #1e2328;
+    --muted: #5b6470;
+    --line: #ddd6c8;
+    --teal: #0f6b63;
+    --teal-soft: #e4f0ed;
+    --amber: #a85a12;
+    --amber-soft: #f8ecd9;
+    --red: #9a3324;
+    --card: #ffffff;
+    --mono: "SFMono-Regular", "Menlo", "Consolas", monospace;
+    --sans: "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    --serif: "Songti SC", "Noto Serif SC", "Source Han Serif SC", Georgia, serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page { max-width: 900px; margin: 0 auto; padding: 56px 28px 96px; }
+
+  header.hero { border-bottom: 2px solid var(--ink); padding-bottom: 28px; margin-bottom: 44px; }
+  .kicker {
+    font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--teal); font-weight: 600; margin-bottom: 12px;
+  }
+  h1 {
+    font-family: var(--serif); font-size: 40px; line-height: 1.25;
+    margin: 0 0 10px; font-weight: 700; letter-spacing: .01em;
+  }
+  .subtitle { font-size: 18px; color: var(--muted); margin: 0 0 20px; }
+  .meta { font-size: 13px; color: var(--muted); display: flex; gap: 18px; flex-wrap: wrap; }
+  .meta b { color: var(--ink); font-weight: 600; }
+
+  h2 {
+    font-family: var(--serif); font-size: 26px; margin: 64px 0 16px;
+    display: flex; align-items: baseline; gap: 12px; line-height: 1.35;
+  }
+  h2 .num {
+    font-family: var(--mono); font-size: 13px; color: var(--teal);
+    border: 1px solid var(--teal); border-radius: 999px;
+    padding: 2px 9px; letter-spacing: .06em; flex: none;
+  }
+  h3 { font-size: 18px; margin: 30px 0 10px; font-weight: 700; }
+  p { margin: 0 0 14px; }
+  ul, ol { margin: 0 0 16px; padding-left: 22px; }
+  li { margin: 0 0 7px; }
+  strong { font-weight: 700; }
+  .muted { color: var(--muted); }
+
+  .lede { font-size: 19px; line-height: 1.85; margin: 0 0 20px; }
+  .lede .hl { background: linear-gradient(transparent 62%, #d7ece7 62%); padding: 0 2px; }
+
+  .callout {
+    background: var(--teal-soft); border-left: 4px solid var(--teal);
+    padding: 16px 20px; margin: 20px 0; border-radius: 0 6px 6px 0;
+  }
+  .callout .tag {
+    display: inline-block; font-size: 12px; font-weight: 700; color: var(--teal);
+    letter-spacing: .12em; margin-bottom: 6px;
+  }
+  .callout p:last-child { margin-bottom: 0; }
+
+  .warn { background: var(--amber-soft); border-left-color: var(--amber); }
+  .warn .tag { color: var(--amber); }
+
+  pre.formula {
+    background: #f4f1e9; border: 1px solid var(--line); border-left: 4px solid var(--ink);
+    padding: 16px 18px; overflow-x: auto; margin: 18px 0;
+    font-family: var(--mono); font-size: 14px; line-height: 1.7;
+    white-space: pre; border-radius: 0 6px 6px 0;
+  }
+  code {
+    font-family: var(--mono); font-size: .92em; background: #efece3;
+    padding: 1px 5px; border-radius: 4px;
+  }
+
+  table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 15px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 13px; letter-spacing: .04em; color: var(--muted); font-weight: 600; border-bottom: 2px solid var(--ink); }
+  td.num, th.num { font-family: var(--mono); font-size: 13.5px; white-space: nowrap; }
+  tbody tr:nth-child(even) { background: #f7f4ec; }
+
+  .chain { display: flex; flex-wrap: wrap; align-items: stretch; gap: 8px; margin: 22px 0 8px; }
+  .chain .node {
+    flex: 1 1 150px; background: var(--card); border: 1px solid var(--line);
+    border-radius: 8px; padding: 12px 14px; min-width: 140px;
+  }
+  .chain .node b { display: block; font-size: 15px; margin-bottom: 4px; }
+  .chain .node span { font-size: 13px; color: var(--muted); line-height: 1.5; display: block; }
+  .chain .arrow { align-self: center; color: var(--teal); font-size: 18px; flex: none; }
+  .chain .node.accent { border-color: var(--teal); background: var(--teal-soft); }
+
+  .scale { margin: 26px 0 10px; }
+  .scale .bar {
+    position: relative; height: 12px; border-radius: 6px;
+    background: linear-gradient(90deg, #e7e2d6 0%, #cfe2dd 25%, #a8cdc5 60%, #7fb7ad 100%);
+  }
+  .scale .tick { position: absolute; top: -6px; width: 2px; height: 24px; background: var(--ink); }
+  .scale .label { position: absolute; top: 30px; transform: translateX(-50%); font-size: 12px; text-align: center; white-space: nowrap; }
+  .scale .label b { display: block; font-family: var(--mono); font-size: 13px; }
+  .scale .stop { height: 78px; position: relative; }
+
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 8px;
+    padding: 18px 20px;
+  }
+  .card h3 { margin-top: 0; font-size: 17px; }
+  .card .expr { font-family: var(--mono); font-size: 13px; background: #f4f1e9; padding: 8px 10px; border-radius: 5px; margin: 10px 0; overflow-x: auto; }
+  .card p:last-child { margin-bottom: 0; }
+
+  .steps { counter-reset: step; list-style: none; padding-left: 0; }
+  .steps li { position: relative; padding-left: 42px; margin-bottom: 14px; }
+  .steps li::before {
+    counter-increment: step; content: counter(step);
+    position: absolute; left: 0; top: 2px; width: 26px; height: 26px;
+    border-radius: 50%; background: var(--ink); color: var(--paper);
+    font-family: var(--mono); font-size: 13px; display: flex; align-items: center; justify-content: center;
+  }
+
+  .example { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 20px 22px; margin: 22px 0; }
+  .example table { margin: 10px 0 0; }
+  .example td:last-child { text-align: right; font-family: var(--mono); white-space: nowrap; }
+  .example tr.total td { border-top: 2px solid var(--ink); border-bottom: none; font-weight: 700; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .note { font-size: 14px; color: var(--muted); }
+
+  footer {
+    margin-top: 72px; padding-top: 24px; border-top: 1px solid var(--line);
+    font-size: 13px; color: var(--muted);
+  }
+  footer a { color: var(--teal); }
+
+  @media (max-width: 720px) {
+    h1 { font-size: 30px; }
+    .cards, .two-col { grid-template-columns: 1fr; }
+    .chain .arrow { display: none; }
+    .page { padding: 36px 18px 72px; }
+    .scale .label.first { transform: translateX(0); text-align: left; }
+    .scale .label.last { transform: translateX(-100%); text-align: right; }
+    pre.formula { font-size: 12.5px; }
+  }
+  @media print {
+    body { background: #fff; }
+    .page { max-width: none; padding: 0; }
+    h2 { break-after: avoid; }
+    .card, .example, .chain .node { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="hero">
+  <div class="kicker">Proposal C · Response Model</div>
+  <h1>这条鱼，为什么这一刻会咬</h1>
+  <p class="subtitle">把鱼的一次出手拆成五笔账，再合成一个数。</p>
+  <div class="meta">
+    <span><b>状态</b> Candidate / Working 设计</span>
+    <span><b>基线</b> main <code>bbb21201</code></span>
+    <span><b>日期</b> 2026-11-05</span>
+    <span><b>档位标尺</b> tier-v2</span>
+  </div>
+</header>
+
+<p class="lede">
+  这套模型只回答一个问题：<span class="hl">给定这条鱼、这个拟饵、这一刻的动作，它现在有多强的出手倾向？</span>
+  它输出的是响应强度，不是咬口概率；也不从商品名称推断猎物身份，不决定奖励。
+</p>
+
+<div class="callout">
+  <div class="tag">三条硬规矩</div>
+  <p><strong>未知不等于零。</strong>缺数据就是 <code>Unknown</code>，不能当成“没有吸引力”。</p>
+  <p><strong>同一作用只结算一次。</strong>同一个事实可以被多处读取，但同一个效果只能在一处加成。</p>
+  <p><strong>时间不进余量。</strong>停留多久、扫过多少空间，由机会侧结算，不在这里加分。</p>
+</div>
+
+<h2><span class="num">01</span>一条链：从画面到出手</h2>
+
+<p>输入是这条鱼实际看到、听到、感觉到的东西。每一层只做一件小事，输出交给下一层。</p>
+
+<div class="chain">
+  <div class="node"><b>呈现事实</b><span>轨迹、速度、水层关系，带时间与来源</span></div>
+  <div class="arrow">→</div>
+  <div class="node"><b>猎物解释</b><span>这条鱼把它当成什么，有多确定</span></div>
+  <div class="arrow">→</div>
+  <div class="node"><b>猎物状态</b><span>它在逃、在停，还是受伤；催不催出手</span></div>
+  <div class="arrow">→</div>
+  <div class="node accent"><b>鱼况快照</b><span>活跃度、食欲、食性偏移、警戒，每竿一份</span></div>
+  <div class="arrow">→</div>
+  <div class="node"><b>五项评价</b><span>食物、诱因、追赶、风险、门槛</span></div>
+  <div class="arrow">→</div>
+  <div class="node accent"><b>出手余量</b><span>加减成一个数</span></div>
+  <div class="arrow">→</div>
+  <div class="node"><b>响应 C</b><span>压到 0 到 1</span></div>
+</div>
+
+<p class="note">快照在抛竿那一刻冻结。整竿沿用同一份鱼况，不因为中途换时段而重算。</p>
+
+<h2><span class="num">02</span>五笔账</h2>
+
+<p>出手余量就是一张账本：两项往里加，三项往外扣。所有项都先换算到同一把尺子上，顶层只做加减。</p>
+
+<pre class="formula">出手余量 = 食物价值 + 攻击诱因 − 追赶负担 − 风险顾虑 − 摄食意愿门槛</pre>
+
+<table>
+  <thead>
+    <tr><th>项</th><th>用大白话说</th><th>工作范围</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>食物价值</strong></td><td>这个猎物，对现在的它值多少</td><td class="num">0 ~ 1</td></tr>
+    <tr><td><strong>攻击诱因</strong></td><td>它的动作有多催鱼出手</td><td class="num">0 ~ 0.15</td></tr>
+    <tr><td><strong>追赶负担</strong></td><td>追上去要花多少力气</td><td class="num">0 ~ 1.52（q∈[0,2] 时）</td></tr>
+    <tr><td><strong>风险顾虑</strong></td><td>这次呈现看起来有多可疑</td><td class="num">0 ~ 1</td></tr>
+    <tr><td><strong>摄食意愿门槛</strong></td><td>现在要多想吃的理由才值得动嘴</td><td class="num">0.1 ~ 0.6</td></tr>
+  </tbody>
+</table>
+
+<p>五项可以互相补偿。食物足够好，可以抵消一部分追赶代价；动作足够催，可以让边缘目标跨过门槛。
+但补偿有上限，成本再大也不能冒充“根本不可能”。</p>
+
+<p class="note">表中的范围是 Working 边界，不是硬上限。追赶负担不设硬 cap：输入合法时，q 超过 2 可能让它超过 1.52；活跃度超出 <code>[0, 2]</code> 按 <code>InvalidInput</code> 处理，不继续算成本。</p>
+
+<h2><span class="num">03</span>食物价值：从基础食性到此刻的偏移</h2>
+
+<p>先问“这类鱼本来觉得这种猎物值多少”，再问“现在的季节、近期食谱让它偏了多少”。
+两部分分开存，最后在同一个档位标尺上合并。</p>
+
+<div class="two-col">
+  <div>
+    <h3>基础食性 <code>BaseDietAffinity</code></h3>
+    <p>鱼种 × 猎物家族的静态值。参考鱼况、参考尺寸下的“本来值多少”，不随当天变化。</p>
+  </div>
+  <div>
+    <h3>食性偏移 <code>DietTierShift</code></h3>
+    <p>按猎物家族分别给出，单位是“档”。当前工作域是 <code>[-1, +1]</code>，一档以内，允许小数档。</p>
+  </div>
+</div>
+
+<h3>公共档位标尺</h3>
+<p>四个锚把 0 到 1 的分数切成三段。锚由 Owner 定，同一标尺版本内所有猎物家族共用。</p>
+
+<div class="scale">
+  <div class="stop">
+    <div class="bar"></div>
+    <div class="tick" style="left:0%"></div>
+    <div class="tick" style="left:25%"></div>
+    <div class="tick" style="left:60%"></div>
+    <div class="tick" style="left:100%"></div>
+    <div class="label first" style="left:0%"><b>0</b>Poor</div>
+    <div class="label" style="left:25%"><b>0.25</b>Marginal</div>
+    <div class="label" style="left:60%"><b>0.60</b>Good</div>
+    <div class="label last" style="left:100%"><b>1.00</b>Preferred</div>
+  </div>
+</div>
+
+<p>档位坐标是 0、1、2、3，锚之间按分段直线插值。把分数换成坐标叫 <code>T</code>，换回来叫 <code>U</code>。</p>
+
+<pre class="formula">u   = T(BaseDietAffinity)                  # 分数 → 档位坐标
+u'  = clamp(u + s, 0, 3)                   # 加减偏移，停在两端
+ShiftedDietAffinity = U(u')                # 档位坐标 → 分数
+FoodValue = clamp(
+    ShiftedDietAffinity + 尺寸调整, 0, 1
+)</pre>
+
+<div class="example">
+  <strong>三个具体例子</strong>
+  <table>
+    <tr><td>基础 0.40，加 1 档</td><td>0.40 → 0.771</td></tr>
+    <tr><td>基础 0.70，加 0.1 档</td><td>0.70 → 0.74</td></tr>
+    <tr><td>基础 1.00，加 1 档，再减尺寸 0.20</td><td>1.00 → 1.00 → 0.80</td></tr>
+  </table>
+</div>
+
+<div class="callout">
+  <div class="tag">两条端点规则</div>
+  <p><strong>基础 0 可以被抬起来。</strong>0 只表示“目前基本不把它当食物”，不是“绝不接受”。加一档就能抬到 Marginal(0.25)，饮食偏移才有意义。</p>
+  <p><strong>顶档不存余额。</strong>已经是 1.00 再加一档，结果还是 1.00。多出来的部分丢掉，不能回头抵消尺寸扣分。鱼“更想吃这类”和“这个尺寸不在它偏好的范围内”是两件事。
+  再大、已经超出可食范围的尺寸属于另一条硬边界，不靠这项软调整表达。</p>
+</div>
+
+<div class="callout warn">
+  <div class="tag">版本必须跟着走</div>
+  <p>“加一档”没有绝对含义，它只相对于某张锚表。锚表一改，同样的 +1 就会落到别处。
+  所以每个鱼况块与快照都带 <code>tierScaleVersion</code>，当前是 <code>tier-v2</code>。
+  消费端只认已知版本；旧版本 <code>tier-v1</code> 读到就直接返回 <code>ResolutionIncomplete</code>，不会被按新锚重解释。</p>
+</div>
+
+<h2><span class="num">04</span>攻击诱因：它的动作在催你</h2>
+
+<p>只有目标已经被解释成“可接受的猎物”，才谈得上诱因。这一项表达猎物的状态是否额外促发出手，
+不承载领地、护巢、烦躁、调查这些别的动机。</p>
+
+<pre class="formula">攻击诱因 = TriggerBudget × TriggerIntensity
+TriggerBudget ≈ 0.10 ~ 0.15        # 预算上限，防止诱因压过一切
+TriggerIntensity ∈ [0, 1]          # 由猎物状态解释器给出</pre>
+
+<p><code>TriggerIntensity</code> 不是把转向角度、爆发速度、事件次数直接相加。
+一次逃逸冲刺往往同时包含转向和加速，按特征相加会把同一个动作奖励两遍。
+现在的做法是先按猎物类型判断“这是不是一次逃逸样动作”，再用转向强度与爆发强度合成。</p>
+
+<h2><span class="num">05</span>追赶负担：追上去有多累</h2>
+
+<pre class="formula">q = 拟饵相对水体的水平速度 / InterceptSpeedLimit
+追赶负担 = K_close × q² × ActivityCostMultiplier(Activity)
+
+K_close = 0.19
+ActivityCostMultiplier(A) = clamp(1 / A, 0.5, 2)     # A = 0 时按 2 处理
+Activity ∈ [0, 2]，常规不超过 1，极活跃才越过 1</pre>
+
+<p><code>q</code> 是速度需求比，按“鱼在追拟饵”这一个方向估算，不模拟相对方位。
+速度越快，负担按平方上升。鱼种与体型决定它能追多快；活跃度决定它此刻愿意为追赶付出多少。</p>
+
+<div class="example">
+  <strong>算一笔</strong>
+  <table>
+    <tr><td>q = 0.40，Activity = 1.0</td><td>0.19 × 0.16 × 1.0 = 0.0304</td></tr>
+    <tr><td>q = 0.80，Activity = 0.5</td><td>0.19 × 0.64 × 2.0 = 0.2432</td></tr>
+  </table>
+</div>
+
+<p class="note">活跃度只改“愿不愿意花力气”，不改“能追多快”。低活跃不能表现为鱼突然失去运动能力。</p>
+
+<h2><span class="num">06</span>风险顾虑：这次看起来可疑吗</h2>
+
+<pre class="formula">风险顾虑 = K_wary × Wariness × SuspicionLoad
+K_wary = 1.0（Working 尺度）</pre>
+
+<p><code>Wariness</code> 是这类鱼对风险线索有多敏感，<code>SuspicionLoad</code> 是这次呈现里有多少已解析的可疑证据。</p>
+
+<ul>
+  <li>没有已解析的线索，两个警觉值都不产生风险顾虑；</li>
+  <li>支持度不足不算可疑，高速和频繁转向也不算，它们已经在追赶负担里结算；</li>
+  <li>钓压提高警戒度，不能再塞进可疑证据，否则会平方放大；</li>
+  <li>首版装备显眼度还没有生产字段，所以 <code>RiskCost</code> 目前恒为 0。</li>
+</ul>
+
+<h2><span class="num">07</span>摄食意愿门槛：要多少理由才动嘴</h2>
+
+<pre class="formula">M ≤ 0.80:  threshold = 0.60 − 0.40 × M
+M &gt; 0.80:  threshold = 0.60 − 0.40 × M − 0.50 × (M − 0.80)
+
+M = 0.5  →  threshold = 0.40</pre>
+
+<p>动机不乘食物价值，也不放大其它负担，它只移动门槛。普通区间保持固定斜率；
+只有极高的动机进入额外下降区，让很差的猎物也出现一条窄窗口。</p>
+
+<div class="callout">
+  <div class="tag">一个容易混的点</div>
+  <p>门槛的数字 0.40 和档位锚里的 Marginal 曾经是同一个数。现在不是了：Marginal 是 0.25，门槛仍是 0.40。
+  两者互相独立：档位锚由 Owner 设定，不参与标定；门槛仍是 Working 参数。改锚不会带着门槛一起走。</p>
+</div>
+
+<h2><span class="num">08</span>从余量到响应：压成一个数</h2>
+
+<pre class="formula">C = clamp((出手余量 − M0) / (M1 − M0), 0, 1)
+M0 = 0.00
+M1 = 0.40</pre>
+
+<p>余量小于等于 0，响应为 0。余量到 0.40 就满了。中间线性。
+这个截断既是设计选择，也是标定工具：它把不同量级的因素拉到同一个可比区间。</p>
+
+<table>
+  <thead><tr><th>余量</th><th>响应 C</th><th>读法</th></tr></thead>
+  <tbody>
+    <tr><td class="num">≤ 0</td><td class="num">0</td><td>不值得动</td></tr>
+    <tr><td class="num">0.20</td><td class="num">0.50</td><td>半推半就</td></tr>
+    <tr><td class="num">≥ 0.40</td><td class="num">1.00</td><td>满响应</td></tr>
+  </tbody>
+</table>
+
+<h2><span class="num">09</span>多个猎物、多个模式：怎么合</h2>
+
+<p>一个拟饵可能被解释成好几种猎物。每种猎物各自算一份响应，最后取最大值。</p>
+
+<ul>
+  <li>已解析的分支取最大，不求和；</li>
+  <li><code>Reject</code> 的分支贡献 0，但不会被最大值复活；全部已解析分支都是 Reject，整体就是 Reject；</li>
+  <li><code>Unknown</code>、<code>NotConfigured</code> 的分支不参与比较，但必须记录在结果里，不能当作 0；</li>
+  <li>没有已解析分支时，整体返回 <code>ResolutionIncomplete</code>；</li>
+  <li><code>InvalidInput</code> 会阻断整个结果，不能靠其它分支救回来。</li>
+</ul>
+
+<p>同一竿里如果有多个 <code>EngagementMode</code>，各自独立计算自己的鱼况与响应，不互相平均。</p>
+
+<h2><span class="num">10</span>状态：三种“零”不能混</h2>
+
+<table>
+  <thead><tr><th>状态</th><th>含义</th><th>能不能当 0 用</th></tr></thead>
+  <tbody>
+    <tr><td><code>Resolved</code>，值 0</td><td>算出来了，结果就是没有响应</td><td>可以</td></tr>
+    <tr><td><code>Unknown</code></td><td>必要事实缺失，结果可能改变</td><td>不可以</td></tr>
+    <tr><td><code>NotConfigured</code></td><td>没有适用的规则或配置</td><td>不可以</td></tr>
+    <tr><td><code>Reject</code></td><td>类型上的硬边界，根本不接受</td><td>当作 typed zero，不进连续公式</td></tr>
+    <tr><td><code>InvalidInput</code></td><td>配置或输入错误</td><td>不可以，不可修复后继续</td></tr>
+    <tr><td><code>ResolutionIncomplete</code></td><td>归约阶段仍形不成最终标量</td><td>不可以</td></tr>
+  </tbody>
+</table>
+
+<p>数值里出现 NaN 或 Infinity 一律按 <code>InvalidInput</code> 处理，不先 clamp 再继续。</p>
+
+<h2><span class="num">11</span>完整算一笔</h2>
+
+<p>假设：猎物支持度 1.0，食物价值 0.70，诱因强度 0.80，活跃度 1.0，q = 0.40，无风险线索，动机 0.50。</p>
+
+<div class="example">
+  <table>
+    <tr><td>食物价值</td><td>0.70</td></tr>
+    <tr><td>攻击诱因</td><td>0.10 × 0.80 = 0.08</td></tr>
+    <tr><td>追赶负担</td><td>0.19 × 0.40² × 1.0 = 0.0304</td></tr>
+    <tr><td>风险顾虑</td><td>0</td></tr>
+    <tr><td>摄食意愿门槛</td><td>0.60 − 0.40 × 0.50 = 0.40</td></tr>
+    <tr class="total"><td>出手余量</td><td>0.3496</td></tr>
+    <tr><td>响应 C</td><td>0.3496 / 0.40 = 0.874</td></tr>
+    <tr><td>乘上支持度 1.0</td><td>0.874</td></tr>
+  </tbody>
+  </table>
+</div>
+
+<p>如果这一季食性偏向这种猎物，加 0.1 档，食物价值从 0.70 升到 0.74，余量变成 0.3896，
+响应升到 0.974。这就是食性偏移在链条里的实际效果。</p>
+
+<h2><span class="num">12</span>机会与圆桌：响应只走到这里</h2>
+
+<p>响应返回的是 <code>C_feed</code>，一个 0 到 1 的标量。它不乘停留时间，也不乘空间覆盖。</p>
+
+<pre class="formula">Response  →  C_feed
+Opportunity →  L = r × τ               # L 是机会侧内部量
+圆桌接口   →  SpatialDistributionWeight × AdaptationCoeff</pre>
+
+<p><code>L × C</code> 只在 Opportunity 内部使用，不是候选贡献公式。圆桌按 FCF 通用公式计算；
+<code>L</code> 如何并入空间分布权重，仍由 Opportunity 线决定。</p>
+
+<h2><span class="num">13</span>边界与还没定的</h2>
+
+<ul>
+  <li>Prediction 不在第一版，列为 Deferred Research；</li>
+  <li>装备显眼度 <code>TackleConspicuousness</code> 还没有生产字段，风险项暂为 0；</li>
+  <li>Wariness 的运行时叠加（事件来源、衰减、有效期）尚未闭合；</li>
+  <li>Escape 样诱因的阈值仍是 Working，缺独立审核与数据依据；</li>
+  <li><code>L</code> 的遭遇几何、档位时间粒度和重复手法衰减 <code>K(n)</code> 仍待定；</li>
+  <li>非摄食行为（防御、调查）是否归入独立 Engagement Mode，尚未裁定；</li>
+  <li>所有系数都是 Working / Probe，不是生产参数。</li>
+</ul>
+
+<footer>
+  <p>依据：<a href="../proposals/lure-response-proposal-c-evaluation-items.md">五评价项契约</a>、
+  <a href="../proposals/lure-response-proposal-c-semantic-contract.md">语义契约</a>、
+  <a href="../proposals/lure-response-proposal-c-response-algorithm-v1.md">响应算法 v1</a>、
+  <a href="../proposals/lure-response-proposal-c-fish-condition-mechanism-contracts.md">鱼况机制契约</a>、
+  <a href="../proposals/lure-response-proposal-c-calibration-register.md">标定台账</a>。
+  可执行样例：<code>prototypes/lure-response/proposal_c_end_to_end_probe.py</code>。</p>
+  <p>本文是阅读材料，不改变任何契约。数值口径以仓内 Markdown 为准。</p>
+</footer>
+
+</div>
+</body>
+</html>
