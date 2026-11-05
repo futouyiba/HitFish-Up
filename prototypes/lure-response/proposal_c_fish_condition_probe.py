@@ -178,7 +178,7 @@ def main() -> None:
         "conditions": {
             **block["conditions"],
             "dietShift": {
-                "tierScaleVersion": "tier-v1",
+                "tierScaleVersion": "tier-v2",
                 "baitfish": {"value": 0.10, "status": RESOLVED, "sourceRef": "bake:1"},
                 "crayfish": {"value": 1.50, "status": RESOLVED, "sourceRef": "bake:1"},
                 "frog": {"value": 0.0, "status": UNKNOWN, "sourceRef": "bake:1"},
@@ -208,7 +208,7 @@ def main() -> None:
     assert resolve(activity_out_of_range, now)["feedingMotivation"] == (RESOLVED, 0.5)
 
     diet_out = resolve(diet_block, now)["dietShift"]
-    assert diet_out["tierScaleVersion"] == "tier-v1"
+    assert diet_out["tierScaleVersion"] == "tier-v2"
     assert diet_out["families"]["baitfish"] == (RESOLVED, 0.10)
     assert diet_out["families"]["crayfish"] == (UNKNOWN, None)   # out of [-1, 1]
     assert diet_out["families"]["frog"] == (UNKNOWN, None)       # explicit Unknown

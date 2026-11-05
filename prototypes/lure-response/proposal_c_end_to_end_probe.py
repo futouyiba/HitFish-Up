@@ -30,7 +30,7 @@ REJECT = "Reject"
 INVALID = "InvalidInput"
 
 TIER_ANCHORS = (0.0, 0.25, 0.60, 1.0)  # Poor, Marginal, Good, Preferred (Owner 2026-11-05)
-SUPPORTED_TIER_SCALES = {"tier-v1": TIER_ANCHORS}
+SUPPORTED_TIER_SCALES = {"tier-v2": TIER_ANCHORS}  # tier-v1 used the retired 0/0.40/0.70/1 table
 
 
 def tier_coordinate(value: float, anchors=TIER_ANCHORS) -> float:
@@ -264,7 +264,7 @@ def base_entry(**overrides):
         "activity": 1.0,
         "feedingMotivation": 0.5,
         "wariness": 0.0,
-        "dietShift": {"tierScaleVersion": "tier-v1", "baitfish": 0.0, "crayfish": 0.0},
+        "dietShift": {"tierScaleVersion": "tier-v2", "baitfish": 0.0, "crayfish": 0.0},
     }
     entry.update(overrides)
     return entry
@@ -360,14 +360,14 @@ def main() -> None:
 
     snap_diet = make_snapshot({
         ("cg-1", "mode-stalk"): base_entry(
-            dietShift={"tierScaleVersion": "tier-v1", "baitfish": 0.10, "crayfish": -0.10}
+            dietShift={"tierScaleVersion": "tier-v2", "baitfish": 0.10, "crayfish": -0.10}
         )
     })
     out_diet = response(seg, asm, snap_diet, {"baitfish": 1.0, "crayfish": 0.30}, states)
     print("diet shift +0.10 baitfish:", out_diet)
     snap_diet_unknown = make_snapshot({
         ("cg-1", "mode-stalk"): base_entry(
-            dietShift={"tierScaleVersion": "tier-v1", "baitfish": UNKNOWN, "crayfish": 0.0}
+            dietShift={"tierScaleVersion": "tier-v2", "baitfish": UNKNOWN, "crayfish": 0.0}
         )
     })
     out_diet_unknown = response(seg, asm, snap_diet_unknown, {"baitfish": 1.0, "crayfish": 0.30}, states)
@@ -383,7 +383,7 @@ def main() -> None:
 
     snap_shift_out = make_snapshot({
         ("cg-1", "mode-stalk"): base_entry(
-            dietShift={"tierScaleVersion": "tier-v1", "baitfish": 1.5, "crayfish": 0.0}
+            dietShift={"tierScaleVersion": "tier-v2", "baitfish": 1.5, "crayfish": 0.0}
         )
     })
     out_shift_out = response(seg, asm, snap_shift_out, {"baitfish": 1.0, "crayfish": 0.30}, states)
@@ -407,7 +407,8 @@ def main() -> None:
     snap_bad_scale = make_snapshot({
         ("cg-1", "mode-stalk"): {
             **entry,
-            "dietShift": {"tierScaleVersion": "tier-v0", "baitfish": 0.0, "crayfish": 0.0},
+            # tier-v1 is the retired 0/0.40/0.70/1 table: rejected, never reinterpreted.
+            "dietShift": {"tierScaleVersion": "tier-v1", "baitfish": 0.0, "crayfish": 0.0},
         }
     })
     out_bad_scale = response(seg, asm, snap_bad_scale, supports, states)

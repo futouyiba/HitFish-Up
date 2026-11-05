@@ -38,7 +38,7 @@ ShiftedDietAffinity_f = U(u'_f)         # 回到 FoodValue 标尺
 
 ```text
 档位坐标 0 / 1 / 2 / 3  ↔  Poor / Marginal / Good / Preferred
-锚 a = (a0, a1, a2, a3) = (0, 0.25, 0.60, 1.0)   # Owner 2026-11-05
+锚 a = (a0, a1, a2, a3) = (0, 0.25, 0.60, 1.0)   # Owner 2026-11-05；tierScaleVersion = tier-v2
 同一标尺版本内所有 family 共用这一组锚，不按 family 另配档距。
 
 T(x)：x 先 clamp 到 [0,1]；对 a_i ≤ x ≤ a_(i+1)，

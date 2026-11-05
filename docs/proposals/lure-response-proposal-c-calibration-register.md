@@ -19,7 +19,7 @@
 | Opportunity `D` | 玩具模型里“停留/机会量随速度衰减”的尺度 | 0.80 |
 | Opportunity `Q_cap` | 玩具模型里单位时间遭遇率开始饱和的速度尺度 | 1.00 |
 | `coverage` | 玩具模型里某方案实际覆盖多少空间，用来测试隐蔽方案的覆盖成本 | 0.55（probe） |
-| Diet tier anchors | 公共档位标尺的四个锚（Poor / Marginal / Good / Preferred） | `0 / 0.25 / 0.60 / 1.0` |
+| Diet tier anchors | 公共档位标尺的四个锚（Poor / Marginal / Good / Preferred） | `0 / 0.25 / 0.60 / 1.0`（`tier-v2`） |
 
 另外两个门槛参数没有单独成行，属于摄食意愿门槛公式的一部分：
 
@@ -45,7 +45,7 @@
 | 机会 `D` | 停留/机会量随速度衰减的尺度（玩具模型） | 0.80 | 机会量玩具模型 | 有效区域尺寸与停留数据 |
 | 机会 `Q_cap` | 单位时间遭遇率的饱和尺度（玩具模型） | 1.00 | 机会量玩具模型 | 单位时间遭遇数据 |
 | `coverage` | 方案实际覆盖的空间比例（玩具模型） | 0.55（probe） | 隐蔽方案 | 隐蔽装备的实际覆盖损失 |
-| Diet tier anchors | 公共档位标尺的四个锚 | `0 / 0.25 / 0.60 / 1.0`（Owner 2026-11-05） | 食物价值 / DietShift | 不需标定；改锚必须升 `tierScaleVersion` |
+| Diet tier anchors | 公共档位标尺的四个锚 | `0 / 0.25 / 0.60 / 1.0`（Owner 2026-11-05，`tier-v2`） | 食物价值 / DietShift | 不需标定；改锚必须升 `tierScaleVersion` |
 | `tau_recover` | Trigger 强度恢复的时间常数 | 未定 | Prediction（Deferred） | 若重开才需要 |
 
 ## 3. 使用规则
