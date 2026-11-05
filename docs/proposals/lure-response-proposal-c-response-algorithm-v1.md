@@ -12,6 +12,7 @@
 PresentationSegment   轨迹、时间、环境关系、局部记录
 AssemblySnapshot      证据绑定与适用标记
 CastFishCondition     抛竿时形成的鱼况快照（可选授权 overlay）
+BaseDietAffinity      species × prey family 的静态基础亲和（非 Fish Condition）
 OpportunityFacts      L 及状态（不进入 Response；圆桌接口按 SDW × AdaptationCoeff）
 WorkingParams         K_close、TriggerBudget、M0/M1、tail 参数
 ```
@@ -30,13 +31,15 @@ WorkingParams         K_close、TriggerBudget、M0/M1、tail 参数
 ## 2. 算法
 
 ```text
-function response(segment, assembly, castFC, params):
+function response(segment, assembly, castFC, baseAffinity, params):
 
   # 0. 帧校验与快照选择
   require segment.valid and assembly.version == segment.assemblyVersion
   require castFC.castId == segment.castId and castFC.blockVersion and castFC.formedAt
   entry = castFC.entries[(segment.conditionGroupId, segment.engagementModeId)]
   if not satisfied or entry missing: return (ResolutionIncomplete, None, {})
+  if entry.dietShift.tierScaleVersion not in supportedTierScales:
+      return (ResolutionIncomplete, None, {})   # 整竿元数据失败，逐 family 不再评价
 
   # 1. 猎物解释
   supports = interpret(segment, assembly)      # per family: value | interval | status
@@ -89,14 +92,14 @@ function response(segment, assembly, castFC, params):
           results[family] = (state.status, None)   # 保留原始状态
           continue
 
-      C_cond = evaluate(family, state, entry, params)   # 已解析输入下的条件响应
+      C_cond = evaluate(family, state, baseAffinity, entry, params)   # 已解析输入下的条件响应
       if C_cond == Reject:
           results[family] = (Reject, 0.0)
           continue
       if C_cond == InvalidInput:
           results[family] = (InvalidInput, None)
           continue
-      if C_cond is Unknown / NotConfigured:
+      if C_cond is Unknown / NotConfigured / ResolutionIncomplete:
           results[family] = (C_cond, None)         # 保留原始状态
           continue
 
@@ -128,11 +131,15 @@ function compose(results):
   return (Resolved, max(resolved + rejected), skipped)
 
 
-function evaluate(family, state, entry, params):
+function evaluate(family, state, baseAffinity, entry, params):
 
   # entry = castFC.entries[(conditionGroupId, engagementModeId)]
-  diet      = entry.dietShift[family]          # 缺失即该 family 不闭合（Unknown）
-  food      = clamp(base + size + diet, 0, 1)
+  scale     = supportedTierScales[entry.dietShift.tierScaleVersion]   # 锚 a=(0, 0.40, G, 1)
+  affinity  = baseAffinity[family]      # 静态输入，不在 Fish Condition 快照里
+  shift     = entry.dietShift[family]   # 档，[-1,+1]；缺失即该 family 不闭合（Unknown）
+  u         = T(affinity, scale)        # 公共档位坐标 Poor/Marginal/Good/Preferred
+  shifted   = U(clamp(u + shift, 0, 3), scale)   # 档位坐标端点饱和是合法饱和
+  food      = clamp(shifted + sizeAdjustment, 0, 1)
   trigger   = params.TriggerBudget * state.TriggerIntensity
   closing   = params.K_close * state.q^2 * activityMultiplier(entry.activity)   # 单方向：鱼在追拟饵
   # activityMultiplier(A) = clamp(1/A, 0.5, 2)，A=0 取 2；A 须在 [0,2]
@@ -147,7 +154,7 @@ function evaluate(family, state, entry, params):
 
 | 步骤 | 可返回 |
 |---|---|
-| 帧校验 | `ResolutionIncomplete`（快照元数据不成立、错竿或缺对应条目） |
+| 帧校验 | `ResolutionIncomplete`（快照元数据不成立、错竿、缺对应条目、`dietShift.tierScaleVersion` 缺失或不支持） |
 | 猎物解释 | 数值 / 区间 / `Unknown` / `NotConfigured` / `NoMatch` |
 | 状态提取 | 状态维度、事件、`TriggerIntensity`；非数值状态向上传播 |
 | 评价 | 五项各自状态；`Reject` 单独处理 |
@@ -188,6 +195,9 @@ Reject > InvalidInput > NotConfigured > Unknown > Resolved
 | Wariness 缺失且存在 cue | `ResolutionIncomplete` |
 | Wariness 缺失且无 cue | `RiskCost=0` |
 | DietShift[family] 缺失 | 该 family 的 FoodValue 不可闭合 |
+| `tierScaleVersion` 缺失或不支持 | 整竿 `ResolutionIncomplete` |
+| BaseDietAffinity[family] 缺失或 `Unknown` | 该 family 的 FoodValue 不可闭合 |
+| SizePreferenceAdjustment 缺失或非有限 | `Unknown` / `InvalidInput`，不按 0 处理 |
 | TriggerIntensity 缺失 | `ResolutionIncomplete` |
 | support 为退化区间 | 按标量处理 |
 | support 为非退化区间 | 该分支 `ResolutionIncomplete`，跳过并记录 |

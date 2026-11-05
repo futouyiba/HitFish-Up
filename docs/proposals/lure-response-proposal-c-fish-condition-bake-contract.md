@@ -50,7 +50,7 @@ V1 允许只实现 Bake baseline；runtime overlay 是受限扩展点，不是�
 |---|---|---|---|---|
 | Activity | `ActivityCostMultiplier` | 当前愿意为主动追赶付出多少行为代价，不是物理速度能力 | 非负倍率；参考 1.0 是候选假设 | `ResolutionIncomplete`，不能默认 1.0 |
 | Feeding Motivation | `WillingnessThreshold(M)` | 当前为了食物出手需要多强的理由 | `M ∈ [0,1]`；0.5 是设计包的 Working 锚 | `ResolutionIncomplete`，不能默认 0.5 |
-| Diet Shift | `DietaryShiftDelta(prey family)` | 相对基础食性的动态偏移，按猎物家族分别给出 | 与 FoodValue 同标尺的有符号偏移 | 该 family 的 FoodValue 不可闭合 |
+| Diet Shift | `DietTierShift(prey family)` | 相对基础食性的动态偏移，按档计 | `[-1,+1]` 档（一档以内，允许小数） | 该 family 的 FoodValue 不可闭合 |
 | Wariness | `RiskCost` 的乘子 | 对已解析风险线索有多敏感 | `[0,1]` 是候选假设，未裁定 | Risk 不可闭合；当前 Risk cue 未实现时整体为 0 |
 
 表中的范围与参考来自设计包的 Working 值或本页的 Candidate 假设，不是已批准 Contract。缺失时的归约遵循语义契约的通用状态协议。
@@ -70,8 +70,9 @@ V1 允许只实现 Bake baseline；runtime overlay 是受限扩展点，不是�
 
 ### 3.3 Diet Shift
 
-- 按 prey family 给出有符号偏移，只影响对应 family 的 FoodValue；
-- 不增加全局 Diet Shift 分量；全局摄食意愿由 Feeding Motivation 表示；
+- 按 prey family 给出档位偏移 `s ∈ [-1,+1]`（一档以内，允许小数档），只影响对应 family 的 FoodValue；
+- 偏移作用在公共档位坐标上：`ShiftedAffinity = U(clamp(T(BaseDietAffinity) + s, 0, 3))`，再叠加尺寸调整；
+- 必须带公共档位标尺版本；不增加全局 Diet Shift 分量；全局摄食意愿由 Feeding Motivation 表示；
 - 与 Feeding Motivation 分开：前者改变“哪种食物更值”，后者改变“现在多愿意出手”。
 
 ### 3.4 Wariness
@@ -144,7 +145,7 @@ value / resolution status / source / version / validity
 |---|---|
 | Activity | 每个条件组 × 模式一个有限非负倍率或 `Unknown` |
 | Feeding Motivation | 每个条件组 × 模式一个 `[0,1]` 值或 `Unknown` |
-| Diet Shift | 每个条件组 × 模式 × prey family 一个偏移或 `Unknown` |
+| Diet Shift | 每个条件组 × 模式 × prey family 一个档位偏移 `s ∈ [-1,+1]` 或 `Unknown`；带档位标尺版本 |
 | Wariness | 每个条件组 × 模式一个 `[0,1]` 基线值或 `Unknown`；runtime overlay 另需授权 |
 
 允许第一版只产出常量或按天气 / 时段分档的 placeholder；必须标注 `Candidate/Working`、适用范围、版本、有效期、来源与未标定状态，不能冒充生产参数。
@@ -156,7 +157,7 @@ Response 侧应能验证：
 1. `Unknown` 的 Activity 不会默认成 1.0；
 2. `Unknown` 的 Motivation 不会默认成 0.5；
 3. `Wariness` 高但没有 cue 时 `RiskCost=0`；
-4. 同一 prey family 的 Diet Shift 只影响该 family 的 FoodValue；
+4. 同一 prey family 的 Diet Shift 只影响该 family 的 FoodValue；`s=0` 复现基础值；基础值在锚点时 `s±1` 落到相邻锚，非锚点移动一档保持小数坐标；
 5. 运行时玩家操作不会改写任何 Fish Condition；
 6. 过期、越界或缺来源的 Fish Condition 不会被沿用为最后值。
 

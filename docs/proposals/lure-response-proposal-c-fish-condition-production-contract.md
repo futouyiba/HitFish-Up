@@ -52,7 +52,7 @@ FishConditionBlock {
     activity        { value, status, sourceRef }
     feedingMotivation { value, status, sourceRef }
     wariness        { value, status, sourceRef, layer }
-    dietShift       { [preyFamily]: { value, status, sourceRef } }
+    dietShift       { tierScaleVersion, [preyFamily]: { value, status, sourceRef } }
   }
 }
 ```
@@ -66,7 +66,7 @@ FishConditionBlock {
 | Activity | `[0, 2]`；常规不突破 `1` | `1.0` 是 Working reference，不是默认值；`>1` 只用于极少数极活跃情形 |
 | FeedingMotivation | `[0,1]`（Candidate 域） | 0.5 是参考锚，不是 fallback |
 | Wariness | `[0,1]`（Candidate 域） | 仅表示鱼侧警觉；不是 SuspicionLoad |
-| DietShift[family] | 与 FoodValue 同标尺的有符号偏移 | 只影响对应 family；无全局分量 |
+| `DietTierShift[family]` | `[-1, 1]`（Candidate，一档以内，允许小数档） | 单位是档；必须带公共档位标尺版本；只影响对应 family；无全局分量 |
 
 范围之外的值按 `InvalidInput` / `Unknown` 处理，不截断后继续用，见第 6 节。
 
@@ -97,6 +97,8 @@ resolved(condition) =
 ```
 
 - overlay 必须声明来源、适用区间与规则版本；
+- `tierScaleVersion` 必须随 `dietShift` 进入快照；消费端只接受已知版本，缺版本或版本不支持时 `ResolutionIncomplete`；
+- baseline 形成时越界 `s` 转 `Unknown`；消费端收到声称 `Resolved` 但非有限或越界的值转 `InvalidInput`；
 - overlay 只能修改被机制 Contract 明确授权的 Condition；越权 overlay 是配置错误，标 `InvalidInput`，不能静默应用；
 - 过期 overlay 回落到 baseline，不沿用旧增量；
 - 当前只有 Wariness 具备 runtime 语义依据；V1 可只消费 baseline；
@@ -114,7 +116,7 @@ CastFishConditionSnapshot {
       activity          { value, status }
       feedingMotivation { value, status }
       wariness          { value, status }
-      dietShift         { [preyFamily]: { value, status } }
+      dietShift         { tierScaleVersion, [preyFamily]: { value, status } }
     }
   }
 }
@@ -126,6 +128,18 @@ CastFishConditionSnapshot {
 - **单个字段失效**（过期、越界、缺来源）按 §5 置该字段 `Unknown`，不抹掉同条目的其它字段；消费方按需判断，例如无 cue 时 Wariness 缺失仍 `RiskCost=0`，某 family 的 DietShift 缺失只阻断该 family；
 - 快照形成之后才到达的 overlay 不进入本竿，下一竿重新解析；
 - 这不等于 `stale-but-usable`：快照自带形成时刻与 block 版本，可追溯。
+
+### `dietShift` 的解析结构与快照包装
+
+Bake 侧解析器（`proposal_c_fish_condition_probe.py` 的 `_resolve_diet_shift`）读入每个 family 的 `{value, status, sourceRef}`，输出：
+
+```text
+{ tierScaleVersion, families: { [preyFamily]: (status, value) } }
+```
+
+写快照时按 `{ tierScaleVersion, [preyFamily]: { value, status, sourceRef } }` 组装：版本进同一层，`families` 展开到同一层，`sourceRef` 沿用解析器输入里该 family 的原值。probe 的解析器只产出 `(status, value)`，不把 `sourceRef` 转发到输出；它会检查 `sourceRef` 是否存在（缺失即把该 family 转成 `Unknown`），但不保留它。快照的 `sourceRef` 由写出方从输入补齐，契约形状以上面的快照定义为准。消费者只从 `entry.dietShift.tierScaleVersion` 读版本、从 `entry.dietShift[family]` 读该 family 的 `{value, status}`，不存在顶层的第二份版本字段。
+
+`proposal_c_end_to_end_probe.py` 使用简化 fixture：`dietShift` 里除 `tierScaleVersion` 外直接放数值或状态字符串（`Unknown` / `NotConfigured`），数值即 `Resolved`。这是 fixture 简化，不是契约形状；契约形状以上面两种为准。probe 的 `evaluate` 读的就是 `entry["dietShift"]`，与生产路径同一 carrier。
 
 ## 7. 写入者与消费者
 

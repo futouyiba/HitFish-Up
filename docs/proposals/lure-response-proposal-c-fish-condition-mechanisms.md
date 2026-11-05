@@ -70,8 +70,8 @@
 | 项 | 内容 |
 |---|---|
 | 语义 | 相对基础食性的动态偏移，按猎物家族分别给出 |
-| 消费者 | `DietaryShiftDelta(prey family)`，进入 FoodValue 求和 |
-| 输出域 | 与 FoodValue 同标尺的有符号偏移；允许正负 |
+| 消费者 | 公共档位坐标上的迁移（`U(clamp(T(Base)+s,0,3))`），不直接加到 FoodValue |
+| 输出域 | `[-1,+1]` 档（一档以内，允许小数档），有符号 |
 | 更新路径 | Bake baseline；不由 Feeding Event 直接写入 |
 | 禁止 | 全局食欲分量；只给一个总数；替代 FeedingMotivation |
 
@@ -88,7 +88,7 @@
 1. 同一 family 的偏移只影响该 family 的 FoodValue；
 2. 不出现全局 DietShift；
 3. `Unknown` 的 family 不闭合该 family 的 FoodValue，不影响其它 family；
-4. clamp 在 FoodValue 的 `[0,1]` 内完成，不在偏移阶段截断。
+4. 档位坐标两端饱和是合法饱和，不在偏移阶段截断；`s` 越界判 `InvalidInput`。
 
 ## 5. Wariness
 

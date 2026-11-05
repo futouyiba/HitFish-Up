@@ -33,19 +33,25 @@ def _value_in_range(name, value) -> bool:
 
 
 def _resolve_diet_shift(item: dict) -> dict:
-    """Per-family DietShift: {family: {value,status,sourceRef}} -> {family: (status,value)}."""
-    out = {}
+    """{tierScaleVersion, family: {value,status,sourceRef}} -> {tierScaleVersion, families}."""
+    version = item.get("tierScaleVersion")
+    families = {}
     for family, entry in item.items():
+        if family == "tierScaleVersion":
+            continue
         status = entry.get("status", RESOLVED)
         value = entry.get("value")
         if status != RESOLVED or entry.get("sourceRef") is None:
-            out[family] = (UNKNOWN, None)
+            families[family] = (UNKNOWN, None)
             continue
-        if not _valid_number(value, -0.2, 0.2):
-            out[family] = (UNKNOWN, None)
+        if not _valid_number(value, -1.0, 1.0):
+            families[family] = (UNKNOWN, None)
             continue
-        out[family] = (RESOLVED, value)
-    return out
+        families[family] = (RESOLVED, value)
+    if not version:
+        return {"tierScaleVersion": None,
+                "families": {family: (UNKNOWN, None) for family in families}}
+    return {"tierScaleVersion": version, "families": families}
 
 
 def activity_generate(normal_sum: float, rare_bonus: float = 0.0) -> float:
@@ -172,8 +178,9 @@ def main() -> None:
         "conditions": {
             **block["conditions"],
             "dietShift": {
+                "tierScaleVersion": "tier-v1",
                 "baitfish": {"value": 0.10, "status": RESOLVED, "sourceRef": "bake:1"},
-                "crayfish": {"value": 0.50, "status": RESOLVED, "sourceRef": "bake:1"},
+                "crayfish": {"value": 1.50, "status": RESOLVED, "sourceRef": "bake:1"},
                 "frog": {"value": 0.0, "status": UNKNOWN, "sourceRef": "bake:1"},
             },
         },
@@ -201,9 +208,21 @@ def main() -> None:
     assert resolve(activity_out_of_range, now)["feedingMotivation"] == (RESOLVED, 0.5)
 
     diet_out = resolve(diet_block, now)["dietShift"]
-    assert diet_out["baitfish"] == (RESOLVED, 0.10)
-    assert diet_out["crayfish"] == (UNKNOWN, None)   # out of [-0.2, 0.2]
-    assert diet_out["frog"] == (UNKNOWN, None)       # explicit Unknown
+    assert diet_out["tierScaleVersion"] == "tier-v1"
+    assert diet_out["families"]["baitfish"] == (RESOLVED, 0.10)
+    assert diet_out["families"]["crayfish"] == (UNKNOWN, None)   # out of [-1, 1]
+    assert diet_out["families"]["frog"] == (UNKNOWN, None)       # explicit Unknown
+
+    # Missing tier scale version invalidates every family.
+    no_version_block = {
+        **diet_block,
+        "conditions": {**diet_block["conditions"],
+                       "dietShift": {k: v for k, v in diet_block["conditions"]["dietShift"].items()
+                                     if k != "tierScaleVersion"}},
+    }
+    no_version = resolve(no_version_block, now)["dietShift"]
+    assert no_version["tierScaleVersion"] is None
+    assert all(status == UNKNOWN for status, _ in no_version["families"].values())
 
     # Activity generation: normal causes stay <= 1; rare bonus can exceed 1; cap at 2.
     assert activity_generate(0.5) == 1.0
