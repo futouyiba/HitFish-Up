@@ -1,0 +1,25 @@
+{
+  "version": "working-v3-20261105",
+  "status": "SYNTHETIC_NOT_SPECIES_FACTS_NOT_PRODUCTION",
+  "treatments": {
+    "open": {"release": 0.6, "loss": 0.12, "cue_delay": 2, "cue_duration": 10, "bottom_share": 0.35, "binder_mass": 0.2},
+    "bound": {"release": 0.06, "loss": 0.02, "cue_delay": 8, "cue_duration": 18, "bottom_share": 0.9, "binder_mass": 0.4}
+  },
+  "recipes": {
+    "cue_only": {"food": {}, "signatures": ["grain"], "cue_dose": 1},
+    "food_only": {"food": {"grain": 1}, "signatures": [], "cue_dose": 0},
+    "grain": {"food": {"grain": 1}, "signatures": ["grain"], "cue_dose": 1},
+    "mixed": {"food": {"grain": 0.5, "animal": 0.5}, "signatures": ["grain"], "cue_dose": 1}
+  },
+  "fish": {
+    "target": {"preference": {"grain": 0.8, "animal": 0.8}, "background": {"grain": "POSITIVE"}, "hook": {"grain": "POSITIVE", "garlic": "AVOID"}, "max_size": 6},
+    "nuisance": {"preference": {"grain": 1, "animal": 0}, "background": {"grain": "POSITIVE"}, "hook": {"grain": "POSITIVE", "garlic": "NEUTRAL"}, "max_size": 2}
+  },
+  "hooks": {
+    "small_grain": {"food": {"grain": 1}, "signatures": ["grain"], "size": 1, "layer": "bottom", "rejected": false},
+    "large_grain": {"food": {"grain": 1}, "signatures": ["grain"], "size": 4, "layer": "bottom", "rejected": false},
+    "animal": {"food": {"animal": 1}, "signatures": [], "size": 1, "layer": "bottom", "rejected": false},
+    "avoid": {"food": {"grain": 1}, "signatures": ["garlic"], "size": 1, "layer": "bottom", "rejected": false},
+    "reject": {"food": {"grain": 1}, "signatures": ["grain"], "size": 1, "layer": "bottom", "rejected": true}
+  }
+}
