@@ -52,7 +52,7 @@ FishConditionBlock {
     activity        { value, status, sourceRef }
     feedingMotivation { value, status, sourceRef }
     wariness        { value, status, sourceRef, layer }
-    dietShift       { [preyFamily]: { value, status, sourceRef } }
+    dietShift       { tierScaleVersion, [preyFamily]: { value, status, sourceRef } }
   }
 }
 ```
@@ -66,7 +66,7 @@ FishConditionBlock {
 | Activity | `[0, 2]`；常规不突破 `1` | `1.0` 是 Working reference，不是默认值；`>1` 只用于极少数极活跃情形 |
 | FeedingMotivation | `[0,1]`（Candidate 域） | 0.5 是参考锚，不是 fallback |
 | Wariness | `[0,1]`（Candidate 域） | 仅表示鱼侧警觉；不是 SuspicionLoad |
-| DietShift[family] | 与 FoodValue 同标尺的有符号偏移 | 只影响对应 family；无全局分量 |
+| `DietTierShift[family]` | `[-1, 1]`（Candidate，一档以内，允许小数档） | 单位是档；必须带公共档位标尺版本；只影响对应 family；无全局分量 |
 
 范围之外的值按 `InvalidInput` / `Unknown` 处理，不截断后继续用，见第 6 节。
 

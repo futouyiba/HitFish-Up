@@ -22,14 +22,32 @@
 ### 合成
 
 ```text
-CurrentFoodValue
+CurrentFoodValue_f
 = clamp(
-    BaseDietAffinity(prey family)
-    + SizePreferenceAdjustment(prey size)
-    + DietaryShiftDelta(prey family),
+    ShiftedDietAffinity_f
+    + SizePreferenceAdjustment(prey size),
     0, 1
   )
+
+u_f   = T(BaseDietAffinity_f)          # 公共档位坐标
+u'_f  = clamp(u_f + DietTierShift_f, 0, 3)
+ShiftedDietAffinity_f = U(u'_f)         # 回到 FoodValue 标尺
 ```
+
+公共档位标尺与锚（Candidate，版本化）：
+
+```text
+档位坐标 0 / 1 / 2 / 3  ↔  Poor / Marginal / Good / Preferred
+参考锚：Poor = 0，Marginal = 0.40，Good = G，Preferred = 1
+G 是 Working 占位，未标定；同一标尺版本内所有 family 共用，不按 family 另配档距。
+```
+
+`DietTierShift_f`（简称 `s_f`）是 DietShift 的输出，单位是“档”，有符号连续值：
+
+- `0` 是已解析的无偏移，不是缺失 fallback；
+- `+1` 从当前锚升到下一个锚，顶端除外；`-1` 同理向下；
+- 第一版工作域 `[-1, +1]`（一档以内，允许小数档），Owner 2026-11-05 确认；
+- 档位坐标在两端饱和，不储存超过 `Preferred` 的隐藏余额，也不能用顶档上调抵消尺寸劣势。
 
 ### 各项职责
 
@@ -37,13 +55,14 @@ CurrentFoodValue
 |---|---|---|
 | BaseDietAffinity | 参考鱼况、参考尺寸下，这类猎物本来值多少 | 当前多想吃、警惕、像不像、好不好追 |
 | SizePreferenceAdjustment | 可食范围内，尺寸相对偏好的软变化 | 尺寸不可食的硬边界 |
-| DietaryShiftDelta | 上下文造成的食物之间相对偏转 | 全局食欲升降 |
+| DietTierShift | 上下文造成的、按档计的食物相对偏转 | 全局食欲升降；跨超过一档的重排 |
 
-`Preferred / Good / Marginal / Poor` 默认是连续 FoodValue 的解释标签，不是第二套独立 authoring 数值。
+`Preferred / Good / Marginal / Poor` 由同一公共标尺解释，档位标签从数值派生，不按 family 独立存储第二份档位值，也不另行抽样。旧的 `DietaryShiftDelta` 不再作为 authoring 输入；如需接口兼容，只能派生为 `ShiftedDietAffinity − BaseDietAffinity`，其范围依赖基础值与档距，不做旧的 ±0.2 校验。
 
 ### 边界
 
 - 不使用多个匿名 multiplier 连乘；
+- 档位坐标的两端饱和是合法饱和，与“非法输入被截断”不同；非法 `s` 必须按 `InvalidInput` 处理，不能先截到合法域再消费；
 - `Reject` 是连续轴外的 typed hard boundary，不等于 `FoodValue=0`；
 - 若未来有权威规则确认某尺寸在物理或摄食方式上不可接受，用独立 hard boundary，不塞进 SizePreferenceAdjustment；
 - 全局食欲不进入 FoodValue，它属于摄食意愿。

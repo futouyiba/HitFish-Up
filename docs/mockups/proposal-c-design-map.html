@@ -256,7 +256,7 @@
           <tr><th scope="col">评价项</th><th scope="col">Working 合成</th></tr>
         </thead>
         <tbody>
-          <tr><td>食物价值</td><td><code>clamp(BaseDietAffinity + SizePreferenceAdjustment + DietaryShiftDelta, 0, 1)</code></td></tr>
+          <tr><td>食物价值</td><td><code>u = T(BaseDietAffinity)</code>；<code>u' = clamp(u + DietTierShift, 0, 3)</code>；<code>clamp(U(u') + SizePreferenceAdjustment, 0, 1)</code></td></tr>
           <tr><td>攻击诱因</td><td><code>TriggerBudget × TriggerIntensity</code>，预算约 0.10~0.15</td></tr>
           <tr><td>追赶负担</td><td><code>K_close × q² × ActivityCostMultiplier</code>；第一版按“鱼在追拟饵”单方向估算，Working <code>K_close = 0.19</code></td></tr>
           <tr><td>风险顾虑</td><td><code>K_wary × Wariness × SuspicionLoad</code></td></tr>

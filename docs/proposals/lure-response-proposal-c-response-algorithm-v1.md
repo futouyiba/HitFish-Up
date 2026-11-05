@@ -131,8 +131,11 @@ function compose(results):
 function evaluate(family, state, entry, params):
 
   # entry = castFC.entries[(conditionGroupId, engagementModeId)]
-  diet      = entry.dietShift[family]          # 缺失即该 family 不闭合（Unknown）
-  food      = clamp(base + size + diet, 0, 1)
+  affinity  = entry.baseDietAffinity[family]    # 参考鱼况、参考尺寸
+  shift     = entry.dietShift[family]           # 档，[-1,+1]；缺失即该 family 不闭合（Unknown）
+  u         = T(affinity)                       # 公共档位坐标 Poor/Marginal/Good/Preferred
+  shifted   = U(clamp(u + shift, 0, 3))         # 档位坐标端点饱和是合法饱和
+  food      = clamp(shifted + sizeAdjustment, 0, 1)
   trigger   = params.TriggerBudget * state.TriggerIntensity
   closing   = params.K_close * state.q^2 * activityMultiplier(entry.activity)   # 单方向：鱼在追拟饵
   # activityMultiplier(A) = clamp(1/A, 0.5, 2)，A=0 取 2；A 须在 [0,2]

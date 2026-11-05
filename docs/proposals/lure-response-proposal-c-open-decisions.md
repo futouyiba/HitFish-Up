@@ -19,6 +19,10 @@
 
 Owner 明确 FCF 通用公式 `SpatialDistributionWeight × AdaptationCoeff` 是对的。Proposal C 不再把 `q = L × C` 当作候选贡献公式；`L` 的并入位置（是否进入 SDW、进入哪一项，或暂不单独使用）尚未指定，属 Opportunity 实现问题。
 
+### 2026-11-05 DietShift 幅度
+
+Owner 确认第一版 DietShift 限定在一档以内（允许小数档）。连续档位坐标迁移模型是 Candidate 设计建议（Fable 2026-11-05）；端点语义（基础 0 可被抬起、顶档不抵消尺寸劣势）与 `G` 锚仍待正式确认与标定。
+
 ### 重开条件
 
 - **探索 / 信息覆盖**：发现 Opportunity 架构无法表达“扫过更多空间意味着更多有效试探”时，按 Opportunity 实现缺口处理，不在 Response 加 bonus。

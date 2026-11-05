@@ -29,6 +29,31 @@ RI = "ResolutionIncomplete"
 REJECT = "Reject"
 INVALID = "InvalidInput"
 
+TIER_ANCHORS = (0.0, 0.40, 0.70, 1.0)  # Poor, Marginal, Good (G placeholder), Preferred
+
+
+def tier_coordinate(value: float) -> float:
+    """Map FoodValue to the shared 0..3 tier coordinate (piecewise linear)."""
+    if value <= TIER_ANCHORS[0]:
+        return 0.0
+    for i in range(3):
+        lo, hi = TIER_ANCHORS[i], TIER_ANCHORS[i + 1]
+        if value <= hi:
+            return i + (value - lo) / (hi - lo)
+    return 3.0
+
+
+def tier_value(coord: float) -> float:
+    c = max(0.0, min(3.0, coord))
+    i = int(c)
+    if i >= 3:
+        return TIER_ANCHORS[3]
+    return TIER_ANCHORS[i] + (TIER_ANCHORS[i + 1] - TIER_ANCHORS[i]) * (c - i)
+
+
+def shift_affinity(base: float, shift: float) -> float:
+    return tier_value(tier_coordinate(base) + shift)
+
 
 def clamp01(x: float) -> float:
     return max(0.0, min(1.0, x))
@@ -98,7 +123,7 @@ def cast_entry(cast_fc, cast_id, group, mode):
 
 
 def evaluate(family, state_trigger, entry, seg):
-    """entry fields: activity, feedingMotivation, wariness, dietShift[family]."""
+    """entry fields: activity, feedingMotivation, wariness, baseDietAffinity[family], dietShift[family]."""
     act_status, activity_mult = activity_multiplier(entry.get("activity"))
     if act_status != RESOLVED:
         return act_status, None
@@ -120,19 +145,20 @@ def evaluate(family, state_trigger, entry, seg):
     elif not _finite(wariness) or not 0.0 <= wariness <= 1.0:
         return INVALID, None
 
-    if not _finite(seg.get("food")):
+    base = entry.get("baseDietAffinity", {}).get(family)
+    if base is None:
+        return UNKNOWN, None
+    if not _finite(base) or not 0.0 <= base <= 1.0:
         return INVALID, None
-    diet = entry.get("dietShift", {}).get(family)
-    if diet is None:
-        return UNKNOWN, None               # 缺失 family 偏移：该 family 不闭合
-    if diet in (UNKNOWN, NOT_CONFIGURED):
-        return diet, None
-    if not _finite(diet) or not -0.2 <= diet <= 0.2:
+    shift = entry.get("dietShift", {}).get(family)
+    if shift is None:
+        return UNKNOWN, None
+    if shift in (UNKNOWN, NOT_CONFIGURED):
+        return shift, None
+    if not _finite(shift) or not -1.0 <= shift <= 1.0:
         return INVALID, None
-    food = clamp01(seg["food"] + diet)
+    food = clamp01(shift_affinity(base, shift) + seg.get("sizeAdjustment", 0.0))
 
-    if not _finite(seg.get("q")):
-        return INVALID, None
     trigger = TRIGGER_BUDGET * state_trigger
     closing = K_CLOSE * seg["q"] ** 2 * activity_mult
     risk = K_WARY * wariness * suspicion
@@ -220,6 +246,7 @@ def base_entry(**overrides):
         "activity": 1.0,
         "feedingMotivation": 0.5,
         "wariness": 0.0,
+        "baseDietAffinity": {"baitfish": 0.70, "crayfish": 0.70},
         "dietShift": {"baitfish": 0.0, "crayfish": 0.0},
     }
     entry.update(overrides)
@@ -234,7 +261,7 @@ def base_seg(**overrides):
         "conditionGroupId": "cg-1",
         "engagementModeId": "mode-stalk",
         "siblingSet": ["baitfish", "crayfish"],
-        "food": 0.70,
+        "sizeAdjustment": 0.0,
         "q": 0.40,
         "suspicionLoad": 0.0,
     }
@@ -332,9 +359,18 @@ def main() -> None:
     out_activity_out = response(base_seg(), asm, snap_activity_out, supports, states)
     print("activity out of range:", out_activity_out)
 
-    out_nan_food = response(base_seg(food=float("nan")), asm, snap, supports, states)
+    snap_shift_out = make_snapshot({
+        ("cg-1", "mode-stalk"): base_entry(dietShift={"baitfish": 1.5, "crayfish": 0.0})
+    })
+    out_shift_out = response(seg, asm, snap_shift_out, {"baitfish": 1.0, "crayfish": 0.30}, states)
+    print("diet shift out of range:", out_shift_out)
+
+    snap_nan_base = make_snapshot({
+        ("cg-1", "mode-stalk"): base_entry(baseDietAffinity={"baitfish": float("nan"), "crayfish": 0.70})
+    })
+    out_nan_food = response(seg, asm, snap_nan_base, supports, states)
     out_nan_q = response(base_seg(q=float("nan")), asm, snap, supports, states)
-    print("nan food:", out_nan_food)
+    print("nan base affinity:", out_nan_food)
     print("nan q:", out_nan_q)
 
     joined = opportunity_join(out[1], 0.50, out[2])
@@ -373,8 +409,17 @@ def main() -> None:
     assert out_unknown_activity[0] == RI
     assert out_unknown_activity[2] == {"baitfish": UNKNOWN, "crayfish": UNKNOWN}
     assert out_activity_out[0] == INVALID
+    assert out_shift_out[0] == INVALID
 
-    assert out_diet[0] == RESOLVED and abs(out_diet[1] - 1.0) < 1e-9
+    # Tier-coordinate migration: one tier in either direction, endpoints saturate.
+    assert abs(shift_affinity(0.40, 1.0) - 0.70) < 1e-12
+    assert abs(shift_affinity(0.40, -1.0) - 0.0) < 1e-12
+    assert abs(shift_affinity(1.0, 1.0) - 1.0) < 1e-12
+    assert abs(shift_affinity(0.0, -1.0) - 0.0) < 1e-12
+    assert abs(shift_affinity(0.70, 0.10) - 0.73) < 1e-12
+    assert abs(shift_affinity(0.70, 0.0) - 0.70) < 1e-12
+
+    assert out_diet[0] == RESOLVED and abs(out_diet[1] - 0.949) < 1e-9
     assert out_diet_unknown[0] == RESOLVED
     assert out_diet_unknown[2] == {"baitfish": UNKNOWN}
     assert out_diet_unknown[1] < out_diet[1]

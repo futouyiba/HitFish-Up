@@ -41,7 +41,7 @@ def _resolve_diet_shift(item: dict) -> dict:
         if status != RESOLVED or entry.get("sourceRef") is None:
             out[family] = (UNKNOWN, None)
             continue
-        if not _valid_number(value, -0.2, 0.2):
+        if not _valid_number(value, -1.0, 1.0):
             out[family] = (UNKNOWN, None)
             continue
         out[family] = (RESOLVED, value)
@@ -173,7 +173,7 @@ def main() -> None:
             **block["conditions"],
             "dietShift": {
                 "baitfish": {"value": 0.10, "status": RESOLVED, "sourceRef": "bake:1"},
-                "crayfish": {"value": 0.50, "status": RESOLVED, "sourceRef": "bake:1"},
+                "crayfish": {"value": 1.50, "status": RESOLVED, "sourceRef": "bake:1"},
                 "frog": {"value": 0.0, "status": UNKNOWN, "sourceRef": "bake:1"},
             },
         },
@@ -202,7 +202,7 @@ def main() -> None:
 
     diet_out = resolve(diet_block, now)["dietShift"]
     assert diet_out["baitfish"] == (RESOLVED, 0.10)
-    assert diet_out["crayfish"] == (UNKNOWN, None)   # out of [-0.2, 0.2]
+    assert diet_out["crayfish"] == (UNKNOWN, None)   # out of [-1, 1]
     assert diet_out["frog"] == (UNKNOWN, None)       # explicit Unknown
 
     # Activity generation: normal causes stay <= 1; rare bonus can exceed 1; cap at 2.

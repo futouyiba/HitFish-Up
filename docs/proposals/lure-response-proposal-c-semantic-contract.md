@@ -146,8 +146,10 @@ Prediction 不在第一版主体内，作为待证明的局部代价保留。
 ### 5.1 食物价值
 
 ```text
-CurrentFoodValue
-= clamp(BaseDietAffinity + SizePreferenceAdjustment + DietaryShiftDelta, 0, 1)
+u   = T(BaseDietAffinity)                     # 公共档位坐标
+u'  = clamp(u + DietTierShift, 0, 3)          # 一档以内，允许小数档
+ShiftedDietAffinity = U(u')
+CurrentFoodValue = clamp(ShiftedDietAffinity + SizePreferenceAdjustment, 0, 1)
 ```
 
 - `Reject` 是连续轴外的 typed hard boundary；

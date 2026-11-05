@@ -88,33 +88,49 @@ h_j(y_j) ∈ [-1, 1]        各 cause 的归一化响应
 
 | 项 | 内容 |
 |---|---|
-| 语义 | 相对基础食性的动态偏移，按猎物家族分别给出 |
-| 输出域 | 与 FoodValue 同标尺的有符号偏移；Candidate 工作范围 `[-0.2, 0.2]`，由 FoodValue 在 `[0,1]` 内 clamp |
+| 语义 | 相对基础食性的动态偏移，按猎物家族分别给出；偏移以“档”为单位 |
+| 输出域 | `DietTierShift ∈ [-1, +1]`（Candidate 工作域，一档以内，允许小数档；Owner 2026-11-05） |
 | 更新路径 | Bake baseline；不由 Feeding Event 直接写入 |
-| 消费者 | `DietaryShiftDelta(prey family)`，进入 FoodValue 求和 |
+| 消费者 | FoodValue 的公共档位坐标变换；不直接加到 FoodValue |
 
 Candidate 生成形状：
 
 ```text
-Δ_f = Σ_k w_{k,f} · d_{k,f}(z_k)      对每个 prey family f；不在偏移阶段截断
-|Δ_f| > 0.2 → Unknown                  超出 Candidate 工作范围的 baseline 值不可消费
+s_f = H_f(具名且准入的 cause)          对每个 prey family f
+s_f ∈ [-1, +1]；超出工作域 → InvalidInput
 ```
 
+- `0` 是已解析的无偏移，不是缺失 fallback；
+- `+1` 从当前档位锚升到下一个锚，顶端除外；`-1` 同理；
 - 只能按 family 给出，不设全局分量；
 - 缺失某个 family 的偏移时，只阻断该 family 的 FoodValue；
-- 正负号必须能追溯 cause；
-- FoodValue 阶段的 `clamp(..., 0, 1)` 是唯一截断点。
+- `s` 必须带来源、版本、有效期；过期、缺来源 → `Unknown`；
+- 档位坐标的两端饱和是合法饱和，不是对非法输入的截断。
+
+消费顺序（与五评价项契约一致）：
+
+```text
+u_f  = T(BaseDietAffinity_f)            # 公共档位坐标（Poor/Marginal/Good/Preferred → 0/1/2/3）
+u'_f = clamp(u_f + s_f, 0, 3)
+ShiftedDietAffinity_f = U(u'_f)
+CurrentFoodValue_f = clamp(ShiftedDietAffinity_f + SizePreferenceAdjustment, 0, 1)
+```
 
 候选 cause：季节、近期摄食组成、猎物家族可得性（全部未证实）。
 
 验收：
 
-1. 同一 family 的偏移只影响该 family；
-2. 不出现全局 DietShift；
-3. clamp 在 FoodValue 阶段完成，偏移阶段不截断；
-4. 越界偏移判越界。
+1. `s = 0` 时复现 BaseDietAffinity；
+2. `s = ±1` 时落到相邻档位锚，顶端/底端不越界；
+3. 小数档在锚间连续，不出现整档跳值；
+4. 同一 family 的偏移只影响该 family；
+5. 固定 `s` 时保留基础值的排序；固定基础值时 FoodValue 对 `s` 单调；
+6. 端点饱和不储存额外余额，不能用顶档上调抵消尺寸劣势；
+7. 尺寸调整在档位迁移之后施加，不参与定档；
+8. 越界 `s` 判 `InvalidInput`，不先截断；
+9. `Reject` 不因正向偏移复活。
 
-标定需求：猎物可得性时间序列、食谱变化数据、按 family 的摄食记录。
+标定需求：猎物可得性时间序列、食谱变化数据、按 family 的摄食记录；公共档位标尺的 `G` 锚与各 cause 曲线仍需标定。
 
 ## 4. Wariness（警戒度）
 
