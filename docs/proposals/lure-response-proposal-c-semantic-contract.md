@@ -153,7 +153,8 @@ CurrentFoodValue = clamp(ShiftedDietAffinity + SizePreferenceAdjustment, 0, 1)
 ```
 
 - `Reject` 是连续轴外的 typed hard boundary；
-- `Poor=0` 是合法连续值；
+- `Poor=0` 是合法连续值；基础 `0` 可被 `+1` 抬到 `Marginal = 0.25`，DietShift 因此能引入新猎物；
+- 档位坐标端点饱和：`U` 的输出先定，`SizePreferenceAdjustment` 在饱和值上施加；基础 `1.0` 加 `+1` 仍是 `1.0`，再减 `0.2` 得 `0.80`，被丢弃的余额不抵消尺寸扣分；
 - FoodValue 与 Motivation 分开。
 
 ### 5.2 攻击诱因
@@ -177,7 +178,7 @@ M > 0.80:
     threshold = 0.60 - 0.40 * M - 0.50 * (M - 0.80)
 ```
 
-- `M=0.5` 时 threshold 仍锚定 `Marginal=0.40`；
+- `M=0.5` 时 threshold 为 `0.40`；门槛是独立 Working 参数，不随档位锚移动；
 - 普通区间保持基准斜率 `0.40`；
 - 只有极高 Motivation 进入额外 tail relief，让 Poor 出现窄弱响应窗口，而不压垮中低 Motivation 的 Good（来源：`lure-response-proposal-c-poor-reject-separation.md`，提交 `d656e938`）。
 

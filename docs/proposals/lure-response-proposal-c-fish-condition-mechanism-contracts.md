@@ -77,7 +77,7 @@ h_j(y_j) ∈ [-1, 1]        各 cause 的归一化响应
 
 验收：
 
-1. `M = 0.5` 时门槛锚定 `Marginal = 0.40`；
+1. `M = 0.5` 时门槛为 `0.40`；门槛是独立 Working 参数，不随档位锚变化；
 2. `Unknown` 不回填 `0.5`；
 3. `M` 不改变 FoodValue，也不复活 `Reject`；
 4. 输出越界判越界，不截断。
@@ -106,7 +106,8 @@ s_f ∈ [-1, +1]；超出工作域按阶段语义处理（见下：baseline → 
 - 缺失某个 family 的偏移时，只阻断该 family 的 FoodValue；
 - `s` 必须带来源、版本、有效期；过期、缺来源 → `Unknown`；
 - **阶段语义**：形成 baseline 时越界 `s` 转 `Unknown`（该字段不可用）；消费端收到声称 `Resolved` 但非有限或越界的值，转 `InvalidInput`（配置或输入错误）；
-- 档位坐标的两端饱和是合法饱和，不是对非法输入的截断。
+- 档位坐标的两端饱和是合法饱和，不是对非法输入的截断；
+- 基础值 `0` 不是 `Reject`，`s = +1` 可把它抬到 `Marginal = 0.25`；顶端不存余额，基础 `1.0` 加 `+1` 仍是 `1.0`，随后的尺寸调整直接从饱和值扣。
 
 消费顺序（与五评价项契约一致）：
 
@@ -131,7 +132,7 @@ CurrentFoodValue_f = clamp(ShiftedDietAffinity_f + SizePreferenceAdjustment, 0, 
 8. baseline 越界 `s` 转 `Unknown`；消费端非法值转 `InvalidInput`，不先截断；
 9. `Reject` 不因正向偏移复活。
 
-标定需求：猎物可得性时间序列、食谱变化数据、按 family 的摄食记录；公共档位标尺的 `G` 锚与各 cause 曲线仍需标定。
+标定需求：猎物可得性时间序列、食谱变化数据、按 family 的摄食记录；档位锚已由 Owner 定为 `(0, 0.25, 0.60, 1.0)`，不再标定，各 cause 曲线仍需标定。
 
 ## 4. Wariness（警戒度）
 

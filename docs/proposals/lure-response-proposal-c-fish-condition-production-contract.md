@@ -59,6 +59,8 @@ FishConditionBlock {
 
 `layer` 区分 `baseline` 与 `overlay`；`overlay` 不写回 DEF，只在消费前与 baseline 合成 resolved 值。
 
+块内字段的**具体布局**（版本放在块级、每 family 各一份，或只放在快照条目上；旧数据如何迁移）由实现方决定，但必须满足：每个块能定位到恰好一个已知的档位标尺版本；若写了多份副本，所有副本的值必须相同，出现不一致按 `InvalidInput` 处理；旧版本标识不静默重绑到新锚。上面的形状是示例，不是对布局的唯一约束。
+
 ## 4. 值与范围
 
 | 字段 | 范围 | 说明 |
@@ -126,6 +128,7 @@ CastFishConditionSnapshot {
 - 本竿内所有 Response 只读该快照；时段切换不触发重新解析；
 - **整快照不可用**只在元数据不成立时发生：`castId` 缺失或与当前抛竿不符、`blockVersion` 缺失、`formedAt` 缺失；此时整竿 `ResolutionIncomplete`；
 - **单个字段失效**（过期、越界、缺来源）按 §5 置该字段 `Unknown`，不抹掉同条目的其它字段；消费方按需判断，例如无 cue 时 Wariness 缺失仍 `RiskCost=0`，某 family 的 DietShift 缺失只阻断该 family；
+- **档位版本失效**是条目级元数据失败：所选条目的 `dietShift` 没有版本、或版本不在消费端已知集合内时，整竿返回 `ResolutionIncomplete`，不回退默认锚、不按 `Reject`、不按 `Unknown` 逐 family 处理；
 - 快照形成之后才到达的 overlay 不进入本竿，下一竿重新解析；
 - 这不等于 `stale-but-usable`：快照自带形成时刻与 block 版本，可追溯。
 
@@ -137,7 +140,7 @@ Bake 侧解析器（`proposal_c_fish_condition_probe.py` 的 `_resolve_diet_shif
 { tierScaleVersion, families: { [preyFamily]: (status, value) } }
 ```
 
-写快照时按 `{ tierScaleVersion, [preyFamily]: { value, status, sourceRef } }` 组装：版本进同一层，`families` 展开到同一层，`sourceRef` 沿用解析器输入里该 family 的原值。probe 的解析器只产出 `(status, value)`，不把 `sourceRef` 转发到输出；它会检查 `sourceRef` 是否存在（缺失即把该 family 转成 `Unknown`），但不保留它。快照的 `sourceRef` 由写出方从输入补齐，契约形状以上面的快照定义为准。消费者只从 `entry.dietShift.tierScaleVersion` 读版本、从 `entry.dietShift[family]` 读该 family 的 `{value, status}`，不存在顶层的第二份版本字段。
+写快照时按 `{ tierScaleVersion, [preyFamily]: { value, status, sourceRef } }` 组装：版本进同一层，`families` 展开到同一层，`sourceRef` 沿用解析器输入里该 family 的原值。probe 的解析器只产出 `(status, value)`，不把 `sourceRef` 转发到输出；它会检查 `sourceRef` 是否存在（缺失即把该 family 转成 `Unknown`），但不保留它。快照的 `sourceRef` 由写出方从输入补齐；上面的快照是合法示例，布局仍按 §3 的规则，快照内同一块的所有版本副本必须一致。消费端必须能定位到所选条目的档位标尺版本，本文示例把版本放在 `dietShift` 下。
 
 `proposal_c_end_to_end_probe.py` 使用简化 fixture：`dietShift` 里除 `tierScaleVersion` 外直接放数值或状态字符串（`Unknown` / `NotConfigured`），数值即 `Resolved`。这是 fixture 简化，不是契约形状；契约形状以上面两种为准。probe 的 `evaluate` 读的就是 `entry["dietShift"]`，与生产路径同一 carrier。
 
