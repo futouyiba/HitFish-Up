@@ -19,9 +19,15 @@
 
 Owner 明确 FCF 通用公式 `SpatialDistributionWeight × AdaptationCoeff` 是对的。Proposal C 不再把 `q = L × C` 当作候选贡献公式；`L` 的并入位置（是否进入 SDW、进入哪一项，或暂不单独使用）尚未指定，属 Opportunity 实现问题。
 
-### 2026-11-05 DietShift 幅度
+### 2026-11-05 DietShift 幅度、档位锚与端点
 
-Owner 确认第一版 DietShift 限定在一档以内（允许小数档）。连续档位坐标迁移模型是 Candidate 设计建议（Fable 2026-11-05）；端点语义（基础 0 可被抬起、顶档不抵消尺寸劣势）与 `G` 锚仍待正式确认与标定。
+Owner 确认第一版 DietShift 限定在一档以内（允许小数档）。连续档位坐标迁移模型是 Candidate 设计建议（Fable 2026-11-05）。
+
+同日的档位锚定为 `Poor / Marginal / Good / Preferred = 0 / 0.25 / 0.60 / 1.0`；Owner 更早提到的「Marginal = 40 分」由这组四值列表取代。端点语义一并确认：基础 `0` 不是 `Reject`，`+1` 可把它抬到 Marginal；顶档不存余额，不能用上调抵消尺寸劣势。
+
+摄食意愿门槛不随档位锚移动：`M=0.5` 时 threshold 仍为 `0.40`（Fable 复核：若跟随降到 `0.25`，happy-path 的 C 会被截到 `1`，丢掉全部余量，且需要没有依据的 `K_close` / `M0` / `M1` 补偿）。
+
+DEF 与快照必须带 `tierScaleVersion`，消费端只接受已知版本，缺失或未知返回 `ResolutionIncomplete`；字段布局与旧数据迁移由实现方在契约规则内决定，不静默把旧版本标识重绑到新锚。
 
 ### 重开条件
 

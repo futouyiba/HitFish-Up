@@ -40,6 +40,8 @@ function response(segment, assembly, castFC, baseAffinity, params):
   if not satisfied or entry missing: return (ResolutionIncomplete, None, {})
   if entry.dietShift.tierScaleVersion not in supportedTierScales:
       return (ResolutionIncomplete, None, {})   # 整竿元数据失败，逐 family 不再评价
+  # 上行的 `entry.dietShift.tierScaleVersion` 是示例路径；字段布局由 Production Contract §3 留给实现方，
+  # 契约要求的是每个条目能定位到唯一一个已知的档位标尺版本。
 
   # 1. 猎物解释
   supports = interpret(segment, assembly)      # per family: value | interval | status
@@ -134,7 +136,7 @@ function compose(results):
 function evaluate(family, state, baseAffinity, entry, params):
 
   # entry = castFC.entries[(conditionGroupId, engagementModeId)]
-  scale     = supportedTierScales[entry.dietShift.tierScaleVersion]   # 锚 a=(0, 0.40, G, 1)
+  scale     = supportedTierScales[entry.dietShift.tierScaleVersion]   # 锚 a=(0, 0.25, 0.60, 1.0)
   affinity  = baseAffinity[family]      # 静态输入，不在 Fish Condition 快照里
   shift     = entry.dietShift[family]   # 档，[-1,+1]；缺失即该 family 不闭合（Unknown）
   u         = T(affinity, scale)        # 公共档位坐标 Poor/Marginal/Good/Preferred

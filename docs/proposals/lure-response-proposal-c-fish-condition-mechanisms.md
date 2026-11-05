@@ -60,7 +60,7 @@
 
 验收：
 
-1. `M=0.5` 时 threshold 锚定 `Marginal=0.40`；
+1. `M=0.5` 时 threshold 为 `0.40`，该门槛独立于档位标签；
 2. `Unknown` 不回填 0.5；
 3. `M` 不改变 FoodValue；
 4. `M` 不改变 `Reject`。
@@ -88,7 +88,7 @@
 1. 同一 family 的偏移只影响该 family 的 FoodValue；
 2. 不出现全局 DietShift；
 3. `Unknown` 的 family 不闭合该 family 的 FoodValue，不影响其它 family；
-4. 档位坐标两端饱和是合法饱和，不在偏移阶段截断；`s` 越界判 `InvalidInput`。
+4. 档位坐标两端饱和是合法饱和，不在偏移阶段截断；`s` 越界按阶段语义处理（baseline → `Unknown`，消费端 → `InvalidInput`）。
 
 ## 5. Wariness
 

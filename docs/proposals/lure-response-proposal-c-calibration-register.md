@@ -19,7 +19,7 @@
 | Opportunity `D` | 玩具模型里“停留/机会量随速度衰减”的尺度 | 0.80 |
 | Opportunity `Q_cap` | 玩具模型里单位时间遭遇率开始饱和的速度尺度 | 1.00 |
 | `coverage` | 玩具模型里某方案实际覆盖多少空间，用来测试隐蔽方案的覆盖成本 | 0.55（probe） |
-| Diet tier `G` | 公共档位标尺上 Good 锚的数值（Poor=0、Marginal=0.40、Preferred=1） | 0.70（占位，未标定） |
+| Diet tier anchors | 公共档位标尺的四个锚（Poor / Marginal / Good / Preferred） | `0 / 0.25 / 0.60 / 1.0` |
 
 另外两个门槛参数没有单独成行，属于摄食意愿门槛公式的一部分：
 
@@ -45,12 +45,13 @@
 | 机会 `D` | 停留/机会量随速度衰减的尺度（玩具模型） | 0.80 | 机会量玩具模型 | 有效区域尺寸与停留数据 |
 | 机会 `Q_cap` | 单位时间遭遇率的饱和尺度（玩具模型） | 1.00 | 机会量玩具模型 | 单位时间遭遇数据 |
 | `coverage` | 方案实际覆盖的空间比例（玩具模型） | 0.55（probe） | 隐蔽方案 | 隐蔽装备的实际覆盖损失 |
-| Diet tier `G` | Good 锚在公共档位标尺上的数值 | 0.70（占位） | 食物价值 / DietShift | 各 family 的相对接受数据、档位锚场景 |
+| Diet tier anchors | 公共档位标尺的四个锚 | `0 / 0.25 / 0.60 / 1.0`（Owner 2026-11-05） | 食物价值 / DietShift | 不需标定；改锚必须升 `tierScaleVersion` |
 | `tau_recover` | Trigger 强度恢复的时间常数 | 未定 | Prediction（Deferred） | 若重开才需要 |
 
 ## 3. 使用规则
 
-- 表中数值全部是 Working / Probe，不得写成生产参数；
+- 表中数值全部是 Working / Probe，不得写成生产参数；档位锚是 Owner 设定的标尺，不随 probe 调整；
+- 档位锚任何改动都必须同时升 `tierScaleVersion`；旧版本数据不按新锚重新解释；
 - Activity 的 Candidate 域是 `[0, 2]`，常规状态不突破 `1`；`>1` 只用于极少数极活跃情形；
 - `K_close` 的 `0.19` 是 no-θ 单方向标尺下的值；`0.76` 是带方位平均时的历史 Working 值；
 - 换算依据：旧模型 `ClosingCost = K_close × max(0, q·cosθ)² × activity`，均匀方位下 `E[max(0, cosθ)²] = 1/4`，故 `0.76 / 4 = 0.19`。这是成本尺度等价，不是响应等价（投影截断会带来差异）；旧值来源见研究分支 `311ae70d` 快照的 closing 契约；
