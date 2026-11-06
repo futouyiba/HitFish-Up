@@ -33,7 +33,7 @@ WorkingParams         K_close、TriggerBudget、M0/M1、tail 参数、默认 Tri
 ## 2. 算法
 
 ```text
-function response(segment, assembly, castFC, baseAffinity, params):
+function response(segment, assembly, castFC, baseAffinity, params, presentationMode):
 
   # 0. 帧校验与快照选择
   require segment.valid and assembly.version == segment.assemblyVersion
@@ -96,7 +96,7 @@ function response(segment, assembly, castFC, baseAffinity, params):
           results[family] = (state.status, None)   # 保留原始状态
           continue
 
-      C_cond = evaluate(family, state, support, baseAffinity, entry, params)   # 已解析输入下的条件响应
+      C_cond = evaluate(family, state, support, baseAffinity, entry, params, presentationMode)
       if C_cond == Reject:
           results[family] = (Reject, 0.0)
           continue
@@ -135,7 +135,7 @@ function compose(results):
   return (Resolved, max(resolved + rejected), skipped)
 
 
-function evaluate(family, state, support, baseAffinity, entry, params):
+function evaluate(family, state, support, baseAffinity, entry, params, presentationMode):
 
   # entry = castFC.entries[(conditionGroupId, engagementModeId)]
   scale     = supportedTierScales[entry.dietShift.tierScaleVersion]   # 锚 a=(0, 0.25, 0.60, 1.0)
@@ -151,7 +151,12 @@ function evaluate(family, state, support, baseAffinity, entry, params):
   # activityMultiplier(A) = clamp(1/A, 0.5, 2)，A=0 取 2；A 须在 [0,2]
   risk      = params.K_wary * entry.wariness * suspicionLoad      # 无 cue 时为 0
   threshold = f(entry.feedingMotivation)                          # 分段线性 + tail
-  reaction_cost = params.reactionLambda * (1 - support) if presentationMode == Reaction else 0
+  if presentationMode == Reaction:
+      if not finite(params.reactionLambda) or params.reactionLambda < 0:
+          return InvalidInput
+      reaction_cost = params.reactionLambda * (1 - support)
+  else:
+      reaction_cost = 0
   # Candidate, Owner 2026-11-06: reaction only; lambda Working probe 0.20, not production
 
   margin = food + trigger - reaction_cost - closing - risk - threshold
@@ -207,6 +212,7 @@ Reject > InvalidInput > NotConfigured > Unknown > Resolved
 | BaseDietAffinity[family] 缺失或 `Unknown` | 该 family 的 FoodValue 不可闭合 |
 | SizePreferenceAdjustment 缺失或非有限 | `Unknown` / `InvalidInput`，不按 0 处理 |
 | `StateMatchStrength` 缺失 | `ResolutionIncomplete` |
+| reaction 分支的 `reactionLambda` 非有限或为负 | `InvalidInput` |
 | support 为退化区间 | 按标量处理 |
 | support 为非退化区间 | 该分支 `ResolutionIncomplete`，跳过并记录 |
 | support 区间非法（非有限、端点越界、倒置） | `InvalidInput`，不可 roll |

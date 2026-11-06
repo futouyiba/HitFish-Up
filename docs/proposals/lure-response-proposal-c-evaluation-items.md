@@ -135,7 +135,7 @@ C_feed = PreySupport × C        # support 仍只在末端乘一次
 - λ 为负或非有限 → `InvalidInput`；
 - 未来按 species / EngagementMode 分化的 λ 需要独立证据，不由实现自行分叉。
 
-证伪条件：在预注册的 support × Motivation × q × trigger 网格上，若低 Motivation 且 reaction support 明显低于 natural 时 reaction 仍系统性胜出，或 `λ=0.20` 连“natural margin 略低于 0”的边缘案例也无法救活，则该规则失败。
+证伪条件：在预注册的 support × Motivation × q × trigger 网格上，若低 Motivation 且 reaction support 明显低于 natural 时 reaction 仍系统性胜出，或 `λ=0.20` 连“natural margin 低于 −0.01”的边缘案例也无法救活，则该规则失败。
 
 ### 准入边界
 
