@@ -35,6 +35,23 @@ r_g  单位时间有效遭遇率
 - `r_g` 来自空间几何与相对运动：鱼与颗粒进入可交互关系的频率；
 - 初始可用玩具模型近似（见[机会量支持](lure-response-proposal-c-opportunity-support.md)）：`r ≈ q / (1 + q / Q_cap)`，`τ ≈ D / (D + q)`。玩具参数不是生产值。
 
+### 3.1 发现/覆盖子量（Candidate，Owner 2026-11-06）
+
+第一次进入时段或钓场时，鱼群位置未知，“找鱼”本身有价值。该子量归 Opportunity，
+不进入 Response：
+
+```text
+DiscoveryFacts = {search trajectory / rate, explored region, prior knownness,
+                  session / window budget, spatial facts}
+DiscoveryOpportunity = f(DiscoveryFacts)
+Opportunity contribution = reduce(DiscoveryOpportunity, native C)
+```
+
+- 输出是 Opportunity 内部的 `L_discovery` 或 coverage 集合因子，必须带单位、窗口、identity、状态与 provenance；
+- Response 只输出 `C`，不加搜索奖励；覆盖不进入 Margin；
+- 该子量最终并入 `L` 还是 `SpatialDistributionWeight` 仍是 OPEN，不得假定已收口；
+- 在没有 encounter geometry、鱼群先验、reaction window 与 strike reach 数据前，只做接口与 toy/replay probe，不声称生产可用。
+
 ## 4. 身份、去重与重算
 
 - 颗粒必须有稳定语义身份：原子手法事件带事件 id；分子手法命中沿用组成事件的 id 集合；

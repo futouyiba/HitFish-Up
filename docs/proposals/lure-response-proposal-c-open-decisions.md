@@ -29,6 +29,14 @@ Owner 确认第一版 DietShift 限定在一档以内（允许小数档）。连
 
 DEF 与快照必须带 `tierScaleVersion`，消费端只接受已知版本，缺失或未知返回 `ResolutionIncomplete`；字段布局与旧数据迁移由实现方在契约规则内决定，不静默把旧版本标识重绑到新锚。本次改锚同时把标尺版本升到 `tier-v2`；旧锚表对应的 `tier-v1` 不再受支持，读到即拒绝，而不是按新锚重新解释。
 
+### 2026-11-06 三项 Response 决策
+
+Owner 批准以下三项按 Candidate 推进，均不升 Production：
+
+- **ReactionCost**：反应呈现增加 `ReactionCost = λ × (1 − PreySupport)`，由 Response 在五项 margin 内扣除；不是第六个顶层评价项，不归 Trigger。`λ=0.20` 只是 probe 值，不是标定值；证伪条件写在[五评价项契约](lure-response-proposal-c-evaluation-items.md) §3。
+- **clarity 与隐蔽覆盖**：`clarity` 立项为钓具 schema 的 Candidate 事实字段，由 schema owner 维护；Risk 负责把材料事实解释为 `SuspicionLoad`；覆盖损失归 Opportunity，不归 Risk。现有实验只支持立项，不支持宣称隐蔽策略已验证。
+- **搜索/发现通道**：归 Opportunity，作为内部 discovery/coverage 子量；Response 不加搜索奖励，覆盖不进入 Margin；该子量最终并入 `L` 还是 `SpatialDistributionWeight` 仍为 OPEN。
+
 ### 重开条件
 
 - **探索 / 信息覆盖**：发现 Opportunity 架构无法表达“扫过更多空间意味着更多有效试探”时，按 Opportunity 实现缺口处理，不在 Response 加 bonus。
@@ -42,7 +50,7 @@ DEF 与快照必须带 `tierScaleVersion`，消费端只接受已知版本，缺
 ## 2. Owner 缺口
 
 - Feeding、Defense、Investigation 的 Interaction composition；
-- `TackleConspicuousness` 的字段与数据 owner：2026-10-30 裁定暂不投入，`RiskCost=0`；需要交付真实警戒玩法时再立项；
+- `TackleConspicuousness` 的字段与数据 owner：2026-11-06 批准把 `clarity` 立项为钓具 schema 的 Candidate 事实字段；在测量数据与解释规则闭合前，`RiskCost` 仍按无 cue 处理；
 - Wariness runtime overlay 的事件来源、粒度、衰减、有效期与会话记忆边界：职责已归 Fish Condition 线，具体机制 Contract 未闭合；
 - 若未来启用 `ExplicitDirectional` bearing prior，production directional support 的 owner；
 - 垂直可交互窗口的正式实现 owner（`L` 归 Opportunity 后由该线承接）。

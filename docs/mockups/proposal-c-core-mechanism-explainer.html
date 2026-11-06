@@ -321,6 +321,13 @@ TriggerBudget ≈ 0.10 ~ 0.15        # 预算上限，防止诱因压过一切
 现在的做法是先按猎物类型判断“这是不是一次逃逸样动作”，再用转向强度与爆发强度合成；
 鱼侧也不得把这些原始特征重新拆开相加。</p>
 
+<div class="callout warn">
+  <div class="tag">反应呈现的条件成本（Candidate）</div>
+  <p>反应呈现不能免费弥补较差的猎物表达。仅对反应分支扣除
+  <code>ReactionCost = 0.20 × (1 − 表达支持度)</code>；自然呈现为 0。
+  它不是第六个评价项，由 Response 在余量内结算。这个 0.20 是实验值，不是生产标定。</p>
+</div>
+
 <h2><span class="num">05</span>追赶负担：追上去有多累</h2>
 
 <pre class="formula">q = 拟饵相对水体的水平速度 / InterceptSpeedLimit

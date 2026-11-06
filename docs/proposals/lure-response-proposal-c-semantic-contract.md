@@ -173,6 +173,15 @@ TriggerBudget ≈ 0.10 ~ 0.15   # Working effect-size budget
 - 未配置的鱼种回落到默认规则，不判 `NotConfigured`；配置值非有限或越界判 `InvalidInput`；
 - 鱼侧不得重新把 raw turn / burst / event count 相加；事件已在猎物侧解释完成。
 
+反应呈现另有条件扣减（Candidate，Owner 2026-11-06）：
+
+```text
+ReactionCost = λ × (1 − PreySupport)     # 仅 reaction presentation；自然呈现为 0
+StateTriggerValue_fp 仍是 TriggerBudget × TriggerEvaluation_f
+```
+
+`ReactionCost` 由 Response 在五项 margin 内结算，不是第六个顶层评价项，也不归 Trigger。λ 的 Working probe 为 `0.20`，不是生产标定；support 仍只在末端乘一次。
+
 Response 不再对原始轨迹特征做第二套 Trigger 解释。
 
 ### 5.3 摄食意愿
@@ -222,6 +231,7 @@ RiskCost = K_wary * Wariness * SuspicionLoad
 DecisionMargin
 = CurrentFoodValue
 + StateTriggerValue
+- ReactionCost            # 仅 reaction presentation；自然呈现为 0
 - ClosingCost
 - RiskCost
 - WillingnessThreshold(FeedingMotivation)
@@ -235,7 +245,8 @@ DecisionMargin
 
 - 正向 soft evidence：FoodValue、StateTriggerValue；
 - 负向 soft burden：ClosingCost、RiskCost，可被足够高的价值、触发或 Motivation 部分补偿；
-- Motivation 只移动门槛，不充当奖励项。
+- Motivation 只移动门槛，不充当奖励项；
+- `ReactionCost` 是反应呈现的条件扣减，不是新评价项；它表达“反应动作不能免费弥补较差的猎物表达”，其 λ 仍是 Candidate 值。
 
 不可补偿语义必须在进入 Margin 前处理：
 

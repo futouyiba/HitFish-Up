@@ -15,7 +15,7 @@
 - 摄食意愿门槛
 ```
 
-五项都先换算到同一“出手余量标尺”，顶层只做竞争。非线性、状态交互和装备/操作交叉在下层完成，不堆到顶层。
+五项都先换算到同一“出手余量标尺”，顶层只做竞争。非线性、状态交互和装备/操作交叉在下层完成，不堆到顶层。反应呈现另有一项条件扣减（`ReactionCost`），见 §3；它不是第六个评价项。
 
 ## 2. 食物价值
 
@@ -114,6 +114,28 @@ TriggerEvaluation_f(p, PreyState_p) = StateMatchStrength_p
 不是 raw turn magnitude、burst speed 或 event count。理由：一次 escape dart 往往同时包含转向和加速，按特征相加会重复奖励同一个行为；不同猎物对同一 raw feature 的含义不同；事件数不应无界累加。
 
 鱼侧评价也不得把这些 raw 特征重新相加。事件已经在猎物侧被解释成事件，鱼侧只读已解释状态。
+
+### 反应呈现的表达成本（Candidate，Owner 2026-11-06）
+
+反应呈现可以跨过自然呈现跨不过的线，但不能免费弥补较差的猎物表达。仅对 reaction presentation：
+
+```text
+ReactionCost = λ × (1 − PreySupport)
+自然 presentation：ReactionCost = 0
+
+DecisionMargin = 食物价值 + StateTriggerValue − ReactionCost
+                 − 追赶负担 − 风险顾虑 − 摄食意愿门槛
+C_feed = PreySupport × C        # support 仍只在末端乘一次
+```
+
+- 这是 Response 在五项 margin 内的条件扣减，不是第六个顶层评价项，也不归 Trigger；Trigger 只负责正向 `StateTriggerValue`；
+- λ 的 Working probe 值为 `0.20`；这是实验夹具，不是生产标定值；
+- 不允许用 `TriggerEvaluation × support` 代替；那会与末端 support 乘法重复计权；
+- 非反应呈现或未配置时成本为 0，不改变现有排序；
+- λ 为负或非有限 → `InvalidInput`；
+- 未来按 species / EngagementMode 分化的 λ 需要独立证据，不由实现自行分叉。
+
+证伪条件：在预注册的 support × Motivation × q × trigger 网格上，若低 Motivation 且 reaction support 明显低于 natural 时 reaction 仍系统性胜出，或 `λ=0.20` 连“natural margin 低于 −0.01”的边缘案例也无法救活，则该规则失败。
 
 ### 准入边界
 
@@ -236,10 +258,11 @@ M > 0.80:
 |---|---|---|
 | 食物价值 | `[0, 1]` | 已 clamp |
 | 攻击诱因 | `[0, 0.15]` | `TriggerBudget × TriggerEvaluation`，预算为 Working 上限 |
+| 反应表达成本 | `[0, 0.20]` | 仅 reaction 分支；`λ=0.20`、`PreySupport∈[0,1]` 时的 Working 上界，不是生产值 |
 | 追赶负担 | `[0, 1.52]` | `K_close=0.19`、`q∈[0,2]`、`Activity∈[0,2]` 时的上界；不设硬 cap |
 | 风险顾虑 | `[0, 1]` | `K_wary=1` 的 Working 尺度；字段未落地时恒为 0 |
 | 摄食意愿门槛 | `[0.1, 0.6]` | `Motivation∈[0,1]` 与 tail 参数下的 Working 范围 |
-| 出手余量（理论域） | `[-3.12, 1.05]` | 五项端点的组合；当前 `RiskCost=0` 时为 `[-2.12, 1.05]`；具体 fixture 的观测范围更窄 |
+| 出手余量（理论域） | `[-3.12, 1.05]`；reaction 分支 `[-3.32, 1.05]` | 五项端点的组合；reaction 分支叠加 `ReactionCost` 后下界再降 `0.20`。当前 `RiskCost=0` 时分别为 `[-2.12, 1.05]` / `[-2.32, 1.05]`；具体 fixture 的观测范围更窄 |
 
 可加性是 **Working 假设**，不是已验证事实：
 
