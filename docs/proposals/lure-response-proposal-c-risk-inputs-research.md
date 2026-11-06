@@ -9,12 +9,12 @@
 Proposal C 的 Risk 链条目前是：
 
 ```text
-TackleConspicuousness（未立项字段）
+TackleConspicuousness（Candidate 字段：clarity，Owner 2026-11-06 立项）
 × Wariness
-→ RiskCost（当前为 0）
+→ RiskCost（解释规则未闭合时仍为 0）
 ```
 
-缺的是“哪些装备事实算显眼、怎么聚合、鱼侧怎么消费”。RF4 与 Fishing Planet 都长期把线径、前导、钩与终端件的可见性当成咬口修正项，可以作为 cue 清单与聚合形状的外部参照。
+缺的是“clarity 如何与直径、颜色、透明度聚合，鱼侧怎么消费”。RF4 与 Fishing Planet 都长期把线径、前导、钩与终端件的可见性当成咬口修正项，可以作为 cue 清单与聚合形状的外部参照。
 
 ## 2. Russian Fishing 4 的公开设计事实
 

@@ -13,8 +13,10 @@ PresentationSegment   轨迹、时间、环境关系、局部记录
 AssemblySnapshot      证据绑定与适用标记
 CastFishCondition     抛竿时形成的鱼况快照（可选授权 overlay）
 BaseDietAffinity      species × prey family 的静态基础亲和（非 Fish Condition）
+PresentationMode      Natural / Reaction；反应分支按 Candidate 规则扣除 ReactionCost
 OpportunityFacts      L 及状态（不进入 Response；圆桌接口按 SDW × AdaptationCoeff）
-WorkingParams         K_close、TriggerBudget、M0/M1、tail 参数、默认 TriggerEvaluation 规则
+WorkingParams         K_close、TriggerBudget、M0/M1、tail 参数、默认 TriggerEvaluation 规则、
+                      reactionLambda（仅 reaction presentation 使用）
 ```
 
 不变量：
@@ -94,7 +96,7 @@ function response(segment, assembly, castFC, baseAffinity, params):
           results[family] = (state.status, None)   # 保留原始状态
           continue
 
-      C_cond = evaluate(family, state, baseAffinity, entry, params)   # 已解析输入下的条件响应
+      C_cond = evaluate(family, state, support, baseAffinity, entry, params)   # 已解析输入下的条件响应
       if C_cond == Reject:
           results[family] = (Reject, 0.0)
           continue
@@ -133,7 +135,7 @@ function compose(results):
   return (Resolved, max(resolved + rejected), skipped)
 
 
-function evaluate(family, state, baseAffinity, entry, params):
+function evaluate(family, state, support, baseAffinity, entry, params):
 
   # entry = castFC.entries[(conditionGroupId, engagementModeId)]
   scale     = supportedTierScales[entry.dietShift.tierScaleVersion]   # 锚 a=(0, 0.25, 0.60, 1.0)
@@ -149,8 +151,10 @@ function evaluate(family, state, baseAffinity, entry, params):
   # activityMultiplier(A) = clamp(1/A, 0.5, 2)，A=0 取 2；A 须在 [0,2]
   risk      = params.K_wary * entry.wariness * suspicionLoad      # 无 cue 时为 0
   threshold = f(entry.feedingMotivation)                          # 分段线性 + tail
+  reaction_cost = params.reactionLambda * (1 - support) if presentationMode == Reaction else 0
+  # Candidate, Owner 2026-11-06: reaction only; lambda Working probe 0.20, not production
 
-  margin = food + trigger - closing - risk - threshold
+  margin = food + trigger - reaction_cost - closing - risk - threshold
   return clamp((margin - params.M0) / (params.M1 - params.M0), 0, 1)   # C
 ```
 
@@ -161,7 +165,7 @@ function evaluate(family, state, baseAffinity, entry, params):
 | 帧校验 | `ResolutionIncomplete`（快照元数据不成立、错竿、缺对应条目、`dietShift.tierScaleVersion` 缺失或不支持） |
 | 猎物解释 | 数值 / 区间 / `Unknown` / `NotConfigured` / `NoMatch` |
 | 状态提取 | 状态维度、事件、`StateMatchStrength`；非数值状态向上传播 |
-| 评价 | 五项各自状态；鱼侧 `TriggerEvaluation` 由已解释状态计算；`Reject` 单独处理 |
+| 评价 | 五项各自状态；鱼侧 `TriggerEvaluation` 由已解释状态计算；reaction 分支另扣 `ReactionCost`；`Reject` 单独处理 |
 | 投影 | 数值 `C`；不输出非数值 |
 | sibling 组成 | 标量（max）或 `ResolutionIncomplete`；`skipped` 记录被跳过的 family 与原始状态 |
 | 机会接入 | 标量 `C_feed`；`L` 的并入方式待定（2026-11-04 圆桌接口方向） |
